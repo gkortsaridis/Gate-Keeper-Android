@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun displayFragment(fragment: Fragment?){
         if (fragment != null) {
-            supportFragmentManager.beginTransaction().add(contentFrame.id, fragment, "ContentFragment").commit()
+            supportFragmentManager.beginTransaction().replace(contentFrame.id, fragment, "ContentFragment").commit()
         }
     }
 
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         when (p0.itemId) {
             R.id.nav_item_logins -> { fragmentToReplace = LoginsFragment() }
-            R.id.nav_item_account -> { fragmentToReplace = LoginsFragment() }
+            R.id.nav_item_account -> { fragmentToReplace = AccountFragment() }
             R.id.nav_item_settings -> { fragmentToReplace = LoginsFragment() }
             R.id.nav_item_devices -> { fragmentToReplace = LoginsFragment() }
             R.id.nav_item_about -> { fragmentToReplace = LoginsFragment() }
