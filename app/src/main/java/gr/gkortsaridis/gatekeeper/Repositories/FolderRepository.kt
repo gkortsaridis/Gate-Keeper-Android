@@ -16,7 +16,7 @@ object FolderRepository {
             .get().addOnSuccessListener { result ->
                 val foldersResult = ArrayList<Folder>()
                 for (document in result) {
-                    //foldersResult.add(Login(document))
+                    foldersResult.add(Folder(document))
                 }
 
                 retrieveListener.onFoldersRetrieveSuccess(foldersResult)

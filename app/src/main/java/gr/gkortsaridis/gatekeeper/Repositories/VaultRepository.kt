@@ -14,7 +14,7 @@ object VaultRepository {
             .get().addOnSuccessListener { result ->
                 val vaultsResult = ArrayList<Vault>()
                 for (document in result) {
-                    //vaultsResult.add(Vault(document))
+                    vaultsResult.add(Vault(document))
                 }
 
                 retrieveListener.onVaultsRetrieveSuccess(vaultsResult)
