@@ -1,6 +1,5 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener

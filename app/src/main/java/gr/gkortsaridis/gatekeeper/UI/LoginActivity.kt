@@ -69,7 +69,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun proceedAuthenticated() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, LoadingActivity::class.java)
         startActivity(intent)
     }
 }

@@ -2,6 +2,9 @@ package gr.gkortsaridis.gatekeeper
 
 import android.app.Application
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import gr.gkortsaridis.gatekeeper.Entities.Folder
+import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.Vault
 
 class GateKeeperApplication : Application() {
 
@@ -13,6 +16,9 @@ class GateKeeperApplication : Application() {
     companion object {
         lateinit var instance: GateKeeperApplication private set
         lateinit var userAccount: GoogleSignInAccount
+        lateinit var logins: ArrayList<Login>
+        lateinit var vaults: ArrayList<Vault>
+        lateinit var folders: ArrayList<Folder>
     }
 
 }
