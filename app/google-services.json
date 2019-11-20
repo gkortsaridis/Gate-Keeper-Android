@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "386574062859",
+    "firebase_url": "https://gate-keeper-password-manager.firebaseio.com",
+    "project_id": "gate-keeper-password-manager",
+    "storage_bucket": "gate-keeper-password-manager.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386574062859:android:8ea6f7b8fdb6eb1c47be0e",
+        "android_client_info": {
+          "package_name": "gr.gkortsaridis.gatekeeper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386574062859-6ifgsu2b79j7ndbn83t4kgp0bq21ospb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRw1zeLZzLR84eqxBw8byUjuYpZS_mZPo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386574062859-6ifgsu2b79j7ndbn83t4kgp0bq21ospb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
