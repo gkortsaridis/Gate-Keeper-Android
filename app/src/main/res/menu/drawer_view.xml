@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/nav_item_logins"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/my_logins" />
+        <item
+            android:id="@+id/nav_item_devices"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/my_devices" />
+    </group>
+
+    <item android:title="Internals">
+        <group android:id="@+id/group_menu">
+            <item
+                android:id="@+id/nav_item_account"
+                android:icon="@mipmap/ic_launcher"
+                android:title="@string/my_account" />
+            <item
+                android:id="@+id/nav_item_settings"
+                android:icon="@mipmap/ic_launcher"
+                android:title="@string/settings" />
+        </group>
+    </item>
+
+    <item android:title="Internals">
+        <group android:id="@+id/group_menu_2">
+            <item
+                android:id="@+id/nav_item_about"
+                android:icon="@mipmap/ic_launcher"
+                android:title="@string/about" />
+            </group>
+    </item>
+
+</menu>

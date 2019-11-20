@@ -1,0 +1,56 @@
+package gr.gkortsaridis.gatekeeper
+
+import android.app.Activity
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class LoginsRecyclerViewAdapter(
+    private val context: Context,
+    private val logins: ArrayList<Login>): RecyclerView.Adapter<LoginsRecyclerViewAdapter.LoginViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LoginViewHolder {
+        val inflatedView = LayoutInflater.from(context).inflate(R.layout.recycler_view_item_login, parent, false)
+        return LoginViewHolder(inflatedView)
+    }
+
+    override fun getItemCount(): Int {
+        return logins.size
+    }
+
+    override fun onBindViewHolder(holder: LoginViewHolder, position: Int) {
+        val loginItem = logins[position]
+        holder.bindLogin(loginItem, position)
+    }
+
+    class LoginViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener {
+
+        private var loginName: TextView? = null
+        private var loginUsername: TextView? = null
+        private var view: View = v
+
+        init {
+            loginName = view.findViewById(R.id.login_name)
+            loginUsername = view.findViewById(R.id.login_username)
+
+            view.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        fun bindLogin(login: Login, position: Int){
+            this.loginName?.text = login.name
+            this.loginUsername?.text = login.username
+
+            if(position == 0) {
+                this.view.setPadding(0,20.dp,0,0)
+            }
+        }
+
+    }
+}
