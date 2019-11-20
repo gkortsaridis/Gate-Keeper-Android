@@ -1,10 +1,9 @@
-package gr.gkortsaridis.gatekeeper
+package gr.gkortsaridis.gatekeeper.UI
 
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -13,6 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.pvryan.easycrypt.symmetric.ECSymmetric
+import gr.gkortsaridis.gatekeeper.R
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -34,7 +34,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         contentFrame = findViewById(R.id.content_frame)
         drawer = findViewById(R.id.drawer_layout)
 
-        toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        toggle = ActionBarDrawerToggle(this, drawer, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
         drawer.addDrawerListener(toggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
@@ -57,11 +60,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var fragmentToReplace: Fragment? = null
 
         when (p0.itemId) {
-            R.id.nav_item_logins -> { fragmentToReplace = LoginsFragment() }
-            R.id.nav_item_account -> { fragmentToReplace = AccountFragment() }
-            R.id.nav_item_settings -> { fragmentToReplace = LoginsFragment() }
-            R.id.nav_item_devices -> { fragmentToReplace = LoginsFragment() }
-            R.id.nav_item_about -> { fragmentToReplace = LoginsFragment() }
+            R.id.nav_item_logins -> { fragmentToReplace =
+                LoginsFragment()
+            }
+            R.id.nav_item_account -> { fragmentToReplace =
+                AccountFragment()
+            }
+            R.id.nav_item_settings -> { fragmentToReplace =
+                LoginsFragment()
+            }
+            R.id.nav_item_devices -> { fragmentToReplace =
+                LoginsFragment()
+            }
+            R.id.nav_item_about -> { fragmentToReplace =
+                LoginsFragment()
+            }
         }
 
         displayFragment(fragmentToReplace)

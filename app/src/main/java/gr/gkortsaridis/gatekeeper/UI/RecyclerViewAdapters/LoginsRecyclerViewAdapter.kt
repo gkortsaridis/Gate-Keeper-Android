@@ -1,12 +1,14 @@
-package gr.gkortsaridis.gatekeeper
+package gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters
 
-import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Entities.dp
 
 class LoginsRecyclerViewAdapter(
     private val context: Context,
@@ -14,7 +16,9 @@ class LoginsRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LoginViewHolder {
         val inflatedView = LayoutInflater.from(context).inflate(R.layout.recycler_view_item_login, parent, false)
-        return LoginViewHolder(inflatedView)
+        return LoginViewHolder(
+            inflatedView
+        )
     }
 
     override fun getItemCount(): Int {

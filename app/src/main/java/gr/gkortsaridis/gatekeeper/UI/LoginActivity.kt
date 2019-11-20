@@ -1,17 +1,17 @@
-package gr.gkortsaridis.gatekeeper
+package gr.gkortsaridis.gatekeeper.UI
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.auth.api.signin.SignInAccount
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.R
 
 
 class LoginActivity : AppCompatActivity() {

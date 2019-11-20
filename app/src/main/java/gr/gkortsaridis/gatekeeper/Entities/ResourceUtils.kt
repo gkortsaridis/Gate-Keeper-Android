@@ -1,4 +1,4 @@
-package gr.gkortsaridis.gatekeeper
+package gr.gkortsaridis.gatekeeper.Entities
 
 import android.content.res.Resources
 

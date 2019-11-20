@@ -1,4 +1,4 @@
-package gr.gkortsaridis.gatekeeper
+package gr.gkortsaridis.gatekeeper.Entities
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.QueryDocumentSnapshot
