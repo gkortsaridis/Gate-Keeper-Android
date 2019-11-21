@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UI.LoadingActivity"></activity>
+        <activity android:name=".UI.CreateLoginActivity"></activity>
+        <activity android:name=".UI.LoadingActivity" />
         <activity android:name=".UI.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

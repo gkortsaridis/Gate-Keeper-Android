@@ -14,4 +14,7 @@ class Vault {
         name = firestoreSnapShot["name"] as String
     }
 
+    override fun toString(): String {
+        return "Vault: [name: $name, account_id: $account_id]"
+    }
 }

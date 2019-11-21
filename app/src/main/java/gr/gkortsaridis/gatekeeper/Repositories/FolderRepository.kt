@@ -2,9 +2,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import com.google.firebase.firestore.FirebaseFirestore
 import gr.gkortsaridis.gatekeeper.Entities.Folder
-import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Interfaces.FolderRetrieveListener
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 
 object FolderRepository {
 

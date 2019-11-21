@@ -12,6 +12,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.pvryan.easycrypt.symmetric.ECSymmetric
+import gr.gkortsaridis.gatekeeper.Entities.Folder
+import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -53,7 +56,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             supportFragmentManager.beginTransaction().replace(contentFrame.id, fragment, "ContentFragment").commit()
         }
     }
-
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
 

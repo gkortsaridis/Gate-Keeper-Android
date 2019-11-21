@@ -36,6 +36,14 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
 
     private fun openMainApplication() {
         if (loginsOk && vaultsOk && foldersOk) {
+            if (GateKeeperApplication.folders.size > 0){
+                GateKeeperApplication.activeFolder = GateKeeperApplication.folders[0]
+            }
+
+            if (GateKeeperApplication.vaults.size > 0) {
+                GateKeeperApplication.activeVault = GateKeeperApplication.vaults[0]
+            }
+
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }

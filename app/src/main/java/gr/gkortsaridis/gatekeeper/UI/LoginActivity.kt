@@ -25,6 +25,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setContentView(R.layout.activity_login)
+        googleSignIn = findViewById(R.id.sign_in_button)
+        googleSignIn.setOnClickListener { signIn() }
+
 
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -34,14 +38,12 @@ class LoginActivity : AppCompatActivity() {
         val account = GoogleSignIn.getLastSignedInAccount(this)
 
         if (account == null) {
-            setContentView(R.layout.activity_login)
-            googleSignIn = findViewById(R.id.sign_in_button)
-            googleSignIn.setOnClickListener { signIn() }
+
 
         }else {
             GateKeeperApplication.userAccount = account
             //TODO: For for, just proceed to logins screen. Later, create PIN/Bio sign in
-            proceedAuthenticated()
+            //proceedAuthenticated()
         }
 
     }

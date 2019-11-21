@@ -19,6 +19,9 @@ class GateKeeperApplication : Application() {
         lateinit var logins: ArrayList<Login>
         lateinit var vaults: ArrayList<Vault>
         lateinit var folders: ArrayList<Folder>
+
+        lateinit var activeVault : Vault
+        lateinit var activeFolder : Folder
     }
 
 }

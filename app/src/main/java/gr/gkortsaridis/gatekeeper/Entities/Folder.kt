@@ -16,4 +16,7 @@ class Folder {
         parent_id = firestoreSnapShot["parent_id"] as String
     }
 
+    override fun toString(): String {
+        return "Folder: [name: $name, parent_id$parent_id, account_id$account_id]"
+    }
 }

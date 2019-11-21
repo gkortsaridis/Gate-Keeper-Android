@@ -1,8 +1,14 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import com.pvryan.easycrypt.ECResultListener
+import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
+import java.util.concurrent.CompletableFuture
 
 object LoginsRepository {
 
@@ -14,13 +20,30 @@ object LoginsRepository {
             .get().addOnSuccessListener { result ->
                 val loginsResult = ArrayList<Login>()
                 for (document in result) {
-                    loginsResult.add(Login(document))
+                    val encryptedLogin = document["login"] as String
+                    loginsResult.add(decryptLogin(encryptedLogin))
                 }
 
                 retrieveListener.onLoginsRetrieveSuccess(loginsResult)
             }
             .addOnFailureListener { exception -> retrieveListener.onLoginsRetrieveError(exception) }
+    }
 
+    fun decryptLogin(encryptedLogin: String) : Login {
+
+        val response = CompletableFuture<Login>()
+        ECSymmetric().decrypt(encryptedLogin, GateKeeperApplication.userAccount.id as String, object :
+            ECResultListener {
+            override fun onFailure(message: String, e: Exception) {
+                response.complete(null)
+            }
+
+            override fun <T> onSuccess(result: T) {
+                response.complete(Gson().fromJson(result.toString(), Login::class.java))
+            }
+        })
+
+        return response.get()
     }
 
 }
