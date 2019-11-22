@@ -21,7 +21,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
         val login = hashMapOf(
             "login" to encryptedLogin,
-            "account_id" to GateKeeperApplication.userAccount.id
+            "account_id" to GateKeeperApplication.user.uid
         )
 
         val db = FirebaseFirestore.getInstance()

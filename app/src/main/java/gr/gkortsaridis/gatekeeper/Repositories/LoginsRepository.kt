@@ -1,6 +1,5 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.pvryan.easycrypt.ECResultListener
@@ -32,7 +31,7 @@ object LoginsRepository {
     fun decryptLogin(encryptedLogin: String) : Login {
 
         val response = CompletableFuture<Login>()
-        ECSymmetric().decrypt(encryptedLogin, GateKeeperApplication.userAccount.id as String, object :
+        ECSymmetric().decrypt(encryptedLogin, GateKeeperApplication.user.uid, object :
             ECResultListener {
             override fun onFailure(message: String, e: Exception) {
                 response.complete(null)

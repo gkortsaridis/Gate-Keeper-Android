@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -13,22 +14,24 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import com.google.firebase.auth.FirebaseUser
+import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository.RC_SIGN_IN
+import gr.gkortsaridis.gatekeeper.Repositories.FirebaseSignInResult
+import kotlinx.android.synthetic.main.activity_login.*
 
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), SignInListener {
 
     private val TAG = "_Login_Activity_"
 
     private lateinit var googleSignIn: SignInButton
     private lateinit var signIn: Button
     private lateinit var signUpLink: TextView
-
-    private lateinit var auth : FirebaseAuth
-    private lateinit var gso : GoogleSignInOptions
-    private lateinit var googleSignInClient : GoogleSignInClient
-    private var RC_SIGN_IN : Int = 1
+    private lateinit var email: EditText
+    private lateinit var password: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,29 +39,12 @@ class LoginActivity : AppCompatActivity() {
         googleSignIn = findViewById(R.id.sign_in_google)
         signIn = findViewById(R.id.sign_in)
         signUpLink = findViewById(R.id.sign_up_link)
+        email = findViewById(R.id.emailET)
+        password = findViewById(R.id.passwordET)
 
         googleSignIn.setOnClickListener { googleSignIn() }
-        signIn.setOnClickListener { signIn("gkortsaridis@gmail.com", "1234567890") }
+        signIn.setOnClickListener { signIn(emailET.text.toString(), password.text.toString(), false) }
         signUpLink.setOnClickListener { signUp() }
-
-        auth = FirebaseAuth.getInstance()
-
-        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-
-        /*val account = GoogleSignIn.getLastSignedInAccount(this)
-
-        if (account == null) {
-
-        }else {
-            GateKeeperApplication.userAccount = account
-            //TODO: For for, just proceed to logins screen. Later, create PIN/Bio sign in
-            //proceedAuthenticated()
-        }*/
 
     }
 
@@ -66,27 +52,27 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(this, SignUpActivity::class.java))
     }
 
-    private fun signIn(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "signInWithEmail:success")
-                    val user = auth.currentUser
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmail:failure", task.exception)
-                    Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT).show()
-                }
-
-                // ...
-            }
+    private fun signIn(email: String, password: String, check: Boolean) {
+        AuthRepository.signIn(this, email, password, check,this)
     }
 
     private fun googleSignIn() {
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        AuthRepository.googleSignIn(this)
     }
 
+    override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
+        if (success) {
+            AuthRepository.proceedLoggedIn(this, user.authResult!!.user!!)
+        }else{
+            Toast.makeText(this, "Wrong Credentials", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onRegistrationNeeded(email: String) {
+        startActivity(Intent(this, CreatePasswordActivity::class.java))
+    }
+
+    //Pretty much onGoogleSignInComplete
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -95,10 +81,9 @@ class LoginActivity : AppCompatActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
-
-
-                //GateKeeperApplication.userAccount = account!!
-                //proceedAuthenticated()
+                if (account?.email != null) {
+                    signIn(account.email!!, account.id!!, true)
+                }
             } catch (e: ApiException) {
                 Log.w("LOGIN ACTIVITY", "Google sign in failed", e)
                 Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
@@ -106,9 +91,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkSignedUp(email: String) {
-        signIn(email,"TEST_PASS");
-    }
 
     private fun proceedAuthenticated() {
         val intent = Intent(this, LoadingActivity::class.java)

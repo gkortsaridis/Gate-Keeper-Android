@@ -8,10 +8,13 @@ import android.widget.EditText
 import android.widget.Toast
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import gr.gkortsaridis.gatekeeper.Repositories.FirebaseSignInResult
 import java.lang.Exception
 
-class SignUpActivity : AppCompatActivity() {
+class SignUpActivity : AppCompatActivity(), SignUpListener {
 
     private val TAG = "_Sign_Up_"
 
@@ -30,21 +33,27 @@ class SignUpActivity : AppCompatActivity() {
         signUp = findViewById(R.id.sign_up)
 
         signUp.setOnClickListener { signUp(email.text.toString(), password.text.toString())}
-
-        auth = FirebaseAuth.getInstance()
     }
 
     private fun signUp(email: String, password: String) {
-        auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener { result: AuthResult ->
-            Log.i(TAG, "SUCCESS: $result")
-        }.addOnFailureListener {e: Exception ->
-            if (e is com.google.firebase.auth.FirebaseAuthUserCollisionException) {
-                Toast.makeText(this, "User with this email already exists", Toast.LENGTH_SHORT).show()
-            }else if (e is com.google.firebase.auth.FirebaseAuthWeakPasswordException) {
-                Toast.makeText(this, "Weak password! Should be at least 6 characters", Toast.LENGTH_SHORT).show()
-            }
+        AuthRepository.signUp(this, email,password, this)
+    }
 
-            Log.i(TAG, "EXCETION$e")
+    override fun onSignUpComplete(success: Boolean, user: FirebaseSignInResult) {
+        if (success) {
+            AuthRepository.proceedLoggedIn(this, user.authResult!!.user!!)
+        }else{
+            when (user.exception) {
+                is com.google.firebase.auth.FirebaseAuthUserCollisionException -> {
+                    Toast.makeText(this, "User with this email already exists", Toast.LENGTH_SHORT).show()
+                }
+                is com.google.firebase.auth.FirebaseAuthWeakPasswordException -> {
+                    Toast.makeText(this, "Weak password! Should be at least 6 characters", Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    Log.i(TAG, "EXCETION${user.exception}")
+                }
+            }
         }
     }
 }

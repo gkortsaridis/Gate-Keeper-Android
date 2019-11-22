@@ -29,9 +29,9 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_loading)
 
-        LoginsRepository.retrieveLoginsByAccountID(GateKeeperApplication.userAccount.id!!, this)
-        VaultRepository.retrieveVaultsByAccountID(GateKeeperApplication.userAccount.id!!, this)
-        FolderRepository.retrieveFoldersByAccountID(GateKeeperApplication.userAccount.id!!, this)
+        LoginsRepository.retrieveLoginsByAccountID(GateKeeperApplication.user.uid, this)
+        VaultRepository.retrieveVaultsByAccountID(GateKeeperApplication.user.uid, this)
+        FolderRepository.retrieveFoldersByAccountID(GateKeeperApplication.user.uid, this)
     }
 
     private fun openMainApplication() {

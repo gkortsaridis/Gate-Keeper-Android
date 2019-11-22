@@ -25,7 +25,7 @@ class Login {
 
     constructor() {
         this.id = "-1"
-        this.account_id = GateKeeperApplication.userAccount.id!!
+        this.account_id = GateKeeperApplication.user.uid
         this.name = "Test_name"
         this.username = "Test_username"
         this.password = "Test_password"
@@ -54,7 +54,7 @@ class Login {
     fun encrypt() : String {
         val decrypted = Gson().toJson(this)
         val response = CompletableFuture<String>()
-        ECSymmetric().encrypt(decrypted, GateKeeperApplication.userAccount.id as String, object :
+        ECSymmetric().encrypt(decrypted, GateKeeperApplication.user.uid, object :
             ECResultListener {
             override fun onFailure(message: String, e: Exception) {
                 response.complete("-1")
