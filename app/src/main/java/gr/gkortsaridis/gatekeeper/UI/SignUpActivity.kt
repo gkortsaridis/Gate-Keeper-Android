@@ -8,10 +8,15 @@ import android.widget.EditText
 import android.widget.Toast
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Interfaces.FolderSetupListener
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
+import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.FirebaseSignInResult
+import gr.gkortsaridis.gatekeeper.Repositories.FolderRepository
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import java.lang.Exception
 
 class SignUpActivity : AppCompatActivity(), SignUpListener {
@@ -22,7 +27,8 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
     private lateinit var password: EditText
     private lateinit var signUp: Button
 
-    private lateinit var auth: FirebaseAuth
+    private var vaultSetup = false
+    private var folderSetup = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +47,25 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
 
     override fun onSignUpComplete(success: Boolean, user: FirebaseSignInResult) {
         if (success) {
-            AuthRepository.proceedLoggedIn(this, user.authResult!!.user!!)
+            AuthRepository.setApplicationUser(user.authResult!!.user!!)
+            VaultRepository.setupVaultsForNewUser(GateKeeperApplication.user, object: VaultSetupListener {
+                override fun onVaultSetupComplete() {
+                    vaultSetup = true
+                    finalizeSetup()
+                }
+                override fun onVaultSetupError() { showSetupError() }
+            })
+
+            FolderRepository.setupFoldersForNewUser(GateKeeperApplication.user, object: FolderSetupListener {
+                override fun onFolderSetupComplete() {
+                    folderSetup = true
+                    finalizeSetup()
+                }
+
+                override fun onFolderSetupError() {
+                    showSetupError()
+                }
+            })
         }else{
             when (user.exception) {
                 is com.google.firebase.auth.FirebaseAuthUserCollisionException -> {
@@ -56,4 +80,12 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
             }
         }
     }
+
+    fun finalizeSetup() { if (vaultSetup && folderSetup ) { AuthRepository.proceedLoggedIn(this) } }
+
+    fun showSetupError() {
+
+    }
+
+
 }

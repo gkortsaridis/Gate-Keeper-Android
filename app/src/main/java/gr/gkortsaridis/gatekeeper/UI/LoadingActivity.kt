@@ -53,10 +53,9 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
     //Sucess Retrieving cases :)
     override fun onLoginsRetrieveSuccess(logins: ArrayList<Login>) {
         for (login in logins) { Log.i(TAG, login.toString()) }
-        GateKeeperApplication.logins = logins
 
+        GateKeeperApplication.logins = logins
         loginsOk = true
-        foldersOk = true
         openMainApplication()
     }
 

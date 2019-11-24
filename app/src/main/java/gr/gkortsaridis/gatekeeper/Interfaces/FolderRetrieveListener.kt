@@ -6,3 +6,13 @@ interface FolderRetrieveListener {
     fun onFoldersRetrieveSuccess(folders: ArrayList<Folder>)
     fun onFoldersRetrieveError(e: Exception)
 }
+
+interface FolderCreateListener {
+    fun onFolderCreated()
+    fun onFolderCreateError()
+}
+
+interface FolderSetupListener {
+    fun onFolderSetupComplete()
+    fun onFolderSetupError()
+}

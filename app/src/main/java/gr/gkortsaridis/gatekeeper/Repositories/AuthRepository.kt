@@ -70,9 +70,11 @@ object AuthRepository {
         }
     }
 
-    fun proceedLoggedIn(activity: Activity, user: FirebaseUser) {
-        Log.i(TAG, "PROCEED AUTHENTICATED FOR: "+user.uid)
+    fun setApplicationUser(user: FirebaseUser) {
         GateKeeperApplication.user = user
+    }
+
+    fun proceedLoggedIn(activity: Activity) {
         activity.startActivity(Intent(activity, LoadingActivity::class.java))
     }
 

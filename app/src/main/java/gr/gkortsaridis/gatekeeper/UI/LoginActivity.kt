@@ -62,7 +62,8 @@ class LoginActivity : AppCompatActivity(), SignInListener {
 
     override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
         if (success) {
-            AuthRepository.proceedLoggedIn(this, user.authResult!!.user!!)
+            AuthRepository.setApplicationUser(user.authResult!!.user!!)
+            AuthRepository.proceedLoggedIn(this)
         }else{
             Toast.makeText(this, "Wrong Credentials", Toast.LENGTH_SHORT).show()
         }
