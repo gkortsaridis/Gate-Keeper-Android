@@ -2,10 +2,16 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import com.pvryan.easycrypt.ECResultListener
+import com.pvryan.easycrypt.symmetric.ECSymmetric
+import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
+import java.util.concurrent.CompletableFuture
 
 object VaultRepository {
 
@@ -58,6 +64,24 @@ object VaultRepository {
                 retrieveListener.onVaultsRetrieveSuccess(vaultsResult)
             }
             .addOnFailureListener { exception -> retrieveListener.onVaultsRetrieveError(exception) }
+
+    }
+
+    fun decryptVault(encryptedString: String): Vault {
+
+        val response = CompletableFuture<Vault>()
+        ECSymmetric().decrypt(encryptedString, GateKeeperApplication.user.uid, object :
+            ECResultListener {
+            override fun onFailure(message: String, e: Exception) {
+                response.complete(null)
+            }
+
+            override fun <T> onSuccess(result: T) {
+                response.complete(Gson().fromJson(result.toString(), Vault::class.java))
+            }
+        })
+
+        return response.get()
 
     }
 

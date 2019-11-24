@@ -6,7 +6,9 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 
 class CreateLoginActivity : AppCompatActivity() {
 
@@ -17,25 +19,14 @@ class CreateLoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_login)
 
         val loginObj = Login()
-        val encryptedLogin = loginObj.encrypt()
+        LoginsRepository.encryptAndStoreLogin(loginObj, object : LoginCreateListener{
+            override fun onLoginCreated() {
 
-        val login = hashMapOf(
-            "login" to encryptedLogin,
-            "account_id" to GateKeeperApplication.user.uid
-        )
-
-        val db = FirebaseFirestore.getInstance()
-
-// Add a new document with a generated ID
-        db.collection("logins")
-            .add(login)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
             }
 
+            override fun onLoginCreateError() {
 
+            }
+        })
     }
 }

@@ -7,3 +7,8 @@ interface LoginRetrieveListener {
     fun onLoginsRetrieveSuccess(logins: ArrayList<Login>)
     fun onLoginsRetrieveError(e: Exception)
 }
+
+interface LoginCreateListener {
+    fun onLoginCreated()
+    fun onLoginCreateError()
+}

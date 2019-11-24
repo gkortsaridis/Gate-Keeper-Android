@@ -6,10 +6,28 @@ import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import java.util.concurrent.CompletableFuture
 
 object LoginsRepository {
+
+    fun encryptAndStoreLogin(login: Login, listener: LoginCreateListener) {
+        val encryptedLogin = login.encrypt()
+
+        val loginhash = hashMapOf(
+            "login" to encryptedLogin,
+            "account_id" to GateKeeperApplication.user.uid
+        )
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("logins")
+            .add(loginhash)
+            .addOnCompleteListener {
+                if (it.isSuccessful) { listener.onLoginCreated() }
+                else { listener.onLoginCreateError() }
+            }
+    }
 
     fun retrieveLoginsByAccountID(accountID: String, retrieveListener: LoginRetrieveListener) {
 
