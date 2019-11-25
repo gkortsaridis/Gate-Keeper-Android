@@ -32,12 +32,8 @@ object AuthRepository {
 
     private val TAG = "_Auth_Repository_"
 
-    private val androidKeystore = "AndroidKeyStore"
-    private val appAlias = "GateKeeperKeysotre"
-
     val auth = FirebaseAuth.getInstance()
     val RC_SIGN_IN : Int = 1
-
 
     fun signIn(activity:Activity, email: String, password: String, check: Boolean, listener: SignInListener) {
         val viewDialog = ViewDialog(activity)
@@ -93,8 +89,8 @@ object AuthRepository {
 
     fun saveCredentials(email: String, password: String): Boolean {
 
-        val encryptionEmail = encrypt(email)
-        val encryptionPassword = encrypt(password)
+        val encryptionEmail = SecurityRepository.encrypt(email)
+        val encryptionPassword= SecurityRepository.encrypt(password)
 
         return if (encryptionEmail != null && encryptionPassword != null) {
             DataRepository.userEmail = Gson().toJson(encryptionEmail)
@@ -114,65 +110,15 @@ object AuthRepository {
             && encryptedPassword != ""
         ) {
             val encryptedEmailData = Gson().fromJson(encryptedEmail, EncryptedData::class.java)
-            val decryptedEmail = decrypt(encryptedEmailData.encryptedData, encryptedEmailData.iv, loadSecretKey())
+            val decryptedEmail = SecurityRepository.decrypt(encryptedEmailData.encryptedData, encryptedEmailData.iv)
 
             val encryptedPasswordData = Gson().fromJson(encryptedPassword, EncryptedData::class.java)
-            val decryptedPassword = decrypt(encryptedPasswordData.encryptedData, encryptedPasswordData.iv, loadSecretKey())
+            val decryptedPassword = SecurityRepository.decrypt(encryptedPasswordData.encryptedData, encryptedPasswordData.iv)
 
             UserCredentials(decryptedEmail, decryptedPassword)
         }else { null }
 
     }
 
-    private fun loadSecretKey(): SecretKey {
-        return try {
-            loadSavedKeyFromKeystore()
-        }catch(e : java.lang.Exception) {
-            generateNewKey()
-        }
-    }
 
-    private fun generateNewKey(): SecretKey {
-        val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, androidKeystore)
-
-        val keyGenParameterSpec = KeyGenParameterSpec.Builder(appAlias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-            .build()
-
-        keyGenerator.init(keyGenParameterSpec)
-        return keyGenerator.generateKey()
-    }
-
-    private fun loadSavedKeyFromKeystore(): SecretKey {
-        val keyStore = KeyStore.getInstance("AndroidKeyStore");
-        keyStore.load(null);
-
-        val secretKeyEntry = keyStore.getEntry(appAlias, null) as KeyStore.SecretKeyEntry
-        val savedSecretKey = secretKeyEntry.secretKey
-        return savedSecretKey
-    }
-
-    private fun decrypt(encryptedData: ByteArray, iv: ByteArray, secretKey: SecretKey):String {
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-
-        val spec = GCMParameterSpec(128, iv)
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
-
-        val decodedData = cipher.doFinal(encryptedData)
-        return String(decodedData, Charset.forName("UTF-8"))
-    }
-
-    private fun encrypt(decryptedData: String): EncryptedData? {
-        return try{
-            val secretKey = loadSecretKey()
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey)
-            val iv = cipher.iv
-            val encryptedString = cipher.doFinal(decryptedData.toByteArray(Charset.forName("UTF-8")))
-            EncryptedData(encryptedString, iv)
-        }catch(e: java.lang.Exception) {
-            null
-        }
-    }
 }

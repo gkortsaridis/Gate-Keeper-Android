@@ -1,23 +1,20 @@
 package gr.gkortsaridis.gatekeeper.UI.Authentication
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
+import androidx.appcompat.app.AppCompatActivity
+import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.FolderSetupListener
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
-import gr.gkortsaridis.gatekeeper.Repositories.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.Repositories.FolderRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
-import java.lang.Exception
 
 class SignUpActivity : AppCompatActivity(), SignUpListener {
 

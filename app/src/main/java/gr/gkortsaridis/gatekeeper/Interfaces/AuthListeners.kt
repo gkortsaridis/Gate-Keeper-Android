@@ -1,6 +1,6 @@
 package gr.gkortsaridis.gatekeeper.Interfaces
 
-import gr.gkortsaridis.gatekeeper.Repositories.FirebaseSignInResult
+import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 
 interface SignInListener {
     fun onSignInComplete (success: Boolean, user: FirebaseSignInResult)
