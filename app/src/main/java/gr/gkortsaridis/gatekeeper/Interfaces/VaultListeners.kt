@@ -16,3 +16,7 @@ interface VaultRetrieveListener {
     fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>)
     fun onVaultsRetrieveError(e: Exception)
 }
+
+interface VaultClickListener {
+    fun onVaultClicked(vault: Vault)
+}

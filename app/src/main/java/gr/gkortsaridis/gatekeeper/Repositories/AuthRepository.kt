@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
+import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.Entities.UserCredentials
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
@@ -26,7 +27,6 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 
-data class FirebaseSignInResult(val authResult: AuthResult?, val exception: Exception?)
 
 object AuthRepository {
 
