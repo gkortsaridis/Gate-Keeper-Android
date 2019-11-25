@@ -3,10 +3,7 @@ package gr.gkortsaridis.gatekeeper.UI
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -21,6 +18,8 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository.RC_SIGN_IN
 import gr.gkortsaridis.gatekeeper.Repositories.FirebaseSignInResult
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login.emailET
+import kotlinx.android.synthetic.main.activity_sign_up.*
 
 
 class LoginActivity : AppCompatActivity(), SignInListener {
@@ -32,6 +31,7 @@ class LoginActivity : AppCompatActivity(), SignInListener {
     private lateinit var signUpLink: TextView
     private lateinit var email: EditText
     private lateinit var password: EditText
+    private lateinit var saveCredentials: CheckBox
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +41,17 @@ class LoginActivity : AppCompatActivity(), SignInListener {
         signUpLink = findViewById(R.id.sign_up_link)
         email = findViewById(R.id.emailET)
         password = findViewById(R.id.passwordET)
+        saveCredentials = findViewById(R.id.save_credentials)
 
         googleSignIn.setOnClickListener { googleSignIn() }
         signIn.setOnClickListener { signIn(emailET.text.toString(), password.text.toString(), false) }
         signUpLink.setOnClickListener { signUp() }
+
+        val loadedCredentials = AuthRepository.loadCredentials()
+        if (loadedCredentials != null) {
+            email.setText(loadedCredentials.email)
+            password.setText(loadedCredentials.password)
+        }
 
     }
 
@@ -62,6 +69,8 @@ class LoginActivity : AppCompatActivity(), SignInListener {
 
     override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
         if (success) {
+            if (saveCredentials.isChecked) { AuthRepository.saveCredentials(email = email.text.toString(), password = password.text.toString()) }
+
             AuthRepository.setApplicationUser(user.authResult!!.user!!)
             AuthRepository.proceedLoggedIn(this)
         }else{
