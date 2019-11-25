@@ -1,4 +1,4 @@
-package gr.gkortsaridis.gatekeeper.UI
+package gr.gkortsaridis.gatekeeper.UI.Authentication
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +15,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.FolderRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
+import gr.gkortsaridis.gatekeeper.UI.MainActivity
 import kotlin.Exception
 
 class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetrieveListener, FolderRetrieveListener {

@@ -17,7 +17,7 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.UI.LoadingActivity
+import gr.gkortsaridis.gatekeeper.UI.Authentication.LoadingActivity
 import java.nio.charset.Charset
 import java.security.KeyStore
 import javax.crypto.Cipher
