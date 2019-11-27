@@ -1,10 +1,13 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
+import android.app.Activity
+import android.content.Context
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
@@ -12,7 +15,14 @@ import java.util.concurrent.CompletableFuture
 
 object LoginsRepository {
 
-    fun encryptAndStoreLogin(login: Login, listener: LoginCreateListener) {
+    val createLoginRequestCode = 1
+    val createLoginSuccess = 2
+    val createLoginError = 3
+
+    fun encryptAndStoreLogin(activity: Activity, login: Login, listener: LoginCreateListener) {
+        val viewDialog = ViewDialog(activity)
+        viewDialog.showDialog()
+
         val encryptedLogin = login.encrypt()
 
         val loginhash = hashMapOf(
@@ -24,8 +34,14 @@ object LoginsRepository {
         db.collection("logins")
             .add(loginhash)
             .addOnCompleteListener {
-                if (it.isSuccessful) { listener.onLoginCreated() }
-                else { listener.onLoginCreateError() }
+                if (it.isSuccessful) {
+                    viewDialog.hideDialog()
+                    listener.onLoginCreated()
+                }
+                else {
+                    viewDialog.hideDialog()
+                    listener.onLoginCreateError()
+                }
             }
     }
 
@@ -38,9 +54,10 @@ object LoginsRepository {
                 val loginsResult = ArrayList<Login>()
                 for (document in result) {
                     val encryptedLogin = document["login"] as String
-                    loginsResult.add(decryptLogin(encryptedLogin))
+                    val decryptedLogin = decryptLogin(encryptedLogin)
+                    decryptedLogin.id = document.id
+                    loginsResult.add(decryptedLogin)
                 }
-
                 retrieveListener.onLoginsRetrieveSuccess(loginsResult)
             }
             .addOnFailureListener { exception -> retrieveListener.onLoginsRetrieveError(exception) }
@@ -61,6 +78,15 @@ object LoginsRepository {
         })
 
         return response.get()
+    }
+
+    fun filterLoginsByCurrentVaultAndFolder(logins: ArrayList<Login>): ArrayList<Login> {
+        val filtered = logins.filter {
+            it.vault_id == GateKeeperApplication.activeVault.id
+                    && it.folder_id == GateKeeperApplication.activeFolder.id
+        }
+
+        return ArrayList(filtered)
     }
 
 }

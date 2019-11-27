@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper.UI
 
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,17 +10,25 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
+import java.lang.Exception
 
-class LoginsFragment : Fragment() {
+class LoginsFragment(private var activity: Activity) : Fragment() {
 
-    private var TAG = "_LOGINS_FRAGMENT_"
+    private val TAG = "_LOGINS_FRAGMENT_"
 
     private lateinit var loginsRV: RecyclerView
     private lateinit var fab: FloatingActionButton
@@ -42,22 +51,35 @@ class LoginsFragment : Fragment() {
         folderName = view.findViewById(R.id.folder_name)
 
 
-        fab.setOnClickListener{ startActivity(Intent(activity, CreateLoginActivity::class.java))}
-        vaultView.setOnClickListener{ startActivity(Intent(activity, SelectVaultActivity::class.java))}
+        fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode)}
+        vaultView.setOnClickListener{ startActivityForResult(Intent(activity, SelectVaultActivity::class.java), createLoginRequestCode)}
 
         return view
     }
 
     override fun onResume() {
         super.onResume()
+        updateUI()
+    }
+
+    private fun updateUI() {
         loginsRV.adapter =
             LoginsRecyclerViewAdapter(
                 activity!!.baseContext,
-                GateKeeperApplication.logins
+                LoginsRepository.filterLoginsByCurrentVaultAndFolder(GateKeeperApplication.logins)
             )
 
         vaultName.text = GateKeeperApplication.activeVault.name
         folderName.text = GateKeeperApplication.activeFolder.name
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if (requestCode == createLoginRequestCode && resultCode == createLoginSuccess) {
+            updateUI()
+            Toast.makeText(context, "Login successfully created", Toast.LENGTH_SHORT).show()
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

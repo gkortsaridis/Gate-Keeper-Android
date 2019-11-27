@@ -17,12 +17,13 @@ class Login {
     var username: String
     var password: String
     var url: String
-    var notes: String
+    var notes: String?
     var date_created: Timestamp
     var date_modified: Timestamp
     var vault_id: String
     var folder_id: String
 
+    //Creating a TEST LOGIN
     constructor() {
         this.id = "-1"
         this.account_id = GateKeeperApplication.user.uid
@@ -35,6 +36,20 @@ class Login {
         this.date_modified = Timestamp(Date())
         this.vault_id = "test_vault_id"
         this.folder_id = "test_folder_id"
+    }
+
+    constructor(account_id: String, vault_id: String, folder_id: String, name: String, username: String, password: String, url: String, notes: String?) {
+        this.id = "temp_id"
+        this.account_id = account_id
+        this.name = name
+        this.username = username
+        this.password = password
+        this.url = url
+        this.notes = notes
+        this.date_created = Timestamp.now()
+        this.date_modified = Timestamp.now()
+        this.vault_id = vault_id
+        this.folder_id = folder_id
     }
 
     constructor(firestoreSnapShot: QueryDocumentSnapshot) {

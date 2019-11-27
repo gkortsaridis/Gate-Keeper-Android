@@ -1,5 +1,6 @@
 package gr.gkortsaridis.gatekeeper.UI
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
@@ -12,10 +13,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.pvryan.easycrypt.symmetric.ECSymmetric
-import gr.gkortsaridis.gatekeeper.Entities.Folder
-import gr.gkortsaridis.gatekeeper.Entities.Vault
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView: NavigationView = findViewById(R.id.navigationView)
         navigationView.setNavigationItemSelectedListener(this)
 
-        displayFragment(LoginsFragment())
+        displayFragment(LoginsFragment(this))
     }
 
     private fun displayFragment(fragment: Fragment?){
@@ -63,19 +63,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         when (p0.itemId) {
             R.id.nav_item_logins -> { fragmentToReplace =
-                LoginsFragment()
+                LoginsFragment(this)
             }
             R.id.nav_item_account -> { fragmentToReplace =
                 AccountFragment()
             }
             R.id.nav_item_settings -> { fragmentToReplace =
-                LoginsFragment()
+                LoginsFragment(this)
             }
             R.id.nav_item_devices -> { fragmentToReplace =
-                LoginsFragment()
+                LoginsFragment(this)
             }
             R.id.nav_item_about -> { fragmentToReplace =
-                LoginsFragment()
+                LoginsFragment(this)
             }
         }
 
@@ -83,6 +83,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        for (fragment in supportFragmentManager.fragments) {
+            fragment.onActivityResult(requestCode, resultCode, data)
+        }
     }
 
     //SYNC TOGGLE STATE
