@@ -4,6 +4,7 @@ package gr.gkortsaridis.gatekeeper.UI
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
+import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
@@ -26,8 +28,9 @@ import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSucce
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
 import org.jetbrains.anko.find
 import java.lang.Exception
+import kotlin.math.log
 
-class LoginsFragment(private var activity: Activity) : Fragment() {
+class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectListener {
 
     private val TAG = "_LOGINS_FRAGMENT_"
 
@@ -65,7 +68,8 @@ class LoginsFragment(private var activity: Activity) : Fragment() {
         loginsRV.adapter =
             LoginsRecyclerViewAdapter(
                 activity.baseContext,
-                LoginsRepository.filterLoginsByCurrentVaultAndFolder(GateKeeperApplication.logins)
+                LoginsRepository.filterLoginsByCurrentVaultAndFolder(GateKeeperApplication.logins),
+                this
             )
 
         vaultName.text = GateKeeperApplication.activeVault.name
@@ -79,5 +83,9 @@ class LoginsFragment(private var activity: Activity) : Fragment() {
         }
 
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onLoginClicked(login: Login) {
+        Log.i("Clicked", login.name)
     }
 }
