@@ -83,7 +83,6 @@ object LoginsRepository {
     fun filterLoginsByCurrentVaultAndFolder(logins: ArrayList<Login>): ArrayList<Login> {
         val filtered = logins.filter {
             it.vault_id == GateKeeperApplication.activeVault.id
-                    && it.folder_id == GateKeeperApplication.activeFolder.id
         }
 
         return ArrayList(filtered)

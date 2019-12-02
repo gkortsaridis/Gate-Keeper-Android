@@ -101,6 +101,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
+                        android:id="@+id/application_view"
                         android:foreground="?attr/selectableItemBackground"
                         android:orientation="vertical">
 
@@ -112,7 +113,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Folder"
+                                android:text="Application"
                                 android:textColor="@android:color/white"
                                 android:layout_centerInParent="true"/>
                         </RelativeLayout>
@@ -124,18 +125,11 @@
                             <ImageView
                                 android:layout_width="70dp"
                                 android:layout_height="match_parent"
-                                android:src="@drawable/folder"
-                                android:alpha="0.3"
+                                android:src="@drawable/question_mark"
                                 android:layout_margin="5dp"
+                                android:id="@+id/app_image"
+                                android:layout_centerInParent="true"
                                 android:scaleType="centerInside"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Root"
-                                android:id="@+id/folder_name"
-                                android:textColor="@color/mate_black"
-                                android:layout_centerInParent="true"/>
 
                         </RelativeLayout>
 
@@ -210,21 +204,6 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:id="@+id/passwordET"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp">
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="URL"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:id="@+id/urlET"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 

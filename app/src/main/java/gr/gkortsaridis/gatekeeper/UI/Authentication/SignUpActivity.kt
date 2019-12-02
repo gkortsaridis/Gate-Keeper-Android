@@ -8,12 +8,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
-import gr.gkortsaridis.gatekeeper.Interfaces.FolderSetupListener
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
-import gr.gkortsaridis.gatekeeper.Repositories.FolderRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 
 class SignUpActivity : AppCompatActivity(), SignUpListener {
@@ -23,9 +21,6 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
     private lateinit var email: EditText
     private lateinit var password: EditText
     private lateinit var signUp: Button
-
-    private var vaultSetup = false
-    private var folderSetup = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,21 +42,9 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
             AuthRepository.setApplicationUser(user.authResult!!.user!!)
             VaultRepository.setupVaultsForNewUser(GateKeeperApplication.user, object: VaultSetupListener {
                 override fun onVaultSetupComplete() {
-                    vaultSetup = true
                     finalizeSetup()
                 }
                 override fun onVaultSetupError() { showSetupError() }
-            })
-
-            FolderRepository.setupFoldersForNewUser(GateKeeperApplication.user, object: FolderSetupListener {
-                override fun onFolderSetupComplete() {
-                    folderSetup = true
-                    finalizeSetup()
-                }
-
-                override fun onFolderSetupError() {
-                    showSetupError()
-                }
             })
         }else{
             when (user.exception) {
@@ -78,7 +61,7 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
         }
     }
 
-    fun finalizeSetup() { if (vaultSetup && folderSetup ) { AuthRepository.proceedLoggedIn(this) } }
+    fun finalizeSetup() { AuthRepository.proceedLoggedIn(this) }
 
     fun showSetupError() {
 

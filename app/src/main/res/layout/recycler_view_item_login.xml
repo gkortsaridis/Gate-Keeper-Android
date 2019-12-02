@@ -4,6 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
     android:background="@android:color/transparent">
 
     <RelativeLayout
@@ -17,12 +19,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp">
-
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/copy"
-                android:layout_marginRight="8dp"/>
 
             <ImageButton
                 android:layout_width="30dp"

@@ -24,6 +24,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
+import org.jetbrains.anko.find
 import java.lang.Exception
 
 class LoginsFragment(private var activity: Activity) : Fragment() {
@@ -48,8 +49,6 @@ class LoginsFragment(private var activity: Activity) : Fragment() {
         fab = view.findViewById(R.id.fab)
         vaultView = view.findViewById(R.id.vault_view)
         vaultName = view.findViewById(R.id.vault_name)
-        folderName = view.findViewById(R.id.folder_name)
-
 
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode)}
         vaultView.setOnClickListener{ startActivityForResult(Intent(activity, SelectVaultActivity::class.java), createLoginRequestCode)}
@@ -65,12 +64,11 @@ class LoginsFragment(private var activity: Activity) : Fragment() {
     private fun updateUI() {
         loginsRV.adapter =
             LoginsRecyclerViewAdapter(
-                activity!!.baseContext,
+                activity.baseContext,
                 LoginsRepository.filterLoginsByCurrentVaultAndFolder(GateKeeperApplication.logins)
             )
 
         vaultName.text = GateKeeperApplication.activeVault.name
-        folderName.text = GateKeeperApplication.activeFolder.name
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
