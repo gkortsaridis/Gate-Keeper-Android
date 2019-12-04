@@ -85,4 +85,13 @@ object VaultRepository {
 
     }
 
+    fun getVaultByID(id: String): Vault? {
+        for (vault in GateKeeperApplication.vaults) {
+            if (vault.id == id) {
+                return vault
+            }
+        }
+
+        return null
+    }
 }

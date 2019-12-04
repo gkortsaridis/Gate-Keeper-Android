@@ -87,5 +87,8 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
 
     override fun onLoginClicked(login: Login) {
         Log.i("Clicked", login.name)
+        val intent = Intent(activity, CreateLoginActivity::class.java)
+        intent.putExtra("login_id",login.id)
+        startActivity(intent)
     }
 }

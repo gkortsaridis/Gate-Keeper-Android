@@ -7,10 +7,11 @@ import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import java.io.Serializable
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class Login {
+class Login: Serializable {
 
     var id : String
     var account_id: String
@@ -23,20 +24,6 @@ class Login {
     var date_modified: Timestamp
     var vault_id: String
 
-    //Creating a TEST LOGIN
-    constructor() {
-        this.id = "-1"
-        this.account_id = GateKeeperApplication.user.uid
-        this.name = "Test_name"
-        this.username = "Test_username"
-        this.password = "Test_password"
-        this.url = "https://www.google.com"
-        this.notes = "Test notes"
-        this.date_created = Timestamp(Date())
-        this.date_modified = Timestamp(Date())
-        this.vault_id = "test_vault_id"
-    }
-
     constructor(account_id: String, vault_id: String, name: String, username: String, password: String, url: String, notes: String?) {
         this.id = "temp_id"
         this.account_id = account_id
@@ -48,19 +35,6 @@ class Login {
         this.date_created = Timestamp.now()
         this.date_modified = Timestamp.now()
         this.vault_id = vault_id
-    }
-
-    constructor(firestoreSnapShot: QueryDocumentSnapshot) {
-        this.id = firestoreSnapShot.id
-        this.account_id = firestoreSnapShot["account_id"] as String
-        this.name = firestoreSnapShot["name"] as String
-        this.username = firestoreSnapShot["username"] as String
-        this.password = firestoreSnapShot["password"] as String
-        this.url = firestoreSnapShot["url"] as String
-        this.notes = firestoreSnapShot["notes"] as String
-        this.date_created = firestoreSnapShot["date_added"] as Timestamp
-        this.date_modified = firestoreSnapShot["date_modified"] as Timestamp
-        this.vault_id = firestoreSnapShot["vault_id"] as String
     }
 
     fun encrypt() : String {

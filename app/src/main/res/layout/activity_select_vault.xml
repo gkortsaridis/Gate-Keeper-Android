@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="Select Vault"
         android:textColor="@android:color/white"
-        android:textSize="30sp"
+        android:textSize="25sp"
         android:layout_margin="16dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
