@@ -2,8 +2,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.app.Activity
 import android.content.Intent
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
+import androidx.core.content.ContextCompat.startActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.AuthResult
@@ -19,13 +18,6 @@ import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.Authentication.LoadingActivity
-import java.nio.charset.Charset
-import java.security.KeyStore
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
-import javax.crypto.spec.GCMParameterSpec
-
 
 
 object AuthRepository {

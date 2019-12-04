@@ -11,7 +11,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/colorPrimary"/>
+        android:background="@color/colorPrimaryDark"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
@@ -48,7 +48,7 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="25dp"
-                        android:background="@color/colorAccent">
+                        android:background="@color/colorPrimary">
 
                         <TextView
                             android:layout_width="wrap_content"

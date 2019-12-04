@@ -12,9 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UI.LoginInfoActivity"></activity>
         <activity android:name=".UI.ApplicationSelector" />
-        <activity android:name=".UI.SelectFolderActivity" />
         <activity android:name=".UI.SelectVaultActivity" />
         <activity android:name=".UI.Authentication.CreatePasswordActivity" />
         <activity android:name=".UI.Authentication.SignUpActivity" />
