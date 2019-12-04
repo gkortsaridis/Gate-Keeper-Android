@@ -43,8 +43,11 @@ class LoginActivity : AppCompatActivity(), SignInListener {
 
         val loadedCredentials = AuthRepository.loadCredentials()
         if (loadedCredentials != null) {
+            saveCredentials.isChecked = true
             email.setText(loadedCredentials.email)
             password.setText(loadedCredentials.password)
+        }else{
+            saveCredentials.isChecked = false
         }
 
     }
@@ -64,6 +67,7 @@ class LoginActivity : AppCompatActivity(), SignInListener {
     override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
         if (success) {
             if (saveCredentials.isChecked) { AuthRepository.saveCredentials(email = email.text.toString(), password = password.text.toString()) }
+            else { AuthRepository.clearCredentials() }
 
             AuthRepository.setApplicationUser(user.authResult!!.user!!)
             AuthRepository.proceedLoggedIn(this)

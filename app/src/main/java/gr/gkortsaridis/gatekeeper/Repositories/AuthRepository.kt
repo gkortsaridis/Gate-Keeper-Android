@@ -87,6 +87,11 @@ object AuthRepository {
         activity.startActivity(Intent(activity, LoadingActivity::class.java))
     }
 
+    fun clearCredentials() {
+        DataRepository.userEmail = null
+        DataRepository.userPassword = null
+    }
+
     fun saveCredentials(email: String, password: String): Boolean {
 
         val encryptionEmail = SecurityRepository.encrypt(email)
@@ -102,7 +107,6 @@ object AuthRepository {
     fun loadCredentials():UserCredentials? {
         val encryptedEmail = DataRepository.userEmail
         val encryptedPassword = DataRepository.userPassword
-
 
         return if (encryptedEmail != null
             && encryptedEmail != ""
