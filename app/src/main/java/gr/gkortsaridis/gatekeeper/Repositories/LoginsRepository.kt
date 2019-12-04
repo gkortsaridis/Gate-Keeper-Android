@@ -81,12 +81,20 @@ object LoginsRepository {
             .whereEqualTo("account_id",accountID)
             .get().addOnSuccessListener { result ->
                 val loginsResult = ArrayList<Login>()
+
+                val encryptedLoginsToSaveLocally = ArrayList<String>()
+
                 for (document in result) {
                     val encryptedLogin = document["login"] as String
+                    encryptedLoginsToSaveLocally.add(encryptedLogin)
                     val decryptedLogin = decryptLogin(encryptedLogin)
                     decryptedLogin.id = document.id
                     loginsResult.add(decryptedLogin)
                 }
+
+                //Save logins locally
+                DataRepository.savedLogins = Gson().toJson(encryptedLoginsToSaveLocally)
+
                 retrieveListener.onLoginsRetrieveSuccess(loginsResult)
             }
             .addOnFailureListener { exception -> retrieveListener.onLoginsRetrieveError(exception) }
