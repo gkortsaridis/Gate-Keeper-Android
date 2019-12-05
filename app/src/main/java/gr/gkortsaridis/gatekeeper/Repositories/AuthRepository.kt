@@ -33,16 +33,11 @@ object AuthRepository {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 viewDialog.hideDialog()
-                when {
-                    it.isSuccessful -> {
-                        listener.onSignInComplete(true, FirebaseSignInResult(it.result,null))
-                    }
-                    check -> {
-                        listener.onRegistrationNeeded(email)
-                    }
-                    else -> {
-                        listener.onSignInComplete(false, FirebaseSignInResult(null,it.exception))
-                    }
+
+                if (it.isSuccessful) {
+                    listener.onSignInComplete(true, FirebaseSignInResult(it.result,null))
+                }else {
+                    listener.onSignInComplete(false, FirebaseSignInResult(null,it.exception))
                 }
             }
     }
@@ -118,7 +113,6 @@ object AuthRepository {
     }
 
     fun getUserID (): String {
-
         var userId = ""
 
         if (GateKeeperApplication.user != null) { userId = GateKeeperApplication.user!!.uid }

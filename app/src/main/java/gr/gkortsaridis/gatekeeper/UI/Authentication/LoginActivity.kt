@@ -20,7 +20,6 @@ class LoginActivity : AppCompatActivity(), SignInListener {
 
     private val TAG = "_Login_Activity_"
 
-    private lateinit var googleSignIn: SignInButton
     private lateinit var signIn: Button
     private lateinit var signUpLink: TextView
     private lateinit var email: EditText
@@ -30,14 +29,12 @@ class LoginActivity : AppCompatActivity(), SignInListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        googleSignIn = findViewById(R.id.sign_in_google)
         signIn = findViewById(R.id.sign_in)
         signUpLink = findViewById(R.id.sign_up_link)
         email = findViewById(R.id.emailET)
         password = findViewById(R.id.passwordET)
         saveCredentials = findViewById(R.id.save_credentials)
 
-        googleSignIn.setOnClickListener { googleSignIn() }
         signIn.setOnClickListener { signIn(emailET.text.toString(), password.text.toString(), false) }
         signUpLink.setOnClickListener { signUp() }
 
