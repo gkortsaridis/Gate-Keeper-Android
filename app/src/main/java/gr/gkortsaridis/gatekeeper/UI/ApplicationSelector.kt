@@ -33,8 +33,8 @@ class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
         toolbar = findViewById(R.id.toolbar)
         searchView = findViewById(R.id.search_view)
 
-        toolbar.setNavigationOnClickListener { view: View? -> onBackPressed() }
         setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
         supportActionBar?.title = "Select Application"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
