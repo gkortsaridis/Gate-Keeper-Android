@@ -10,6 +10,7 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.MainActivity
@@ -26,8 +27,8 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_loading)
 
-        LoginsRepository.retrieveLoginsByAccountID(GateKeeperApplication.user.uid, this)
-        VaultRepository.retrieveVaultsByAccountID(GateKeeperApplication.user.uid, this)
+        LoginsRepository.retrieveLoginsByAccountID(AuthRepository.getUserID(), this)
+        VaultRepository.retrieveVaultsByAccountID(AuthRepository.getUserID(), this)
         //FolderRepository.retrieveFoldersByAccountID(GateKeeperApplication.user.uid, this)
     }
 

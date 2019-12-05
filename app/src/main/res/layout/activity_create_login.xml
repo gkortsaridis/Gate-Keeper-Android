@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark"
             android:id="@+id/toolbar"/>
 
         <View
@@ -148,7 +149,7 @@
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimaryDark"
         android:text="Save"
-        android:onClick="createLogin"
+        android:id="@+id/save_update_button"
         android:textColor="@android:color/white" />
 
     <ScrollView

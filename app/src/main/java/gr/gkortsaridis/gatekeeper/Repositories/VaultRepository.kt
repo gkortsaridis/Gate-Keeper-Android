@@ -70,7 +70,7 @@ object VaultRepository {
     fun decryptVault(encryptedString: String): Vault {
 
         val response = CompletableFuture<Vault>()
-        ECSymmetric().decrypt(encryptedString, GateKeeperApplication.user.uid, object :
+        ECSymmetric().decrypt(encryptedString, AuthRepository.getUserID(), object :
             ECResultListener {
             override fun onFailure(message: String, e: Exception) {
                 response.complete(null)

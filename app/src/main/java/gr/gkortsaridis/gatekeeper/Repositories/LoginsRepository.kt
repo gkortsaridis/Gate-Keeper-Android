@@ -1,12 +1,12 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.Login
@@ -30,7 +30,7 @@ object LoginsRepository {
 
         val loginhash = hashMapOf(
             "login" to encryptedLogin,
-            "account_id" to GateKeeperApplication.user.uid
+            "account_id" to AuthRepository.getUserID()
         )
 
         val db = FirebaseFirestore.getInstance()
@@ -56,7 +56,7 @@ object LoginsRepository {
 
         val loginhash = hashMapOf(
             "login" to encryptedLogin,
-            "account_id" to GateKeeperApplication.user.uid
+            "account_id" to AuthRepository.getUserID()
         )
 
         val db = FirebaseFirestore.getInstance()
@@ -88,8 +88,10 @@ object LoginsRepository {
                     val encryptedLogin = document["login"] as String
                     encryptedLoginsToSaveLocally.add(encryptedLogin)
                     val decryptedLogin = decryptLogin(encryptedLogin)
-                    decryptedLogin.id = document.id
-                    loginsResult.add(decryptedLogin)
+                    if (decryptedLogin != null){
+                        decryptedLogin.id = document.id
+                        loginsResult.add(decryptedLogin)
+                    }
                 }
 
                 //Save logins locally
@@ -100,21 +102,27 @@ object LoginsRepository {
             .addOnFailureListener { exception -> retrieveListener.onLoginsRetrieveError(exception) }
     }
 
-    fun decryptLogin(encryptedLogin: String) : Login {
-
+    fun decryptLogin(encryptedLogin: String) : Login? {
         val response = CompletableFuture<Login>()
-        ECSymmetric().decrypt(encryptedLogin, GateKeeperApplication.user.uid, object :
-            ECResultListener {
-            override fun onFailure(message: String, e: Exception) {
-                response.complete(null)
-            }
+        val userId = AuthRepository.getUserID()
 
-            override fun <T> onSuccess(result: T) {
-                response.complete(Gson().fromJson(result.toString(), Login::class.java))
-            }
-        })
+        if (userId != "") {
+            ECSymmetric().decrypt(encryptedLogin, userId, object :
+                ECResultListener {
+                override fun onFailure(message: String, e: Exception) {
+                    response.complete(null)
+                }
 
-        return response.get()
+                override fun <T> onSuccess(result: T) {
+                    response.complete(Gson().fromJson(result.toString(), Login::class.java))
+                }
+            })
+
+            return response.get()
+        }else {
+            return null
+        }
+
     }
 
     fun filterLoginsByCurrentVaultAndFolder(logins: ArrayList<Login>): ArrayList<Login> {
@@ -143,5 +151,26 @@ object LoginsRepository {
         }
         return null
     }
+
+    fun getSavedLogins(): ArrayList<Login> {
+
+        val savedLoginsStr = DataRepository.savedLogins
+        val turnsType = object : TypeToken<ArrayList<String>>() {}.type
+
+        val savedLogins = Gson().fromJson<ArrayList<String>>(savedLoginsStr, turnsType)
+
+        val decryptedLogins = ArrayList<Login>()
+
+        for (encryptedLogin in savedLogins) {
+            val decryptedLogin = decryptLogin(encryptedLogin)
+            if (decryptedLogin != null) {
+                decryptedLogins.add(decryptedLogin)
+            }
+
+        }
+
+        return decryptedLogins
+    }
+
 
 }

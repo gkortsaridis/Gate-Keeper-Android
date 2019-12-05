@@ -40,7 +40,7 @@ class Login: Serializable {
     fun encrypt() : String {
         val decrypted = Gson().toJson(this)
         val response = CompletableFuture<String>()
-        ECSymmetric().encrypt(decrypted, GateKeeperApplication.user.uid, object :
+        ECSymmetric().encrypt(decrypted, AuthRepository.getUserID(), object :
             ECResultListener {
             override fun onFailure(message: String, e: Exception) {
                 response.complete("-1")

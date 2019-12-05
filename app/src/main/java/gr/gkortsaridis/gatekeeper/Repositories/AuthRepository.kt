@@ -73,6 +73,7 @@ object AuthRepository {
 
     fun setApplicationUser(user: FirebaseUser) {
         GateKeeperApplication.user = user
+        DataRepository.savedUser = user.uid
     }
 
     fun proceedLoggedIn(activity: Activity) {
@@ -115,5 +116,18 @@ object AuthRepository {
         }else { null }
 
     }
+
+    fun getUserID (): String {
+
+        var userId = ""
+
+        if (GateKeeperApplication.user != null) { userId = GateKeeperApplication.user!!.uid }
+        else if (GateKeeperApplication.user_id != null && GateKeeperApplication.user_id != "") {
+            userId = GateKeeperApplication.user_id!!
+        }
+
+        return userId
+    }
+
 
 }

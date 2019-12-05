@@ -6,6 +6,7 @@ import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -18,6 +19,7 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 
@@ -34,6 +36,7 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var notes: EditText
     private lateinit var applicationView: LinearLayout
     private lateinit var appImage: ImageView
+    private lateinit var saveUpdateButton: Button
 
     private lateinit var vaultToAdd: Vault
 
@@ -50,6 +53,9 @@ class CreateLoginActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
         val loginId = intent.getStringExtra("login_id")
 
         name = findViewById(R.id.nameET)
@@ -57,15 +63,19 @@ class CreateLoginActivity : AppCompatActivity() {
         password = findViewById(R.id.passwordET)
         notes = findViewById(R.id.notesET)
         applicationView = findViewById(R.id.application_view)
-        applicationView.setOnClickListener { startActivityForResult(Intent(this, ApplicationSelector::class.java), 13) }
         appImage = findViewById(R.id.app_image)
+        saveUpdateButton = findViewById(R.id.save_update_button)
+
+        applicationView.setOnClickListener { startActivityForResult(Intent(this, ApplicationSelector::class.java), 13) }
 
         if (loginId == null) {
-            toolbar.title = "Create new login"
+            supportActionBar?.title = "Create new login"
             vaultToAdd = GateKeeperApplication.activeVault
+            saveUpdateButton.setOnClickListener { createLogin() }
+
         }else{
             login = LoginsRepository.getLoginById(loginId)
-            toolbar.title = "Edit Login"
+            supportActionBar?.title = "Edit Login"
 
             name.setText(login?.name)
             username.setText(login?.username)
@@ -76,33 +86,75 @@ class CreateLoginActivity : AppCompatActivity() {
 
             val resolveInfo = LoginsRepository.getApplicationInfoByPackageName(login?.url, packageManager)
             if (resolveInfo != null) {
-                this.appImage.setImageDrawable(resolveInfo!!.loadIcon(packageManager))
+                this.appImage.setImageDrawable(resolveInfo.loadIcon(packageManager))
             }
 
+            saveUpdateButton.setOnClickListener { updateLogin() }
         }
 
         this.activity = this
     }
 
-    fun createLogin(view: View) {
+    fun updateLogin() {
+        login?.username = username.text.toString()
+        login?.name = name.text.toString()
+        login?.password = name.text.toString()
+        login?.notes = notes.text.toString()
+        login?.url = app_package
+        login?.vault_id = vaultToAdd.id
+
+        LoginsRepository.encryptAndUpdateLogin(this, login!!, object : LoginCreateListener{
+            override fun onLoginCreated() {
+                val viewDialog = ViewDialog(activity)
+                viewDialog.showDialog()
+
+                LoginsRepository.retrieveLoginsByAccountID(AuthRepository.getUserID(), object:
+                    LoginRetrieveListener {
+                    override fun onLoginsRetrieveSuccess(logins: ArrayList<Login>) {
+                        viewDialog.hideDialog()
+                        GateKeeperApplication.logins = logins
+                        val data = Intent()
+                        setResult(LoginsRepository.createLoginSuccess, data)
+
+                        finish()
+                    }
+
+                    override fun onLoginsRetrieveError(e: Exception) {
+                        viewDialog.hideDialog()
+                        val data = Intent()
+                        setResult(LoginsRepository.createLoginError, data)
+                        finish()
+                    }
+                })
 
 
-        if (login == null) {
-            val loginObj = Login(account_id = GateKeeperApplication.user.uid,
-                vault_id = vaultToAdd.id,
-                name = name.text.toString(),
-                password = password.text.toString(),
-                username = username.text.toString(),
-                url = app_package,
-                notes = notes.text.toString()
-            )
 
-            LoginsRepository.encryptAndStoreLogin(this, loginObj, object : LoginCreateListener{
+            }
+
+            override fun onLoginCreateError() {
+                val data = Intent()
+                setResult(LoginsRepository.createLoginError, data)
+                finish()
+            }
+        })
+    }
+
+    fun createLogin() {
+        val loginObj = Login(account_id = AuthRepository.getUserID(),
+            vault_id = vaultToAdd.id,
+            name = name.text.toString(),
+            password = password.text.toString(),
+            username = username.text.toString(),
+            url = app_package,
+            notes = notes.text.toString()
+        )
+
+        LoginsRepository.encryptAndStoreLogin(this, loginObj, object : LoginCreateListener{
                 override fun onLoginCreated() {
                     val viewDialog = ViewDialog(activity)
                     viewDialog.showDialog()
 
-                    LoginsRepository.retrieveLoginsByAccountID(GateKeeperApplication.user.uid, object:
+                    LoginsRepository.retrieveLoginsByAccountID(AuthRepository.getUserID(), object:
                         LoginRetrieveListener {
                         override fun onLoginsRetrieveSuccess(logins: ArrayList<Login>) {
                             viewDialog.hideDialog()
@@ -131,50 +183,6 @@ class CreateLoginActivity : AppCompatActivity() {
                     finish()
                 }
             })
-        }else {
-            login?.username = username.text.toString()
-            login?.name = name.text.toString()
-            login?.password = name.text.toString()
-            login?.notes = notes.text.toString()
-            login?.url = app_package
-            login?.vault_id = vaultToAdd.id
-
-            LoginsRepository.encryptAndUpdateLogin(this, login!!, object : LoginCreateListener{
-                override fun onLoginCreated() {
-                val viewDialog = ViewDialog(activity)
-                viewDialog.showDialog()
-
-                LoginsRepository.retrieveLoginsByAccountID(GateKeeperApplication.user.uid, object:
-                    LoginRetrieveListener {
-                    override fun onLoginsRetrieveSuccess(logins: ArrayList<Login>) {
-                        viewDialog.hideDialog()
-                        GateKeeperApplication.logins = logins
-                        val data = Intent()
-                        setResult(LoginsRepository.createLoginSuccess, data)
-
-                        finish()
-                    }
-
-                    override fun onLoginsRetrieveError(e: Exception) {
-                        viewDialog.hideDialog()
-                        val data = Intent()
-                        setResult(LoginsRepository.createLoginError, data)
-                        finish()
-                    }
-                })
-
-
-
-            }
-
-                    override fun onLoginCreateError() {
-                val data = Intent()
-                setResult(LoginsRepository.createLoginError, data)
-                finish()
-            }
-        })
-        }
-
 
     }
 

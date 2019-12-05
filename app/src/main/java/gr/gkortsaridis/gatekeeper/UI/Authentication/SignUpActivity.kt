@@ -40,7 +40,7 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
     override fun onSignUpComplete(success: Boolean, user: FirebaseSignInResult) {
         if (success) {
             AuthRepository.setApplicationUser(user.authResult!!.user!!)
-            VaultRepository.setupVaultsForNewUser(GateKeeperApplication.user, object: VaultSetupListener {
+            VaultRepository.setupVaultsForNewUser(GateKeeperApplication.user!!, object: VaultSetupListener {
                 override fun onVaultSetupComplete() {
                     finalizeSetup()
                 }

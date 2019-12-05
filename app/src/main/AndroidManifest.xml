@@ -26,6 +26,19 @@
             </intent-filter>
         </activity>
         <activity android:name=".UI.MainActivity" />
+
+
+        <service
+            android:name=".GateKeeperAutoFillServiceL"
+            android:label="GateKeeper Autofill Service"
+            android:permission="android.permission.BIND_AUTOFILL_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.autofill.AutofillService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.autofill"
+                android:resource="@xml/gatekeeper_credentials_filler" />
+        </service>
     </application>
 
 </manifest>
