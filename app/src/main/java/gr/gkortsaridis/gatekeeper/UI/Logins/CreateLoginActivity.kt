@@ -1,11 +1,9 @@
-package gr.gkortsaridis.gatekeeper.UI
+package gr.gkortsaridis.gatekeeper.UI.Logins
 
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView

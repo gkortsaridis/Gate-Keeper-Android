@@ -3,8 +3,12 @@
     <group>
         <item
             android:id="@+id/nav_item_logins"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@drawable/padlock"
             android:title="@string/my_logins" />
+        <item
+            android:id="@+id/nav_item_cards"
+            android:icon="@drawable/padlock"
+            android:title="@string/cards" />
         <item
             android:id="@+id/nav_item_devices"
             android:icon="@mipmap/ic_launcher"

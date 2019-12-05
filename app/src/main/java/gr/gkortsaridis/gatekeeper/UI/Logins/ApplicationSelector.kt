@@ -1,11 +1,9 @@
-package gr.gkortsaridis.gatekeeper.UI
+package gr.gkortsaridis.gatekeeper.UI.Logins
 
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar

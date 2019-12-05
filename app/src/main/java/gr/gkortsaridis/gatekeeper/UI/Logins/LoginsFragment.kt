@@ -1,4 +1,4 @@
-package gr.gkortsaridis.gatekeeper.UI
+package gr.gkortsaridis.gatekeeper.UI.Logins
 
 
 import android.app.Activity
@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -17,18 +16,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import gr.gkortsaridis.gatekeeper.Entities.Login
-import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
-import org.jetbrains.anko.find
-import java.lang.Exception
-import kotlin.math.log
 
 class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectListener {
 

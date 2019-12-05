@@ -13,8 +13,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.pvryan.easycrypt.symmetric.ECSymmetric
-import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
+import gr.gkortsaridis.gatekeeper.UI.Logins.LoginsFragment
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -48,7 +49,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView: NavigationView = findViewById(R.id.navigationView)
         navigationView.setNavigationItemSelectedListener(this)
 
-        displayFragment(LoginsFragment(this))
+        displayFragment(CardsFragment(this))
+        //displayFragment(LoginsFragment(this))
     }
 
     private fun displayFragment(fragment: Fragment?){
@@ -64,6 +66,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (p0.itemId) {
             R.id.nav_item_logins -> { fragmentToReplace =
                 LoginsFragment(this)
+            }
+            R.id.nav_item_cards -> { fragmentToReplace =
+                CardsFragment(this)
             }
             R.id.nav_item_account -> { fragmentToReplace =
                 AccountFragment()

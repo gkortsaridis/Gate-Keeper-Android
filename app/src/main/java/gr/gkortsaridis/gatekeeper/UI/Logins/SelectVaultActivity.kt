@@ -1,4 +1,4 @@
-package gr.gkortsaridis.gatekeeper.UI
+package gr.gkortsaridis.gatekeeper.UI.Logins
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
