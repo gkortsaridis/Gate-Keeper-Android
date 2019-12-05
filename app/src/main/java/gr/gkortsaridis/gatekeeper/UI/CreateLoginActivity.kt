@@ -52,7 +52,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
+        toolbar.setNavigationOnClickListener { onBackPressed() }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
