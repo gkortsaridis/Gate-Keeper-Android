@@ -14,7 +14,7 @@ import gr.gkortsaridis.gatekeeper.R
 
 class ApplicationSelectRecyclerViewAdapter(
     private val context: Context,
-    private val apps: List<ResolveInfo>,
+    private var apps: ArrayList<ResolveInfo>,
     private val packageManager: PackageManager,
     private val listener: ApplicationSelectListener): RecyclerView.Adapter<ApplicationSelectRecyclerViewAdapter.AppViewHolder>() {
 
@@ -30,6 +30,12 @@ class ApplicationSelectRecyclerViewAdapter(
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val appItem = apps[position]
         holder.bindApp(appItem, packageManager, listener)
+    }
+
+    fun refreshDataSet(data: ArrayList<ResolveInfo>) {
+        apps.clear()
+        apps.addAll(data)
+        notifyDataSetChanged()
     }
 
     class AppViewHolder(v: View): RecyclerView.ViewHolder(v) {

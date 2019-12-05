@@ -13,7 +13,10 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@mipmap/ic_launcher_round"
-        android:layout_margin="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:id="@+id/application_icon"/>
 
     <TextView
