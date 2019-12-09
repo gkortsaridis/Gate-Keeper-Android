@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import gr.gkortsaridis.gatekeeper.Entities.Bank
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
@@ -56,12 +57,20 @@ class CreditCardsRecyclerViewAdapter(
             this.cardExpiryDate?.text = card.expirationDate
             this.cardholderName?.text = card.cardholderName
 
-            if (card.type == CardType.Visa) {
-                cardType?.setImageResource(R.drawable.visa)
-            }else if (card.type == CardType.Amex) {
-                cardType?.setImageResource(R.drawable.amex)
+            when (card.type) {
+                CardType.Visa -> { cardType?.setImageResource(R.drawable.visa) }
+                CardType.Amex -> { cardType?.setImageResource(R.drawable.amex) }
+                CardType.DinersClub -> { cardType?.setImageResource(R.drawable.discover) } //TODO: change
+                CardType.DiscoverCard -> { cardType?.setImageResource(R.drawable.discover) }
+                CardType.Mastercard -> { cardType?.setImageResource(R.drawable.mastercard) }
             }
 
+            when (card.bank) {
+                Bank.Monzo -> { bankLogo?.setImageResource(R.drawable.monzo) }
+                Bank.Barclays -> { bankLogo?.setImageResource(R.drawable.barclays) }
+                Bank.HSBC -> { bankLogo?.setImageResource(R.drawable.hsbc) }
+                Bank.Lloyds -> { bankLogo?.setImageResource(R.drawable.lloyds) }
+            }
 
             //view.setOnClickListener{ listener.onVaultClicked(vault) }
             //this.vaultName?.text = vault.name

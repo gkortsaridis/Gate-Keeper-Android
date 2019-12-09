@@ -7,17 +7,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import gr.gkortsaridis.gatekeeper.Entities.Bank
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
 
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.CreditCardsRecyclerViewAdapter
+import java.lang.Exception
 
-class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener {
+class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener, CreditCardRetrieveListener {
 
     private lateinit var cardsRecyclerView: RecyclerView
 
@@ -29,19 +36,27 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         val view = inflater.inflate(R.layout.fragment_cards, container, false)
 
         cardsRecyclerView = view.findViewById(R.id.cards_recycler_view)
+        CreditCardRepository.retrieveCardsByAccountID(AuthRepository.getUserID(), this)
 
-        val cards = ArrayList<CreditCard>()
-        val creditCard = CreditCard(cardName = "My Main Card", type = CardType.Visa, number = "1234 5678 9012 3456", expirationDate = "11/22", cvv = "1234", cardholderName = "Georgios Kortsaridis", accountId = AuthRepository.getUserID())
-        cards.add(creditCard)
-        cards.add(creditCard)
+        /*CreditCardRepository.encryptAndStoreCard(activity, creditCard, object : CreditCardCreateListener {
+            override fun onCreditCardCreated() {
+                Toast.makeText(activity, "Card Saved", Toast.LENGTH_SHORT).show()
+            }
 
+            override fun onCreditCardCreateError() {
+                Toast.makeText(activity, "Error :(", Toast.LENGTH_SHORT).show()
+            }
+        })*/
+        return view
+    }
+
+    override fun onCreditCardsReceived(cards: ArrayList<CreditCard>) {
         val cardsAdapter = CreditCardsRecyclerViewAdapter(activity, cards, this)
         cardsRecyclerView.adapter = cardsAdapter
         cardsRecyclerView.layoutManager = LinearLayoutManager(activity)
-
-
-        return view
     }
+
+    override fun onCreditCardsReceiveError(e: Exception) { }
 
 
 }

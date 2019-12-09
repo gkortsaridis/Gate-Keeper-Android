@@ -78,7 +78,7 @@ class GateKeeperAutoFillServiceL: AutofillService() {
 
     private fun traverseNode(viewNode: ViewNode?) {
 
-        if (viewNode != null && viewNode.className.contains("EditText") ) {
+        if (viewNode != null && (viewNode.className?.contains("EditText") == true) ) {
 
             if (viewNode.autofillHints != null && viewNode.autofillHints?.isNotEmpty() == true) {
                 //If the View has any autofill hints in place

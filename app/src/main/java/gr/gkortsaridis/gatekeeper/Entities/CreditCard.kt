@@ -15,20 +15,29 @@ enum class CardType {
     DinersClub
 }
 
+enum class Bank {
+    Monzo,
+    HSBC,
+    Barclays,
+    Lloyds
+}
+
 class CreditCard: Serializable {
 
     var id: String
     var cardName: String
     var type: CardType
+    var bank: Bank
     var number: String
     var expirationDate: String
     var cvv: String
     var cardholderName: String
     var accountId: String
 
-    constructor(cardName: String, type: CardType, number: String, expirationDate: String, cvv: String, cardholderName: String, accountId: String) {
+    constructor(cardName: String,bank: Bank, type: CardType, number: String, expirationDate: String, cvv: String, cardholderName: String, accountId: String) {
         this.id = "-1"
         this.cardName = cardName
+        this.bank = bank
         this.type = type
         this.number = number
         this.expirationDate = expirationDate

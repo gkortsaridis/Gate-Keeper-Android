@@ -9,6 +9,8 @@ object DataRepository {
     private const val CREDENTIALS_EMAIL = "user_credentials_email"
     private const val CREDENTIALS_PASSWORD = "user_credentials_password"
     private const val SAVED_LOGINS = "saved_logins"
+    private const val SAVED_CARDS = "saved_cards"
+
     private const val SAVED_USER = "saved_user"
 
     private val prefs: SharedPreferences = GateKeeperApplication.instance.getSharedPreferences(PREFS_FILENAME, 0)
@@ -24,6 +26,10 @@ object DataRepository {
     var savedLogins: String?
         get() = prefs.getString(SAVED_LOGINS,"")
         set(value) = prefs.edit().putString(SAVED_LOGINS, value).apply()
+
+    var savedCards: String?
+        get() = prefs.getString(SAVED_CARDS, "")
+        set(value) = prefs.edit().putString(SAVED_CARDS, value).apply()
 
     var savedUser: String?
         get() = prefs.getString(SAVED_USER, "")
