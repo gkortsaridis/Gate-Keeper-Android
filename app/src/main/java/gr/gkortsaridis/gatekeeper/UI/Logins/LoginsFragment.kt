@@ -63,6 +63,7 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
             LoginsRecyclerViewAdapter(
                 activity.baseContext,
                 LoginsRepository.filterLoginsByCurrentVaultAndFolder(GateKeeperApplication.logins),
+                activity.packageManager,
                 this
             )
 
