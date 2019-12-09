@@ -49,8 +49,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView: NavigationView = findViewById(R.id.navigationView)
         navigationView.setNavigationItemSelectedListener(this)
 
-        displayFragment(CardsFragment(this))
-        //displayFragment(LoginsFragment(this))
+        //displayFragment(CardsFragment(this))
+        displayFragment(LoginsFragment(this))
     }
 
     private fun displayFragment(fragment: Fragment?){

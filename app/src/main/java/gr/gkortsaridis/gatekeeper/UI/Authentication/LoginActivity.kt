@@ -8,12 +8,17 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import com.google.gson.Gson
+import com.pvryan.easycrypt.ECResultListener
+import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
+import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository.RC_SIGN_IN
 import kotlinx.android.synthetic.main.activity_login.emailET
+import java.util.concurrent.CompletableFuture
 
 
 class LoginActivity : AppCompatActivity(), SignInListener {
@@ -47,6 +52,10 @@ class LoginActivity : AppCompatActivity(), SignInListener {
             saveCredentials.isChecked = false
         }
 
+        val data = ""
+        val key = "O9YsueRg4CU0qOeaWrwHJwso2942"
+        val decrypted = decryptSomething(data, key)
+        Log.i("DECRYPTED DATA", decrypted)
     }
 
     private fun signUp() {
@@ -96,9 +105,21 @@ class LoginActivity : AppCompatActivity(), SignInListener {
         }
     }
 
+    private fun decryptSomething(data: String, key: String): String {
+        val response = CompletableFuture<String>()
 
-    private fun proceedAuthenticated() {
-        val intent = Intent(this, LoadingActivity::class.java)
-        startActivity(intent)
+        ECSymmetric().decrypt(data, key, object :
+                ECResultListener {
+                override fun onFailure(message: String, e: Exception) {
+                    response.complete(message)
+                }
+
+                override fun <T> onSuccess(result: T) {
+                    response.complete(result.toString())
+                }
+            })
+
+        return response.get()
     }
+
 }
