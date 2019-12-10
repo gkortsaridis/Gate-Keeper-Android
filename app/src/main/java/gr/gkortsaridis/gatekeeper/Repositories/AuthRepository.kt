@@ -3,6 +3,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -10,10 +11,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
-import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
-import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
-import gr.gkortsaridis.gatekeeper.Entities.UserCredentials
-import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
+import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener

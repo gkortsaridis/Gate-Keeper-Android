@@ -27,19 +27,10 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_cards, container, false)
-
         cardsRecyclerView = view.findViewById(R.id.cards_recycler_view)
+
         CreditCardRepository.retrieveCardsByAccountID(AuthRepository.getUserID(), this)
 
-        /*CreditCardRepository.encryptAndStoreCard(activity, creditCard, object : CreditCardCreateListener {
-            override fun onCreditCardCreated() {
-                Toast.makeText(activity, "Card Saved", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onCreditCardCreateError() {
-                Toast.makeText(activity, "Error :(", Toast.LENGTH_SHORT).show()
-            }
-        })*/
         return view
     }
 

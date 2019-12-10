@@ -4,24 +4,28 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import gr.gkortsaridis.gatekeeper.Entities.CreditCard
+import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
+import gr.gkortsaridis.gatekeeper.Interfaces.DevicesRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
-import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
+import gr.gkortsaridis.gatekeeper.Repositories.*
 import gr.gkortsaridis.gatekeeper.UI.MainActivity
 
 
-class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetrieveListener {
+class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetrieveListener, CreditCardRetrieveListener, DevicesRetrieveListener {
 
     private val TAG = "_Loading_Activity_"
 
     private var loginsOk : Boolean = false
     private var vaultsOk : Boolean = false
+    private var devicesOk: Boolean = false
+    private var cardsOk  : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,15 +33,18 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
 
         LoginsRepository.retrieveLoginsByAccountID(AuthRepository.getUserID(), this)
         VaultRepository.retrieveVaultsByAccountID(AuthRepository.getUserID(), this)
-        //FolderRepository.retrieveFoldersByAccountID(GateKeeperApplication.user.uid, this)
+        CreditCardRepository.retrieveCardsByAccountID(AuthRepository.getUserID(), this)
+        DeviceRepository.retrieveDevicesByAccountID(AuthRepository.getUserID(), this)
     }
 
     private fun openMainApplication() {
-        if (loginsOk && vaultsOk) {
+        if (loginsOk && vaultsOk && devicesOk && cardsOk) {
 
             if (GateKeeperApplication.vaults.size > 0) {
                 GateKeeperApplication.activeVault = GateKeeperApplication.vaults[0]
             }
+
+            DeviceRepository.logCurrentLogin(this)
 
             val intent = Intent(this, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -46,21 +53,27 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
         }
     }
 
-
-    //Sucess Retrieving cases :)
     override fun onLoginsRetrieveSuccess(logins: ArrayList<Login>) {
-        for (login in logins) { Log.i(TAG, login.toString()) }
-
         GateKeeperApplication.logins = logins
         loginsOk = true
         openMainApplication()
     }
 
     override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
-        for (vault in vaults) { Log.i(TAG, vault.toString()) }
-
         GateKeeperApplication.vaults = vaults
         vaultsOk = true
+        openMainApplication()
+    }
+
+    override fun onCreditCardsReceived(cards: ArrayList<CreditCard>) {
+        GateKeeperApplication.cards = cards
+        cardsOk = true
+        openMainApplication()
+    }
+
+    override fun onDevicesRetrieved(devices: ArrayList<Device>) {
+        GateKeeperApplication.devices = devices
+        devicesOk = true
         openMainApplication()
     }
 
@@ -71,6 +84,16 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
 
     override fun onVaultsRetrieveError(e: Exception) {
         e.printStackTrace()
+        //TODO: Update UI
+    }
+
+    override fun onCreditCardsReceiveError(e: java.lang.Exception) {
+        e.printStackTrace()
+        //TODO: Update UI
+    }
+
+    override fun onDeviceRetrieveError(exception: java.lang.Exception) {
+        exception.printStackTrace()
         //TODO: Update UI
     }
 

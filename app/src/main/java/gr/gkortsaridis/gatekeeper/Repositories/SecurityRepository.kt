@@ -2,9 +2,13 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import com.google.gson.Gson
+import com.pvryan.easycrypt.ECResultListener
+import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
 import java.nio.charset.Charset
 import java.security.KeyStore
+import java.util.concurrent.CompletableFuture
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -72,6 +76,23 @@ object SecurityRepository {
         }catch(e: java.lang.Exception) {
             null
         }
+    }
+
+    fun encryptObject(obj: Any) : String {
+        val decrypted = Gson().toJson(obj)
+        val response = CompletableFuture<String>()
+        ECSymmetric().encrypt(decrypted, AuthRepository.getUserID(), object :
+            ECResultListener {
+            override fun onFailure(message: String, e: Exception) {
+                response.complete("-1")
+            }
+
+            override fun <T> onSuccess(result: T) {
+                response.complete(result as String)
+            }
+        })
+
+        return response.get()
     }
 
 }
