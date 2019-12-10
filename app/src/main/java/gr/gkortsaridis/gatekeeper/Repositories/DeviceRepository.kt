@@ -2,10 +2,8 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.content.Context
 import android.os.Build
-import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson

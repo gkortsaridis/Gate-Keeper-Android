@@ -15,6 +15,7 @@ import com.google.android.material.navigation.NavigationView
 import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
+import gr.gkortsaridis.gatekeeper.UI.Devices.DevicesFragment
 import gr.gkortsaridis.gatekeeper.UI.Logins.LoginsFragment
 
 
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 LoginsFragment(this)
             }
             R.id.nav_item_devices -> { fragmentToReplace =
-                LoginsFragment(this)
+                DevicesFragment()
             }
             R.id.nav_item_about -> { fragmentToReplace =
                 LoginsFragment(this)
