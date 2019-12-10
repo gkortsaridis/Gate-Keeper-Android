@@ -52,10 +52,6 @@ class LoginActivity : AppCompatActivity(), SignInListener {
             saveCredentials.isChecked = false
         }
 
-        val data = ""
-        val key = "O9YsueRg4CU0qOeaWrwHJwso2942"
-        val decrypted = decryptSomething(data, key)
-        Log.i("DECRYPTED DATA", decrypted)
     }
 
     private fun signUp() {

@@ -2,9 +2,10 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.app.Activity
 import android.content.Intent
-import androidx.core.content.ContextCompat.startActivity
+import android.os.Bundle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -35,6 +36,9 @@ object AuthRepository {
                 viewDialog.hideDialog()
 
                 if (it.isSuccessful) {
+                    val bundle = Bundle()
+                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
+                    FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
                     listener.onSignInComplete(true, FirebaseSignInResult(it.result,null))
                 }else {
                     listener.onSignInComplete(false, FirebaseSignInResult(null,it.exception))
@@ -59,6 +63,9 @@ object AuthRepository {
         viewDialog.showDialog()
         auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener { result: AuthResult ->
             viewDialog.hideDialog()
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
+            FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
             listener.onSignUpComplete(true, FirebaseSignInResult(result, null))
         }.addOnFailureListener {e: java.lang.Exception ->
             viewDialog.hideDialog()

@@ -75,7 +75,7 @@ class LoginsRecyclerViewAdapter(
                 val clip = ClipData.newPlainText("label",login.password)
                 clipboard.setPrimaryClip(clip)
 
-                Toast.makeText(context, "Password copied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, login.name+" password copied", Toast.LENGTH_SHORT).show()
             }
         }
 

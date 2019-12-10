@@ -24,50 +24,76 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.6"
-                android:id="@+id/bank_logo"/>
+                android:id="@+id/bank_logo"
+                android:padding="16dp"
+                android:src="@drawable/monzo"
+                android:scaleType="fitStart"/>
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
-                android:id="@+id/card_type"/>
+                android:id="@+id/card_type"
+                android:padding="16dp"
+                android:scaleType="fitEnd"
+                android:src="@drawable/mastercard"/>
         </LinearLayout>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
             android:text="XXXX XXXX XXXX 1234"
             android:textSize="26sp"
             android:id="@+id/card_number"
             android:layout_marginTop="8dp"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="5sp"
+            app:autoSizeMaxTextSize="100sp"
+            app:autoSizeStepGranularity="1sp"
+            android:gravity="center_horizontal"
+            />
 
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="20dp"
             android:text="Personal Bank"
             android:textSize="17sp"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="5sp"
+            app:autoSizeMaxTextSize="100sp"
+            app:autoSizeStepGranularity="1sp"
             android:layout_gravity="right"
+            android:gravity="right"
             android:layout_marginTop="8dp"
             android:layout_marginRight="16dp"
             android:id="@+id/card_name"/>
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="20dp"
             android:text="Expires: 11/22"
             android:textSize="20sp"
             android:id="@+id/expiration_date"
             android:layout_marginTop="8dp"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="5sp"
+            app:autoSizeMaxTextSize="100sp"
+            app:autoSizeStepGranularity="1sp"
             android:layout_marginLeft="16dp"/>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="20dp"
             android:textSize="20sp"
             android:layout_marginLeft="16dp"
             android:text="Georgios Kortsaridis"
             android:id="@+id/cardholder_name"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="5sp"
+            app:autoSizeMaxTextSize="100sp"
+            app:autoSizeStepGranularity="1sp"
             android:layout_marginBottom="16dp"
             android:layout_marginTop="8dp" />
 
