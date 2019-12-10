@@ -1,6 +1,6 @@
 package gr.gkortsaridis.gatekeeper.Entities
 
-import java.util.*
+import com.google.firebase.Timestamp
 
 data class Device(val OS : String,
                   val version : String,
@@ -9,5 +9,5 @@ data class Device(val OS : String,
                   val vendor: String,
                   val nickname: String,
                   var locale: String,
-                  val firstAdded: Date,
-                  var lastEntry: Date)
+                  val firstAdded: Timestamp,
+                  var lastEntry: Timestamp)

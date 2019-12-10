@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.telephony.TelephonyManager
 import android.util.Log
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
@@ -43,7 +44,7 @@ object DeviceRepository {
         //val encryptedDevice = SecurityRepository.encryptObject(getCurrentDevice())
 
         val currentDevice = getCurrentDevice(context)
-        currentDevice.lastEntry = Date()
+        currentDevice.lastEntry = Timestamp.now()
         currentDevice.locale = getDetectedCountry(context, "??")
 
         val devicehash = hashMapOf(
@@ -72,7 +73,7 @@ object DeviceRepository {
 
         for (device in devices ?: ArrayList()) { if (device.UID == UID) { return device } }
 
-        return Device(OS= OS, version = version, versionNum = versionNum, UID = UID, vendor = vendor, nickname = nickname, locale = locale, firstAdded = Date(), lastEntry = Date())
+        return Device(OS= OS, version = version, versionNum = versionNum, UID = UID, vendor = vendor, nickname = nickname, locale = locale, firstAdded = Timestamp.now(), lastEntry = Timestamp.now())
     }
 
     private fun getDetectedCountry(context: Context, defaultCountryIsoCode: String): String {
