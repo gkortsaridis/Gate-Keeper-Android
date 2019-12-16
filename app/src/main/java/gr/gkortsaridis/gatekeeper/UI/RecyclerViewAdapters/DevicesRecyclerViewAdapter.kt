@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters
 
 import android.content.Context
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,9 +49,26 @@ class DevicesRecyclerViewAdapter(
 
         fun bindDevice(device: Device, listener: DeviceClickListener?){
             this.deviceName?.text = device.vendor
+            val lastEntryDate = device.lastEntry.toDate()
 
-            val sdf: DateFormat = SimpleDateFormat("MM/dd/yyyy hh:mm")
-            this.entryDate?.text = sdf.format(device.lastEntry.toDate())
+            val sdf: DateFormat?
+            val dateStr: String
+            when {
+                DateUtils.isToday(lastEntryDate.time) -> {
+                    sdf = SimpleDateFormat("hh:mm")
+                    dateStr = "Today, "+sdf.format(lastEntryDate)
+                }
+                DateUtils.isToday(lastEntryDate.time + DateUtils.DAY_IN_MILLIS) -> {
+                    sdf = SimpleDateFormat("hh:mm")
+                    dateStr = "Yesterday, "+sdf.format(lastEntryDate)
+                }
+                else -> {
+                    sdf = SimpleDateFormat("MM/dd/yyyy hh:mm")
+                    dateStr = sdf.format(lastEntryDate)
+                }
+            }
+
+            this.entryDate?.text = dateStr
             view.setOnClickListener { listener?.onDeviceClicked(device) }
         }
     }

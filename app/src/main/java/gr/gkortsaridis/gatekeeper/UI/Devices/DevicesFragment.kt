@@ -24,7 +24,6 @@ class DevicesFragment : Fragment(), DeviceClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_devices, container, false)
 
         devicesRecyclerView = view.findViewById(R.id.devicesRV)
