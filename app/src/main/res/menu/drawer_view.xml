@@ -7,11 +7,11 @@
             android:title="@string/my_logins" />
         <item
             android:id="@+id/nav_item_cards"
-            android:icon="@drawable/padlock"
+            android:icon="@drawable/credit_cards"
             android:title="@string/cards" />
         <item
             android:id="@+id/nav_item_devices"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@drawable/phone"
             android:title="@string/my_devices" />
     </group>
 
