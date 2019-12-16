@@ -8,13 +8,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Device
-import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
+import gr.gkortsaridis.gatekeeper.Interfaces.DeviceClickListener
 import gr.gkortsaridis.gatekeeper.R
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 class DevicesRecyclerViewAdapter(
     private val context: Context,
     private val devices: ArrayList<Device>,
-    private val listener: CreditCardClickListener?
+    private val listener: DeviceClickListener?
 ): RecyclerView.Adapter<DevicesRecyclerViewAdapter.DeviceViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
@@ -44,13 +46,12 @@ class DevicesRecyclerViewAdapter(
             entryDate = view.findViewById(R.id.entryDate)
         }
 
-        fun bindDevice(device: Device, listener: CreditCardClickListener?){
+        fun bindDevice(device: Device, listener: DeviceClickListener?){
             this.deviceName?.text = device.vendor
-            this.entryDate?.text = device.lastEntry.toString()
 
-            //view.setOnClickListener{ listener.onVaultClicked(vault) }
-            //this.vaultName?.text = vault.name
+            val sdf: DateFormat = SimpleDateFormat("MM/dd/yyyy hh:mm")
+            this.entryDate?.text = sdf.format(device.lastEntry.toDate())
+            view.setOnClickListener { listener?.onDeviceClicked(device) }
         }
-
     }
 }

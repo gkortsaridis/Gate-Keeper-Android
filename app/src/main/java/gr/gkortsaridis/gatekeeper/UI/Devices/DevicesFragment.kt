@@ -8,13 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Interfaces.DeviceClickListener
 
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.DevicesRecyclerViewAdapter
 
 
-class DevicesFragment : Fragment() {
+class DevicesFragment : Fragment(), DeviceClickListener {
 
     private lateinit var devicesRecyclerView: RecyclerView
 
@@ -27,10 +29,14 @@ class DevicesFragment : Fragment() {
 
         devicesRecyclerView = view.findViewById(R.id.devicesRV)
 
-        devicesRecyclerView.adapter = DevicesRecyclerViewAdapter(context!!, GateKeeperApplication.devices!!, null)
+        devicesRecyclerView.adapter = DevicesRecyclerViewAdapter(context!!, GateKeeperApplication.devices!!, this)
         devicesRecyclerView.layoutManager = LinearLayoutManager(context!!)
 
         return view
+    }
+
+    override fun onDeviceClicked(device: Device) {
+
     }
 
 

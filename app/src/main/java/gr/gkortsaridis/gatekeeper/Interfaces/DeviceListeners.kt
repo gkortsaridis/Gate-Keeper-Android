@@ -7,3 +7,7 @@ interface DevicesRetrieveListener {
     fun onDevicesRetrieved(devices: ArrayList<Device>)
     fun onDeviceRetrieveError(exception: Exception)
 }
+
+interface DeviceClickListener {
+    fun onDeviceClicked(device: Device)
+}
