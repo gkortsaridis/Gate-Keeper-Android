@@ -2,12 +2,18 @@ package gr.gkortsaridis.gatekeeper.UI.Logins
 
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.autofill.AutofillManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -24,6 +30,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginReque
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
 
+
 class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectListener {
 
     private val TAG = "_LOGINS_FRAGMENT_"
@@ -31,8 +38,8 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
     private lateinit var loginsRV: RecyclerView
     private lateinit var fab: FloatingActionButton
     private lateinit var vaultName: TextView
-    private lateinit var folderName: TextView
     private lateinit var vaultView: LinearLayout
+    private var autofillManager: AutofillManager? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -49,6 +56,8 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
 
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode)}
         vaultView.setOnClickListener{ startActivityForResult(Intent(activity, SelectVaultActivity::class.java), createLoginRequestCode)}
+
+        checkForAutofill()
 
         return view
     }
@@ -68,6 +77,28 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
             )
 
         vaultName.text = GateKeeperApplication.activeVault.name
+    }
+
+    private fun checkForAutofill() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            autofillManager = context?.getSystemService(AutofillManager::class.java)
+
+            if (!autofillManager?.hasEnabledAutofillServices()!!) {
+                AlertDialog.Builder(context)
+                    .setTitle("Autofill is not enabled")
+                    .setMessage("Gate Keeper can fill your saved credentials to applications. Would you like to enable that funtionality?")
+                    .setPositiveButton(
+                        "Yes"
+                    ) { dialog, which ->
+                        val intent = Intent(Settings.ACTION_REQUEST_SET_AUTOFILL_SERVICE)
+                        intent.data = Uri.parse("package:gr.gkortsaridis.gatekeeper.GateKeeperAutoFillServiceL")
+                        startActivity(intent)
+                    }
+                    .setNegativeButton("No", null)
+                    .show()
+            }
+
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
