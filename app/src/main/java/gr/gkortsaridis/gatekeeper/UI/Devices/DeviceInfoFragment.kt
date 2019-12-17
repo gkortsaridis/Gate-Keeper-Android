@@ -73,6 +73,7 @@ class DeviceInfoFragment : BottomSheetDialogFragment(), DeviceModifyListener {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         input.inputType = InputType.TYPE_CLASS_TEXT
+        input.setText(device!!.nickname)
         parent.addView(input)
 
         builder.setTitle("Rename Device")

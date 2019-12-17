@@ -17,6 +17,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Nickname"
+            android:textStyle="bold"
+            android:textColor="@color/mate_black"
             android:id="@+id/device_nickname"/>
     </RelativeLayout>
 

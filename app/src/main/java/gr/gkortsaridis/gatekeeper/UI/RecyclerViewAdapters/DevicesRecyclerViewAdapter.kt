@@ -48,7 +48,11 @@ class DevicesRecyclerViewAdapter(
         }
 
         fun bindDevice(device: Device, listener: DeviceClickListener?){
-            this.deviceName?.text = device.vendor
+            if (device.nickname == "") {
+                this.deviceName?.text = device.vendor
+            }else {
+                this.deviceName?.text = device.nickname
+            }
             this.entryDate?.text = device.formattedDate()
             view.setOnClickListener { listener?.onDeviceClicked(device) }
         }

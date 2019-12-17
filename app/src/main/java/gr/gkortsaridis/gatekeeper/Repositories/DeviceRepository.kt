@@ -61,10 +61,34 @@ object DeviceRepository {
     }
 
     fun renameDevice(device: Device, newName: String, listener: DeviceModifyListener) {
-        listener.onDeviceRenamed()
+
+        device.nickname = newName
+
+        val devicehash = hashMapOf(
+            "device" to Gson().toJson(device),
+            "account_id" to AuthRepository.getUserID()
+        )
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("devices")
+            .document(device.UID)
+            .set(devicehash)
+            .addOnCompleteListener {
+                listener.onDeviceRenamed()
+                Log.i(TAG, "Device was renamed")
+            }
+
     }
 
     fun deleteDevice(device: Device, listener: DeviceModifyListener) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("devices")
+            .document(device.UID)
+            .delete()
+            .addOnCompleteListener {
+                listener.onDeviceDeleted()
+            }
+
         listener.onDeviceDeleted()
     }
 
