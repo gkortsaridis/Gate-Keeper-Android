@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -32,14 +34,20 @@ class VaultSelectRecyclerViewAdapter(
     class VaultViewHolder(v: View): RecyclerView.ViewHolder(v) {
 
         private var vaultName: TextView? = null
-        private var view: View = v
+        private var editView: RelativeLayout? = null
+        private var deleteView: RelativeLayout? = null
+        private var view: LinearLayout? = null
 
         init {
-            vaultName = view.findViewById(R.id.vault_name)
+            view = v.findViewById(R.id.vault_main_container)
+            editView = v.findViewById(R.id.vault_edit_container)
+            deleteView = v.findViewById(R.id.vault_delete_container)
+            vaultName = v.findViewById(R.id.vault_name)
+
         }
 
         fun bindVault(vault: Vault, listener: VaultClickListener){
-            view.setOnClickListener{ listener.onVaultClicked(vault) }
+            view?.setOnClickListener{ listener.onVaultClicked(vault) }
             this.vaultName?.text = vault.name
         }
 

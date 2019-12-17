@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
     tools:context=".UI.Vaults.SelectVaultActivity">
 
@@ -13,21 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:theme="@style/ThemeOverlay.AppCompat.Dark"
-        android:id="@+id/toolbar"/>
+        android:id="@+id/toolbar"
+        android:background="@color/colorPrimaryDark"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/vault_recycler_view"/>
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_alignParentBottom="true"
-        app:lottie_rawRes="@raw/vault_dark_blue"
-        app:lottie_loop="true"
-        app:lottie_autoPlay="true"/>
+        android:id="@+id/vault_recycler_view"
+        android:layout_marginTop="8dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
