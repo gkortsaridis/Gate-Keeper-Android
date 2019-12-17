@@ -57,7 +57,6 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode)}
         vaultView.setOnClickListener{ startActivityForResult(Intent(activity, SelectVaultActivity::class.java), createLoginRequestCode)}
 
-        checkForAutofill()
 
         return view
     }
@@ -83,10 +82,10 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             autofillManager = context?.getSystemService(AutofillManager::class.java)
 
-            if (!autofillManager?.hasEnabledAutofillServices()!!) {
+            if (!autofillManager!!.hasEnabledAutofillServices()) {
                 AlertDialog.Builder(context)
                     .setTitle("Autofill is not enabled")
-                    .setMessage("Gate Keeper can fill your saved credentials to applications. Would you like to enable that funtionality?")
+                    .setMessage("Gate Keeper can fill your saved credentials to applications. Would you like to enable that functionality?")
                     .setPositiveButton(
                         "Yes"
                     ) { dialog, which ->
