@@ -7,6 +7,21 @@
     android:orientation="vertical"
     tools:context=".UI.Cards.CardsFragment">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/colorPrimaryDark">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cards"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"/>
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

@@ -35,7 +35,9 @@ class DevicesFragment : Fragment(), DeviceClickListener {
     }
 
     override fun onDeviceClicked(device: Device) {
-
+        val deviceInfoFragment = DeviceInfoFragment()
+        deviceInfoFragment.setDevice(device)
+        deviceInfoFragment.show(fragmentManager!!, "TAG")
     }
 
 

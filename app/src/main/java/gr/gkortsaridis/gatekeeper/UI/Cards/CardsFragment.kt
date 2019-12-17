@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
@@ -17,7 +18,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.CreditCardsRecyclerViewAdapter
 
-class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener, CreditCardRetrieveListener {
+class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener {
 
     private lateinit var cardsRecyclerView: RecyclerView
 
@@ -29,18 +30,11 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         val view = inflater.inflate(R.layout.fragment_cards, container, false)
         cardsRecyclerView = view.findViewById(R.id.cards_recycler_view)
 
-        CreditCardRepository.retrieveCardsByAccountID(AuthRepository.getUserID(), this)
+        val cardsAdapter = CreditCardsRecyclerViewAdapter(activity, GateKeeperApplication.cards, this)
+        cardsRecyclerView.adapter = cardsAdapter
+        cardsRecyclerView.layoutManager = GridLayoutManager(activity,1)
 
         return view
     }
-
-    override fun onCreditCardsReceived(cards: ArrayList<CreditCard>) {
-        val cardsAdapter = CreditCardsRecyclerViewAdapter(activity, cards, this)
-        cardsRecyclerView.adapter = cardsAdapter
-        cardsRecyclerView.layoutManager = GridLayoutManager(activity,1)
-    }
-
-    override fun onCreditCardsReceiveError(e: Exception) { }
-
 
 }
