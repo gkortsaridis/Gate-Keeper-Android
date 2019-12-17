@@ -10,6 +10,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Interfaces.DeviceModifyListener
 import gr.gkortsaridis.gatekeeper.Interfaces.DevicesRetrieveListener
 import java.util.*
 import kotlin.collections.ArrayList
@@ -57,6 +58,14 @@ object DeviceRepository {
             .document(currentDevice.UID)
             .set(devicehash)
             .addOnCompleteListener { Log.i(TAG, "Login was logged") }
+    }
+
+    fun renameDevice(device: Device, newName: String, listener: DeviceModifyListener) {
+        listener.onDeviceRenamed()
+    }
+
+    fun deleteDevice(device: Device, listener: DeviceModifyListener) {
+        listener.onDeviceDeleted()
     }
 
     private fun getCurrentDevice(context: Context): Device {

@@ -11,3 +11,8 @@ interface DevicesRetrieveListener {
 interface DeviceClickListener {
     fun onDeviceClicked(device: Device)
 }
+
+interface DeviceModifyListener {
+    fun onDeviceDeleted()
+    fun onDeviceRenamed()
+}

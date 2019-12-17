@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 LoginsFragment(this)
             }
             R.id.nav_item_devices -> { fragmentToReplace =
-                DevicesFragment()
+                DevicesFragment(this)
             }
             R.id.nav_item_about -> { fragmentToReplace =
                 LoginsFragment(this)
