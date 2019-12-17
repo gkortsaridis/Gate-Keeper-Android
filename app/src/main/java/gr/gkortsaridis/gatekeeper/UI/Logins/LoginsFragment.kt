@@ -3,7 +3,6 @@ package gr.gkortsaridis.gatekeeper.UI.Logins
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -29,6 +28,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
+import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 
 
 class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectListener {

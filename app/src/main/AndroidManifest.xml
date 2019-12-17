@@ -12,8 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".UI.Vaults.CreateVaultActivity"></activity>
         <activity android:name=".UI.Logins.ApplicationSelector" />
-        <activity android:name=".UI.Logins.SelectVaultActivity" />
+        <activity android:name=".UI.Vaults.SelectVaultActivity" />
         <activity android:name=".UI.Authentication.CreatePasswordActivity" />
         <activity android:name=".UI.Authentication.SignUpActivity" />
         <activity android:name=".UI.Logins.CreateLoginActivity" />
@@ -27,7 +28,6 @@
         </activity>
         <activity android:name=".UI.MainActivity" />
 
-
         <service
             android:name=".GateKeeperAutoFillServiceL"
             android:label="GateKeeper Autofill Service"
@@ -35,6 +35,7 @@
             <intent-filter>
                 <action android:name="android.service.autofill.AutofillService" />
             </intent-filter>
+
             <meta-data
                 android:name="android.autofill"
                 android:resource="@xml/gatekeeper_credentials_filler" />

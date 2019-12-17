@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
-    tools:context=".UI.Logins.SelectVaultActivity">
+    tools:context=".UI.Vaults.SelectVaultActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
@@ -28,5 +28,14 @@
         app:lottie_rawRes="@raw/vault_dark_blue"
         app:lottie_loop="true"
         app:lottie_autoPlay="true"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/vault"
+        android:id="@+id/add_vault"/>
 
 </RelativeLayout>

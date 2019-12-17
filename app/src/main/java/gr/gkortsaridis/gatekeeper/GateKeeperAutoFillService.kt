@@ -100,7 +100,7 @@ class GateKeeperAutoFillServiceL: AutofillService() {
 
                 val hint = (viewNode.hint ?: "").toLowerCase()
                 val text = viewNode.text
-                val idEntry = viewNode.idEntry
+                val idEntry = viewNode.idEntry ?: ""
 
                 if (hint.contains("email") || hint.contains("user")
                     || text.contains("email") || text.contains("user")

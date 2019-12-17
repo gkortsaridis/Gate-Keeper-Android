@@ -5,7 +5,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
-import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
@@ -22,7 +21,7 @@ object VaultRepository {
                 if (vaults.size > 0) {
                     listener.onVaultSetupComplete()
                 }else{
-                    createVaultForUser("Personal", user, object : VaultCreateListener {
+                    createVault("Personal", object : VaultCreateListener {
                         override fun onVaultCreated() { listener.onVaultSetupComplete() }
                         override fun onVaultCreateError() { listener.onVaultSetupError() }
                     })
@@ -30,7 +29,7 @@ object VaultRepository {
             }
 
             override fun onVaultsRetrieveError(e: Exception) {
-                createVaultForUser("Personal", user, object : VaultCreateListener {
+                createVault("Personal", object : VaultCreateListener {
                     override fun onVaultCreated() { listener.onVaultSetupComplete() }
                     override fun onVaultCreateError() { listener.onVaultSetupError() }
                 })
@@ -39,11 +38,11 @@ object VaultRepository {
 
     }
 
-    fun createVaultForUser(vaultName: String, user: FirebaseUser, listener: VaultCreateListener) {
+    fun createVault(vaultName: String, listener: VaultCreateListener) {
         val db = FirebaseFirestore.getInstance()
 
         db.collection("vaults")
-            .add(hashMapOf( "account_id" to user.uid, "name" to vaultName ))
+            .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "name" to vaultName ))
             .addOnCompleteListener {
                 if (it.isSuccessful) { listener.onVaultCreated() }
                 else { listener.onVaultCreateError() }
