@@ -19,6 +19,7 @@ import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import gr.gkortsaridis.gatekeeper.Repositories.DeviceRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.VaultSelectRecyclerViewAdapter
 
@@ -52,6 +53,50 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener {
     override fun onVaultClicked(vault: Vault) {
         VaultRepository.setActiveVault(vault)
         finish()
+    }
+
+    override fun onVaultEditClicked(vault: Vault) {
+        val viewDialog = ViewDialog(this)
+        val builder = AlertDialog.Builder(this)
+        val parent = RelativeLayout(this)
+        parent.layoutParams = ViewGroup.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT)
+        parent.setPadding(50,50,50,50)
+        val input = EditText(this)
+        input.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT)
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        input.setText(vault.name)
+        parent.addView(input)
+
+        builder.setTitle("Rename Vault")
+        builder.setMessage("Set a new name for this vault")
+        builder.setView(parent)
+
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        builder.setPositiveButton("OK") { _, _ ->
+            //viewDialog.showDialog()
+            //DeviceRepository.renameDevice(device!!, input.text.toString(), this)
+        }
+
+        builder.show()
+    }
+
+    override fun onVaultDeleteClicked(vault: Vault) {
+        val viewDialog = ViewDialog(this)
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Delete Vault")
+        builder.setMessage("Are you sure you wish to delete this vault?")
+
+        builder.setNegativeButton("No") { dialog, _ -> dialog.cancel() }
+        builder.setPositiveButton("Yes") { _, _ ->
+            //viewDialog!!.showDialog()
+            //DeviceRepository.deleteDevice(device!!,this)
+        }
+
+        builder.show()
     }
 
     private fun updateVaultsRecyclerView() {

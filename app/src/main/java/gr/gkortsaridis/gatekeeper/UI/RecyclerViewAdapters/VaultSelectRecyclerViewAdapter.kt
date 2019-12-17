@@ -48,6 +48,8 @@ class VaultSelectRecyclerViewAdapter(
 
         fun bindVault(vault: Vault, listener: VaultClickListener){
             view?.setOnClickListener{ listener.onVaultClicked(vault) }
+            editView?.setOnClickListener { listener.onVaultEditClicked(vault) }
+            deleteView?.setOnClickListener { listener.onVaultDeleteClicked(vault) }
             this.vaultName?.text = vault.name
         }
 

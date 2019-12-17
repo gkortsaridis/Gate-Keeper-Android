@@ -19,4 +19,6 @@ interface VaultRetrieveListener {
 
 interface VaultClickListener {
     fun onVaultClicked(vault: Vault)
+    fun onVaultEditClicked(vault: Vault)
+    fun onVaultDeleteClicked(vault: Vault)
 }
