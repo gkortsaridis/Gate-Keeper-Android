@@ -25,8 +25,6 @@ class GateKeeperApplication : Application() {
         lateinit var vaults: ArrayList<Vault>
         lateinit var cards: ArrayList<CreditCard>
         var devices: ArrayList<Device>? = null
-
-        lateinit var activeVault : Vault
     }
 
 

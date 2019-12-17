@@ -39,11 +39,6 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
 
     private fun openMainApplication() {
         if (loginsOk && vaultsOk && devicesOk && cardsOk) {
-
-            if (GateKeeperApplication.vaults.size > 0) {
-                GateKeeperApplication.activeVault = GateKeeperApplication.vaults[0]
-            }
-
             DeviceRepository.logCurrentLogin(this)
 
             val intent = Intent(this, MainActivity::class.java)

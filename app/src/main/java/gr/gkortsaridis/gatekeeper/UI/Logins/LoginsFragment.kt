@@ -27,6 +27,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 
@@ -75,7 +76,7 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
                 this
             )
 
-        vaultName.text = GateKeeperApplication.activeVault.name
+        vaultName.text = VaultRepository.getLastActiveVault().name
     }
 
     private fun checkForAutofill() {

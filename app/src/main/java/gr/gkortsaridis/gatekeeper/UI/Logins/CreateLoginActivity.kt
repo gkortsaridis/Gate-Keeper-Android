@@ -68,7 +68,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
         if (loginId == null) {
             supportActionBar?.title = "Create new login"
-            vaultToAdd = GateKeeperApplication.activeVault
+            vaultToAdd = VaultRepository.getLastActiveVault()
             saveUpdateButton.setOnClickListener { createLogin() }
 
         }else{

@@ -93,4 +93,18 @@ object VaultRepository {
 
         return null
     }
+
+    fun setActiveVault(vault: Vault) { DataRepository.lastActiveVaultId = vault.id }
+
+    fun getLastActiveVault(): Vault {
+        val lastActiveVaultId = DataRepository.lastActiveVaultId ?: ""
+        var vaultToReturn = GateKeeperApplication.vaults[0]
+        if (lastActiveVaultId != "") {
+            val savedVault = getVaultByID(lastActiveVaultId)
+            if (savedVault != null) { vaultToReturn = savedVault}
+        }
+
+        return vaultToReturn
+    }
+
 }

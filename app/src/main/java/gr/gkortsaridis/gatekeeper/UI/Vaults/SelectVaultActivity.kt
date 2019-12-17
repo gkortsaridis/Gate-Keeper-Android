@@ -50,7 +50,7 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener {
     }
 
     override fun onVaultClicked(vault: Vault) {
-        GateKeeperApplication.activeVault = vault
+        VaultRepository.setActiveVault(vault)
         finish()
     }
 
