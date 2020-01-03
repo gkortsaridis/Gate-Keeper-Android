@@ -107,12 +107,17 @@ object AuthRepository {
             && encryptedPassword != ""
         ) {
             val encryptedEmailData = Gson().fromJson(encryptedEmail, EncryptedData::class.java)
-            val decryptedEmail = SecurityRepository.decrypt(encryptedEmailData.encryptedData, encryptedEmailData.iv)
-
             val encryptedPasswordData = Gson().fromJson(encryptedPassword, EncryptedData::class.java)
-            val decryptedPassword = SecurityRepository.decrypt(encryptedPasswordData.encryptedData, encryptedPasswordData.iv)
 
-            UserCredentials(decryptedEmail, decryptedPassword)
+            try {
+                val decryptedEmail = SecurityRepository.decrypt(encryptedEmailData.encryptedData, encryptedEmailData.iv)
+                val decryptedPassword = SecurityRepository.decrypt(encryptedPasswordData.encryptedData, encryptedPasswordData.iv)
+
+                UserCredentials(decryptedEmail, decryptedPassword)
+            } catch(e: Exception) {
+                null
+            }
+
         }else { null }
 
     }
