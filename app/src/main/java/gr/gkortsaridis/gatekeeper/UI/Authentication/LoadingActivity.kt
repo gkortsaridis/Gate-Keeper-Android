@@ -93,7 +93,7 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
         showLoadingError()
     }
 
-    fun showLoadingError() {
+    private fun showLoadingError() {
         Toast.makeText(this, "We encountered an error loading your data. Please try again", Toast.LENGTH_SHORT).show()
         finish()
     }
