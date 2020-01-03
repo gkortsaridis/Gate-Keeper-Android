@@ -3,6 +3,7 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Device
@@ -74,22 +75,27 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
 
     override fun onLoginsRetrieveError(e: Exception) {
         e.printStackTrace()
-        //TODO: Update UI
+        showLoadingError()
     }
 
     override fun onVaultsRetrieveError(e: Exception) {
         e.printStackTrace()
-        //TODO: Update UI
+        showLoadingError()
     }
 
     override fun onCreditCardsReceiveError(e: java.lang.Exception) {
         e.printStackTrace()
-        //TODO: Update UI
+        showLoadingError()
     }
 
     override fun onDeviceRetrieveError(exception: java.lang.Exception) {
         exception.printStackTrace()
-        //TODO: Update UI
+        showLoadingError()
+    }
+
+    fun showLoadingError() {
+        Toast.makeText(this, "We encountered an error loading your data. Please try again", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
 }
