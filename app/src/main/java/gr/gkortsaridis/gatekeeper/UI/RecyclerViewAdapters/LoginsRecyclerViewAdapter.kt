@@ -47,14 +47,14 @@ class LoginsRecyclerViewAdapter(
         private var loginName: TextView? = null
         private var loginUsername: TextView? = null
         private var loginImage: ImageView? = null
-        private var copyPassword: ImageButton? = null
+        private var loginAction: ImageButton? = null
         private var view: View = v
 
         init {
             loginName = view.findViewById(R.id.login_name)
             loginUsername = view.findViewById(R.id.login_username)
             loginImage = view.findViewById(R.id.login_image)
-            copyPassword = view.findViewById(R.id.copyPassword)
+            loginAction = view.findViewById(R.id.login_action)
         }
 
         fun bindLogin(login: Login, position: Int, context: Context, packageManager: PackageManager, listener: LoginSelectListener){
@@ -69,14 +69,7 @@ class LoginsRecyclerViewAdapter(
             }
 
             this.view.setOnClickListener { listener.onLoginClicked(login) }
-
-            this.copyPassword?.setOnClickListener {
-                val clipboard = getSystemService(context, ClipboardManager::class.java) as ClipboardManager
-                val clip = ClipData.newPlainText("label",login.password)
-                clipboard.setPrimaryClip(clip)
-
-                Toast.makeText(context, login.name+" password copied", Toast.LENGTH_SHORT).show()
-            }
+            this.loginAction?.setOnClickListener { listener.onLoginActionClicked(login) }
         }
 
     }

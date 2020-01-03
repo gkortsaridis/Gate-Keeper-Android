@@ -60,8 +60,8 @@
         <ImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/copyPassword"
-            android:background="@drawable/copy"/>
+            android:id="@+id/login_action"
+            android:background="@drawable/writing"/>
 
     </LinearLayout>
 

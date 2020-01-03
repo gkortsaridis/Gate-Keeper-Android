@@ -3,6 +3,8 @@ package gr.gkortsaridis.gatekeeper.UI.Logins
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -16,6 +18,8 @@ import android.view.autofill.AutofillManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -111,10 +115,25 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onLoginClicked(login: Login) {
+    override fun onLoginClicked(login: Login) { copyLoginPassword(login) }
+
+    override fun onLoginActionClicked(login: Login) { openLogin(login) }
+
+    private fun openLogin(login: Login) {
         Log.i("Clicked", login.name)
         val intent = Intent(activity, CreateLoginActivity::class.java)
         intent.putExtra("login_id",login.id)
         startActivity(intent)
+    }
+
+    private fun copyLoginPassword(login: Login) {
+        val clipboard = getSystemService(
+            context!!,
+            ClipboardManager::class.java
+        ) as ClipboardManager
+        val clip = ClipData.newPlainText("label",login.password)
+        clipboard.setPrimaryClip(clip)
+
+        Toast.makeText(context, login.name+" password copied", Toast.LENGTH_SHORT).show()
     }
 }

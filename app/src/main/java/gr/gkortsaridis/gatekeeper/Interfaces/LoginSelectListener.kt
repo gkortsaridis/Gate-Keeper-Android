@@ -4,4 +4,5 @@ import gr.gkortsaridis.gatekeeper.Entities.Login
 
 interface LoginSelectListener {
     fun onLoginClicked(login: Login)
+    fun onLoginActionClicked(login: Login)
 }
