@@ -63,7 +63,9 @@ class LoginsRecyclerViewAdapter(
 
             val app = LoginsRepository.getApplicationInfoByPackageName(login.url, packageManager)
 
-            this.loginImage?.setImageDrawable(app?.loadIcon(packageManager))
+            val appIcon = app?.loadIcon(packageManager)
+            if (appIcon != null) { this.loginImage?.setImageDrawable(appIcon) }
+
             if(position == 0) {
                 this.view.setPadding(0,20.dp,0,0)
             }
