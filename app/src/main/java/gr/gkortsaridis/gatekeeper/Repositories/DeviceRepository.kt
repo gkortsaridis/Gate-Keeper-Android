@@ -12,6 +12,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.DeviceModifyListener
 import gr.gkortsaridis.gatekeeper.Interfaces.DevicesRetrieveListener
+import gr.gkortsaridis.gatekeeper.R
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -103,10 +104,10 @@ object DeviceRepository {
         val locale = getDetectedCountry(context, "??")
 
         val devices = GateKeeperApplication.devices
-
         for (device in devices ?: ArrayList()) { if (device.UID == UID) { return device } }
 
-        return Device(OS= OS, version = version, versionNum = versionNum, UID = UID, vendor = vendor, nickname = nickname, locale = locale, firstAdded = Timestamp.now(), lastEntry = Timestamp.now())
+        return Device(OS= OS, version = version, versionNum = versionNum, UID = UID, vendor = vendor, nickname = nickname, locale = locale, firstAdded = Timestamp.now(), lastEntry = Timestamp.now(), isTablet = context.resources.getBoolean(
+            R.bool.isTablet))
     }
 
     private fun getDetectedCountry(context: Context, defaultCountryIsoCode: String): String {
