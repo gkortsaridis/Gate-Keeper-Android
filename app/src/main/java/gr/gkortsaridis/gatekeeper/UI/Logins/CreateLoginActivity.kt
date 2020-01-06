@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -15,6 +17,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
+import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
@@ -93,7 +96,7 @@ class CreateLoginActivity : AppCompatActivity() {
         this.activity = this
     }
 
-    fun updateLogin() {
+    private fun updateLogin() {
         login?.username = username.text.toString()
         login?.name = name.text.toString()
         login?.password = name.text.toString()
@@ -137,7 +140,7 @@ class CreateLoginActivity : AppCompatActivity() {
         })
     }
 
-    fun createLogin() {
+    private fun createLogin() {
         val loginObj = Login(account_id = AuthRepository.getUserID(),
             vault_id = vaultToAdd.id,
             name = name.text.toString(),
@@ -182,6 +185,46 @@ class CreateLoginActivity : AppCompatActivity() {
                 }
             })
 
+    }
+
+    private fun deleteLogin() {
+        val viewDialog = ViewDialog(activity)
+        viewDialog.showDialog()
+
+        LoginsRepository.deleteLogin(login!!, object: LoginDeleteListener {
+            override fun onLoginDeleted() {
+                LoginsRepository.retrieveLoginsByAccountID(AuthRepository.getUserID(), object:
+                    LoginRetrieveListener {
+                    override fun onLoginsRetrieveSuccess(logins: ArrayList<Login>) {
+                        viewDialog.hideDialog()
+                        GateKeeperApplication.logins = logins
+                        val data = Intent()
+                        setResult(LoginsRepository.deleteLoginSuccess, data)
+
+                        finish()
+                    }
+
+                    override fun onLoginsRetrieveError(e: Exception) {
+                        viewDialog.hideDialog()
+                        val data = Intent()
+                        setResult(LoginsRepository.createLoginError, data)
+                        finish()
+                    }
+                })
+            }
+        })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (login != null) {
+            menuInflater.inflate(R.menu.create_login_menu, menu)
+        }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_delete) { deleteLogin() }
+        return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

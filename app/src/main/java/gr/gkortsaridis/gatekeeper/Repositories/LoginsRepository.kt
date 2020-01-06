@@ -13,6 +13,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
+import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import java.util.concurrent.CompletableFuture
 
@@ -21,6 +22,7 @@ object LoginsRepository {
     val createLoginRequestCode = 1
     val createLoginSuccess = 2
     val createLoginError = 3
+    val deleteLoginSuccess = 4
 
     fun encryptAndStoreLogin(activity: Activity, login: Login, listener: LoginCreateListener) {
         val viewDialog = ViewDialog(activity)
@@ -172,5 +174,15 @@ object LoginsRepository {
         return decryptedLogins
     }
 
+    fun deleteLogin(login: Login, listener: LoginDeleteListener) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("logins")
+            .document(login.id)
+            .delete()
+            .addOnCompleteListener {
+                listener.onLoginDeleted()
+            }
+
+    }
 
 }

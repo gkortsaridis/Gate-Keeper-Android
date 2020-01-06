@@ -31,6 +31,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.deleteLoginSuccess
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
@@ -110,6 +111,9 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         if (requestCode == createLoginRequestCode && resultCode == createLoginSuccess) {
             updateUI()
             Toast.makeText(context, "Login successfully created", Toast.LENGTH_SHORT).show()
+        } else if (resultCode == deleteLoginSuccess) {
+            updateUI()
+            Toast.makeText(context, "Login successfully deleted", Toast.LENGTH_SHORT).show()
         }
 
         super.onActivityResult(requestCode, resultCode, data)

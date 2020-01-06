@@ -12,3 +12,7 @@ interface LoginCreateListener {
     fun onLoginCreated()
     fun onLoginCreateError()
 }
+
+interface LoginDeleteListener {
+    fun onLoginDeleted()
+}
