@@ -18,7 +18,6 @@ import android.view.autofill.AutofillManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -81,7 +80,7 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         loginsRV.adapter =
             LoginsRecyclerViewAdapter(
                 activity.baseContext,
-                LoginsRepository.filterLoginsByCurrentVaultAndFolder(GateKeeperApplication.logins),
+                LoginsRepository.filterLoginsByCurrentVault(GateKeeperApplication.logins),
                 activity.packageManager,
                 this
             )

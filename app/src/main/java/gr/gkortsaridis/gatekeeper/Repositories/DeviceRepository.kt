@@ -29,7 +29,7 @@ object DeviceRepository {
                 val devicesResult = ArrayList<Device>()
 
                 for (document in result) {
-                    val encryptedDevice = document["device"] as String
+                    val encryptedDevice = (document["device"] ?: "")as String
                     val decryptedDevice = Gson().fromJson(encryptedDevice, Device::class.java)
                     if (decryptedDevice != null){
                         devicesResult.add(decryptedDevice)

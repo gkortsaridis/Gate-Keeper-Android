@@ -1,5 +1,6 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
@@ -8,6 +9,7 @@ import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
+import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
 import java.util.concurrent.CompletableFuture
@@ -105,6 +107,49 @@ object VaultRepository {
         }
 
         return vaultToReturn
+    }
+
+    fun renameVault(newName: String, vault: Vault, listener: VaultEditListener) {
+
+        vault.name = newName
+
+        val vaulthash = hashMapOf(
+            "name" to vault.name,
+            "account_id" to AuthRepository.getUserID()
+        )
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("vaults")
+            .document(vault.id)
+            .set(vaulthash)
+            .addOnCompleteListener {
+                listener.onVaultRenamed()
+            }
+
+    }
+
+    fun deleteVault(vault: Vault, listener: VaultEditListener) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("vaults")
+            .document(vault.id)
+            .delete()
+            .addOnCompleteListener {
+                retrieveVaultsByAccountID(vault.account_id, object: VaultRetrieveListener{
+                    override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
+                        GateKeeperApplication.vaults = vaults
+                        listener.onVaultDeleted()
+                    }
+
+                    override fun onVaultsRetrieveError(e: Exception) {
+                        listener.onVaultDeleted()
+                    }
+                })
+            }
+
+        val vaultLogins = LoginsRepository.filterLoginsByVault(GateKeeperApplication.logins, vault)
+        for (login in vaultLogins) {
+            LoginsRepository.deleteLogin(login, null)
+        }
     }
 
 }

@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken
 import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
@@ -127,12 +128,16 @@ object LoginsRepository {
 
     }
 
-    fun filterLoginsByCurrentVaultAndFolder(logins: ArrayList<Login>): ArrayList<Login> {
+    fun filterLoginsByVault(logins: ArrayList<Login>, vault: Vault): ArrayList<Login> {
         val filtered = logins.filter {
-            it.vault_id == VaultRepository.getLastActiveVault().id
+            it.vault_id == vault.id
         }
 
         return ArrayList(filtered)
+    }
+
+    fun filterLoginsByCurrentVault(logins: ArrayList<Login>): ArrayList<Login> {
+        return filterLoginsByVault(logins, VaultRepository.getLastActiveVault())
     }
 
     fun getLoginById(loginId: String): Login? {
@@ -174,13 +179,13 @@ object LoginsRepository {
         return decryptedLogins
     }
 
-    fun deleteLogin(login: Login, listener: LoginDeleteListener) {
+    fun deleteLogin(login: Login, listener: LoginDeleteListener?) {
         val db = FirebaseFirestore.getInstance()
         db.collection("logins")
             .document(login.id)
             .delete()
             .addOnCompleteListener {
-                listener.onLoginDeleted()
+                listener?.onLoginDeleted()
             }
 
     }
