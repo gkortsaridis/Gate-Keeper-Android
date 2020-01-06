@@ -61,7 +61,12 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         vaultName = view.findViewById(R.id.vault_name)
 
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode)}
-        vaultView.setOnClickListener{ startActivityForResult(Intent(activity, SelectVaultActivity::class.java), createLoginRequestCode)}
+        vaultView.setOnClickListener{
+            val intent = Intent(activity, SelectVaultActivity::class.java)
+            intent.putExtra("action", "change_login_list_vault")
+            intent.putExtra("vault_id",VaultRepository.getLastActiveVault().id)
+            startActivityForResult(intent, createLoginRequestCode)
+        }
 
 
         return view

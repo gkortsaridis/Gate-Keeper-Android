@@ -57,12 +57,13 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener {
     }
 
     override fun onVaultClicked(vault: Vault) {
-        if (intent.getStringExtra("action") == "change_login_vault") {
+        val action = intent.getStringExtra("action")
+        if (action == "change_login_vault") {
             val intent = Intent()
             intent.data = Uri.parse(vault.id)
             setResult(Activity.RESULT_OK, intent)
             finish()
-        }else{
+        }else if (action == "change_login_list_vault") {
             VaultRepository.setActiveVault(vault)
             finish()
         }

@@ -94,7 +94,6 @@ class CreateLoginActivity : AppCompatActivity() {
 
             vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
 
-
             name.setText(login?.name)
             username.setText(login?.username)
             password.setText(login?.password)
