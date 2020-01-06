@@ -1,6 +1,9 @@
 package gr.gkortsaridis.gatekeeper.UI.Vaults
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.view.ViewGroup
@@ -29,10 +32,13 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener {
     private lateinit var vaultsRecyclerView: RecyclerView
     private lateinit var toolbar: Toolbar
     private lateinit var addVaultFab: FloatingActionButton
+    private var vaultId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_vault)
+
+        vaultId = intent.getStringExtra("vault_id")
 
         addVaultFab = findViewById(R.id.add_vault)
         toolbar = findViewById(R.id.toolbar)
@@ -51,8 +57,16 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener {
     }
 
     override fun onVaultClicked(vault: Vault) {
-        VaultRepository.setActiveVault(vault)
-        finish()
+        if (intent.getStringExtra("action") == "change_login_vault") {
+            val intent = Intent()
+            intent.data = Uri.parse(vault.id)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }else{
+            VaultRepository.setActiveVault(vault)
+            finish()
+        }
+
     }
 
     override fun onVaultEditClicked(vault: Vault) {
@@ -100,7 +114,7 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener {
     }
 
     private fun updateVaultsRecyclerView() {
-        vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(this, GateKeeperApplication.vaults, this)
+        vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(this, GateKeeperApplication.vaults, vaultId, this)
     }
 
     private fun createVault() {

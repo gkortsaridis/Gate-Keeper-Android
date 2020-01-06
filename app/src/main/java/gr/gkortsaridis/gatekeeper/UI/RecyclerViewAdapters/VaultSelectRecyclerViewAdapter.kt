@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters
 
 import android.content.Context
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import gr.gkortsaridis.gatekeeper.R
 class VaultSelectRecyclerViewAdapter(
     private val context: Context,
     private val vaults: ArrayList<Vault>,
+    private val active_vault: String?,
     private val listener: VaultClickListener): RecyclerView.Adapter<VaultSelectRecyclerViewAdapter.VaultViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VaultViewHolder {
@@ -28,7 +30,7 @@ class VaultSelectRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: VaultViewHolder, position: Int) {
         val vaultItem = vaults[position]
-        holder.bindVault(vaultItem, listener)
+        holder.bindVault(vaultItem, active_vault, listener)
     }
 
     class VaultViewHolder(v: View): RecyclerView.ViewHolder(v) {
@@ -43,14 +45,16 @@ class VaultSelectRecyclerViewAdapter(
             editView = v.findViewById(R.id.vault_edit_container)
             deleteView = v.findViewById(R.id.vault_delete_container)
             vaultName = v.findViewById(R.id.vault_name)
-
         }
 
-        fun bindVault(vault: Vault, listener: VaultClickListener){
+        fun bindVault(vault: Vault, activeVault: String?, listener: VaultClickListener){
             view?.setOnClickListener{ listener.onVaultClicked(vault) }
             editView?.setOnClickListener { listener.onVaultEditClicked(vault) }
             deleteView?.setOnClickListener { listener.onVaultDeleteClicked(vault) }
             this.vaultName?.text = vault.name
+            if (vault.id == activeVault) {
+                this.vaultName?.typeface = Typeface.DEFAULT_BOLD
+            }
         }
 
     }
