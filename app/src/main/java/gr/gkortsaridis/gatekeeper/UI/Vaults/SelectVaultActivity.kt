@@ -125,7 +125,7 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
     }
 
     private fun updateVaultsRecyclerView() {
-        vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(this, GateKeeperApplication.vaults, vaultId, this)
+        vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(this, ArrayList(GateKeeperApplication.vaults.sortedWith(compareBy {it.name})), vaultId, this)
     }
 
     private fun createVault() {
