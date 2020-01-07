@@ -11,3 +11,7 @@ interface NoteRetrieveListener {
     fun onNotesRetrieved(notes: ArrayList<Note>)
     fun onNotesRetrievedError(e: Exception)
 }
+
+interface NoteClickListener {
+    fun onNoteClicked(note: Note)
+}
