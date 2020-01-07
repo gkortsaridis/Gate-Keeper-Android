@@ -9,6 +9,12 @@
             android:id="@+id/nav_item_cards"
             android:icon="@drawable/credit_cards"
             android:title="@string/cards" />
+
+        <item
+            android:id="@+id/nav_item_notes"
+            android:icon="@drawable/note"
+            android:title="@string/notes" />
+
         <item
             android:id="@+id/nav_item_devices"
             android:icon="@drawable/phone"

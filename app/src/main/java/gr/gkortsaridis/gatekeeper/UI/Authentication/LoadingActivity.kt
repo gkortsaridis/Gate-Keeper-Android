@@ -5,21 +5,15 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import gr.gkortsaridis.gatekeeper.Entities.CreditCard
-import gr.gkortsaridis.gatekeeper.Entities.Device
-import gr.gkortsaridis.gatekeeper.Entities.Login
-import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
-import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
-import gr.gkortsaridis.gatekeeper.Interfaces.DevicesRetrieveListener
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
-import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
+import gr.gkortsaridis.gatekeeper.Interfaces.*
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.*
 import gr.gkortsaridis.gatekeeper.UI.MainActivity
 
 
-class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetrieveListener, CreditCardRetrieveListener, DevicesRetrieveListener {
+class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetrieveListener, CreditCardRetrieveListener, DevicesRetrieveListener, NoteRetrieveListener {
 
     private val TAG = "_Loading_Activity_"
 
@@ -27,6 +21,7 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
     private var vaultsOk : Boolean = false
     private var devicesOk: Boolean = false
     private var cardsOk  : Boolean = false
+    private var notesOk  : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +31,7 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
         VaultRepository.retrieveVaultsByAccountID(AuthRepository.getUserID(), this)
         CreditCardRepository.retrieveCardsByAccountID(AuthRepository.getUserID(), this)
         DeviceRepository.retrieveDevicesByAccountID(AuthRepository.getUserID(), this)
+        NotesRepository.retrieveNotesByAccountID(AuthRepository.getUserID(), this)
     }
 
     private fun openMainApplication() {
@@ -72,6 +68,18 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
         devicesOk = true
         openMainApplication()
     }
+
+    override fun onNotesRetrieved(notes: ArrayList<Note>) {
+        GateKeeperApplication.notes = notes
+        notesOk = true
+        openMainApplication()
+    }
+
+    override fun onNotesRetrievedError(e: java.lang.Exception) {
+        e.printStackTrace()
+        showLoadingError()
+    }
+
 
     override fun onLoginsRetrieveError(e: Exception) {
         e.printStackTrace()

@@ -18,6 +18,7 @@ import gr.gkortsaridis.gatekeeper.UI.Account.MyAccountFragment
 import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
 import gr.gkortsaridis.gatekeeper.UI.Devices.DevicesFragment
 import gr.gkortsaridis.gatekeeper.UI.Logins.LoginsFragment
+import gr.gkortsaridis.gatekeeper.UI.Notes.NotesFragment
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -71,6 +72,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_item_cards -> { fragmentToReplace =
                 CardsFragment(this)
+            }
+            R.id.nav_item_notes -> { fragmentToReplace =
+                NotesFragment(this)
             }
             R.id.nav_item_account -> { fragmentToReplace =
                 MyAccountFragment()
