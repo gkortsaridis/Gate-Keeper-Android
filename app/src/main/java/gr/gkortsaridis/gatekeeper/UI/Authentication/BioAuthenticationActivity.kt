@@ -25,11 +25,7 @@ class BioAuthenticationActivity : AppCompatActivity() {
             showBioAuth(loadedCredentials)
         } else {
             Toast.makeText(applicationContext, "Could not load user credentials. Please log in using password to enable biometric authentication", Toast.LENGTH_LONG).show()
-
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION
-            startActivity(intent)
-            overridePendingTransition(0, 0)
+            goToPassword()
         }
 
     }
@@ -40,7 +36,8 @@ class BioAuthenticationActivity : AppCompatActivity() {
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    Toast.makeText(applicationContext, "Authentication error: $errString", Toast.LENGTH_SHORT).show()
+                    if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) { goToPassword() }
+                    else { Toast.makeText(applicationContext, "Authentication error: $errString", Toast.LENGTH_SHORT).show() }
                 }
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
@@ -68,6 +65,13 @@ class BioAuthenticationActivity : AppCompatActivity() {
             .build()
 
         biometricPrompt.authenticate(promptInfo)
+    }
+
+    private fun goToPassword() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION
+        startActivity(intent)
+        overridePendingTransition(0, 0)
     }
 
 }
