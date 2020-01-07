@@ -59,6 +59,9 @@ dependencies {
 
     //Multilevel expandable listview
     implementation 'com.muditsen.multilevelrecyclerview:multilevelview:1.0.0'
+
+    //Biometric Manager
+    implementation 'androidx.biometric:biometric:1.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

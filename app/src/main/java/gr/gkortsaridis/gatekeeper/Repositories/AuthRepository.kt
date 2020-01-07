@@ -3,7 +3,6 @@ package gr.gkortsaridis.gatekeeper.Repositories
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -20,6 +19,11 @@ import gr.gkortsaridis.gatekeeper.UI.Authentication.LoadingActivity
 
 
 object AuthRepository {
+
+    val signInNotSet = 0
+    val passwordSignIn = 1
+    val bioSignIn = 2
+    val pinSignIn = 3
 
     private val TAG = "_Auth_Repository_"
 
@@ -131,6 +135,10 @@ object AuthRepository {
         }
 
         return userId
+    }
+
+    fun getPreferredAuthType(): Int{
+        return DataRepository.preferredAuthType
     }
 
 }

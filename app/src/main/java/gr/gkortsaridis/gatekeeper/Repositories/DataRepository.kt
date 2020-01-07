@@ -12,6 +12,7 @@ object DataRepository {
     private const val SAVED_CARDS = "saved_cards"
     private const val LAST_ACTIVE_VAULT = "last_active_vault"
     private const val SAVED_USER = "saved_user"
+    private const val AUTH_TYPE = "authentication_type"
 
     private val prefs: SharedPreferences = GateKeeperApplication.instance.getSharedPreferences(PREFS_FILENAME, 0)
 
@@ -38,4 +39,8 @@ object DataRepository {
     var lastActiveVaultId: String?
         get() = prefs.getString(LAST_ACTIVE_VAULT, "")
         set(value) = prefs.edit().putString(LAST_ACTIVE_VAULT, value).apply()
+
+    var preferredAuthType: Int
+        get() = prefs.getInt(AUTH_TYPE, AuthRepository.signInNotSet)
+        set(value) = prefs.edit().putInt(AUTH_TYPE, value).apply()
 }
