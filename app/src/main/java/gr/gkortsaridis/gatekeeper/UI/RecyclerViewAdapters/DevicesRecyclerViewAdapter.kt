@@ -55,6 +55,10 @@ class DevicesRecyclerViewAdapter(
             }
             this.entryDate?.text = device.formattedDate()
             view.setOnClickListener { listener?.onDeviceClicked(device) }
+
+            if (device.isTablet) {
+                this.deviceIcon?.setImageResource(R.drawable.tablet)
+            }
         }
     }
 }
