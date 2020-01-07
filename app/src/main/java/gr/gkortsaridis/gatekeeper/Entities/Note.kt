@@ -8,18 +8,27 @@ import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import java.util.concurrent.CompletableFuture
 
-class Note(firestoreSnapShot: QueryDocumentSnapshot) {
-
+class Note {
     var title: String
     var body: String
     var createDate: Timestamp
     var modifiedDate: Timestamp
     var id: String
-    var account_id: String
+    var accountId: String
 
-    init {
+    constructor(id: String, title: String, body: String, account_id: String, createDate: Timestamp, modifiedDate: Timestamp) {
+        this.id = id
+        this.title = title
+        this.body = body
+        this.createDate = createDate
+        this.modifiedDate = modifiedDate
+        this.accountId = account_id
+    }
+
+
+    constructor(firestoreSnapShot: QueryDocumentSnapshot) {
         id = firestoreSnapShot.id
-        account_id = firestoreSnapShot["account_id"] as String
+        accountId = firestoreSnapShot["accountId"] as String
         title = firestoreSnapShot["title"] as String
         body = firestoreSnapShot["body"] as String
         createDate = firestoreSnapShot["createDate"] as Timestamp

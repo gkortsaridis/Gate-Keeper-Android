@@ -35,7 +35,7 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
     }
 
     private fun openMainApplication() {
-        if (loginsOk && vaultsOk && devicesOk && cardsOk) {
+        if (loginsOk && vaultsOk && devicesOk && cardsOk && notesOk) {
             DeviceRepository.logCurrentLogin(this)
 
             val intent = Intent(this, MainActivity::class.java)

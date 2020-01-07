@@ -4,8 +4,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
-import gr.gkortsaridis.gatekeeper.Entities.Device
-import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteRetrieveListener
@@ -13,13 +11,13 @@ import java.util.concurrent.CompletableFuture
 
 object NotesRepository {
 
-    fun createNote(note: Note, listener: NoteCreateListener) {
+    fun createNote(note: Note, listener: NoteCreateListener?) {
         val db = FirebaseFirestore.getInstance()
 
         db.collection("notes")
             .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "note" to note.encrypt() ))
             .addOnCompleteListener {
-                listener.onNoteCreated(note)
+                listener?.onNoteCreated(note)
             }
     }
 
@@ -35,6 +33,7 @@ object NotesRepository {
                     val encryptedNote = (document["note"] ?: "")as String
                     val decryptedNote = decryptNote(encryptedNote)
                     if (decryptedNote != null) {
+                        decryptedNote.id = document.id
                         notesResult.add(decryptedNote)
                     }
                 }
