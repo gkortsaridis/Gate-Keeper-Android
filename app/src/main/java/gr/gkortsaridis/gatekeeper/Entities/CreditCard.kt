@@ -7,34 +7,18 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import java.io.Serializable
 import java.util.concurrent.CompletableFuture
 
-enum class CardType {
-    Mastercard,
-    Visa,
-    Amex,
-    DiscoverCard,
-    DinersClub
-}
+data class CreditCard( var id: String = "-1",
+                       var cardName: String,
+                       var type: CardType,
+                       var bank: Bank,
+                       var number: String,
+                       var expirationDate: String,
+                       var cvv: String,
+                       var cardholderName: String,
+                       var accountId: String): Serializable {
 
-enum class Bank {
-    Monzo,
-    HSBC,
-    Barclays,
-    Lloyds
-}
 
-class CreditCard: Serializable {
-
-    var id: String
-    var cardName: String
-    var type: CardType
-    var bank: Bank
-    var number: String
-    var expirationDate: String
-    var cvv: String
-    var cardholderName: String
-    var accountId: String
-
-    constructor(cardName: String,bank: Bank, type: CardType, number: String, expirationDate: String, cvv: String, cardholderName: String, accountId: String) {
+    /*constructor(cardName: String,bank: Bank, type: CardType, number: String, expirationDate: String, cvv: String, cardholderName: String, accountId: String) {
         this.id = "-1"
         this.cardName = cardName
         this.bank = bank
@@ -44,7 +28,7 @@ class CreditCard: Serializable {
         this.cvv = cvv
         this.cardholderName = cardholderName
         this.accountId = accountId
-    }
+    }*/
 
     fun encrypt() : String {
         val decrypted = Gson().toJson(this)

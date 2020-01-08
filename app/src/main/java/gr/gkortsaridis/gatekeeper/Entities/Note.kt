@@ -6,27 +6,21 @@ import com.google.gson.Gson
 import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import java.io.Serializable
 import java.util.concurrent.CompletableFuture
 
-class Note {
-    var title: String
-    var body: String
-    var createDate: Timestamp
-    var modifiedDate: Timestamp
-    var id: String
-    var accountId: String
+data class Note( var title: String,
+                 var body: String,
+                 var createDate: Timestamp,
+                 var modifiedDate: Timestamp,
+                 var id: String,
+                 var accountId: String) : Serializable {
 
-    constructor(id: String, title: String, body: String, account_id: String, createDate: Timestamp, modifiedDate: Timestamp) {
-        this.id = id
-        this.title = title
-        this.body = body
-        this.createDate = createDate
-        this.modifiedDate = modifiedDate
-        this.accountId = account_id
-    }
+    constructor(firestoreSnapShot: QueryDocumentSnapshot)
+                        //Initialize with dummy data
+            : this("","", Timestamp.now(), Timestamp.now(),"","") {
 
-
-    constructor(firestoreSnapShot: QueryDocumentSnapshot) {
+        //Then put the actual data on the object
         id = firestoreSnapShot.id
         accountId = firestoreSnapShot["accountId"] as String
         title = firestoreSnapShot["title"] as String

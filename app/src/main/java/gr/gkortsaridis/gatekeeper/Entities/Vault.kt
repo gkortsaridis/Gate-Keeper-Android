@@ -2,13 +2,11 @@ package gr.gkortsaridis.gatekeeper.Entities
 
 import com.google.firebase.firestore.QueryDocumentSnapshot
 
-class Vault {
+data class Vault( var id: String,
+                  var account_id : String,
+                  var name : String ) {
 
-    var id: String
-    var account_id : String
-    var name : String
-
-    constructor(firestoreSnapShot: QueryDocumentSnapshot) {
+    constructor(firestoreSnapShot: QueryDocumentSnapshot) : this("","","") {
         id = firestoreSnapShot.id
         account_id = firestoreSnapShot["account_id"] as String
         name = firestoreSnapShot["name"] as String
