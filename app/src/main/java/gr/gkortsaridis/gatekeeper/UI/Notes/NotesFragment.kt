@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.UI.Notes
 
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,14 +10,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.google.android.gms.common.internal.ResourceUtils
 import gr.gkortsaridis.gatekeeper.Entities.Note
-import gr.gkortsaridis.gatekeeper.Entities.dp
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.GridItemDecoration
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.NotesRecyclerViewAdapter
+import java.io.Serializable
 
 class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListener {
 
@@ -29,16 +28,19 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
 
         notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
         notesRecyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        //This will for default android divider
-        notesRecyclerView.adapter = NotesRecyclerViewAdapter(activity, GateKeeperApplication.notes, this)
-
-        //val note = Note(id = "0",title = "Test1", body = "body 1", account_id = AuthRepository.getUserID(), createDate = Timestamp.now(), modifiedDate = Timestamp.now())
-        //NotesRepository.createNote(note, null)
+        updateUI()
 
         return view
     }
 
+    private fun updateUI() {
+        notesRecyclerView.adapter = NotesRecyclerViewAdapter(activity, GateKeeperApplication.notes, this)
+    }
+
     override fun onNoteClicked(note: Note) {
+        val intent = Intent(activity, NoteActivity::class.java)
+        intent.putExtra("note_id", note.id)
+        startActivityForResult(intent,0)
     }
 
 }

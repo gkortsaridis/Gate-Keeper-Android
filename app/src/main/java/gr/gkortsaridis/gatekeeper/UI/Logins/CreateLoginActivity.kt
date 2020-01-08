@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.google.firebase.Timestamp
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
@@ -160,7 +161,9 @@ class CreateLoginActivity : AppCompatActivity() {
             password = password.text.toString(),
             username = username.text.toString(),
             url = app_package,
-            notes = notes.text.toString()
+            notes = notes.text.toString(),
+            date_created = Timestamp.now(),
+            date_modified = Timestamp.now()
         )
 
         LoginsRepository.encryptAndStoreLogin(this, loginObj, object : LoginCreateListener{

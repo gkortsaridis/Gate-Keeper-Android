@@ -44,8 +44,13 @@ class BioAuthenticationActivity : AppCompatActivity() {
                     super.onAuthenticationSucceeded(result)
                     AuthRepository.signIn(activity, credentials.email, credentials.password, false, object: SignInListener{
                         override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
-                            AuthRepository.setApplicationUser(user.authResult!!.user!!)
-                            AuthRepository.proceedLoggedIn(activity)
+                            if (success) {
+                                AuthRepository.setApplicationUser(user.authResult!!.user!!)
+                                AuthRepository.proceedLoggedIn(activity)
+                            }else {
+                                Toast.makeText(activity, user.exception.toString(), Toast.LENGTH_SHORT).show()
+                            }
+
                         }
 
                         override fun onRegistrationNeeded(email: String) { }

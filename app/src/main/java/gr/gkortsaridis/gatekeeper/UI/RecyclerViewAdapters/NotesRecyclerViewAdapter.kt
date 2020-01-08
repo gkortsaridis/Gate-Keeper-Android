@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,10 +9,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Note
+import gr.gkortsaridis.gatekeeper.Entities.NoteColor
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 
 class NotesRecyclerViewAdapter(
     private val context: Context,
@@ -48,9 +50,11 @@ class NotesRecyclerViewAdapter(
             noteTitle?.text = note.title
             noteBody?.text = note.body
             val modifiedDate = note.modifiedDate.toDate()
-            val formatter = SimpleDateFormat("dd/mm/yy hh:mm")
-            var formattedDate = formatter.format(modifiedDate)
+            val formatter = SimpleDateFormat(GateKeeperConstants.simpleDateFormat)
+            val formattedDate = formatter.format(modifiedDate)
             noteModified?.text = formattedDate
+            view?.setBackgroundColor(Color.parseColor(note.color?.value  ?: NoteColor.White.value))
+            view?.setOnClickListener { listener.onNoteClicked(note) }
         }
     }
 }

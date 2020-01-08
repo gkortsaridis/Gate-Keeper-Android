@@ -2,6 +2,6 @@ package gr.gkortsaridis.gatekeeper.Utils
 
 object GateKeeperConstants {
 
-    val simpleDateFormat = "dd/mm/yy hh:mm"
+    val simpleDateFormat = "dd/MM/yy HH:mm"
 
 }

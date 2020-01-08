@@ -12,14 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UI.Authentication.BioAuthenticationActivity"></activity>
-        <activity android:name=".UI.Authentication.AuthenticationBaseActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".UI.Notes.NoteActivity"/>
+        <activity android:name=".UI.Authentication.BioAuthenticationActivity" />
         <activity android:name=".UI.Logins.ApplicationSelector" />
         <activity android:name=".UI.Vaults.SelectVaultActivity" />
         <activity android:name=".UI.Authentication.CreatePasswordActivity" />
@@ -28,7 +22,12 @@
         <activity android:name=".UI.Authentication.LoadingActivity" />
         <activity android:name=".UI.Authentication.LoginActivity" />
         <activity android:name=".UI.MainActivity" />
-
+        <activity android:name=".UI.Authentication.AuthenticationBaseActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <service
             android:name=".GateKeeperAutoFillServiceL"
             android:label="GateKeeper Autofill Service"

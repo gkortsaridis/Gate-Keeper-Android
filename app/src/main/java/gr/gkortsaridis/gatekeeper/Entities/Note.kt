@@ -14,11 +14,12 @@ data class Note( var title: String,
                  var createDate: Timestamp,
                  var modifiedDate: Timestamp,
                  var id: String,
-                 var accountId: String) : Serializable {
+                 var accountId: String,
+                 var color: NoteColor?) {
 
     constructor(firestoreSnapShot: QueryDocumentSnapshot)
                         //Initialize with dummy data
-            : this("","", Timestamp.now(), Timestamp.now(),"","") {
+            : this("","", Timestamp.now(), Timestamp.now(),"","", NoteColor.White) {
 
         //Then put the actual data on the object
         id = firestoreSnapShot.id
@@ -27,6 +28,16 @@ data class Note( var title: String,
         body = firestoreSnapShot["body"] as String
         createDate = firestoreSnapShot["createDate"] as Timestamp
         modifiedDate = firestoreSnapShot["modifiedDate"] as Timestamp
+        val c = firestoreSnapShot["color"] as String
+        if (c == "White") {
+            color = NoteColor.White
+        }else if (c == "Red") {
+            color = NoteColor.Red
+        }else if (c == "Yellow") {
+            color = NoteColor.Yellow
+        }else if (c == "Blue") {
+            color = NoteColor.Blue
+        }
     }
 
     fun encrypt() : String {

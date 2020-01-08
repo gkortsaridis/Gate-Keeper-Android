@@ -1,7 +1,5 @@
 package gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.view.LayoutInflater
@@ -9,14 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Login
-import gr.gkortsaridis.gatekeeper.Entities.dp
+import gr.gkortsaridis.gatekeeper.Utils.dp
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
-import org.jetbrains.anko.find
 
 
 class LoginsRecyclerViewAdapter(

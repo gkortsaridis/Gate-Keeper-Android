@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.Note
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteRetrieveListener
 import java.util.concurrent.CompletableFuture
@@ -19,6 +20,16 @@ object NotesRepository {
             .addOnCompleteListener {
                 listener?.onNoteCreated(note)
             }
+    }
+
+    fun getNoteById(noteId: String): Note? {
+        for (note in GateKeeperApplication.notes) {
+            if (noteId == note.id) {
+                return note
+            }
+        }
+
+        return null
     }
 
     fun retrieveNotesByAccountID(accountID: String, retrieveListener: NoteRetrieveListener) {

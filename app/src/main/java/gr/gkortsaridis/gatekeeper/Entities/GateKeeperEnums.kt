@@ -14,3 +14,10 @@ enum class Bank {
     Barclays,
     Lloyds
 }
+
+enum class NoteColor(val value: String) {
+    Red("#ff0000"),
+    Yellow("#ffff00"),
+    Blue("#0000ff"),
+    White("#fafafa")
+}
