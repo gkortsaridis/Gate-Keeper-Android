@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
 import gr.gkortsaridis.gatekeeper.R
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 
 class NotesRecyclerViewAdapter(
     private val context: Context,
@@ -45,7 +47,10 @@ class NotesRecyclerViewAdapter(
         fun bindView(note: Note, listener: NoteClickListener) {
             noteTitle?.text = note.title
             noteBody?.text = note.body
-            noteModified?.text = note.modifiedDate.toString()
+            val modifiedDate = note.modifiedDate.toDate()
+            val formatter = SimpleDateFormat("dd/mm/yy hh:mm")
+            var formattedDate = formatter.format(modifiedDate)
+            noteModified?.text = formattedDate
         }
     }
 }
