@@ -2,11 +2,13 @@ package gr.gkortsaridis.gatekeeper.UI.Notes
 
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.Timestamp
@@ -22,6 +24,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import java.text.SimpleDateFormat
+
 
 class NoteActivity : AppCompatActivity() {
 
@@ -45,6 +48,7 @@ class NoteActivity : AppCompatActivity() {
 
     private lateinit var noteColor: NoteColor
     private lateinit var note : Note
+    private lateinit var sheetBehavior : BottomSheetBehavior<LinearLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +97,7 @@ class NoteActivity : AppCompatActivity() {
 
         noteTitle.setText(note.title)
         deleteNote.setOnClickListener { deleteNote() }
-        val sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
+        sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
         noteExtraBtn.setOnClickListener { sheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
 
         circleBlue.setOnClickListener { changeColor(NoteColor.Blue) }
@@ -130,6 +134,21 @@ class NoteActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         updateNoteAndFinish()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev?.action === MotionEvent.ACTION_DOWN) {
+            if (sheetBehavior.state === BottomSheetBehavior.STATE_EXPANDED) {
+                val outRect = Rect()
+                bottomSheetLayout.getGlobalVisibleRect(outRect)
+
+                if (!outRect.contains(ev?.rawX.toInt(), ev.rawY.toInt())){
+                    sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                }
+            }
+        }
+
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun deleteNote() {
