@@ -13,8 +13,10 @@ import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.NoteColor
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteUpdateListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import java.text.SimpleDateFormat
@@ -48,7 +50,19 @@ class NoteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_note)
 
         val noteId = intent.getStringExtra("note_id")!!
-        note = NotesRepository.getNoteById(noteId)!!
+        if (noteId != "-1") {
+            note = NotesRepository.getNoteById(noteId)!!
+        }else {
+            note = Note(
+                title= "",
+                body = "",
+                modifiedDate = Timestamp.now(),
+                createDate = Timestamp.now(),
+                id= "",
+                accountId = AuthRepository.getUserID(),
+                isPinned = false,
+                color = NoteColor.White)
+        }
         noteColor = note.color ?: NoteColor.White
 
         toolbar = findViewById(R.id.toolbar)
@@ -122,14 +136,27 @@ class NoteActivity : AppCompatActivity() {
         note.body = noteBody.text.toString()
         note.modifiedDate = Timestamp.now()
         note.color = noteColor
-        NotesRepository.updateNote(note, object : NoteUpdateListener{
-            override fun onNoteUpdated(note: Note) {
-                GateKeeperApplication.notes.replaceAll { if (it.id == note.id) note else it }
-                viewDialog.hideDialog()
-                val intent = Intent()
-                setResult(1, intent)
-                finish()
-            }
-        })
+        if (note.id != "") {
+            NotesRepository.updateNote(note, object : NoteUpdateListener{
+                override fun onNoteUpdated(note: Note) {
+                    GateKeeperApplication.notes.replaceAll { if (it.id == note.id) note else it }
+                    viewDialog.hideDialog()
+                    val intent = Intent()
+                    setResult(1, intent)
+                    finish()
+                }
+            })
+        }else {
+            NotesRepository.createNote(note, object : NoteCreateListener{
+                override fun onNoteCreated(note: Note) {
+                    GateKeeperApplication.notes.add(note)
+                    viewDialog.hideDialog()
+                    val intent = Intent()
+                    setResult(1, intent)
+                    finish()
+                }
+            })
+        }
+
     }
 }

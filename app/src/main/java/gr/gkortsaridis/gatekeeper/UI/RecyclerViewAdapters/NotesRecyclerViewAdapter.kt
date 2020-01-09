@@ -31,7 +31,7 @@ class NotesRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: NoteStaggeredViewHolder, position: Int) {
         val noteItem = notes[position]
-        holder.bindView(noteItem, listener)
+        holder.bindView(noteItem, context, listener)
     }
     class NoteStaggeredViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private var noteTitle: TextView? = null
@@ -46,8 +46,9 @@ class NotesRecyclerViewAdapter(
             view = v.findViewById(R.id.note_container)
         }
 
-        fun bindView(note: Note, listener: NoteClickListener) {
+        fun bindView(note: Note, context: Context, listener: NoteClickListener) {
             noteTitle?.text = note.title
+            noteTitle?.setTextColor(context.resources.getColor(R.color.mate_black))
             noteBody?.text = note.body
             val modifiedDate = note.modifiedDate.toDate()
             val formatter = SimpleDateFormat(GateKeeperConstants.simpleDateFormat)

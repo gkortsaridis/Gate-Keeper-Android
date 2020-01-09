@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
@@ -19,18 +20,26 @@ import java.io.Serializable
 
 class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListener {
 
-
+    private lateinit var addNoteFab : FloatingActionButton
     private lateinit var notesRecyclerView : RecyclerView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_notes, container, false)
 
+        addNoteFab = view.findViewById(R.id.add_note)
         notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
         notesRecyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         updateUI()
+        addNoteFab.setOnClickListener { addNote() }
 
         return view
+    }
+
+    private fun addNote() {
+        val intent = Intent(activity, NoteActivity::class.java)
+        intent.putExtra("note_id", "-1")
+        startActivityForResult(intent,0)
     }
 
     private fun updateUI() {

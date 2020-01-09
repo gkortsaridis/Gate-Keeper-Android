@@ -25,6 +25,7 @@
             android:layout_marginLeft="70dp"
             android:layout_marginTop="16dp"
             tools:text="Note Title"
+            android:hint="Title"
             android:id="@+id/note_title"
             android:background="@null"
             android:cursorVisible="true"
@@ -41,6 +42,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/note_body"
                 android:padding="16dp"
+                android:hint="Body"
                 android:text="This is the body"
                 android:background="@null"
                 android:cursorVisible="true"/>
