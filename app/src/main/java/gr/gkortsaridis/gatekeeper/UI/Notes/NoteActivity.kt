@@ -5,6 +5,7 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -14,6 +15,7 @@ import gr.gkortsaridis.gatekeeper.Entities.NoteColor
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
+import gr.gkortsaridis.gatekeeper.Interfaces.NoteDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteUpdateListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
@@ -23,8 +25,6 @@ import java.text.SimpleDateFormat
 
 class NoteActivity : AppCompatActivity() {
 
-    private lateinit var note : Note
-
     private lateinit var toolbar: Toolbar
     private lateinit var noteTitle: EditText
     private lateinit var noteBody : EditText
@@ -33,7 +33,7 @@ class NoteActivity : AppCompatActivity() {
     private lateinit var bottomSheetLayout: LinearLayout
     private lateinit var bottomSheetContainer: RelativeLayout
     private lateinit var noteBackground: RelativeLayout
-
+    private lateinit var deleteNote: LinearLayout
     private lateinit var circleBlue: Button
     private lateinit var circleCream: Button
     private lateinit var circleGreen: Button
@@ -44,41 +44,17 @@ class NoteActivity : AppCompatActivity() {
     private lateinit var circleYellow: Button
 
     private lateinit var noteColor: NoteColor
+    private lateinit var note : Note
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
 
-        val noteId = intent.getStringExtra("note_id")!!
-        if (noteId != "-1") {
-            note = NotesRepository.getNoteById(noteId)!!
-        }else {
-            note = Note(
-                title= "",
-                body = "",
-                modifiedDate = Timestamp.now(),
-                createDate = Timestamp.now(),
-                id= "",
-                accountId = AuthRepository.getUserID(),
-                isPinned = false,
-                color = NoteColor.White)
-        }
-        noteColor = note.color ?: NoteColor.White
-
         toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.title = ""
-
+        deleteNote = findViewById(R.id.delete_note)
         noteTitle = findViewById(R.id.note_title)
-        noteTitle.setText(note.title)
-
         noteExtraBtn = findViewById(R.id.note_extra)
         bottomSheetLayout = findViewById(R.id.bottom_sheet)
-        val sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
-        noteExtraBtn.setOnClickListener { sheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
-
         noteBackground = findViewById(R.id.note_background)
         bottomSheetContainer = findViewById(R.id.bottom_container)
         circleBlue = findViewById(R.id.circle_blue)
@@ -89,6 +65,36 @@ class NoteActivity : AppCompatActivity() {
         circleRed = findViewById(R.id.circle_red)
         circleWhite = findViewById(R.id.circle_white)
         circleYellow = findViewById(R.id.circle_yellow)
+        noteBody = findViewById(R.id.note_body)
+        noteModified = findViewById(R.id.note_modified)
+
+        val noteId = intent.getStringExtra("note_id")!!
+        if (noteId != "-1") {
+            deleteNote.visibility = View.VISIBLE
+            note = NotesRepository.getNoteById(noteId)!!
+        }else {
+            deleteNote.visibility = View.GONE
+            note = Note(
+                title= "",
+                body = "",
+                modifiedDate = Timestamp.now(),
+                createDate = Timestamp.now(),
+                id= "",
+                accountId = AuthRepository.getUserID(),
+                isPinned = false,
+                color = NoteColor.White)
+        }
+
+        noteColor = note.color ?: NoteColor.White
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.title = ""
+
+        noteTitle.setText(note.title)
+        deleteNote.setOnClickListener { deleteNote() }
+        val sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
+        noteExtraBtn.setOnClickListener { sheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
 
         circleBlue.setOnClickListener { changeColor(NoteColor.Blue) }
         circleCream.setOnClickListener { changeColor(NoteColor.Cream) }
@@ -99,8 +105,6 @@ class NoteActivity : AppCompatActivity() {
         circleWhite.setOnClickListener { changeColor(NoteColor.White) }
         circleYellow.setOnClickListener { changeColor(NoteColor.Yellow) }
 
-        noteBody = findViewById(R.id.note_body)
-        noteModified = findViewById(R.id.note_modified)
         val formatter = SimpleDateFormat(GateKeeperConstants.dateOnlyFormat)
         val formattedDate = formatter.format(note.modifiedDate.toDate())
         noteModified.text = "Edited at $formattedDate"
@@ -128,35 +132,61 @@ class NoteActivity : AppCompatActivity() {
         updateNoteAndFinish()
     }
 
-    private fun updateNoteAndFinish() {
+    private fun deleteNote() {
         val viewDialog = ViewDialog(this)
         viewDialog.showDialog()
 
-        note.title = noteTitle.text.toString()
-        note.body = noteBody.text.toString()
-        note.modifiedDate = Timestamp.now()
-        note.color = noteColor
+        NotesRepository.deleteNote(note, object: NoteDeleteListener{
+            override fun onNoteDeleted() {
+                GateKeeperApplication.notes.remove(note)
+                viewDialog.hideDialog()
+                finishWithResult()
+            }
+        })
+    }
+
+    private fun updateNoteAndFinish() {
+        val viewDialog = ViewDialog(this)
+
         if (note.id != "") {
-            NotesRepository.updateNote(note, object : NoteUpdateListener{
-                override fun onNoteUpdated(note: Note) {
-                    GateKeeperApplication.notes.replaceAll { if (it.id == note.id) note else it }
-                    viewDialog.hideDialog()
-                    val intent = Intent()
-                    setResult(1, intent)
-                    finish()
-                }
-            })
+            if (note.title != noteTitle.text.toString()
+                || note.body != noteBody.text.toString()
+                || note.color != noteColor) {
+
+                note.title = noteTitle.text.toString()
+                note.body = noteBody.text.toString()
+                note.modifiedDate = Timestamp.now()
+                note.color = noteColor
+                viewDialog.showDialog()
+
+                NotesRepository.updateNote(note, object : NoteUpdateListener{
+                    override fun onNoteUpdated(note: Note) {
+                        GateKeeperApplication.notes.replaceAll { if (it.id == note.id) note else it }
+                        viewDialog.hideDialog()
+                        finishWithResult()
+                    }
+                })
+            }
+
         }else {
-            NotesRepository.createNote(note, object : NoteCreateListener{
-                override fun onNoteCreated(note: Note) {
-                    GateKeeperApplication.notes.add(note)
-                    viewDialog.hideDialog()
-                    val intent = Intent()
-                    setResult(1, intent)
-                    finish()
-                }
-            })
+            if (noteTitle.text.toString().trim() != "" || noteBody.text.toString().trim() != "") {
+                viewDialog.showDialog()
+
+                NotesRepository.createNote(note, object : NoteCreateListener{
+                    override fun onNoteCreated(note: Note) {
+                        GateKeeperApplication.notes.add(note)
+                        viewDialog.hideDialog()
+                        finishWithResult()
+                    }
+                })
+            }
         }
 
+    }
+
+    private fun finishWithResult() {
+        val intent = Intent()
+        setResult(1, intent)
+        finish()
     }
 }
