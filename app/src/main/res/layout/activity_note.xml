@@ -19,6 +19,18 @@
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"/>
 
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="16dp"
+            tools:text="Note Title"
+            android:id="@+id/note_title"
+            android:background="@null"
+            android:cursorVisible="true"
+            android:textColor="@color/mate_black"
+            android:textStyle="bold"/>
+
         <ScrollView
             android:layout_below="@+id/toolbar"
             android:layout_width="match_parent"

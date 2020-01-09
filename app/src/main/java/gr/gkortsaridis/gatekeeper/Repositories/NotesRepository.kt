@@ -8,6 +8,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteRetrieveListener
+import gr.gkortsaridis.gatekeeper.Interfaces.NoteUpdateListener
 import java.util.concurrent.CompletableFuture
 
 object NotesRepository {
@@ -19,6 +20,21 @@ object NotesRepository {
             .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "note" to note.encrypt() ))
             .addOnCompleteListener {
                 listener?.onNoteCreated(note)
+            }
+    }
+
+    fun updateNote(note: Note, listener: NoteUpdateListener) {
+        val notehash = hashMapOf(
+            "note" to note.encrypt(),
+            "account_id" to AuthRepository.getUserID()
+        )
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("notes")
+            .document(note.id)
+            .set(notehash)
+            .addOnCompleteListener {
+                listener.onNoteUpdated(note)
             }
     }
 

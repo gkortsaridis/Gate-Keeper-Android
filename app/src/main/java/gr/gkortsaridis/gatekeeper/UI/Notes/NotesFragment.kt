@@ -43,4 +43,9 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
         startActivityForResult(intent,0)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        updateUI()
+    }
+
 }

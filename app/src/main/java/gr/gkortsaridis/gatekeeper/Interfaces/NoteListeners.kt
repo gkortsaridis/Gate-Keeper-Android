@@ -15,3 +15,11 @@ interface NoteRetrieveListener {
 interface NoteClickListener {
     fun onNoteClicked(note: Note)
 }
+
+interface NoteUpdateListener {
+    fun onNoteUpdated(note: Note)
+}
+
+interface NoteDeleteListener {
+    fun onNoteDeleted()
+}
