@@ -22,6 +22,7 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
 
     private lateinit var addNoteFab : FloatingActionButton
     private lateinit var notesRecyclerView : RecyclerView
+    private lateinit var notesAdapter: NotesRecyclerViewAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -30,7 +31,8 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
         addNoteFab = view.findViewById(R.id.add_note)
         notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
         notesRecyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        updateUI()
+        notesAdapter = NotesRecyclerViewAdapter(activity, GateKeeperApplication.notes, this)
+        notesRecyclerView.adapter = notesAdapter
         addNoteFab.setOnClickListener { addNote() }
 
         return view
@@ -43,7 +45,7 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
     }
 
     private fun updateUI() {
-        notesRecyclerView.adapter = NotesRecyclerViewAdapter(activity, GateKeeperApplication.notes, this)
+        notesAdapter.setNotes(GateKeeperApplication.notes)
     }
 
     override fun onNoteClicked(note: Note) {

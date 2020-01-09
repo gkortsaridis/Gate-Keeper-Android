@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat
 
 class NotesRecyclerViewAdapter(
     private val context: Context,
-    private val notes: ArrayList<Note>,
+    private var notes: ArrayList<Note>,
     private val listener: NoteClickListener): RecyclerView.Adapter<NotesRecyclerViewAdapter.NoteStaggeredViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteStaggeredViewHolder {
@@ -33,6 +33,12 @@ class NotesRecyclerViewAdapter(
         val noteItem = notes[position]
         holder.bindView(noteItem, context, listener)
     }
+
+    fun setNotes(notes: ArrayList<Note>) {
+        this.notes = notes
+        notifyDataSetChanged()
+    }
+
     class NoteStaggeredViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private var noteTitle: TextView? = null
         private var noteBody: TextView? = null
