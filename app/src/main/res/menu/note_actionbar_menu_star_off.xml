@@ -1,0 +1,11 @@
+<menu
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/action_star_off"
+        android:orderInCategory="100"
+        android:icon="@drawable/star_off"
+        app:showAsAction="always"
+        android:title="" />
+
+</menu>

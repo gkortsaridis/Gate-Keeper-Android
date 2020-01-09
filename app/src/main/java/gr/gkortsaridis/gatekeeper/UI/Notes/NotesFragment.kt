@@ -49,7 +49,14 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
     }
 
     private fun getOrderedNotes(): ArrayList<Note> {
-        return ArrayList(GateKeeperApplication.notes.sortedWith(compareBy { it.modifiedDate }).reversed())
+        val pinnedNotes = GateKeeperApplication.notes.filter { it.isPinned }
+        val nonPinnedNotes = GateKeeperApplication.notes.filter { !it.isPinned }
+
+        val pinnedSorted = ArrayList(pinnedNotes.sortedWith(compareBy { it.modifiedDate }).reversed())
+        val nonPinnedSorted = ArrayList(nonPinnedNotes.sortedWith(compareBy { it.modifiedDate }).reversed())
+        pinnedSorted.addAll(nonPinnedSorted)
+
+        return pinnedSorted
     }
 
     override fun onNoteClicked(note: Note) {

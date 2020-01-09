@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -49,6 +50,8 @@ class NoteActivity : AppCompatActivity() {
     private lateinit var noteColor: NoteColor
     private lateinit var note : Note
     private lateinit var sheetBehavior : BottomSheetBehavior<LinearLayout>
+    private var noteMenu : Int? = null
+    private var isPinned : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +79,8 @@ class NoteActivity : AppCompatActivity() {
         if (noteId != "-1") {
             deleteNote.visibility = View.VISIBLE
             note = NotesRepository.getNoteById(noteId)!!
+            this.isPinned = note.isPinned
+            noteMenu = if (note.isPinned) R.menu.note_actionbar_menu_star_on else R.menu.note_actionbar_menu_star_off
         }else {
             deleteNote.visibility = View.GONE
             note = Note(
@@ -87,6 +92,7 @@ class NoteActivity : AppCompatActivity() {
                 accountId = AuthRepository.getUserID(),
                 isPinned = false,
                 color = NoteColor.White)
+            noteMenu = R.menu.note_actionbar_menu_star_off
         }
 
         noteColor = note.color ?: NoteColor.White
@@ -123,13 +129,30 @@ class NoteActivity : AppCompatActivity() {
         bottomSheetLayout.setBackgroundColor(Color.parseColor(color.value))
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(noteMenu!!, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             android.R.id.home -> { updateNoteAndFinish() }
+            R.id.action_star_off -> {
+                this.isPinned = true
+                noteMenu = R.menu.note_actionbar_menu_star_on
+                invalidateOptionsMenu()
+            }
+            R.id.action_star_on -> {
+                this.isPinned = false
+                noteMenu = R.menu.note_actionbar_menu_star_off
+                invalidateOptionsMenu()
+            }
         }
 
         return super.onOptionsItemSelected(item)
     }
+
+
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -170,12 +193,15 @@ class NoteActivity : AppCompatActivity() {
         if (note.id != "") {
             if (note.title != noteTitle.text.toString()
                 || note.body != noteBody.text.toString()
-                || note.color != noteColor) {
+                || note.color != noteColor
+                || this.isPinned != note.isPinned
+            ) {
 
                 note.title = noteTitle.text.toString()
                 note.body = noteBody.text.toString()
                 note.modifiedDate = Timestamp.now()
                 note.color = noteColor
+                note.isPinned = this.isPinned
                 viewDialog.showDialog()
 
                 NotesRepository.updateNote(note, object : NoteUpdateListener{

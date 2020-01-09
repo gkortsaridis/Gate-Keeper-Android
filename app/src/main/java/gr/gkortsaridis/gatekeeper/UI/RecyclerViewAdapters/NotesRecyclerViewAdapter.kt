@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -44,12 +45,14 @@ class NotesRecyclerViewAdapter(
         private var noteBody: TextView? = null
         private var noteModified: TextView? = null
         private var view: LinearLayout? = null
+        private var pinnedNote: ImageView? = null
 
         init {
             noteTitle = v.findViewById(R.id.note_title)
             noteBody = v.findViewById(R.id.note_body)
             noteModified = v.findViewById(R.id.note_modified)
             view = v.findViewById(R.id.note_container)
+            pinnedNote = v.findViewById(R.id.note_pinned)
         }
 
         fun bindView(note: Note, context: Context, listener: NoteClickListener) {
@@ -62,6 +65,7 @@ class NotesRecyclerViewAdapter(
             noteModified?.text = formattedDate
             view?.setBackgroundColor(Color.parseColor(note.color?.value  ?: NoteColor.White.value))
             view?.setOnClickListener { listener.onNoteClicked(note) }
+            pinnedNote?.visibility = if (note.isPinned) View.VISIBLE else View.GONE
         }
     }
 }
