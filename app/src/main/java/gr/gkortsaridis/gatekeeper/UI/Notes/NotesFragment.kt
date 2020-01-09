@@ -31,7 +31,7 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
         addNoteFab = view.findViewById(R.id.add_note)
         notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
         notesRecyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        notesAdapter = NotesRecyclerViewAdapter(activity, GateKeeperApplication.notes, this)
+        notesAdapter = NotesRecyclerViewAdapter(activity, getOrderedNotes(), this)
         notesRecyclerView.adapter = notesAdapter
         addNoteFab.setOnClickListener { addNote() }
 
@@ -45,7 +45,11 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
     }
 
     private fun updateUI() {
-        notesAdapter.setNotes(GateKeeperApplication.notes)
+        notesAdapter.setNotes(getOrderedNotes())
+    }
+
+    private fun getOrderedNotes(): ArrayList<Note> {
+        return ArrayList(GateKeeperApplication.notes.sortedWith(compareBy { it.modifiedDate }).reversed())
     }
 
     override fun onNoteClicked(note: Note) {
