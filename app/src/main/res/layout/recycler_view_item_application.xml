@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/application_name"
-        android:textColor="@android:color/white"
+        android:textColor="@color/mate_black"
         android:text="Name"
         android:layout_gravity="center_vertical"
         android:textStyle="bold"

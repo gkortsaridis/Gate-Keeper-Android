@@ -1,15 +1,20 @@
 package gr.gkortsaridis.gatekeeper.UI.Logins
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import com.google.firebase.Timestamp
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -23,6 +28,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
+import kotlinx.android.synthetic.main.activity_create_login.*
 import kotlinx.android.synthetic.main.fragment_logins.*
 
 
@@ -41,6 +47,10 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var appImage: ImageView
     private lateinit var saveUpdateButton: Button
     private lateinit var vaultName: TextView
+    private lateinit var loginIcon: CardView
+    private lateinit var loginInitials: TextView
+    private lateinit var copyUsername: ImageButton
+    private lateinit var copyPassword: ImageButton
 
     private var vaultToAdd: Vault? = null
 
@@ -69,6 +79,13 @@ class CreateLoginActivity : AppCompatActivity() {
         saveUpdateButton = findViewById(R.id.save_update_button)
         vaultView = findViewById(R.id.vault_view)
         vaultName = findViewById(R.id.vault_name)
+        loginInitials = findViewById(R.id.login_icon_initial)
+        loginIcon = findViewById(R.id.login_icon)
+        copyPassword = findViewById(R.id.copy_password)
+        copyUsername = findViewById(R.id.copy_username)
+
+        copyUsername.setOnClickListener { copy(username.text.toString(), "Username") }
+        copyPassword.setOnClickListener { copy(password.text.toString(), "Password") }
 
         vaultView.setOnClickListener {
             val intent = Intent(this, SelectVaultActivity::class.java)
@@ -81,6 +98,17 @@ class CreateLoginActivity : AppCompatActivity() {
         updateUI()
     }
 
+    private fun copy(txt: String, what: String) {
+        val clipboard = ContextCompat.getSystemService(
+            this,
+            ClipboardManager::class.java
+        ) as ClipboardManager
+        val clip = ClipData.newPlainText("label",txt)
+        clipboard.setPrimaryClip(clip)
+
+        Toast.makeText(this, "$what copied", Toast.LENGTH_SHORT).show()
+    }
+
     private fun updateUI() {
         val loginId = intent.getStringExtra("login_id")
 
@@ -88,6 +116,7 @@ class CreateLoginActivity : AppCompatActivity() {
             supportActionBar?.title = "Create new login"
             vaultToAdd = VaultRepository.getLastActiveVault()
             saveUpdateButton.setOnClickListener { createLogin() }
+            loginIcon.visibility = View.GONE
 
         }else{
             login = LoginsRepository.getLoginById(loginId)
@@ -103,7 +132,11 @@ class CreateLoginActivity : AppCompatActivity() {
 
             val resolveInfo = LoginsRepository.getApplicationInfoByPackageName(login?.url, packageManager)
             if (resolveInfo != null) {
+                loginIcon.visibility = View.GONE
                 this.appImage.setImageDrawable(resolveInfo.loadIcon(packageManager))
+            }else{
+                loginIcon.visibility = View.VISIBLE
+                loginInitials.text = login?.name?.get(0).toString()
             }
 
             saveUpdateButton.setOnClickListener { updateLogin() }
@@ -113,7 +146,7 @@ class CreateLoginActivity : AppCompatActivity() {
     private fun updateLogin() {
         login?.username = username.text.toString()
         login?.name = name.text.toString()
-        login?.password = name.text.toString()
+        login?.password = password.text.toString()
         login?.notes = notes.text.toString()
         login?.url = app_package
         login?.vault_id = vaultToAdd!!.id
@@ -248,6 +281,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
         if (requestCode == 13 && resultCode == Activity.RESULT_OK) {
             val app = data!!.getParcelableExtra<ResolveInfo>("app")
+            this.loginIcon.visibility = View.GONE
             this.appImage.setImageDrawable(app!!.loadIcon(packageManager))
             this.name.setText(app.loadLabel(packageManager))
             this.app_package = app.activityInfo.packageName

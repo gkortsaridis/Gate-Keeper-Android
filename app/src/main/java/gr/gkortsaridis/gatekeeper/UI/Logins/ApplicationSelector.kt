@@ -33,7 +33,7 @@ class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
 
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
-        supportActionBar?.title = "Select Application"
+        supportActionBar?.title = "Set your login URL"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
