@@ -1,61 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".UI.Notes.NoteActivity">
+    android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/toolbar"/>
-
-    <ScrollView
-        android:layout_below="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="50dp">
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/note_body"
-            android:padding="16dp"
-            android:text="This is the body"
-            android:background="@null"
-            android:cursorVisible="true"/>
-    </ScrollView>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/top_shadow"
-        android:layout_above="@+id/bottom_container"/>
     <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/bottom_container"
-        android:layout_alignParentBottom="true">
+        android:id="@+id/note_background"
+        android:layout_height="match_parent"
+        tools:context=".UI.Notes.NoteActivity">
 
-        <TextView
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Modified at\nWed 23 April 2019, 14:32"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="52dp"
-            android:id="@+id/note_modified"
-            android:layout_marginLeft="16dp"
-            android:gravity="center_horizontal"/>
+            android:id="@+id/toolbar"/>
 
-        <ImageButton
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:id="@+id/note_extra"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/dots"/>
+        <ScrollView
+            android:layout_below="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/note_body"
+                android:padding="16dp"
+                android:text="This is the body"
+                android:background="@null"
+                android:cursorVisible="true"/>
+        </ScrollView>
+
 
     </RelativeLayout>
 
-</RelativeLayout>
+    <!-- Adding bottom sheet after main content -->
+    <include layout="@layout/note_bottom_sheet" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+

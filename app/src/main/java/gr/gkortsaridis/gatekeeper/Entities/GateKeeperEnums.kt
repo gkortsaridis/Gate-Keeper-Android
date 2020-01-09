@@ -16,8 +16,12 @@ enum class Bank {
 }
 
 enum class NoteColor(val value: String) {
-    Red("#ff0000"),
-    Yellow("#ffff00"),
-    Blue("#0000ff"),
+    Blue("#A7D9D6"),
+    Cream("#FDE79D"),
+    Green("#82CC74"),
+    Orange("#F66522"),
+    Pink("#F0A1A6"),
+    Red("#F65A34"),
+    Yellow("#FEF735"),
     White("#fafafa")
 }

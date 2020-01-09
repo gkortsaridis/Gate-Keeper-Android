@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff"
+    android:orientation="vertical"
+    app:behavior_peekHeight="56dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/top_shadow"
+        android:layout_above="@+id/bottom_container"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:id="@+id/bottom_container"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Modified at\nWed 23 April 2019, 14:32"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="52dp"
+            android:id="@+id/note_modified"
+            android:layout_marginLeft="16dp"
+            android:gravity="center_horizontal"/>
+
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:id="@+id/note_extra"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/dots"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="Background Color"/>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_blue"
+                android:layout_marginRight="16dp"
+                android:id="@+id/circle_blue"
+                android:foreground="?android:attr/selectableItemBackground" />
+
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_cream"
+                android:layout_marginRight="16dp"
+                android:id="@+id/circle_cream"
+                android:foreground="?android:attr/selectableItemBackground" />
+
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_green"
+                android:layout_marginRight="16dp"
+                android:id="@+id/circle_green"
+                android:foreground="?android:attr/selectableItemBackground" />
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_orange"
+                android:layout_marginRight="16dp"
+                android:id="@+id/circle_orange"
+                android:foreground="?android:attr/selectableItemBackground" />
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_pink"
+                android:layout_marginRight="16dp"
+                android:id="@+id/circle_pink"
+                android:foreground="?android:attr/selectableItemBackground" />
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_red"
+                android:layout_marginRight="16dp"
+                android:id="@+id/circle_red"
+                android:foreground="?android:attr/selectableItemBackground" />
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_white"
+                android:layout_marginRight="16dp"
+                android:id="@+id/circle_white"
+                android:foreground="?android:attr/selectableItemBackground" />
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_yellow"
+                android:layout_marginRight="16dp"
+                android:id="@+id/circle_yellow"
+                android:foreground="?android:attr/selectableItemBackground" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+</LinearLayout>
