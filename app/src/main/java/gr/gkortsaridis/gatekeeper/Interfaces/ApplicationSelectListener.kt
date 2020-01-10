@@ -3,5 +3,5 @@ package gr.gkortsaridis.gatekeeper.Interfaces
 import android.content.pm.ResolveInfo
 
 interface ApplicationSelectListener {
-    fun onApplicationSelected(app: ResolveInfo)
+    fun onApplicationSelected(app: ResolveInfo?, webUrl: String)
 }

@@ -4,15 +4,25 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
+import androidx.core.view.children
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.common.internal.ResourceUtils
 import gr.gkortsaridis.gatekeeper.Interfaces.ApplicationSelectListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.ApplicationSelectRecyclerViewAdapter
+import gr.gkortsaridis.gatekeeper.Utils.dp
+import org.jetbrains.anko.find
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
@@ -20,6 +30,13 @@ class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
     private lateinit var toolbar: Toolbar
     private lateinit var applicationRV: RecyclerView
     private lateinit var searchView: SearchView
+    private lateinit var webUrl: EditText
+    private lateinit var urlTypeRG: RadioGroup
+    private lateinit var urlTypeWeb: RadioButton
+    private lateinit var urlTypeApp: RadioButton
+    private lateinit var webUrlContainer: CardView
+    private lateinit var appUrlContainer: LinearLayout
+
     private lateinit var applicationRVadapter: ApplicationSelectRecyclerViewAdapter
     private lateinit var pkgAppsList: List<ResolveInfo>
 
@@ -30,6 +47,12 @@ class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
         applicationRV = findViewById(R.id.application_list)
         toolbar = findViewById(R.id.toolbar)
         searchView = findViewById(R.id.search_view)
+        //webUrl = findViewById(R.id.web_url)
+        //urlTypeRG = findViewById(R.id.url_type)
+        //urlTypeApp = findViewById(R.id.url_type_app)
+        //urlTypeWeb = findViewById(R.id.url_type_web)
+        //webUrlContainer = findViewById(R.id.web_url_container)
+        appUrlContainer = findViewById(R.id.app_url_container)
 
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
@@ -43,8 +66,10 @@ class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
         pkgAppsList = packageManager.queryIntentActivities(mainIntent, 0)
 
         Collections.sort(pkgAppsList) { x: ResolveInfo, y: ResolveInfo -> x.loadLabel(packageManager).toString().compareTo(y.loadLabel(packageManager).toString())}
+        val apps = ArrayList(pkgAppsList)
+        apps.add(0,null)
 
-        applicationRVadapter = ApplicationSelectRecyclerViewAdapter(this, ArrayList(pkgAppsList), packageManager, this)
+        applicationRVadapter = ApplicationSelectRecyclerViewAdapter(this, apps, packageManager, this)
         applicationRV.adapter = applicationRVadapter
         applicationRV.layoutManager = LinearLayoutManager(this)
 
@@ -74,9 +99,13 @@ class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
         }
     }
 
-    override fun onApplicationSelected(app: ResolveInfo) {
+    override fun onApplicationSelected(app: ResolveInfo?, webUrl: String) {
         val output = Intent()
-        output.putExtra("app", app)
+        if (app != null) {
+            output.putExtra("app", app)
+        }else {
+            output.putExtra("web", webUrl)
+        }
         setResult(Activity.RESULT_OK, output)
         finish()
     }

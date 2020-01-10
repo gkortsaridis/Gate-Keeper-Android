@@ -6,7 +6,6 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -26,8 +25,6 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
-import kotlinx.android.synthetic.main.activity_create_login.*
-import kotlinx.android.synthetic.main.fragment_logins.*
 
 
 class CreateLoginActivity : AppCompatActivity() {
@@ -54,7 +51,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
     private lateinit var activity: Activity
 
-    private var app_package: String = ""
+    private var appPackage: LoginUrl = LoginUrl(LoginUrlType.App, "")
 
     private var login: Login? = null
 
@@ -149,7 +146,7 @@ class CreateLoginActivity : AppCompatActivity() {
         login?.name = name.text.toString()
         login?.password = password.text.toString()
         login?.notes = notes.text.toString()
-        login?.url = LoginUrl(LoginUrlType.App, app_package)// app_package
+        login?.url = appPackage
         login?.vault_id = vaultToAdd!!.id
 
         LoginsRepository.encryptAndUpdateLogin(this, login!!, object : LoginCreateListener{
@@ -194,7 +191,7 @@ class CreateLoginActivity : AppCompatActivity() {
             name = name.text.toString(),
             password = password.text.toString(),
             username = username.text.toString(),
-            url = LoginUrl(LoginUrlType.App, app_package),
+            url = appPackage,
             notes = notes.text.toString(),
             date_created = Timestamp.now(),
             date_modified = Timestamp.now()
@@ -282,10 +279,18 @@ class CreateLoginActivity : AppCompatActivity() {
 
         if (requestCode == 13 && resultCode == Activity.RESULT_OK) {
             val app = data!!.getParcelableExtra<ResolveInfo>("app")
-            this.loginIcon.visibility = View.GONE
-            this.appImage.setImageDrawable(app!!.loadIcon(packageManager))
-            this.name.setText(app.loadLabel(packageManager))
-            this.app_package = app.activityInfo.packageName
+            if (app != null) {
+                this.loginIcon.visibility = View.GONE
+                this.appImage.setImageDrawable(app.loadIcon(packageManager))
+                this.name.setText(app.loadLabel(packageManager))
+                this.appPackage = LoginUrl(LoginUrlType.App, app.activityInfo.packageName)
+            } else {
+                val url = data.getStringExtra("web") ?: ""
+                this.loginIcon.visibility = View.GONE
+                this.appImage.setImageResource(R.drawable.web)
+                this.appPackage = LoginUrl(LoginUrlType.Web, url)
+            }
+
         }else if (requestCode == 14 && resultCode == Activity.RESULT_OK) {
             val vaultId = data!!.data.toString()
             login?.vault_id = vaultId
