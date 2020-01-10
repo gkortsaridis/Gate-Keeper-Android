@@ -82,6 +82,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 card.number = cardNumber.text.toString()
                 card.cardholderName = cardholderName.text.toString()
                 card.cvv = cvv.text.toString()
+                card.type = CreditCardRepository.getCreditCardType(card.number)
                 card.expirationDate = expiryMonth.text.toString()+"/"+expiryYear.text.toString()
 
                 viewDialog.showDialog()
@@ -102,9 +103,10 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 card.number = cardNumber.text.toString()
                 card.cardholderName = cardholderName.text.toString()
                 card.cvv = cvv.text.toString()
+                card.type = CreditCardRepository.getCreditCardType(card.number)
                 card.expirationDate = expiryMonth.text.toString()+"/"+expiryYear.text.toString()
 
-
+                //Update the card
             }
         }
 
@@ -132,7 +134,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 this.cardType.visibility = View.VISIBLE
                 this.cardType.setImageResource(R.drawable.amex)
             }
-            null -> this.cardType.visibility = View.INVISIBLE
+            CardType.Unknown -> this.cardType.visibility = View.INVISIBLE
         }
 
     }

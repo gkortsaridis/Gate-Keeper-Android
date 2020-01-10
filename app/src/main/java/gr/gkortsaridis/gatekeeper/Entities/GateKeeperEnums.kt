@@ -5,7 +5,8 @@ enum class CardType {
     Visa,
     Amex,
     DiscoverCard,
-    DinersClub
+    DinersClub,
+    Unknown
 }
 
 enum class Bank {

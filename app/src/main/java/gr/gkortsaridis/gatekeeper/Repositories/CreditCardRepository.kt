@@ -7,17 +7,15 @@ import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
-import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import java.util.concurrent.CompletableFuture
 
 object CreditCardRepository {
 
-    fun getCreditCardType(cardNumber: String): CardType? {
+    fun getCreditCardType(cardNumber: String): CardType {
         if (cardNumber.isNotEmpty()) {
             if (cardNumber.length > 1) {
                 if (cardNumber.substring(0,2) == "37") { return CardType.Amex }
@@ -28,10 +26,10 @@ object CreditCardRepository {
                 cardNumber[0] == '4' -> CardType.Visa
                 cardNumber[0] == '5' -> CardType.Mastercard
                 cardNumber[0] == '6' -> CardType.DiscoverCard
-                else -> null
+                else -> CardType.Unknown
             }
 
-        }else { return null }
+        }else { return CardType.Unknown }
 
     }
 
