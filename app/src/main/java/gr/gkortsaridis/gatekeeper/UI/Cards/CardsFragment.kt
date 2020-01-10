@@ -44,7 +44,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         return view
     }
 
-    fun updateUI() {
+    private fun updateUI() {
         cardsAdapter.updateCards(GateKeeperApplication.cards)
     }
 

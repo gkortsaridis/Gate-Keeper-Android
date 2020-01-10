@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.pvryan.easycrypt.ECResultListener
 import com.pvryan.easycrypt.symmetric.ECSymmetric
+import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
@@ -15,6 +16,24 @@ import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import java.util.concurrent.CompletableFuture
 
 object CreditCardRepository {
+
+    fun getCreditCardType(cardNumber: String): CardType? {
+        if (cardNumber.isNotEmpty()) {
+            if (cardNumber.length > 1) {
+                if (cardNumber.substring(0,2) == "37") { return CardType.Amex }
+                else if (cardNumber.substring(0,2) == "38") { return CardType.DinersClub }
+            }
+
+            return when {
+                cardNumber[0] == '4' -> CardType.Visa
+                cardNumber[0] == '5' -> CardType.Mastercard
+                cardNumber[0] == '6' -> CardType.DiscoverCard
+                else -> null
+            }
+
+        }else { return null }
+
+    }
 
     fun encryptAndStoreCard(activity: Activity, card: CreditCard, listener: CreditCardCreateListener) {
         val viewDialog = ViewDialog(activity)

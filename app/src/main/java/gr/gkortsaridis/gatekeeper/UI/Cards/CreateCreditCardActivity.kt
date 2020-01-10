@@ -1,11 +1,12 @@
 package gr.gkortsaridis.gatekeeper.UI.Cards
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.google.firebase.Timestamp
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
@@ -14,6 +15,7 @@ import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
+import gr.gkortsaridis.gatekeeper.Utils.FourDigitCardFormatWatcher
 
 class CreateCreditCardActivity : AppCompatActivity() {
 
@@ -23,6 +25,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
     private lateinit var expiryMonth: EditText
     private lateinit var expiryYear: EditText
     private lateinit var cardNumber: EditText
+    private lateinit var cardType: ImageView
 
     private lateinit var card: CreditCard
 
@@ -51,6 +54,8 @@ class CreateCreditCardActivity : AppCompatActivity() {
         expiryMonth = findViewById(R.id.expire_month)
         expiryYear = findViewById(R.id.expire_year)
         cardNumber = findViewById(R.id.card_number)
+        cardType = findViewById(R.id.card_type)
+        cardNumber.addTextChangedListener(FourDigitCardFormatWatcher(cardType))
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -64,17 +69,15 @@ class CreateCreditCardActivity : AppCompatActivity() {
         val year = card.expirationDate.substring(3,5)
         expiryMonth.setText(month)
         expiryYear.setText(year)
+
+        setCardType()
     }
 
-    override fun onBackPressed() {
+    private fun saveCreditCard() {
         val viewDialog = ViewDialog(this)
 
         if (card.id == "-1") {
-            if (cardNumber.text.toString().trim() != ""
-                && cardholderName.text.toString().trim() != ""
-                && cvv.text.toString().trim() != ""
-                && expiryMonth.text.toString().trim() != ""
-                && expiryYear.text.toString().trim() != "") {
+            if (allDataFilled()) {
                 //Create Credit Card
                 card.number = cardNumber.text.toString()
                 card.cardholderName = cardholderName.text.toString()
@@ -95,24 +98,63 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 Toast.makeText(this, "Incomplete card data", Toast.LENGTH_SHORT).show()
             }
         } else {
-            if (cardNumber.text.toString() != card.number
-                && cardholderName.text.toString() != card.cardholderName
-                && cvv.text.toString() != card.cvv
-                && expiryMonth.text.toString() != card.expirationDate.substring(0,2)
-                && expiryYear.text.toString().trim() != card.expirationDate.substring(3,5)) {
+            if (allDataFilled() && dataDifferentFromCurrentlySaved()) {
                 card.number = cardNumber.text.toString()
                 card.cardholderName = cardholderName.text.toString()
                 card.cvv = cvv.text.toString()
                 card.expirationDate = expiryMonth.text.toString()+"/"+expiryYear.text.toString()
 
-                //Add to local arraylist
-                //go back
-            }else {
-                Toast.makeText(this, "Incomplete card data", Toast.LENGTH_SHORT).show()
+
             }
         }
 
-        super.onBackPressed()
+    }
 
+    private fun setCardType() {
+        when (CreditCardRepository.getCreditCardType(cardNumber.text.toString())) {
+            CardType.Visa -> {
+                this.cardType.visibility = View.VISIBLE
+                this.cardType.setImageResource(R.drawable.visa)
+            }
+            CardType.Mastercard -> {
+                this.cardType.visibility = View.VISIBLE
+                this.cardType.setImageResource(R.drawable.mastercard)
+            }
+            CardType.DiscoverCard -> {
+                this.cardType.visibility = View.VISIBLE
+                this.cardType.setImageResource(R.drawable.discover)
+            }
+            CardType.DinersClub -> {
+                this.cardType.visibility = View.VISIBLE
+                this.cardType.setImageResource(R.drawable.discover)
+            }
+            CardType.Amex -> {
+                this.cardType.visibility = View.VISIBLE
+                this.cardType.setImageResource(R.drawable.amex)
+            }
+            null -> this.cardType.visibility = View.INVISIBLE
+        }
+
+    }
+
+    private fun allDataFilled(): Boolean {
+        return cardNumber.text.toString().trim() != ""
+                && cardholderName.text.toString().trim() != ""
+                && cvv.text.toString().trim() != ""
+                && expiryMonth.text.toString().trim() != ""
+                && expiryYear.text.toString().trim() != ""
+    }
+
+    private fun dataDifferentFromCurrentlySaved(): Boolean {
+        return cardNumber.text.toString() != card.number
+                && cardholderName.text.toString() != card.cardholderName
+                && cvv.text.toString() != card.cvv
+                && expiryMonth.text.toString() != card.expirationDate.substring(0,2)
+                && expiryYear.text.toString().trim() != card.expirationDate.substring(3,5)
+    }
+
+    override fun onBackPressed() {
+        saveCreditCard()
+        super.onBackPressed()
     }
 }
