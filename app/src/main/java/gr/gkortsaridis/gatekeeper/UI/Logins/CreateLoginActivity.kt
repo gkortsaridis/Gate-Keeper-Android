@@ -49,12 +49,9 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var url: EditText
 
     private var vaultToAdd: Vault? = null
+    private var login: Login? = null
 
     private lateinit var activity: Activity
-
-    private var app_package: String = ""
-
-    private var login: Login? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,7 +107,6 @@ class CreateLoginActivity : AppCompatActivity() {
             supportActionBar?.title = "Create new login"
             vaultToAdd = VaultRepository.getLastActiveVault()
             saveUpdateButton.setOnClickListener { createLogin() }
-
         }else{
             login = LoginsRepository.getLoginById(loginId)
             supportActionBar?.title = "Edit Login"
@@ -122,7 +118,7 @@ class CreateLoginActivity : AppCompatActivity() {
             password.setText(login?.password)
             notes.setText(login?.notes)
             vaultName.text = vaultToAdd?.name
-
+            url.setText(login?.url)
             saveUpdateButton.setOnClickListener { updateLogin() }
         }
     }
