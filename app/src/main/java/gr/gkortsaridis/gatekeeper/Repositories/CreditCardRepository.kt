@@ -8,6 +8,7 @@ import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
@@ -32,7 +33,8 @@ object CreditCardRepository {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     viewDialog.hideDialog()
-                    listener.onCreditCardCreated()
+                    card.id = it.result?.id ?: ""
+                    listener.onCreditCardCreated(card)
                 }
                 else {
                     viewDialog.hideDialog()
@@ -67,6 +69,15 @@ object CreditCardRepository {
                 retrieveListener.onCreditCardsReceived(cardsResult)
             }
             .addOnFailureListener { exception -> retrieveListener.onCreditCardsReceiveError(exception) }
+    }
+
+    fun getCreditCardById(cardId: String): CreditCard? {
+        for (card in GateKeeperApplication.cards) {
+            if (card.id == cardId) {
+                return card
+            }
+        }
+        return null
     }
 
     private fun decryptCreditCard(encryptedData: String): CreditCard? {

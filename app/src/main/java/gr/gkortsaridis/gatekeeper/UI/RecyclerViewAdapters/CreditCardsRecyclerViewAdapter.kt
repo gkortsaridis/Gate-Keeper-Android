@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Bank
@@ -15,7 +16,7 @@ import gr.gkortsaridis.gatekeeper.R
 
 class CreditCardsRecyclerViewAdapter(
     private val context: Context,
-    private val cards: ArrayList<CreditCard>,
+    private var cards: ArrayList<CreditCard>,
     private val listener: CreditCardClickListener): RecyclerView.Adapter<CreditCardsRecyclerViewAdapter.CreditCardViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreditCardViewHolder {
@@ -32,29 +33,37 @@ class CreditCardsRecyclerViewAdapter(
         holder.bindCard(vaultItem, listener)
     }
 
+    fun updateCards(cards: ArrayList<CreditCard>) {
+        this.cards = cards
+        notifyDataSetChanged()
+    }
+
     class CreditCardViewHolder(v: View): RecyclerView.ViewHolder(v) {
 
-        private var bankLogo: ImageView? = null
         private var cardType: ImageView? = null
         private var cardNumber: TextView? = null
-        private var cardName: TextView? = null
         private var cardholderName: TextView? = null
-        private var cardExpiryDate: TextView? = null
+        private var cardExpiryDateMonth: TextView? = null
+        private var cardExpiryDateYear: TextView? = null
+        private var cardCVV: TextView? = null
         private var view: View = v
+        private var cardContainer: LinearLayout? = null
 
         init {
-            bankLogo = view.findViewById(R.id.bank_logo)
             cardType = view.findViewById(R.id.card_type)
-            cardName = view.findViewById(R.id.card_name)
             cardNumber = view.findViewById(R.id.card_number)
-            cardExpiryDate = view.findViewById(R.id.expiration_date)
+            cardExpiryDateMonth = view.findViewById(R.id.expire_month)
+            cardExpiryDateYear = view.findViewById(R.id.expire_year)
             cardholderName = view.findViewById(R.id.cardholder_name)
+            cardContainer = view.findViewById(R.id.card_container)
+            cardCVV = view.findViewById(R.id.cvv)
         }
 
         fun bindCard(card: CreditCard, listener: CreditCardClickListener){
             this.cardNumber?.text = card.number
-            this.cardName?.text = card.cardName
-            this.cardExpiryDate?.text = card.expirationDate
+            this.cardExpiryDateMonth?.text = card.expirationDate
+            this.cardExpiryDateYear?.text = card.expirationDate
+            this.cardCVV?.text = "CVV: "+card.cvv
             this.cardholderName?.text = card.cardholderName
 
             when (card.type) {
@@ -65,15 +74,7 @@ class CreditCardsRecyclerViewAdapter(
                 CardType.Mastercard -> { cardType?.setImageResource(R.drawable.mastercard) }
             }
 
-            when (card.bank) {
-                Bank.Monzo -> { bankLogo?.setImageResource(R.drawable.monzo) }
-                Bank.Barclays -> { bankLogo?.setImageResource(R.drawable.barclays) }
-                Bank.HSBC -> { bankLogo?.setImageResource(R.drawable.hsbc) }
-                Bank.Lloyds -> { bankLogo?.setImageResource(R.drawable.lloyds) }
-            }
-
-            //view.setOnClickListener{ listener.onVaultClicked(vault) }
-            //this.vaultName?.text = vault.name
+            cardContainer?.setOnClickListener{ listener.onCreditCardClicked(card) }
         }
 
     }

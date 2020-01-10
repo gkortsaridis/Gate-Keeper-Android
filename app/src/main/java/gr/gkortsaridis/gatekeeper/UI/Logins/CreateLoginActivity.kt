@@ -16,9 +16,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import com.google.firebase.Timestamp
-import gr.gkortsaridis.gatekeeper.Entities.Login
-import gr.gkortsaridis.gatekeeper.Entities.Vault
-import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
+import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
@@ -130,7 +128,10 @@ class CreateLoginActivity : AppCompatActivity() {
             notes.setText(login?.notes)
             vaultName.text = vaultToAdd?.name
 
-            val resolveInfo = LoginsRepository.getApplicationInfoByPackageName(login?.url, packageManager)
+            var resolveInfo : ResolveInfo? = null
+            if (login?.url?.type == LoginUrlType.App) {
+                resolveInfo = LoginsRepository.getApplicationInfoByPackageName(login?.url?.url, packageManager)
+            }
             if (resolveInfo != null) {
                 loginIcon.visibility = View.GONE
                 this.appImage.setImageDrawable(resolveInfo.loadIcon(packageManager))
@@ -148,7 +149,7 @@ class CreateLoginActivity : AppCompatActivity() {
         login?.name = name.text.toString()
         login?.password = password.text.toString()
         login?.notes = notes.text.toString()
-        login?.url = app_package
+        login?.url = LoginUrl(LoginUrlType.App, app_package)// app_package
         login?.vault_id = vaultToAdd!!.id
 
         LoginsRepository.encryptAndUpdateLogin(this, login!!, object : LoginCreateListener{
@@ -193,7 +194,7 @@ class CreateLoginActivity : AppCompatActivity() {
             name = name.text.toString(),
             password = password.text.toString(),
             username = username.text.toString(),
-            url = app_package,
+            url = LoginUrl(LoginUrlType.App, app_package),
             notes = notes.text.toString(),
             date_created = Timestamp.now(),
             date_modified = Timestamp.now()

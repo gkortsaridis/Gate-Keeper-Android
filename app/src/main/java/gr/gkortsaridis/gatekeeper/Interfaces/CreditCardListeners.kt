@@ -4,6 +4,7 @@ import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import java.lang.Exception
 
 interface CreditCardClickListener {
+    fun onCreditCardClicked(card: CreditCard)
 }
 
 interface CreditCardRetrieveListener {
@@ -12,6 +13,6 @@ interface CreditCardRetrieveListener {
 }
 
 interface CreditCardCreateListener {
-    fun onCreditCardCreated()
+    fun onCreditCardCreated(card: CreditCard)
     fun onCreditCardCreateError()
 }

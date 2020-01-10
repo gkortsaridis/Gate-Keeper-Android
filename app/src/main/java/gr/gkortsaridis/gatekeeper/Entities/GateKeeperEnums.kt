@@ -25,3 +25,8 @@ enum class NoteColor(val value: String) {
     Yellow("#FEF735"),
     White("#fafafa")
 }
+
+enum class LoginUrlType(val value: String) {
+    Web("Web"),
+    App("App")
+}

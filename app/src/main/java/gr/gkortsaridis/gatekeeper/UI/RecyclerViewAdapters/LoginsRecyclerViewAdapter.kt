@@ -60,7 +60,7 @@ class LoginsRecyclerViewAdapter(
             this.loginName?.text = login.name
             this.loginUsername?.text = login.username
 
-            val app = LoginsRepository.getApplicationInfoByPackageName(login.url, packageManager)
+            val app = LoginsRepository.getApplicationInfoByPackageName(login.url.url, packageManager)
 
             val appIcon = app?.loadIcon(packageManager)
             if (appIcon != null) {
