@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -25,6 +26,8 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
+import kotlinx.android.synthetic.main.activity_create_login.*
+import kotlinx.android.synthetic.main.fragment_logins.*
 
 
 class CreateLoginActivity : AppCompatActivity() {
@@ -37,23 +40,18 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var username: EditText
     private lateinit var password: EditText
     private lateinit var notes: EditText
-    private lateinit var applicationView: LinearLayout
+    private lateinit var applicationView: ImageButton
     private lateinit var vaultView: LinearLayout
-    private lateinit var appImage: ImageView
     private lateinit var saveUpdateButton: Button
     private lateinit var vaultName: TextView
-    private lateinit var loginIcon: CardView
-    private lateinit var loginInitials: TextView
     private lateinit var copyUsername: ImageButton
     private lateinit var copyPassword: ImageButton
+    private lateinit var url: EditText
 
     private var vaultToAdd: Vault? = null
+    private var login: Login? = null
 
     private lateinit var activity: Activity
-
-    private var appPackage: LoginUrl = LoginUrl(LoginUrlType.App, "")
-
-    private var login: Login? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,14 +66,12 @@ class CreateLoginActivity : AppCompatActivity() {
         name = findViewById(R.id.nameET)
         username = findViewById(R.id.usernameET)
         password = findViewById(R.id.passwordET)
+        url = findViewById(R.id.urlET)
         notes = findViewById(R.id.notesET)
-        applicationView = findViewById(R.id.application_view)
-        appImage = findViewById(R.id.app_image)
+        applicationView = findViewById(R.id.select_application)
         saveUpdateButton = findViewById(R.id.save_update_button)
         vaultView = findViewById(R.id.vault_view)
         vaultName = findViewById(R.id.vault_name)
-        loginInitials = findViewById(R.id.login_icon_initial)
-        loginIcon = findViewById(R.id.login_icon)
         copyPassword = findViewById(R.id.copy_password)
         copyUsername = findViewById(R.id.copy_username)
 
@@ -111,8 +107,6 @@ class CreateLoginActivity : AppCompatActivity() {
             supportActionBar?.title = "Create new login"
             vaultToAdd = VaultRepository.getLastActiveVault()
             saveUpdateButton.setOnClickListener { createLogin() }
-            loginIcon.visibility = View.GONE
-
         }else{
             login = LoginsRepository.getLoginById(loginId)
             supportActionBar?.title = "Edit Login"
@@ -124,19 +118,7 @@ class CreateLoginActivity : AppCompatActivity() {
             password.setText(login?.password)
             notes.setText(login?.notes)
             vaultName.text = vaultToAdd?.name
-
-            var resolveInfo : ResolveInfo? = null
-            if (login?.url?.type == LoginUrlType.App) {
-                resolveInfo = LoginsRepository.getApplicationInfoByPackageName(login?.url?.url, packageManager)
-            }
-            if (resolveInfo != null) {
-                loginIcon.visibility = View.GONE
-                this.appImage.setImageDrawable(resolveInfo.loadIcon(packageManager))
-            }else{
-                loginIcon.visibility = View.VISIBLE
-                loginInitials.text = login?.name?.get(0).toString()
-            }
-
+            url.setText(login?.url)
             saveUpdateButton.setOnClickListener { updateLogin() }
         }
     }
@@ -146,7 +128,7 @@ class CreateLoginActivity : AppCompatActivity() {
         login?.name = name.text.toString()
         login?.password = password.text.toString()
         login?.notes = notes.text.toString()
-        login?.url = appPackage
+        login?.url = url.text.toString()
         login?.vault_id = vaultToAdd!!.id
 
         LoginsRepository.encryptAndUpdateLogin(this, login!!, object : LoginCreateListener{
@@ -191,7 +173,7 @@ class CreateLoginActivity : AppCompatActivity() {
             name = name.text.toString(),
             password = password.text.toString(),
             username = username.text.toString(),
-            url = appPackage,
+            url = url.text.toString(),
             notes = notes.text.toString(),
             date_created = Timestamp.now(),
             date_modified = Timestamp.now()
@@ -279,18 +261,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
         if (requestCode == 13 && resultCode == Activity.RESULT_OK) {
             val app = data!!.getParcelableExtra<ResolveInfo>("app")
-            if (app != null) {
-                this.loginIcon.visibility = View.GONE
-                this.appImage.setImageDrawable(app.loadIcon(packageManager))
-                this.name.setText(app.loadLabel(packageManager))
-                this.appPackage = LoginUrl(LoginUrlType.App, app.activityInfo.packageName)
-            } else {
-                val url = data.getStringExtra("web") ?: ""
-                this.loginIcon.visibility = View.GONE
-                this.appImage.setImageResource(R.drawable.web)
-                this.appPackage = LoginUrl(LoginUrlType.Web, url)
-            }
-
+            this.url.setText(app?.activityInfo?.packageName)
         }else if (requestCode == 14 && resultCode == Activity.RESULT_OK) {
             val vaultId = data!!.data.toString()
             login?.vault_id = vaultId

@@ -137,7 +137,7 @@ class GateKeeperAutoFillServiceL: AutofillService() {
         val userData = ArrayList<UserData>()
 
         for (login in decryptedLogins) {
-            if (activeApplication == login.url.url) {
+            if (activeApplication == login.url) {
                 userData.add(UserData(name = login.name, username = login.username, password = login.password))
             }
         }
