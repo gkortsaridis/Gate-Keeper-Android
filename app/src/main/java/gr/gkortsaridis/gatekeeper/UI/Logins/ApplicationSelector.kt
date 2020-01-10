@@ -30,12 +30,6 @@ class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
     private lateinit var toolbar: Toolbar
     private lateinit var applicationRV: RecyclerView
     private lateinit var searchView: SearchView
-    private lateinit var webUrl: EditText
-    private lateinit var urlTypeRG: RadioGroup
-    private lateinit var urlTypeWeb: RadioButton
-    private lateinit var urlTypeApp: RadioButton
-    private lateinit var webUrlContainer: CardView
-    private lateinit var appUrlContainer: LinearLayout
 
     private lateinit var applicationRVadapter: ApplicationSelectRecyclerViewAdapter
     private lateinit var pkgAppsList: List<ResolveInfo>
@@ -47,12 +41,6 @@ class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
         applicationRV = findViewById(R.id.application_list)
         toolbar = findViewById(R.id.toolbar)
         searchView = findViewById(R.id.search_view)
-        //webUrl = findViewById(R.id.web_url)
-        //urlTypeRG = findViewById(R.id.url_type)
-        //urlTypeApp = findViewById(R.id.url_type_app)
-        //urlTypeWeb = findViewById(R.id.url_type_web)
-        //webUrlContainer = findViewById(R.id.web_url_container)
-        appUrlContainer = findViewById(R.id.app_url_container)
 
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
@@ -67,7 +55,6 @@ class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
 
         Collections.sort(pkgAppsList) { x: ResolveInfo, y: ResolveInfo -> x.loadLabel(packageManager).toString().compareTo(y.loadLabel(packageManager).toString())}
         val apps = ArrayList(pkgAppsList)
-        apps.add(0,null)
 
         applicationRVadapter = ApplicationSelectRecyclerViewAdapter(this, apps, packageManager, this)
         applicationRV.adapter = applicationRVadapter
@@ -91,7 +78,7 @@ class ApplicationSelector : AppCompatActivity(), ApplicationSelectListener {
         if (query != "") {
             var tempData = pkgAppsList
             tempData = tempData.filter {
-                it.loadLabel(packageManager).toString().toLowerCase().contains(query)
+                it.loadLabel(packageManager).toString().toLowerCase().contains(query.toLowerCase())
             }
             applicationRVadapter.refreshDataSet(ArrayList(tempData))
         }else{
