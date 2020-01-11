@@ -1,6 +1,8 @@
 package gr.gkortsaridis.gatekeeper.UI.Cards
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -14,6 +16,8 @@ import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardDeleteListener
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
@@ -115,8 +119,15 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 card.cvv = cvv.text.toString()
                 card.type = CreditCardRepository.getCreditCardType(card.number)
                 card.expirationDate = expiryMonth.text.toString()+"/"+expiryYear.text.toString()
+                viewDialog.showDialog()
 
-                //Update the card
+                CreditCardRepository.updateCreditCard(card, object: CreditCardUpdateListener {
+                    override fun onCardUpdated(card: CreditCard) {
+                        GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
+                        viewDialog.hideDialog()
+                        finish()
+                    }
+                })
             }
         }
 
@@ -156,6 +167,38 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 && expiryMonth.text.toString().trim() != ""
                 && expiryYear.text.toString().trim() != ""
                 && cardNickname.text.toString().trim() != ""
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (card.id != "-1") { menuInflater.inflate(R.menu.delete_item_menu, menu) }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_delete) { deleteCard() }
+        else if (item.itemId == android.R.id.home) {
+            if (card.id != "-1" && dataDifferentFromCurrentlySaved()) {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Save card")
+                builder.setMessage("There seem to be some changes. Would you like to save them?")
+                builder.setPositiveButton("YES"){_, _ -> saveCreditCard() }
+                builder.setNegativeButton("No"){_, _ -> finish() }
+                val dialog: AlertDialog = builder.create()
+                dialog.show()
+            }else {
+                finish()
+            }
+        }
+        return true
+    }
+
+    private fun deleteCard() {
+        CreditCardRepository.deleteCreditCard(card, object : CreditCardDeleteListener {
+            override fun onCardDeleted() {
+                GateKeeperApplication.cards.remove(card)
+                finish()
+            }
+        })
     }
 
     private fun dataDifferentFromCurrentlySaved(): Boolean {

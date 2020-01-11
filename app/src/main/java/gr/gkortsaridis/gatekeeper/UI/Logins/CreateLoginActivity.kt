@@ -6,14 +6,11 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import com.google.firebase.Timestamp
 import gr.gkortsaridis.gatekeeper.Entities.*
@@ -26,8 +23,6 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
-import kotlinx.android.synthetic.main.activity_create_login.*
-import kotlinx.android.synthetic.main.fragment_logins.*
 
 
 class CreateLoginActivity : AppCompatActivity() {
@@ -136,6 +131,7 @@ class CreateLoginActivity : AppCompatActivity() {
                 val viewDialog = ViewDialog(activity)
                 viewDialog.showDialog()
 
+                //TODO: Remove this call
                 LoginsRepository.retrieveLoginsByAccountID(AuthRepository.getUserID(), object:
                     LoginRetrieveListener {
                     override fun onLoginsRetrieveSuccess(logins: ArrayList<Login>) {
@@ -246,7 +242,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (login != null) {
-            menuInflater.inflate(R.menu.create_login_menu, menu)
+            menuInflater.inflate(R.menu.delete_item_menu, menu)
         }
         return true
     }

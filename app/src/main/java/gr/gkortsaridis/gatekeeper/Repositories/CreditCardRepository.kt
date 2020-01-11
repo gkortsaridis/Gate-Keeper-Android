@@ -10,7 +10,9 @@ import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 import java.util.concurrent.CompletableFuture
 
 object CreditCardRepository {
@@ -31,6 +33,31 @@ object CreditCardRepository {
 
         }else { return CardType.Unknown }
 
+    }
+
+    fun deleteCreditCard(card: CreditCard, listener: CreditCardDeleteListener) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("cards")
+            .document(card.id)
+            .delete()
+            .addOnCompleteListener {
+                listener.onCardDeleted()
+            }
+    }
+
+    fun updateCreditCard(card: CreditCard, listener: CreditCardUpdateListener) {
+        val cardhash = hashMapOf(
+            "card" to card.encrypt(),
+            "account_id" to AuthRepository.getUserID()
+        )
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("cards")
+            .document(card.id)
+            .set(cardhash)
+            .addOnCompleteListener {
+                listener.onCardUpdated(card)
+            }
     }
 
     fun encryptAndStoreCard(activity: Activity, card: CreditCard, listener: CreditCardCreateListener) {

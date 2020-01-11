@@ -16,3 +16,11 @@ interface CreditCardCreateListener {
     fun onCreditCardCreated(card: CreditCard)
     fun onCreditCardCreateError()
 }
+
+interface CreditCardDeleteListener {
+    fun onCardDeleted()
+}
+
+interface CreditCardUpdateListener {
+    fun onCardUpdated(card: CreditCard)
+}
