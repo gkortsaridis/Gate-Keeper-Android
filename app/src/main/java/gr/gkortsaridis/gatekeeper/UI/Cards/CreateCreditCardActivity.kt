@@ -26,6 +26,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
     private lateinit var expiryYear: EditText
     private lateinit var cardNumber: EditText
     private lateinit var cardType: ImageView
+    private lateinit var cardNickname: EditText
 
     private lateinit var card: CreditCard
 
@@ -55,6 +56,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
         expiryYear = findViewById(R.id.expire_year)
         cardNumber = findViewById(R.id.card_number)
         cardType = findViewById(R.id.card_type)
+        cardNickname = findViewById(R.id.card_nickname)
         cardNumber.addTextChangedListener(FourDigitCardFormatWatcher(cardType))
 
         setSupportActionBar(toolbar)
@@ -62,6 +64,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = if (cardId == "-1") "Add new Credit Card" else "Edit Credit Card"
 
+        cardNickname.setText(card.cardName)
         cardNumber.setText(card.number)
         cardholderName.setText(card.cardholderName)
         cvv.setText(card.cvv)
@@ -79,6 +82,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
         if (card.id == "-1") {
             if (allDataFilled()) {
                 //Create Credit Card
+                card.cardName = cardNickname.text.toString()
                 card.number = cardNumber.text.toString()
                 card.cardholderName = cardholderName.text.toString()
                 card.cvv = cvv.text.toString()
@@ -100,6 +104,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
             }
         } else {
             if (allDataFilled() && dataDifferentFromCurrentlySaved()) {
+                card.cardName = cardNickname.text.toString()
                 card.number = cardNumber.text.toString()
                 card.cardholderName = cardholderName.text.toString()
                 card.cvv = cvv.text.toString()
@@ -145,6 +150,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 && cvv.text.toString().trim() != ""
                 && expiryMonth.text.toString().trim() != ""
                 && expiryYear.text.toString().trim() != ""
+                && cardNickname.text.toString().trim() != ""
     }
 
     private fun dataDifferentFromCurrentlySaved(): Boolean {
@@ -153,6 +159,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 && cvv.text.toString() != card.cvv
                 && expiryMonth.text.toString() != card.expirationDate.substring(0,2)
                 && expiryYear.text.toString().trim() != card.expirationDate.substring(3,5)
+                && cardNickname.text.toString().trim() != card.cardName
     }
 
     override fun onBackPressed() {
