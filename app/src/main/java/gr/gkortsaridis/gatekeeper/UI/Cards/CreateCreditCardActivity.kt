@@ -2,9 +2,11 @@ package gr.gkortsaridis.gatekeeper.UI.Cards
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import gr.gkortsaridis.gatekeeper.Entities.CardType
@@ -27,6 +29,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
     private lateinit var cardNumber: EditText
     private lateinit var cardType: ImageView
     private lateinit var cardNickname: EditText
+    private lateinit var cardSave: Button
 
     private lateinit var card: CreditCard
 
@@ -57,6 +60,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
         cardNumber = findViewById(R.id.card_number)
         cardType = findViewById(R.id.card_type)
         cardNickname = findViewById(R.id.card_nickname)
+        cardSave = findViewById(R.id.card_save)
         cardNumber.addTextChangedListener(FourDigitCardFormatWatcher(cardType))
 
         setSupportActionBar(toolbar)
@@ -72,6 +76,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
         val year = card.expirationDate.substring(3,5)
         expiryMonth.setText(month)
         expiryYear.setText(year)
+        cardSave.setOnClickListener { saveCreditCard() }
 
         setCardType()
     }
@@ -155,15 +160,24 @@ class CreateCreditCardActivity : AppCompatActivity() {
 
     private fun dataDifferentFromCurrentlySaved(): Boolean {
         return cardNumber.text.toString() != card.number
-                && cardholderName.text.toString() != card.cardholderName
-                && cvv.text.toString() != card.cvv
-                && expiryMonth.text.toString() != card.expirationDate.substring(0,2)
-                && expiryYear.text.toString().trim() != card.expirationDate.substring(3,5)
-                && cardNickname.text.toString().trim() != card.cardName
+                || cardholderName.text.toString() != card.cardholderName
+                || cvv.text.toString() != card.cvv
+                || expiryMonth.text.toString() != card.expirationDate.substring(0,2)
+                || expiryYear.text.toString() != card.expirationDate.substring(3,5)
+                || cardNickname.text.toString() != card.cardName
     }
 
     override fun onBackPressed() {
-        saveCreditCard()
-        super.onBackPressed()
+        if (card.id != "-1" && dataDifferentFromCurrentlySaved()) {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Save card")
+            builder.setMessage("There seem to be some changes. Would you like to save them?")
+            builder.setPositiveButton("YES"){_, _ -> saveCreditCard() }
+            builder.setNegativeButton("No"){_, _ -> super.onBackPressed() }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }else {
+            super.onBackPressed()
+        }
     }
 }
