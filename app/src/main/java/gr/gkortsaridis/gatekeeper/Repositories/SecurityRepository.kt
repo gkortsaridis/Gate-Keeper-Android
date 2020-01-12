@@ -53,9 +53,7 @@ object SecurityRepository {
         return savedSecretKey
     }
 
-    fun decrypt(encryptedData: ByteArray, iv: ByteArray):String {
-        val secretKey = loadSecretKey()
-
+    fun decryptWithKey(encryptedData: ByteArray, iv: ByteArray, secretKey: SecretKey):String {
         val cipher = Cipher.getInstance(cipherText)
 
         val spec = GCMParameterSpec(128, iv)
@@ -68,6 +66,30 @@ object SecurityRepository {
     fun encrypt(decryptedData: String): EncryptedData? {
         return try{
             val secretKey = loadSecretKey()
+            val cipher = Cipher.getInstance(cipherText)
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+            val iv = cipher.iv
+            val encryptedString = cipher.doFinal(decryptedData.toByteArray(Charset.forName(stringCharset)))
+            EncryptedData(encryptedString, iv)
+        }catch(e: java.lang.Exception) {
+            null
+        }
+    }
+
+    fun decrypt(encryptedData: ByteArray, iv: ByteArray):String {
+        val secretKey = loadSecretKey()
+
+        val cipher = Cipher.getInstance(cipherText)
+
+        val spec = GCMParameterSpec(128, iv)
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
+
+        val decodedData = cipher.doFinal(encryptedData)
+        return String(decodedData, Charset.forName(stringCharset))
+    }
+
+    fun encryptWithKey(decryptedData: String, secretKey: SecretKey): EncryptedData? {
+        return try{
             val cipher = Cipher.getInstance(cipherText)
             cipher.init(Cipher.ENCRYPT_MODE, secretKey)
             val iv = cipher.iv
