@@ -69,6 +69,7 @@ object AuthRepository {
             bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
             FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
             listener.onSignUpComplete(true, FirebaseSignInResult(result, null))
+            result.user?.sendEmailVerification()
         }.addOnFailureListener {e: java.lang.Exception ->
             viewDialog.hideDialog()
             listener.onSignUpComplete(false, FirebaseSignInResult(null, e))
