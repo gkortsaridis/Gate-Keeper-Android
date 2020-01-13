@@ -1,23 +1,17 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.gson.Gson
-import com.pvryan.easycrypt.ECResultListener
-import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
-import java.util.concurrent.CompletableFuture
 
 object VaultRepository {
 
     fun setupVaultsForNewUser(user: FirebaseUser, listener: VaultSetupListener) {
-
         retrieveVaultsByAccountID(user.uid, object: VaultRetrieveListener {
             override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
                 if (vaults.size > 0) {
@@ -37,14 +31,15 @@ object VaultRepository {
                 })
             }
         })
-
     }
 
     fun createVault(vaultName: String, listener: VaultCreateListener) {
         val db = FirebaseFirestore.getInstance()
 
+        val vault = Vault("", AuthRepository.getUserID(), vaultName)
+
         db.collection("vaults")
-            .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "name" to SecurityRepository.encryptObjectWithUserCredentials(vaultName) ))
+            .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "vault" to SecurityRepository.encryptObjectWithUserCredentials(vault) ))
             .addOnCompleteListener {
                 if (it.isSuccessful) { listener.onVaultCreated() }
                 else { listener.onVaultCreateError() }
@@ -59,7 +54,12 @@ object VaultRepository {
             .get().addOnSuccessListener { result ->
                 val vaultsResult = ArrayList<Vault>()
                 for (document in result) {
-                    vaultsResult.add(Vault(document))
+                    val encryptedVault = (document["vault"] ?: "") as String
+                    val decryptedVault = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedVault, Vault::class.java) as Vault?
+                    if (decryptedVault != null) {
+                        decryptedVault.id = document.id
+                        vaultsResult.add(decryptedVault)
+                    }
                 }
 
                 retrieveListener.onVaultsRetrieveSuccess(vaultsResult)

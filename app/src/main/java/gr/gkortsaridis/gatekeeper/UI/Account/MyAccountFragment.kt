@@ -1,11 +1,12 @@
 package gr.gkortsaridis.gatekeeper.UI.Account
 
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -17,9 +18,19 @@ import kotlinx.android.synthetic.main.fragment_my_account.*
 class MyAccountFragment : Fragment() {
 
     private val user = GateKeeperApplication.user
+    private lateinit var sendConfirmation : TextView
+    private lateinit var emailConfirmed : LinearLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_my_account, container, false)
+        val view = inflater.inflate(R.layout.fragment_my_account, container, false)
+
+        emailConfirmed = view.findViewById(R.id.verified_email_link)
+        sendConfirmation = view.findViewById(R.id.verify_email_here)
+        sendConfirmation.setOnClickListener { sendEmailConfirmation() }
+
+        emailConfirmed.visibility = if (user?.isEmailVerified!!) View.GONE else View.VISIBLE
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,6 +46,11 @@ class MyAccountFragment : Fragment() {
 
         update_account_btn.setOnClickListener { updateProfile() }
 
+    }
+
+    private fun sendEmailConfirmation(){
+        user?.sendEmailVerification()
+        Toast.makeText(activity, "Verification email sent", Toast.LENGTH_SHORT).show()
     }
 
     private fun updateProfile() {
