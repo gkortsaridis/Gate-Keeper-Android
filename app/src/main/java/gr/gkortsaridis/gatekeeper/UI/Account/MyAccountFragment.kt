@@ -23,6 +23,7 @@ import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import kotlinx.android.synthetic.main.fragment_my_account.*
 import java.io.ByteArrayOutputStream
 
@@ -125,6 +126,6 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
         val userImageRef = imagesRef.child(AuthRepository.getUserID()+".jpg")
 
         //TODO: Load image into ImageView
-        //Glide.with(activity).load(userImageRef).into(profileImage)
+        GlideApp.with(activity).load(userImageRef).into(profileImage)
     }
 }
