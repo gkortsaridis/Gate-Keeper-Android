@@ -52,9 +52,6 @@ class LoginActivity : AppCompatActivity(), SignInListener {
         }else{
             saveCredentials.isChecked = false
         }
-
-
-        encryption()
     }
 
     private fun signUp() {
@@ -126,23 +123,5 @@ class LoginActivity : AppCompatActivity(), SignInListener {
                 Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    val username = "aspisteam@gmail.com"
-    val pass = "aspisteam"
-
-    private fun encryption() {
-
-        val ek = pbkdf2_lib.createHash(pass, username)
-        val originalKey = SecretKeySpec(ek, "AES")
-
-        val enc_data = SecurityRepository.encryptWithKey("Hello World" ,originalKey)
-        val data = Base64.encodeToString(enc_data!!.encryptedData, Base64.DEFAULT)
-        val iv = Base64.encodeToString(enc_data.iv, Base64.DEFAULT)
-
-
-        val decrypted = SecurityRepository.decryptWithKey(Base64.decode(data, Base64.DEFAULT), Base64.decode(iv, Base64.DEFAULT), originalKey)
-
-        Log.i("DECRTPTED", decrypted)
     }
 }

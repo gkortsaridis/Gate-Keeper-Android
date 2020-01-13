@@ -67,6 +67,15 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
             startActivityForResult(intent, createLoginRequestCode)
         }
 
+        /*
+        //Encryption - Decryption Test Operation
+
+        val login = GateKeeperApplication.logins[0]
+        val encr = SecurityRepository.encryptObjectWithUserCredentials(login)
+        Log.i("Encrypted ", encr.toString())
+
+        val decrLogin = SecurityRepository.decryptStringToObjectWithUserCredentials(encr ?: "", Login::class.java)
+        Log.i("LOGIN", decrLogin.toString())*/
 
         return view
     }
