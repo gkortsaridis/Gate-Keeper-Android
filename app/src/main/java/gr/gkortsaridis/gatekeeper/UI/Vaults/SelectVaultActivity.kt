@@ -9,6 +9,7 @@ import android.text.InputType
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -101,17 +102,23 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
     }
 
     override fun onVaultDeleteClicked(vault: Vault) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Delete Vault")
-        builder.setMessage("Are you sure you wish to delete this vault and its content?")
+        if (GateKeeperApplication.vaults.size > 1) {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Delete Vault")
+            builder.setMessage("Are you sure you wish to delete this vault and its content?")
 
-        builder.setNegativeButton("No") { dialog, _ -> dialog.cancel() }
-        builder.setPositiveButton("Yes") { _, _ ->
-            viewDialog.showDialog()
-            VaultRepository.deleteVault(vault, this)
+            builder.setNegativeButton("No") { dialog, _ -> dialog.cancel() }
+            builder.setPositiveButton("Yes") { _, _ ->
+                viewDialog.showDialog()
+                VaultRepository.deleteVault(vault, this)
+            }
+
+            builder.show()
+        }else {
+            Toast.makeText(this,"You cannot delete your only Vault", Toast.LENGTH_SHORT).show()
         }
 
-        builder.show()
+
     }
 
     override fun onVaultDeleted() {
