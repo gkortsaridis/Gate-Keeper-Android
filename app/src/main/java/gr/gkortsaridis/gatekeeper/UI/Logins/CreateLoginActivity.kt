@@ -48,6 +48,9 @@ class CreateLoginActivity : AppCompatActivity() {
 
     private lateinit var activity: Activity
 
+    private val CHANGE_VAULT_REQUEST_CODE = 14
+    private val CHANGE_APP_REQUEST_CODE = 13
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_login)
@@ -77,10 +80,12 @@ class CreateLoginActivity : AppCompatActivity() {
             val intent = Intent(this, SelectVaultActivity::class.java)
             intent.putExtra("action", "change_login_vault")
             intent.putExtra("vault_id",vaultToAdd?.id)
-            startActivityForResult(intent, 14)
+            startActivityForResult(intent, CHANGE_VAULT_REQUEST_CODE)
         }
-        applicationView.setOnClickListener { startActivityForResult(Intent(this, ApplicationSelector::class.java), 13) }
+        applicationView.setOnClickListener { startActivityForResult(Intent(this, ApplicationSelector::class.java), CHANGE_APP_REQUEST_CODE) }
         this.activity = this
+        vaultToAdd = VaultRepository.getLastActiveVault()
+
         updateUI()
     }
 
@@ -100,22 +105,21 @@ class CreateLoginActivity : AppCompatActivity() {
 
         if (loginId == null) {
             supportActionBar?.title = "Create new login"
-            vaultToAdd = VaultRepository.getLastActiveVault()
             saveUpdateButton.setOnClickListener { createLogin() }
         }else{
             login = LoginsRepository.getLoginById(loginId)
             supportActionBar?.title = "Edit Login"
-
             vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
 
             name.setText(login?.name)
             username.setText(login?.username)
             password.setText(login?.password)
             notes.setText(login?.notes)
-            vaultName.text = vaultToAdd?.name
             url.setText(login?.url)
             saveUpdateButton.setOnClickListener { updateLogin() }
         }
+
+        vaultName.text = vaultToAdd?.name
     }
 
     private fun updateLogin() {
@@ -255,12 +259,12 @@ class CreateLoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == 13 && resultCode == Activity.RESULT_OK) {
+        if (requestCode == CHANGE_APP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val app = data!!.getParcelableExtra<ResolveInfo>("app")
             this.url.setText(app?.activityInfo?.packageName)
-        }else if (requestCode == 14 && resultCode == Activity.RESULT_OK) {
+        }else if (requestCode == CHANGE_VAULT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val vaultId = data!!.data.toString()
-            login?.vault_id = vaultId
+            vaultToAdd = VaultRepository.getVaultByID(vaultId)
             updateUI()
         }
 
