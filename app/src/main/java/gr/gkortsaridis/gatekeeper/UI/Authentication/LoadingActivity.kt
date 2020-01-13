@@ -3,6 +3,7 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import gr.gkortsaridis.gatekeeper.Entities.*
@@ -23,6 +24,8 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
     private var cardsOk  : Boolean = false
     private var notesOk  : Boolean = false
 
+    private lateinit var welcomeMessage : TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_loading)
@@ -32,6 +35,9 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
         CreditCardRepository.retrieveCardsByAccountID(AuthRepository.getUserID(), this)
         DeviceRepository.retrieveDevicesByAccountID(AuthRepository.getUserID(), this)
         NotesRepository.retrieveNotesByAccountID(AuthRepository.getUserID(), this)
+
+        welcomeMessage = findViewById(R.id.welcome_message)
+        welcomeMessage.text = "Welcome back\n"+GateKeeperApplication.user?.displayName
     }
 
     private fun openMainApplication() {
