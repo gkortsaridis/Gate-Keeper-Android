@@ -73,6 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
+            android:enabled="false"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
             android:id="@+id/email_et"/>
@@ -107,6 +108,8 @@
 
     </LinearLayout>
 
+
+    <!--
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -136,7 +139,7 @@
             android:id="@+id/repeat_pass_et"/>
 
     </com.google.android.material.textfield.TextInputLayout>
-
+    -->
 
     <View
         android:layout_width="match_parent"

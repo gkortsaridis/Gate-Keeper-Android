@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.view.Window
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import gr.gkortsaridis.gatekeeper.R
 

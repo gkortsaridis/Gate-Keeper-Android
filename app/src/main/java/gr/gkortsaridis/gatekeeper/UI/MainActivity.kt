@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 NotesFragment(this)
             }
             R.id.nav_item_account -> { fragmentToReplace =
-                MyAccountFragment()
+                MyAccountFragment(this)
             }
             R.id.nav_item_settings -> { fragmentToReplace =
                 LoginsFragment(this)
