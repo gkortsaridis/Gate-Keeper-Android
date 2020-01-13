@@ -91,8 +91,8 @@ object AuthRepository {
 
     fun saveCredentials(email: String, password: String): Boolean {
 
-        val encryptionEmail = SecurityRepository.encrypt(email)
-        val encryptionPassword= SecurityRepository.encrypt(password)
+        val encryptionEmail = SecurityRepository.encryptWithKeystore(email)
+        val encryptionPassword= SecurityRepository.encryptWithKeystore(password)
 
         return if (encryptionEmail != null && encryptionPassword != null) {
             DataRepository.userEmail = Gson().toJson(encryptionEmail)
@@ -114,8 +114,8 @@ object AuthRepository {
             val encryptedPasswordData = Gson().fromJson(encryptedPassword, EncryptedData::class.java)
 
             try {
-                val decryptedEmail = SecurityRepository.decrypt(encryptedEmailData.encryptedData, encryptedEmailData.iv)
-                val decryptedPassword = SecurityRepository.decrypt(encryptedPasswordData.encryptedData, encryptedPasswordData.iv)
+                val decryptedEmail = SecurityRepository.decryptWithKeystore(encryptedEmailData.encryptedData, encryptedEmailData.iv)
+                val decryptedPassword = SecurityRepository.decryptWithKeystore(encryptedPasswordData.encryptedData, encryptedPasswordData.iv)
 
                 UserCredentials(decryptedEmail, decryptedPassword)
             } catch(e: Exception) {

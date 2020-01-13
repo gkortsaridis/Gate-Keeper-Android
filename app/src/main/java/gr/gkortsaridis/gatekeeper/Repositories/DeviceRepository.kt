@@ -31,7 +31,7 @@ object DeviceRepository {
 
                 for (document in result) {
                     val encryptedDevice = (document["device"] ?: "")as String
-                    val decryptedDevice = Gson().fromJson(encryptedDevice, Device::class.java)
+                    val decryptedDevice = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedDevice, Device::class.java) as Device?
                     if (decryptedDevice != null){
                         devicesResult.add(decryptedDevice)
                     }
@@ -43,14 +43,14 @@ object DeviceRepository {
     }
 
     fun logCurrentLogin(context: Context) {
-        //val encryptedDevice = SecurityRepository.encryptObject(getCurrentDevice())
+        val encryptedDevice = SecurityRepository.encryptObjectWithUserCredentials(getCurrentDevice(context))
 
         val currentDevice = getCurrentDevice(context)
         currentDevice.lastEntry = Timestamp.now()
         currentDevice.locale = getDetectedCountry(context, "??")
 
         val devicehash = hashMapOf(
-            "device" to Gson().toJson(currentDevice),
+            "device" to encryptedDevice,
             "account_id" to AuthRepository.getUserID()
         )
 
@@ -66,7 +66,7 @@ object DeviceRepository {
         device.nickname = newName
 
         val devicehash = hashMapOf(
-            "device" to Gson().toJson(device),
+            "device" to SecurityRepository.encryptObjectWithUserCredentials(device),
             "account_id" to AuthRepository.getUserID()
         )
 

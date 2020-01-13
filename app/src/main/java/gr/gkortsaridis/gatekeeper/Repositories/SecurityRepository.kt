@@ -3,16 +3,15 @@ package gr.gkortsaridis.gatekeeper.Repositories
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import com.google.gson.Gson
-import com.pvryan.easycrypt.ECResultListener
-import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
+import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
 import java.nio.charset.Charset
 import java.security.KeyStore
-import java.util.concurrent.CompletableFuture
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
 object SecurityRepository {
 
@@ -21,15 +20,16 @@ object SecurityRepository {
     private val cipherText = "AES/GCM/NoPadding"
     private val stringCharset = "UTF-8"
 
-    private fun loadSecretKey(): SecretKey {
+    //Operations for private Android Keystore Related Key
+    private fun loadKeystoreSecretKey(): SecretKey {
         return try {
             loadSavedKeyFromKeystore()
         }catch(e : java.lang.Exception) {
-            generateNewKey()
+            generateNewKeystoreKey()
         }
     }
 
-    private fun generateNewKey(): SecretKey {
+    private fun generateNewKeystoreKey(): SecretKey {
         val keyGenerator = KeyGenerator.getInstance(
             KeyProperties.KEY_ALGORITHM_AES,
             androidKeystore
@@ -53,21 +53,23 @@ object SecurityRepository {
         return savedSecretKey
     }
 
-    fun decrypt(encryptedData: ByteArray, iv: ByteArray):String {
-        val secretKey = loadSecretKey()
+    //Operation for User Credential secret key creation
+    private fun createUserCredentialsSecretKey(): SecretKey? {
+        return try {
+            //Retrieve User Credentials & Create Encryption Decrytion Key
+            val loadedCredentials = AuthRepository.loadCredentials()
+            val ek = pbkdf2_lib.createHash(loadedCredentials!!.email, AuthRepository.getUserID())
+            SecretKeySpec(ek, "AES")
+        } catch (e: java.lang.Exception) {
+            null
+        }
 
-        val cipher = Cipher.getInstance(cipherText)
-
-        val spec = GCMParameterSpec(128, iv)
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
-
-        val decodedData = cipher.doFinal(encryptedData)
-        return String(decodedData, Charset.forName(stringCharset))
     }
 
-    fun encrypt(decryptedData: String): EncryptedData? {
+    //Encryption / Decryption operations based on Android Keystore secret key
+    fun encryptWithKeystore(decryptedData: String): EncryptedData? {
         return try{
-            val secretKey = loadSecretKey()
+            val secretKey = loadKeystoreSecretKey()
             val cipher = Cipher.getInstance(cipherText)
             cipher.init(Cipher.ENCRYPT_MODE, secretKey)
             val iv = cipher.iv
@@ -78,21 +80,60 @@ object SecurityRepository {
         }
     }
 
-    fun encryptObject(obj: Any) : String {
+    fun decryptWithKeystore(encryptedData: ByteArray, iv: ByteArray):String {
+        val secretKey = loadKeystoreSecretKey()
+
+        val cipher = Cipher.getInstance(cipherText)
+
+        val spec = GCMParameterSpec(128, iv)
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
+
+        val decodedData = cipher.doFinal(encryptedData)
+        return String(decodedData, Charset.forName(stringCharset))
+    }
+
+    //Encryption / Decryption operations on User Credentials secret key
+    fun encryptWithUserCredentials(decryptedData: String): EncryptedData? {
+        return try {
+            val userKey = createUserCredentialsSecretKey()
+            if (userKey != null) {
+                val cipher = Cipher.getInstance(cipherText)
+                cipher.init(Cipher.ENCRYPT_MODE, userKey)
+                val iv = cipher.iv
+                val encryptedBytes = cipher.doFinal(decryptedData.toByteArray(Charset.forName(stringCharset)))
+                EncryptedData(encryptedBytes, iv)
+            } else { null }
+        }catch(e: java.lang.Exception) { null }
+    }
+
+    fun decryptWithUserCredentials(encryptedData: EncryptedData):String? {
+        return try {
+            val userKey = createUserCredentialsSecretKey()
+            if (userKey != null) {
+                val cipher = Cipher.getInstance(cipherText)
+                val spec = GCMParameterSpec(128, encryptedData.iv)
+                cipher.init(Cipher.DECRYPT_MODE, userKey, spec)
+                val decodedData = cipher.doFinal(encryptedData.encryptedData)
+                String(decodedData, Charset.forName(stringCharset))
+            } else { null }
+        } catch (e: java.lang.Exception) { null }
+
+    }
+
+    fun encryptObjectWithUserCredentials(obj: Any) : String? {
         val decrypted = Gson().toJson(obj)
-        val response = CompletableFuture<String>()
-        ECSymmetric().encrypt(decrypted, AuthRepository.getUserID(), object :
-            ECResultListener {
-            override fun onFailure(message: String, e: Exception) {
-                response.complete("-1")
-            }
+        val encData = encryptWithUserCredentials(decrypted)
+        return Gson().toJson(encData)
+    }
 
-            override fun <T> onSuccess(result: T) {
-                response.complete(result as String)
-            }
-        })
-
-        return response.get()
+    fun decryptStringToObjectWithUserCredentials(str: String, objType: Class<out Any>): Any? {
+        return try {
+            val encData = Gson().fromJson(str, EncryptedData::class.java)
+            val decryptedString = decryptWithUserCredentials(encData)
+            Gson().fromJson(decryptedString, objType)
+        } catch (e: Exception) {
+            null
+        }
     }
 
 }

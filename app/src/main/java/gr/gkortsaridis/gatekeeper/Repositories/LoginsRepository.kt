@@ -29,7 +29,7 @@ object LoginsRepository {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
-        val encryptedLogin = login.encrypt()
+        val encryptedLogin = SecurityRepository.encryptObjectWithUserCredentials(login)
 
         val loginhash = hashMapOf(
             "login" to encryptedLogin,
@@ -55,7 +55,7 @@ object LoginsRepository {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
-        val encryptedLogin = login.encrypt()
+        val encryptedLogin = SecurityRepository.encryptObjectWithUserCredentials(login)
 
         val loginhash = hashMapOf(
             "login" to encryptedLogin,
@@ -90,7 +90,7 @@ object LoginsRepository {
                 for (document in result) {
                     val encryptedLogin = document["login"] as String
                     encryptedLoginsToSaveLocally.add(encryptedLogin)
-                    val decryptedLogin = decryptLogin(encryptedLogin)
+                    val decryptedLogin = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedLogin, Login::class.java) as Login?
                     if (decryptedLogin != null){
                         decryptedLogin.id = document.id
                         loginsResult.add(decryptedLogin)
@@ -103,29 +103,6 @@ object LoginsRepository {
                 retrieveListener.onLoginsRetrieveSuccess(loginsResult)
             }
             .addOnFailureListener { exception -> retrieveListener.onLoginsRetrieveError(exception) }
-    }
-
-    fun decryptLogin(encryptedLogin: String) : Login? {
-        val response = CompletableFuture<Login>()
-        val userId = AuthRepository.getUserID()
-
-        if (userId != "") {
-            ECSymmetric().decrypt(encryptedLogin, userId, object :
-                ECResultListener {
-                override fun onFailure(message: String, e: Exception) {
-                    response.complete(null)
-                }
-
-                override fun <T> onSuccess(result: T) {
-                    response.complete(Gson().fromJson(result.toString(), Login::class.java))
-                }
-            })
-
-            return response.get()
-        }else {
-            return null
-        }
-
     }
 
     fun filterLoginsByVault(logins: ArrayList<Login>, vault: Vault): ArrayList<Login> {
@@ -169,7 +146,7 @@ object LoginsRepository {
         val decryptedLogins = ArrayList<Login>()
 
         for (encryptedLogin in savedLogins) {
-            val decryptedLogin = decryptLogin(encryptedLogin)
+            val decryptedLogin = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedLogin, Login::class.java) as Login?
             if (decryptedLogin != null) {
                 decryptedLogins.add(decryptedLogin)
             }

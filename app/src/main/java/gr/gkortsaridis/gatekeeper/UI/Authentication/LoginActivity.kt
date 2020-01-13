@@ -1,28 +1,25 @@
 package gr.gkortsaridis.gatekeeper.UI.Authentication
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricPrompt
-import androidx.core.content.ContextCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
-import com.pvryan.easycrypt.ECResultListener
-import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
-import gr.gkortsaridis.gatekeeper.Entities.UserCredentials
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository.RC_SIGN_IN
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
+import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
+import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
 import kotlinx.android.synthetic.main.activity_login.*
-import java.util.concurrent.CompletableFuture
+import javax.crypto.spec.SecretKeySpec
 
 
 class LoginActivity : AppCompatActivity(), SignInListener {
@@ -55,7 +52,6 @@ class LoginActivity : AppCompatActivity(), SignInListener {
         }else{
             saveCredentials.isChecked = false
         }
-
     }
 
     private fun signUp() {
@@ -128,22 +124,4 @@ class LoginActivity : AppCompatActivity(), SignInListener {
             }
         }
     }
-
-    private fun decryptSomething(data: String, key: String): String {
-        val response = CompletableFuture<String>()
-
-        ECSymmetric().decrypt(data, key, object :
-                ECResultListener {
-                override fun onFailure(message: String, e: Exception) {
-                    response.complete(message)
-                }
-
-                override fun <T> onSuccess(result: T) {
-                    response.complete(result.toString())
-                }
-            })
-
-        return response.get()
-    }
-
 }

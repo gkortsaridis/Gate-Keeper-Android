@@ -215,6 +215,13 @@ class NoteActivity : AppCompatActivity() {
 
         }else {
             if (noteTitle.text.toString().trim() != "" || noteBody.text.toString().trim() != "") {
+                note.title = noteTitle.text.toString()
+                note.body = noteBody.text.toString()
+                note.modifiedDate = Timestamp.now()
+                note.createDate = Timestamp.now()
+                note.color = noteColor
+                note.isPinned = this.isPinned
+
                 viewDialog.showDialog()
 
                 NotesRepository.createNote(note, object : NoteCreateListener{
