@@ -17,8 +17,13 @@ object NotesRepository {
     fun createNote(note: Note, listener: NoteCreateListener?) {
         val db = FirebaseFirestore.getInstance()
 
+        val notehash = hashMapOf(
+            "note" to SecurityRepository.encryptObjectWithUserCredentials(note),
+            "account_id" to AuthRepository.getUserID()
+        )
+
         db.collection("notes")
-            .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "note" to note.encrypt() ))
+            .add(notehash)
             .addOnCompleteListener {
                 listener?.onNoteCreated(note)
             }
@@ -36,7 +41,7 @@ object NotesRepository {
 
     fun updateNote(note: Note, listener: NoteUpdateListener) {
         val notehash = hashMapOf(
-            "note" to note.encrypt(),
+            "note" to SecurityRepository.encryptObjectWithUserCredentials(note),
             "account_id" to AuthRepository.getUserID()
         )
 
@@ -69,7 +74,7 @@ object NotesRepository {
 
                 for (document in result) {
                     val encryptedNote = (document["note"] ?: "")as String
-                    val decryptedNote = decryptNote(encryptedNote)
+                    val decryptedNote = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedNote, Note::class.java) as Note?
                     if (decryptedNote != null) {
                         decryptedNote.id = document.id
                         notesResult.add(decryptedNote)
@@ -82,26 +87,4 @@ object NotesRepository {
 
     }
 
-    fun decryptNote(encryptedNote: String) : Note? {
-        val response = CompletableFuture<Note>()
-        val userId = AuthRepository.getUserID()
-
-        if (userId != "") {
-            ECSymmetric().decrypt(encryptedNote, userId, object :
-                ECResultListener {
-                override fun onFailure(message: String, e: Exception) {
-                    response.complete(null)
-                }
-
-                override fun <T> onSuccess(result: T) {
-                    response.complete(Gson().fromJson(result.toString(), Note::class.java))
-                }
-            })
-
-            return response.get()
-        }else {
-            return null
-        }
-
-    }
 }
