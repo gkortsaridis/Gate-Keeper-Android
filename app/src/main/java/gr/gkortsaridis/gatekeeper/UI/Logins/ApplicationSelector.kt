@@ -4,23 +4,14 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.cardview.widget.CardView
-import androidx.core.view.children
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.common.internal.ResourceUtils
 import gr.gkortsaridis.gatekeeper.Interfaces.ApplicationSelectListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.ApplicationSelectRecyclerViewAdapter
-import gr.gkortsaridis.gatekeeper.Utils.dp
-import org.jetbrains.anko.find
 import java.util.*
 import kotlin.collections.ArrayList
 

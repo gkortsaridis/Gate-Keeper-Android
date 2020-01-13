@@ -4,10 +4,10 @@ import android.app.Activity
 import android.app.Dialog
 import android.view.Window
 import android.widget.ImageView
-import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.DrawableImageViewTarget
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 
 
 class ViewDialog {
@@ -33,15 +33,15 @@ class ViewDialog {
         it was never easy to load gif into an ImageView before Glide or Others library
         and for doing this we need DrawableImageViewTarget to that ImageView
         */
-        val imageViewTarget = GlideDrawableImageViewTarget(gifImageView)
+        val imageViewTarget = DrawableImageViewTarget(gifImageView)
 
         //...now load that gif which we put inside the drawble folder here with the help of Glide
 
-        Glide.with(activity)
+        GlideApp.with(activity)
             .load(R.drawable.loading)
             .placeholder(R.drawable.loading)
             .centerCrop()
-            .crossFade()
+            .transition(withCrossFade())
             .into(imageViewTarget)
 
         //...finaly show it

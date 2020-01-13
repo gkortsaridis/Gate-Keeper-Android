@@ -3,8 +3,6 @@ package gr.gkortsaridis.gatekeeper.Repositories
 import android.app.Activity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
-import com.pvryan.easycrypt.ECResultListener
-import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
@@ -13,7 +11,6 @@ import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
-import java.util.concurrent.CompletableFuture
 
 object CreditCardRepository {
 
