@@ -12,7 +12,6 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
-import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.Account.MyAccountFragment
 import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
@@ -24,8 +23,6 @@ import gr.gkortsaridis.gatekeeper.UI.Notes.NotesFragment
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val TAG = MainActivity::class.java.simpleName
-
-    val eCryptSymmetric = ECSymmetric()
 
     private lateinit var drawer: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle

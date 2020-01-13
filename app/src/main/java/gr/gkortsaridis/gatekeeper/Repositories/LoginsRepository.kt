@@ -7,8 +7,6 @@ import android.content.pm.ResolveInfo
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.pvryan.easycrypt.ECResultListener
-import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
@@ -16,7 +14,6 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
-import java.util.concurrent.CompletableFuture
 
 object LoginsRepository {
 

@@ -1,16 +1,12 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.gson.Gson
-import com.pvryan.easycrypt.ECResultListener
-import com.pvryan.easycrypt.symmetric.ECSymmetric
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteUpdateListener
-import java.util.concurrent.CompletableFuture
 
 object NotesRepository {
 
