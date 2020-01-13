@@ -20,9 +20,19 @@
         android:layout_marginTop="60dp"
         android:background="@android:color/transparent"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You currently do not have any Logins saved.\nYou can dive right in by clicking the + Button."
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="16dp"
+        android:textSize="17sp"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/no_logins_message"/>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
