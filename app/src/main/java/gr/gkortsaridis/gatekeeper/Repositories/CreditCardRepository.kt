@@ -47,7 +47,7 @@ object CreditCardRepository {
 
     fun updateCreditCard(card: CreditCard, listener: CreditCardUpdateListener) {
         val cardhash = hashMapOf(
-            "card" to card.encrypt(),
+            "card" to SecurityRepository.encryptObjectWithUserCredentials(card),
             "account_id" to AuthRepository.getUserID()
         )
 
@@ -64,16 +64,16 @@ object CreditCardRepository {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
-        val encryptedCard = card.encrypt()
+        val encryptedCard = SecurityRepository.encryptObjectWithUserCredentials(card)
 
-        val loginhash = hashMapOf(
+        val cardhash = hashMapOf(
             "card" to encryptedCard,
             "account_id" to AuthRepository.getUserID()
         )
 
         val db = FirebaseFirestore.getInstance()
         db.collection("cards")
-            .add(loginhash)
+            .add(cardhash)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     viewDialog.hideDialog()
@@ -88,7 +88,6 @@ object CreditCardRepository {
     }
 
     fun retrieveCardsByAccountID(accountID: String, retrieveListener: CreditCardRetrieveListener) {
-
         val db = FirebaseFirestore.getInstance()
         db.collection("cards")
             .whereEqualTo("account_id",accountID)
@@ -100,7 +99,7 @@ object CreditCardRepository {
                 for (document in result) {
                     val encryptedCard = document["card"] as String
                     encryptedCardsToSaveLocally.add(encryptedCard)
-                    val decryptedCard = decryptCreditCard(encryptedCard)
+                    val decryptedCard = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedCard, CreditCard::class.java) as CreditCard?
                     if (decryptedCard != null){
                         decryptedCard.id = document.id
                         cardsResult.add(decryptedCard)
@@ -124,26 +123,4 @@ object CreditCardRepository {
         return null
     }
 
-    private fun decryptCreditCard(encryptedData: String): CreditCard? {
-        val response = CompletableFuture<CreditCard>()
-        val userId = AuthRepository.getUserID()
-
-        if (userId != "") {
-            ECSymmetric().decrypt(encryptedData, userId, object :
-                ECResultListener {
-                override fun onFailure(message: String, e: Exception) {
-                    response.complete(null)
-                }
-
-                override fun <T> onSuccess(result: T) {
-                    response.complete(Gson().fromJson(result.toString(), CreditCard::class.java))
-                }
-            })
-
-            return response.get()
-        }else {
-            return null
-        }
-
-    }
 }
