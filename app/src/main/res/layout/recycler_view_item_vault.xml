@@ -38,6 +38,7 @@
                     android:layout_height="wrap_content"
                     android:text="Personal"
                     android:id="@+id/vault_name"
+                    android:textColor="@color/mate_black"
                     android:textSize="17sp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="8dp"
