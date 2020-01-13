@@ -44,7 +44,7 @@ object VaultRepository {
         val db = FirebaseFirestore.getInstance()
 
         db.collection("vaults")
-            .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "name" to vaultName ))
+            .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "name" to SecurityRepository.encryptObjectWithUserCredentials(vaultName) ))
             .addOnCompleteListener {
                 if (it.isSuccessful) { listener.onVaultCreated() }
                 else { listener.onVaultCreateError() }
@@ -65,24 +65,6 @@ object VaultRepository {
                 retrieveListener.onVaultsRetrieveSuccess(vaultsResult)
             }
             .addOnFailureListener { exception -> retrieveListener.onVaultsRetrieveError(exception) }
-
-    }
-
-    fun decryptVault(encryptedString: String): Vault {
-
-        val response = CompletableFuture<Vault>()
-        ECSymmetric().decrypt(encryptedString, AuthRepository.getUserID(), object :
-            ECResultListener {
-            override fun onFailure(message: String, e: Exception) {
-                response.complete(null)
-            }
-
-            override fun <T> onSuccess(result: T) {
-                response.complete(Gson().fromJson(result.toString(), Vault::class.java))
-            }
-        })
-
-        return response.get()
 
     }
 
@@ -114,7 +96,7 @@ object VaultRepository {
         vault.name = newName
 
         val vaulthash = hashMapOf(
-            "name" to vault.name,
+            "name" to SecurityRepository.encryptObjectWithUserCredentials(vault.name),
             "account_id" to AuthRepository.getUserID()
         )
 

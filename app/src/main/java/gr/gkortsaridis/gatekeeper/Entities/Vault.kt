@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper.Entities
 
 import com.google.firebase.firestore.QueryDocumentSnapshot
+import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
 
 data class Vault( var id: String,
                   var account_id : String,
@@ -9,7 +10,7 @@ data class Vault( var id: String,
     constructor(firestoreSnapShot: QueryDocumentSnapshot) : this("","","") {
         id = firestoreSnapShot.id
         account_id = firestoreSnapShot["account_id"] as String
-        name = firestoreSnapShot["name"] as String
+        name = SecurityRepository.decryptStringToObjectWithUserCredentials(firestoreSnapShot["name"] as String, String::class.java) as String
     }
 
     override fun toString(): String {
