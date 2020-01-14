@@ -13,6 +13,7 @@ import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Utils.dp
 
 class CreditCardsRecyclerViewAdapter(
     private val context: Context,
@@ -30,7 +31,7 @@ class CreditCardsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: CreditCardViewHolder, position: Int) {
         val vaultItem = cards[position]
-        holder.bindCard(vaultItem, listener)
+        holder.bindCard(vaultItem, position, listener)
     }
 
     fun updateCards(cards: ArrayList<CreditCard>) {
@@ -59,7 +60,11 @@ class CreditCardsRecyclerViewAdapter(
             cardCVV = view.findViewById(R.id.cvv)
         }
 
-        fun bindCard(card: CreditCard, listener: CreditCardClickListener){
+        fun bindCard(card: CreditCard, position: Int, listener: CreditCardClickListener){
+            if (position == 0) {
+                view.setPadding(0,20.dp, 0,0)
+            }
+
             this.cardNumber?.text = card.number
             this.cardExpiryDateMonth?.text = card.expirationDate
             this.cardExpiryDateYear?.text = card.expirationDate

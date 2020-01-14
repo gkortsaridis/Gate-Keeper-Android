@@ -30,73 +30,61 @@
         android:layout_marginLeft="16dp"
         android:id="@+id/no_logins_message"/>
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_margin="8dp"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="3dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:clickable="true"
+            android:id="@+id/vault_view"
+            android:foreground="?attr/selectableItemBackground"
+            android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardElevation="5dp"
-                app:cardCornerRadius="3dp">
+                android:layout_height="25dp"
+                android:background="@color/colorPrimary">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:id="@+id/vault_view"
-                    android:foreground="?attr/selectableItemBackground"
-                    android:orientation="vertical">
+                    android:text="Vault"
+                    android:textColor="@android:color/white"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:background="@color/colorPrimary">
+            <RelativeLayout
+                android:layout_height="50dp"
+                android:layout_width="match_parent">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Vault"
-                            android:textColor="@android:color/white"
-                            android:layout_centerInParent="true"/>
-                    </RelativeLayout>
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/vault"
+                    android:alpha="0.3"
+                    android:scaleType="centerInside"/>
 
-                    <RelativeLayout
-                        android:layout_height="50dp"
-                        android:layout_width="match_parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Personal"
+                    android:id="@+id/vault_name"
+                    android:textColor="@color/mate_black"
+                    android:layout_centerInParent="true"/>
 
-                        <ImageView
-                            android:layout_width="70dp"
-                            android:layout_height="match_parent"
-                            android:layout_margin="5dp"
-                            android:src="@drawable/vault"
-                            android:alpha="0.3"
-                            android:scaleType="centerInside"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Personal"
-                            android:id="@+id/vault_name"
-                            android:textColor="@color/mate_black"
-                            android:layout_centerInParent="true"/>
-
-                    </RelativeLayout>
-
-                </LinearLayout>
-
-
-            </androidx.cardview.widget.CardView>
+            </RelativeLayout>
 
         </LinearLayout>
-    </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
