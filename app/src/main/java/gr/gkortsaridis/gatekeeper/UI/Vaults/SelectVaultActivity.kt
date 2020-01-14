@@ -27,6 +27,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DeviceRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.VaultSelectRecyclerViewAdapter
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 
 
 class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditListener {
@@ -61,12 +62,12 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
 
     override fun onVaultClicked(vault: Vault) {
         val action = intent.getStringExtra("action")
-        if (action == "change_login_vault") {
+        if (action == GateKeeperConstants.ACTION_CHANGE_VAULT) {
             val intent = Intent()
             intent.data = Uri.parse(vault.id)
             setResult(Activity.RESULT_OK, intent)
             finish()
-        }else if (action == "change_login_list_vault") {
+        }else if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT) {
             VaultRepository.setActiveVault(vault)
             finish()
         }
@@ -134,7 +135,7 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
     private fun updateVaultsRecyclerView() {
         val action = intent.getStringExtra("action")
         val sortedVaults = ArrayList(GateKeeperApplication.vaults.sortedWith(compareBy {it.name}))
-        if (action == "change_login_list_vault") { sortedVaults.add(0, Vault("-1", AuthRepository.getUserID(), "All Vaults") )}
+        if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT) { sortedVaults.add(0, Vault("-1", AuthRepository.getUserID(), "All Vaults") )}
         vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(this, sortedVaults, vaultId, this)
     }
 

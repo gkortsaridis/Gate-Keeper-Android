@@ -69,6 +69,17 @@
 
     </androidx.cardview.widget.CardView>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You currently do not have any Credit Cards saved in this vault. You can dive right in by clicking the + Button."
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="16dp"
+        android:textSize="17sp"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/no_cards_message"/>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

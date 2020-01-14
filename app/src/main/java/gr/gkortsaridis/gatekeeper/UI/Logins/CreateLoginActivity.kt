@@ -23,6 +23,9 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_APP_REQUEST_CODE
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE
 
 
 class CreateLoginActivity : AppCompatActivity() {
@@ -47,9 +50,6 @@ class CreateLoginActivity : AppCompatActivity() {
     private var login: Login? = null
 
     private lateinit var activity: Activity
-
-    private val CHANGE_VAULT_REQUEST_CODE = 14
-    private val CHANGE_APP_REQUEST_CODE = 13
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +78,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
         vaultView.setOnClickListener {
             val intent = Intent(this, SelectVaultActivity::class.java)
-            intent.putExtra("action", "change_login_vault")
+            intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_VAULT)
             intent.putExtra("vault_id",vaultToAdd?.id)
             startActivityForResult(intent, CHANGE_VAULT_REQUEST_CODE)
         }

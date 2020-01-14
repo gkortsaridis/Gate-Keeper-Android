@@ -1,18 +1,19 @@
 package gr.gkortsaridis.gatekeeper.UI.Cards
 
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
+import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
@@ -21,7 +22,12 @@ import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
+import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.FourDigitCardFormatWatcher
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE
 
 class CreateCreditCardActivity : AppCompatActivity() {
 
@@ -34,8 +40,11 @@ class CreateCreditCardActivity : AppCompatActivity() {
     private lateinit var cardType: ImageView
     private lateinit var cardNickname: EditText
     private lateinit var cardSave: Button
+    private lateinit var vaultView: LinearLayout
+    private lateinit var vaultName: TextView
 
     private lateinit var card: CreditCard
+    private lateinit var vaultToAdd: Vault
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +53,9 @@ class CreateCreditCardActivity : AppCompatActivity() {
         val cardId = intent.getStringExtra("card_id") ?: "-1"
         if (cardId != "-1") {
             card = CreditCardRepository.getCreditCardById(cardId)!!
+            vaultToAdd = VaultRepository.getVaultByID(card.vaultId)!!
         }else {
+            vaultToAdd = VaultRepository.getLastActiveRealVault()
             card = CreditCard(
                 id="-1",
                 cardName = "",
@@ -53,6 +64,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 expirationDate = "     ",
                 cvv = "",
                 cardholderName = "",
+                vaultId = vaultToAdd.id,
                 accountId = AuthRepository.getUserID())
         }
 
@@ -65,6 +77,8 @@ class CreateCreditCardActivity : AppCompatActivity() {
         cardType = findViewById(R.id.card_type)
         cardNickname = findViewById(R.id.card_nickname)
         cardSave = findViewById(R.id.card_save)
+        vaultView = findViewById(R.id.vault_view)
+        vaultName = findViewById(R.id.vault_name)
         cardNumber.addTextChangedListener(FourDigitCardFormatWatcher(cardType))
 
         setSupportActionBar(toolbar)
@@ -72,6 +86,13 @@ class CreateCreditCardActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = if (cardId == "-1") "Add new Credit Card" else "Edit Credit Card"
 
+        cardSave.setOnClickListener { saveCreditCard() }
+        vaultView.setOnClickListener { changeVault() }
+
+        updateUI()
+    }
+
+    private fun updateUI() {
         cardNickname.setText(card.cardName)
         cardNumber.setText(card.number)
         cardholderName.setText(card.cardholderName)
@@ -80,9 +101,26 @@ class CreateCreditCardActivity : AppCompatActivity() {
         val year = card.expirationDate.substring(3,5)
         expiryMonth.setText(month)
         expiryYear.setText(year)
-        cardSave.setOnClickListener { saveCreditCard() }
-
+        vaultName.text = vaultToAdd.name
         setCardType()
+    }
+
+    private fun changeVault() {
+        val intent = Intent(this, SelectVaultActivity::class.java)
+        intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_VAULT)
+        intent.putExtra("vault_id",vaultToAdd.id)
+        startActivityForResult(intent, CHANGE_VAULT_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == CHANGE_VAULT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val vaultId = data!!.data.toString()
+            vaultToAdd = VaultRepository.getVaultByID(vaultId)!!
+            updateUI()
+        }
+
     }
 
     private fun saveCreditCard() {
@@ -97,6 +135,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 card.cvv = cvv.text.toString()
                 card.type = CreditCardRepository.getCreditCardType(card.number)
                 card.expirationDate = expiryMonth.text.toString()+"/"+expiryYear.text.toString()
+                card.vaultId = vaultToAdd.id
 
                 viewDialog.showDialog()
                 CreditCardRepository.encryptAndStoreCard(this, card, object: CreditCardCreateListener{
@@ -119,6 +158,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 card.cvv = cvv.text.toString()
                 card.type = CreditCardRepository.getCreditCardType(card.number)
                 card.expirationDate = expiryMonth.text.toString()+"/"+expiryYear.text.toString()
+                card.vaultId = vaultToAdd.id
                 viewDialog.showDialog()
 
                 CreditCardRepository.updateCreditCard(card, object: CreditCardUpdateListener {
@@ -208,6 +248,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
                 || expiryMonth.text.toString() != card.expirationDate.substring(0,2)
                 || expiryYear.text.toString() != card.expirationDate.substring(3,5)
                 || cardNickname.text.toString() != card.cardName
+                || card.vaultId != vaultToAdd.id
     }
 
     override fun onBackPressed() {

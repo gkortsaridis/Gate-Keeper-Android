@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
+import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
@@ -13,6 +14,13 @@ import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 
 object CreditCardRepository {
+
+    fun filterCardsByVault(vault: Vault) : ArrayList<CreditCard> {
+        if (vault.id == "-1") { return GateKeeperApplication.cards }
+
+        val filtered = GateKeeperApplication.cards.filter { it.vaultId == vault.id }
+        return ArrayList(filtered)
+    }
 
     fun getCreditCardType(cardNumber: String): CardType {
         if (cardNumber.isNotEmpty()) {

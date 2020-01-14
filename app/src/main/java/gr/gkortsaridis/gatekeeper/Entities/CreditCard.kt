@@ -9,4 +9,5 @@ data class CreditCard( var id: String = "-1",
                        var expirationDate: String,
                        var cvv: String,
                        var cardholderName: String,
+                       var vaultId: String,
                        var accountId: String): Serializable

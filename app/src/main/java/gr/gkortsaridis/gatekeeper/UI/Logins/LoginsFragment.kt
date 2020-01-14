@@ -34,6 +34,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.deleteLoginSucce
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 
 
 class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectListener {
@@ -63,7 +64,7 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode)}
         vaultView.setOnClickListener{
             val intent = Intent(activity, SelectVaultActivity::class.java)
-            intent.putExtra("action", "change_login_list_vault")
+            intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
             intent.putExtra("vault_id",VaultRepository.getLastActiveVault().id)
             startActivityForResult(intent, createLoginRequestCode)
         }
@@ -77,16 +78,17 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
     }
 
     private fun updateUI() {
+        val logins = LoginsRepository.filterLoginsByCurrentVault(GateKeeperApplication.logins)
         loginsRV.adapter =
             LoginsRecyclerViewAdapter(
                 activity.baseContext,
-                LoginsRepository.filterLoginsByCurrentVault(GateKeeperApplication.logins),
+                logins,
                 activity.packageManager,
                 this
             )
 
         vaultName.text = VaultRepository.getLastActiveVault().name
-        noLoginsMessage.visibility = if (GateKeeperApplication.logins.size > 0) View.GONE else View.VISIBLE
+        noLoginsMessage.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
     }
 
     private fun checkForAutofill() {

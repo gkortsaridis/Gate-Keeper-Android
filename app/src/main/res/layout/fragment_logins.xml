@@ -23,7 +23,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="You currently do not have any Logins saved.\nYou can dive right in by clicking the + Button."
+        android:text="You currently do not have any Logins saved in this vault. You can dive right in by clicking the + Button."
         android:layout_marginTop="100dp"
         android:layout_marginRight="16dp"
         android:textSize="17sp"
