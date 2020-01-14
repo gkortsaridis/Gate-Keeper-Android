@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import com.google.firebase.firestore.FirebaseFirestore
 import gr.gkortsaridis.gatekeeper.Entities.Note
+import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteDeleteListener
@@ -9,6 +10,12 @@ import gr.gkortsaridis.gatekeeper.Interfaces.NoteRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteUpdateListener
 
 object NotesRepository {
+
+    fun filterNotesByVault(vault: Vault): ArrayList<Note> {
+        if (vault.id == "-1") { return GateKeeperApplication.notes }
+        val filtered = GateKeeperApplication.notes.filter { it.id == vault.id }
+        return ArrayList(filtered)
+    }
 
     fun createNote(note: Note, listener: NoteCreateListener?) {
         val db = FirebaseFirestore.getInstance()

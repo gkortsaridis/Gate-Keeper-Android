@@ -1,5 +1,6 @@
 package gr.gkortsaridis.gatekeeper.UI.Notes
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
@@ -15,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.Timestamp
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.NoteColor
+import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
@@ -23,6 +25,8 @@ import gr.gkortsaridis.gatekeeper.Interfaces.NoteUpdateListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
+import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import java.text.SimpleDateFormat
 
@@ -52,6 +56,10 @@ class NoteActivity : AppCompatActivity() {
     private lateinit var sheetBehavior : BottomSheetBehavior<LinearLayout>
     private var noteMenu : Int? = null
     private var isPinned : Boolean = false
+    private lateinit var vaultView: LinearLayout
+    private lateinit var vaultName: TextView
+
+    private lateinit var vaultToAdd: Vault
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,15 +82,19 @@ class NoteActivity : AppCompatActivity() {
         circleYellow = findViewById(R.id.circle_yellow)
         noteBody = findViewById(R.id.note_body)
         noteModified = findViewById(R.id.note_modified)
+        vaultView = findViewById(R.id.vault_view)
+        vaultName = findViewById(R.id.vault_name)
 
         val noteId = intent.getStringExtra("note_id")!!
         if (noteId != "-1") {
             deleteNote.visibility = View.VISIBLE
             note = NotesRepository.getNoteById(noteId)!!
+            vaultToAdd = VaultRepository.getVaultByID(note.vaultId)!!
             this.isPinned = note.isPinned
             noteMenu = if (note.isPinned) R.menu.note_actionbar_menu_star_on else R.menu.note_actionbar_menu_star_off
         }else {
             deleteNote.visibility = View.GONE
+            vaultToAdd = VaultRepository.getLastActiveRealVault()
             note = Note(
                 title= "",
                 body = "",
@@ -91,6 +103,7 @@ class NoteActivity : AppCompatActivity() {
                 id= "",
                 accountId = AuthRepository.getUserID(),
                 isPinned = false,
+                vaultId = vaultToAdd.id,
                 color = NoteColor.White)
             noteMenu = R.menu.note_actionbar_menu_star_off
         }
@@ -114,6 +127,7 @@ class NoteActivity : AppCompatActivity() {
         circleRed.setOnClickListener { changeColor(NoteColor.Red) }
         circleWhite.setOnClickListener { changeColor(NoteColor.White) }
         circleYellow.setOnClickListener { changeColor(NoteColor.Yellow) }
+        vaultView.setOnClickListener { changeVault() }
 
         val formatter = SimpleDateFormat(GateKeeperConstants.dateOnlyFormat)
         val formattedDate = formatter.format(note.modifiedDate.toDate())
@@ -121,6 +135,17 @@ class NoteActivity : AppCompatActivity() {
         noteBody.setText(note.body)
 
         changeColor(noteColor)
+    }
+
+    private fun updateUI() {
+        vaultName.text = vaultToAdd.name
+    }
+
+    private fun changeVault() {
+        val intent = Intent(this, SelectVaultActivity::class.java)
+        intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_VAULT)
+        intent.putExtra("vault_id",vaultToAdd.id)
+        startActivityForResult(intent, GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE)
     }
 
     private fun changeColor(color: NoteColor) {
@@ -195,6 +220,7 @@ class NoteActivity : AppCompatActivity() {
                 || note.body != noteBody.text.toString()
                 || note.color != noteColor
                 || this.isPinned != note.isPinned
+                || this.vaultToAdd.id != note.vaultId
             ) {
 
                 note.title = noteTitle.text.toString()
@@ -202,6 +228,7 @@ class NoteActivity : AppCompatActivity() {
                 note.modifiedDate = Timestamp.now()
                 note.color = noteColor
                 note.isPinned = this.isPinned
+                note.vaultId = vaultToAdd.id
                 viewDialog.showDialog()
 
                 NotesRepository.updateNote(note, object : NoteUpdateListener{
@@ -221,6 +248,7 @@ class NoteActivity : AppCompatActivity() {
                 note.createDate = Timestamp.now()
                 note.color = noteColor
                 note.isPinned = this.isPinned
+                note.vaultId = this.vaultToAdd.id
 
                 viewDialog.showDialog()
 
@@ -232,6 +260,17 @@ class NoteActivity : AppCompatActivity() {
                     }
                 })
             }
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val vaultId = data!!.data.toString()
+            vaultToAdd = VaultRepository.getVaultByID(vaultId)!!
+            updateUI()
         }
 
     }

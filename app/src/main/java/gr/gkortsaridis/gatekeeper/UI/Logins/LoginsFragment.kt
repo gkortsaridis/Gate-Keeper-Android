@@ -66,7 +66,7 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
             val intent = Intent(activity, SelectVaultActivity::class.java)
             intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
             intent.putExtra("vault_id",VaultRepository.getLastActiveVault().id)
-            startActivityForResult(intent, createLoginRequestCode)
+            startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
         }
 
         return view

@@ -49,8 +49,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView: NavigationView = findViewById(R.id.navigationView)
         navigationView.setNavigationItemSelectedListener(this)
 
-        //displayFragment(CardsFragment(this))
         displayFragment(LoginsFragment(this))
+        supportActionBar?.title = "GateKeeper Logins"
+
     }
 
     private fun displayFragment(fragment: Fragment?){
@@ -66,24 +67,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (p0.itemId) {
             R.id.nav_item_logins -> { fragmentToReplace =
                 LoginsFragment(this)
+                supportActionBar?.title = "GateKeeper Logins"
             }
             R.id.nav_item_cards -> { fragmentToReplace =
                 CardsFragment(this)
+                supportActionBar?.title = "GateKeeper Cards"
             }
             R.id.nav_item_notes -> { fragmentToReplace =
                 NotesFragment(this)
+                supportActionBar?.title = "GateKeeper Notes"
             }
             R.id.nav_item_account -> { fragmentToReplace =
                 MyAccountFragment(this)
+                supportActionBar?.title = "GateKeeper Account"
             }
             R.id.nav_item_settings -> { fragmentToReplace =
                 LoginsFragment(this)
+                supportActionBar?.title = "GateKeeper Settings"
             }
             R.id.nav_item_devices -> { fragmentToReplace =
                 DevicesFragment(this)
+                supportActionBar?.title = "GateKeeper Device History"
             }
             R.id.nav_item_about -> { fragmentToReplace =
                 LoginsFragment(this)
+                supportActionBar?.title = "GateKeeper"
             }
         }
 

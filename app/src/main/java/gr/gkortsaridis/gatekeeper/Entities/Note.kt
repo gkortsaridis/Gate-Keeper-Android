@@ -9,4 +9,5 @@ data class Note( var title: String,
                  var id: String,
                  var accountId: String,
                  var isPinned: Boolean,
+                 var vaultId: String,
                  var color: NoteColor?)

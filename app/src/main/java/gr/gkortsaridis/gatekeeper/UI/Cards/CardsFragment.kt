@@ -76,7 +76,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         val intent = Intent(activity, SelectVaultActivity::class.java)
         intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
         intent.putExtra("vault_id",currentVault.id)
-        startActivityForResult(intent, LoginsRepository.createLoginRequestCode)
+        startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
     }
 
     override fun onResume() {
