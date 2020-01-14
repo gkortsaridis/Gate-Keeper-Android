@@ -29,6 +29,9 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:textColorHint="@color/busy_grey"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginBottom="8dp"
                 android:layout_height="wrap_content">
 
                 <EditText
@@ -37,11 +40,66 @@
                     android:hint="Card Nickcame"
                     android:textColor="@android:color/white"
                     app:theme="@style/ThemeOverlay.AppCompat.Dark"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
                     android:id="@+id/card_nickname"/>
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginBottom="-16dp"
+                app:cardElevation="8dp"
+                app:cardCornerRadius="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:id="@+id/vault_view"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:background="@color/colorPrimary">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Vault"
+                            android:textColor="@android:color/white"
+                            android:layout_centerInParent="true"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_height="50dp"
+                        android:layout_width="match_parent">
+
+                        <ImageView
+                            android:layout_width="70dp"
+                            android:layout_height="match_parent"
+                            android:layout_margin="5dp"
+                            android:src="@drawable/vault"
+                            android:alpha="0.3"
+                            android:scaleType="centerInside"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Personal"
+                            android:id="@+id/vault_name"
+                            android:textColor="@color/mate_black"
+                            android:layout_centerInParent="true"/>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -51,7 +109,9 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="5dp"
                 android:elevation="5dp"
-                android:layout_margin="16dp">
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
