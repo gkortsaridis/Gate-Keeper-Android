@@ -84,7 +84,6 @@ class CreateLoginActivity : AppCompatActivity() {
         }
         applicationView.setOnClickListener { startActivityForResult(Intent(this, ApplicationSelector::class.java), CHANGE_APP_REQUEST_CODE) }
         this.activity = this
-        vaultToAdd = VaultRepository.getLastActiveVault()
 
         updateUI()
     }
@@ -105,6 +104,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
         if (loginId == null) {
             supportActionBar?.title = "Create new login"
+            vaultToAdd = VaultRepository.getLastActiveRealVault()
             saveUpdateButton.setOnClickListener { createLogin() }
         }else{
             login = LoginsRepository.getLoginById(loginId)

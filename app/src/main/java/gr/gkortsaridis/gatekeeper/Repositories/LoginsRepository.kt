@@ -103,6 +103,8 @@ object LoginsRepository {
     }
 
     fun filterLoginsByVault(logins: ArrayList<Login>, vault: Vault): ArrayList<Login> {
+        if (vault.id == "-1") { return logins }
+
         val filtered = logins.filter {
             it.vault_id == vault.id
         }

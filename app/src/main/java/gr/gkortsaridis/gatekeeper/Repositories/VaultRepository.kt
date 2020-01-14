@@ -69,6 +69,8 @@ object VaultRepository {
     }
 
     fun getVaultByID(id: String): Vault? {
+        if (id == "-1") { return Vault("-1", AuthRepository.getUserID(), "All Vaults") }
+
         for (vault in GateKeeperApplication.vaults) {
             if (vault.id == id) {
                 return vault
@@ -79,6 +81,12 @@ object VaultRepository {
     }
 
     fun setActiveVault(vault: Vault) { DataRepository.lastActiveVaultId = vault.id }
+
+    fun getLastActiveRealVault() : Vault {
+        val lastActive = getLastActiveVault()
+        return if (lastActive.id == "-1") { GateKeeperApplication.vaults[0] }
+        else lastActive
+    }
 
     fun getLastActiveVault(): Vault {
         val lastActiveVaultId = DataRepository.lastActiveVaultId ?: ""
