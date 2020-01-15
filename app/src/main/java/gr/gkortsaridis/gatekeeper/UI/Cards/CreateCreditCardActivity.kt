@@ -118,6 +118,7 @@ class CreateCreditCardActivity : AppCompatActivity() {
         if (requestCode == CHANGE_VAULT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val vaultId = data!!.data.toString()
             vaultToAdd = VaultRepository.getVaultByID(vaultId)!!
+            VaultRepository.setActiveVault(vaultToAdd)
             updateUI()
         }
 

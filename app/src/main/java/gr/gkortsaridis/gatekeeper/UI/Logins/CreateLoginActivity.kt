@@ -85,6 +85,18 @@ class CreateLoginActivity : AppCompatActivity() {
         applicationView.setOnClickListener { startActivityForResult(Intent(this, ApplicationSelector::class.java), CHANGE_APP_REQUEST_CODE) }
         this.activity = this
 
+        val loginId = intent.getStringExtra("login_id")
+        if (loginId == null) {
+            supportActionBar?.title = "Create new login"
+            vaultToAdd = VaultRepository.getLastActiveRealVault()
+            saveUpdateButton.setOnClickListener { createLogin() }
+        } else {
+            login = LoginsRepository.getLoginById(loginId)
+            supportActionBar?.title = "Edit Login"
+            vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
+            saveUpdateButton.setOnClickListener { updateLogin() }
+        }
+
         updateUI()
     }
 
@@ -100,25 +112,11 @@ class CreateLoginActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        val loginId = intent.getStringExtra("login_id")
-
-        if (loginId == null) {
-            supportActionBar?.title = "Create new login"
-            vaultToAdd = VaultRepository.getLastActiveRealVault()
-            saveUpdateButton.setOnClickListener { createLogin() }
-        }else{
-            login = LoginsRepository.getLoginById(loginId)
-            supportActionBar?.title = "Edit Login"
-            vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
-
-            name.setText(login?.name)
-            username.setText(login?.username)
-            password.setText(login?.password)
-            notes.setText(login?.notes)
-            url.setText(login?.url)
-            saveUpdateButton.setOnClickListener { updateLogin() }
-        }
-
+        name.setText(login?.name)
+        username.setText(login?.username)
+        password.setText(login?.password)
+        notes.setText(login?.notes)
+        url.setText(login?.url)
         vaultName.text = vaultToAdd?.name
     }
 
