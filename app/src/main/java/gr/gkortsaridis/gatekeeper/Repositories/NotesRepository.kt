@@ -12,8 +12,9 @@ import gr.gkortsaridis.gatekeeper.Interfaces.NoteUpdateListener
 object NotesRepository {
 
     fun filterNotesByVault(vault: Vault): ArrayList<Note> {
+        val notes = GateKeeperApplication.notes
         if (vault.id == "-1") { return GateKeeperApplication.notes }
-        val filtered = GateKeeperApplication.notes.filter { it.id == vault.id }
+        val filtered = GateKeeperApplication.notes.filter { it.vaultId == vault.id }
         return ArrayList(filtered)
     }
 

@@ -135,6 +135,7 @@ class NoteActivity : AppCompatActivity() {
         noteBody.setText(note.body)
 
         changeColor(noteColor)
+        updateUI()
     }
 
     private fun updateUI() {
@@ -180,7 +181,6 @@ class NoteActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        super.onBackPressed()
         updateNoteAndFinish()
     }
 
@@ -214,23 +214,12 @@ class NoteActivity : AppCompatActivity() {
 
     private fun updateNoteAndFinish() {
         val viewDialog = ViewDialog(this)
-
+        VaultRepository.setActiveVault(vaultToAdd)
         if (note.id != "") {
-            if (note.title != noteTitle.text.toString()
-                || note.body != noteBody.text.toString()
-                || note.color != noteColor
-                || this.isPinned != note.isPinned
-                || this.vaultToAdd.id != note.vaultId
-            ) {
+            if (isNoteChanged()) {
+                bringNoteObjUpToDate()
 
-                note.title = noteTitle.text.toString()
-                note.body = noteBody.text.toString()
-                note.modifiedDate = Timestamp.now()
-                note.color = noteColor
-                note.isPinned = this.isPinned
-                note.vaultId = vaultToAdd.id
                 viewDialog.showDialog()
-
                 NotesRepository.updateNote(note, object : NoteUpdateListener{
                     override fun onNoteUpdated(note: Note) {
                         GateKeeperApplication.notes.replaceAll { if (it.id == note.id) note else it }
@@ -242,16 +231,10 @@ class NoteActivity : AppCompatActivity() {
 
         }else {
             if (noteTitle.text.toString().trim() != "" || noteBody.text.toString().trim() != "") {
-                note.title = noteTitle.text.toString()
-                note.body = noteBody.text.toString()
-                note.modifiedDate = Timestamp.now()
                 note.createDate = Timestamp.now()
-                note.color = noteColor
-                note.isPinned = this.isPinned
-                note.vaultId = this.vaultToAdd.id
+                bringNoteObjUpToDate()
 
                 viewDialog.showDialog()
-
                 NotesRepository.createNote(note, object : NoteCreateListener{
                     override fun onNoteCreated(note: Note) {
                         GateKeeperApplication.notes.add(note)
@@ -262,6 +245,23 @@ class NoteActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun isNoteChanged(): Boolean {
+        return (note.title != noteTitle.text.toString()
+                || note.body != noteBody.text.toString()
+                || note.color != noteColor
+                || this.isPinned != note.isPinned
+                || this.vaultToAdd.id != note.vaultId)
+    }
+
+    private fun bringNoteObjUpToDate() {
+        note.title = noteTitle.text.toString()
+        note.body = noteBody.text.toString()
+        note.modifiedDate = Timestamp.now()
+        note.color = noteColor
+        note.isPinned = this.isPinned
+        note.vaultId = vaultToAdd.id
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
