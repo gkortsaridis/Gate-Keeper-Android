@@ -68,6 +68,7 @@ object AuthRepository {
             val bundle = Bundle()
             bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
             FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
+            saveCredentials(email, password)
             listener.onSignUpComplete(true, FirebaseSignInResult(result, null))
             result.user?.sendEmailVerification()
         }.addOnFailureListener {e: java.lang.Exception ->

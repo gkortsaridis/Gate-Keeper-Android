@@ -139,17 +139,17 @@ object LoginsRepository {
 
         val savedLoginsStr = DataRepository.savedLogins
         val turnsType = object : TypeToken<ArrayList<String>>() {}.type
-
+        val decryptedLogins = ArrayList<Login>()
         val savedLogins = Gson().fromJson<ArrayList<String>>(savedLoginsStr, turnsType)
 
-        val decryptedLogins = ArrayList<Login>()
+        if (savedLogins != null) {
+            for (encryptedLogin in savedLogins) {
+                val decryptedLogin = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedLogin, Login::class.java) as Login?
+                if (decryptedLogin != null) {
+                    decryptedLogins.add(decryptedLogin)
+                }
 
-        for (encryptedLogin in savedLogins) {
-            val decryptedLogin = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedLogin, Login::class.java) as Login?
-            if (decryptedLogin != null) {
-                decryptedLogins.add(decryptedLogin)
             }
-
         }
 
         return decryptedLogins

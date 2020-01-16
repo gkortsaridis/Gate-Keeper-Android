@@ -2,21 +2,21 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Base64
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
-import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
+import gr.gkortsaridis.gatekeeper.Utils.CryptLib
 import java.nio.charset.Charset
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 object SecurityRepository {
 
     private val androidKeystore = "AndroidKeyStore"
-    private val appAlias = "GateKeeperKeysotre"
+    private val appAlias = "GateKeeperKeystore"
     private val cipherText = "AES/GCM/NoPadding"
     private val stringCharset = "UTF-8"
 
@@ -53,19 +53,6 @@ object SecurityRepository {
         return savedSecretKey
     }
 
-    //Operation for User Credential secret key creation
-    private fun createUserCredentialsSecretKey(): SecretKey? {
-        return try {
-            //Retrieve User Credentials & Create Encryption Decrytion Key
-            val loadedCredentials = AuthRepository.loadCredentials()
-            val ek = pbkdf2_lib.createHash(loadedCredentials!!.email, AuthRepository.getUserID())
-            SecretKeySpec(ek, "AES")
-        } catch (e: java.lang.Exception) {
-            null
-        }
-
-    }
-
     //Encryption / Decryption operations based on Android Keystore secret key
     fun encryptWithKeystore(decryptedData: String): EncryptedData? {
         return try{
@@ -73,51 +60,61 @@ object SecurityRepository {
             val cipher = Cipher.getInstance(cipherText)
             cipher.init(Cipher.ENCRYPT_MODE, secretKey)
             val iv = cipher.iv
-            val encryptedString = cipher.doFinal(decryptedData.toByteArray(Charset.forName(stringCharset)))
-            EncryptedData(encryptedString, iv)
+            val encrypted = cipher.doFinal(decryptedData.toByteArray(Charset.forName(stringCharset)))
+            val ctBase64 = Base64.encodeToString(encrypted, Base64.DEFAULT)
+            val ivBase64 = Base64.encodeToString(iv, Base64.DEFAULT)
+            EncryptedData(ctBase64, ivBase64)
         }catch(e: java.lang.Exception) {
             null
         }
     }
 
-    fun decryptWithKeystore(encryptedData: ByteArray, iv: ByteArray):String {
+    fun decryptWithKeystore(encryptedData: String, ivStr: String):String {
+
+        val ct = Base64.decode(encryptedData, Base64.DEFAULT)
+        val iv = Base64.decode(ivStr, Base64.DEFAULT)
+
         val secretKey = loadKeystoreSecretKey()
-
         val cipher = Cipher.getInstance(cipherText)
-
         val spec = GCMParameterSpec(128, iv)
         cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
-
-        val decodedData = cipher.doFinal(encryptedData)
+        val decodedData = cipher.doFinal(ct)
         return String(decodedData, Charset.forName(stringCharset))
     }
 
     //Encryption / Decryption operations on User Credentials secret key
     fun encryptWithUserCredentials(decryptedData: String): EncryptedData? {
         return try {
-            val userKey = createUserCredentialsSecretKey()
-            if (userKey != null) {
-                val cipher = Cipher.getInstance(cipherText)
-                cipher.init(Cipher.ENCRYPT_MODE, userKey)
-                val iv = cipher.iv
-                val encryptedBytes = cipher.doFinal(decryptedData.toByteArray(Charset.forName(stringCharset)))
-                EncryptedData(encryptedBytes, iv)
-            } else { null }
-        }catch(e: java.lang.Exception) { null }
+            val cryptLib = CryptLib()
+            val credentials = AuthRepository.loadCredentials()
+            if (credentials != null) {
+                val userPassword = AuthRepository.getUserID()
+                val key = CryptLib.SHA256(userPassword, 32) //32 bytes = 256 bit
+                val iv = CryptLib.generateRandomIV(16) //16 bytes = 128 bit
+                val encryption =  cryptLib.encrypt(decryptedData, key, iv)
+                EncryptedData(encryption, iv)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     fun decryptWithUserCredentials(encryptedData: EncryptedData):String? {
         return try {
-            val userKey = createUserCredentialsSecretKey()
-            if (userKey != null) {
-                val cipher = Cipher.getInstance(cipherText)
-                val spec = GCMParameterSpec(128, encryptedData.iv)
-                cipher.init(Cipher.DECRYPT_MODE, userKey, spec)
-                val decodedData = cipher.doFinal(encryptedData.encryptedData)
-                String(decodedData, Charset.forName(stringCharset))
-            } else { null }
-        } catch (e: java.lang.Exception) { null }
-
+            val cryptLib = CryptLib()
+            val credentials = AuthRepository.loadCredentials()
+            if (credentials != null) {
+                val userPassword = AuthRepository.getUserID()
+                val key = CryptLib.SHA256(userPassword, 32) //32 bytes = 256 bit
+                cryptLib.decrypt(encryptedData.encryptedData, key, encryptedData.iv)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     fun encryptObjectWithUserCredentials(obj: Any) : String? {
