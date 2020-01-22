@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
@@ -15,11 +16,19 @@ import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 class BioAuthenticationActivity : AppCompatActivity() {
 
     private val activity = this
+    private lateinit var startBio : ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bio_authentication)
 
+        startBio = findViewById(R.id.start_bio)
+        startBio.setOnClickListener { startBioAuth() }
+
+        startBioAuth()
+    }
+
+    private fun startBioAuth() {
         val loadedCredentials = AuthRepository.loadCredentials()
         if (loadedCredentials != null) {
             showBioAuth(loadedCredentials)
@@ -27,7 +36,6 @@ class BioAuthenticationActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, "Could not load user credentials. Please log in using password to enable biometric authentication", Toast.LENGTH_LONG).show()
             goToPassword()
         }
-
     }
 
     private fun showBioAuth(credentials: UserCredentials) {

@@ -8,4 +8,31 @@
     android:background="@color/colorPrimaryDark"
     tools:context=".UI.Authentication.BioAuthenticationActivity">
 
+
+    <ImageButton
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/logo"
+        android:background="@mipmap/ic_launcher_round"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"/>
+
+    <ImageButton
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/access"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/logo"
+        android:id="@+id/start_bio"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Click the fingerprint icon to try again"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"/>
+
 </RelativeLayout>
