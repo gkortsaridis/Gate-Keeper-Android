@@ -1,7 +1,9 @@
 package gr.gkortsaridis.gatekeeper.UI.Authentication
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
+import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -21,6 +23,7 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
     private lateinit var email: EditText
     private lateinit var password: EditText
     private lateinit var signUp: Button
+    private lateinit var repeatPassword: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +32,27 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
         email = findViewById(R.id.emailET)
         password = findViewById(R.id.passwordET)
         signUp = findViewById(R.id.sign_up)
+        repeatPassword = findViewById(R.id.repeatPasswordET)
 
-        signUp.setOnClickListener { signUp(email.text.toString(), password.text.toString())}
+        signUp.setOnClickListener {
+            var error = false
+            if (password.text.toString() != repeatPassword.text.toString()) {
+                error = true
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+            } else if (!isValidEmail(email.text.toString())) {
+                error = true
+                Toast.makeText(this, "This is not a valid email", Toast.LENGTH_SHORT).show()
+            } else if (email.text.toString().isEmpty() || password.text.toString().isEmpty() || repeatPassword.text.toString().isEmpty()) {
+                error = true
+                Toast.makeText(this, "Fields must not be empty", Toast.LENGTH_SHORT).show()
+            }
+
+            if (!error) { signUp(email.text.toString(), password.text.toString()) }
+        }
+    }
+
+    fun isValidEmail(target: CharSequence): Boolean {
+        return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches()
     }
 
     private fun signUp(email: String, password: String) {
