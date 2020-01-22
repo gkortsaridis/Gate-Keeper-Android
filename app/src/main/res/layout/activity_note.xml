@@ -17,63 +17,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"/>
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="50dp"
-            app:cardElevation="5dp"
-            app:cardCornerRadius="3dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:id="@+id/vault_view"
-                android:foreground="?attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp"
-                    android:background="@color/colorPrimary">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Vault"
-                        android:textColor="@android:color/white"
-                        android:layout_centerInParent="true"/>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_height="50dp"
-                    android:layout_width="match_parent">
-
-                    <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/vault"
-                        android:alpha="0.3"
-                        android:scaleType="centerInside"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Personal"
-                        android:id="@+id/vault_name"
-                        android:textColor="@color/mate_black"
-                        android:layout_centerInParent="true"/>
-
-                </RelativeLayout>
-
-            </LinearLayout>
-
-
-        </androidx.cardview.widget.CardView>
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,8 +36,7 @@
             android:layout_below="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="80dp"
-            android:layout_marginBottom="50dp">
+            android:layout_marginBottom="106dp">
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

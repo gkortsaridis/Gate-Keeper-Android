@@ -178,8 +178,6 @@ class NoteActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-
-
     override fun onBackPressed() {
         updateNoteAndFinish()
     }
