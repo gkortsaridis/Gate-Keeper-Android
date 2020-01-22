@@ -11,6 +11,7 @@
     <string name="cards">Cards</string>
     <string name="notes">Notes</string>
     <string name="ids">IDs</string>
+    <string name="logout">Logout</string>
 
     <string name="encryption_copyright"><![CDATA[Gate Keeper uses a combination of AES GCM & AES CBC encryption algorithms to store your data safely on your device and on Google Firebase cloud.]]></string>
     <string name="auth_type_fingerprint_description">Device will use Android Fingerprint authentication to securely log you to Gate Keeper.</string>
