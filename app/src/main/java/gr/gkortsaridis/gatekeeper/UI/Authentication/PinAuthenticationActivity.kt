@@ -1,8 +1,11 @@
 package gr.gkortsaridis.gatekeeper.UI.Authentication
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.andrognito.pinlockview.IndicatorDots
@@ -20,6 +23,7 @@ class PinAuthenticationActivity : AppCompatActivity() {
     private lateinit var lockView : PinLockView
     private lateinit var indicatorDots : IndicatorDots
     private lateinit var pinMessage : TextView
+    private lateinit var goToPassword: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,11 +36,20 @@ class PinAuthenticationActivity : AppCompatActivity() {
         lockView = findViewById(R.id.pin_lock_view)
         indicatorDots = findViewById(R.id.indicator_dots)
         pinMessage = findViewById(R.id.pin_message)
+        goToPassword = findViewById(R.id.go_to_pass_auth)
 
         if (setupMode) {
+            goToPassword.visibility = View.GONE
             pinMessage.text = getString(R.string.please_setup_your_pin)
         } else {
+            goToPassword.visibility = View.VISIBLE
             pinMessage.text = getString(R.string.welcome)
+        }
+
+        goToPassword.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
 
         lockView.attachIndicatorDots(indicatorDots)
