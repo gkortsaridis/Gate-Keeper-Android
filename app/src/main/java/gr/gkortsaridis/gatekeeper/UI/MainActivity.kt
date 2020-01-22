@@ -15,6 +15,7 @@ import com.google.android.material.navigation.NavigationView
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.About.AboutFragment
 import gr.gkortsaridis.gatekeeper.UI.Account.MyAccountFragment
+import gr.gkortsaridis.gatekeeper.UI.Authentication.AuthenticationBaseActivity
 import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
 import gr.gkortsaridis.gatekeeper.UI.Devices.DevicesFragment
 import gr.gkortsaridis.gatekeeper.UI.Logins.LoginsFragment
@@ -62,6 +63,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    private fun logout() {
+        val intent = Intent(this, AuthenticationBaseActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
 
         var fragmentToReplace: Fragment? = null
@@ -95,9 +102,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 AboutFragment(this)
                 supportActionBar?.title = "About GateKeeper"
             }
+            R.id.nav_item_logout -> { fragmentToReplace = null}
         }
 
-        displayFragment(fragmentToReplace)
+        if (fragmentToReplace != null) {
+            displayFragment(fragmentToReplace)
+        } else { logout() }
 
         drawer.closeDrawer(GravityCompat.START)
         return true

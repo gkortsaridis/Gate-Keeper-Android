@@ -14,7 +14,7 @@
         android:layout_height="150dp"
         android:src="@mipmap/ic_launcher_round"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="100dp"/>
 
     <TextView
         android:layout_width="wrap_content"
