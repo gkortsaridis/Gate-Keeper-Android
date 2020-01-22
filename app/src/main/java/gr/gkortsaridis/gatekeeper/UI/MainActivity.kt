@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.UI.About.AboutFragment
 import gr.gkortsaridis.gatekeeper.UI.Account.MyAccountFragment
 import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
 import gr.gkortsaridis.gatekeeper.UI.Devices.DevicesFragment
@@ -91,8 +92,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 supportActionBar?.title = "GateKeeper Device History"
             }
             R.id.nav_item_about -> { fragmentToReplace =
-                LoginsFragment(this)
-                supportActionBar?.title = "GateKeeper"
+                AboutFragment(this)
+                supportActionBar?.title = "About GateKeeper"
             }
         }
 
