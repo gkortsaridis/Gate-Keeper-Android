@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical"
+    tools:context=".UI.Authentication.PinAuthenticationActivity">
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome\nGeorge Kortsaridis"
+        android:textColor="@android:color/white"
+        android:textSize="25sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"/>
+
+    <com.andrognito.pinlockview.IndicatorDots
+        android:id="@+id/indicator_dots"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="40dp"/>
+
+    <com.andrognito.pinlockview.PinLockView
+        android:id="@+id/pin_lock_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

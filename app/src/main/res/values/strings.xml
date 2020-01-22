@@ -12,7 +12,12 @@
     <string name="notes">Notes</string>
     <string name="ids">IDs</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="encryption_copyright"><![CDATA[Gate Keeper uses a combination of AES GCM & AES CBC encryption algorithms to store your data safely on your device and on Google Firebase cloud.]]></string>
+    <string name="auth_type_fingerprint_description">Device will use Android Fingerprint authentication to securely log you to Gate Keeper.</string>
+    <string name="auth_type_face_description">Device will use Android Face authentication to securely log you to Gate Keeper.</string>
+    <string name="auth_type_pin_description">Device will use a PIN to securely log you to Gate Keeper.</string>
+    <string name="auth_type_password_description"><![CDATA[Device will use you username & password to securely log you to Gate Keeper.]]></string>
+    <string name="login_action_copy">When you click on a login item, password will automatically be copied to device clipboard.</string>
+    <string name="login_action_open">When you click on a login item, this item will open to view more detailed data.</string>
+
 </resources>

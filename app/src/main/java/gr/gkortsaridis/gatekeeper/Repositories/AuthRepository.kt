@@ -20,10 +20,10 @@ import gr.gkortsaridis.gatekeeper.UI.Authentication.LoadingActivity
 
 object AuthRepository {
 
-    val signInNotSet = 0
-    val passwordSignIn = 1
-    val bioSignIn = 2
-    val pinSignIn = 3
+    const val SIGN_IN_NOT_SET = 0
+    const val PASSWORD_SIGN_IN = 1
+    const val BIO_SIN_IN = 2
+    const val PIN_SIGN_IN = 3
 
     private val TAG = "_Auth_Repository_"
 

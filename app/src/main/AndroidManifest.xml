@@ -8,12 +8,13 @@
         android:name=".GateKeeperApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:installLocation="internalOnly"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UI.Cards.CreateCreditCardActivity"></activity>
+        <activity android:name=".UI.Authentication.PinAuthenticationActivity"></activity>
+        <activity android:name=".UI.Cards.CreateCreditCardActivity" />
         <activity android:name=".UI.Notes.NoteActivity" />
         <activity android:name=".UI.Authentication.BioAuthenticationActivity" />
         <activity android:name=".UI.Logins.ApplicationSelector" />

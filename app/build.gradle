@@ -66,6 +66,8 @@ dependencies {
     //Segmented Control
     implementation 'info.hoang8f:android-segmented:1.0.6'
 
+    //PIN Auth
+    implementation 'com.andrognito.pinlockview:pinlockview:2.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

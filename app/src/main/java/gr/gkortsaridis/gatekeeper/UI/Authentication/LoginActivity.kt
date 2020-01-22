@@ -2,7 +2,6 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -16,10 +15,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository.RC_SIGN_IN
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
-import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
-import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
 import kotlinx.android.synthetic.main.activity_login.*
-import javax.crypto.spec.SecretKeySpec
 
 
 class LoginActivity : AppCompatActivity(), SignInListener {
@@ -70,18 +66,18 @@ class LoginActivity : AppCompatActivity(), SignInListener {
         if (success) {
             val biometricManager = BiometricManager.from(this)
 
-            if (AuthRepository.getPreferredAuthType() == AuthRepository.signInNotSet
+            if (AuthRepository.getPreferredAuthType() == AuthRepository.SIGN_IN_NOT_SET
                 && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
                 AlertDialog.Builder(this)
                     .setTitle("Biometric Sign In")
                     .setMessage("Would you like to use our biometric authentication feature?\nYour credentials are going to be safely stored on the device.")
                     .setPositiveButton("Yes") { _, _ ->
-                        DataRepository.preferredAuthType = AuthRepository.bioSignIn
+                        DataRepository.preferredAuthType = AuthRepository.BIO_SIN_IN
                         saveCredentials.isChecked = true
                         proceedLogin(user)
                     }
                     .setNegativeButton("No") { _, _ ->
-                        DataRepository.preferredAuthType = AuthRepository.passwordSignIn
+                        DataRepository.preferredAuthType = AuthRepository.PASSWORD_SIGN_IN
                         proceedLogin(user)
                     }
                     .show()

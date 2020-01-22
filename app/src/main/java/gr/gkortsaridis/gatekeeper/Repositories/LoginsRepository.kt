@@ -17,6 +17,9 @@ import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 
 object LoginsRepository {
 
+    const val LOGIN_CLICK_ACTION_COPY = 1
+    const val LOGIN_CLICK_ACTION_OPEN = 2
+
     val createLoginRequestCode = 1
     val createLoginSuccess = 2
     val createLoginError = 3

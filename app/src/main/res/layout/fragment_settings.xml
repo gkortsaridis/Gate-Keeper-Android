@@ -51,7 +51,7 @@
 
                 <info.hoang8f.android.segmented.SegmentedGroup
                     xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/segmented2"
+                    android:id="@+id/auth_type_segmented"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
@@ -63,7 +63,7 @@
                     segmentedgroup:sc_corner_radius="10dp">
 
                     <RadioButton
-                        android:id="@+id/button21"
+                        android:id="@+id/auth_type_pass"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                         style="@style/RadioButton" />
 
                     <RadioButton
-                        android:id="@+id/button22"
+                        android:id="@+id/auth_type_bio"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
@@ -80,6 +80,7 @@
 
 
                     <RadioButton
+                        android:id="@+id/auth_type_pin"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
@@ -93,7 +94,28 @@
                     android:layout_marginBottom="16dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:text="Your device will use Android Fingerprint authentication to securely log you to Gate Keeper."/>
+                    android:id="@+id/auth_type_description"
+                    android:text="@string/auth_type_fingerprint_description"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:textColor="@color/error_red"
+                    android:layout_marginRight="16dp"
+                    android:id="@+id/pin_error_1"
+                    android:text="PIN is not setup yet. Password authentication will be used instead."/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:id="@+id/pin_error_2"
+                    android:textColor="@color/error_red"
+                    android:text="Click here to setup your PIN"/>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -126,6 +148,7 @@
                     xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/login_click_action_segmented"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="16dp"
@@ -137,6 +160,7 @@
                     <RadioButton
                         android:layout_width="0dp"
                         android:layout_weight="1"
+                        android:id="@+id/login_click_action_copy"
                         android:layout_height="wrap_content"
                         android:text="Copy Password"
                         style="@style/RadioButton" />
@@ -144,6 +168,7 @@
                     <RadioButton
                         android:layout_width="0dp"
                         android:layout_weight="1"
+                        android:id="@+id/login_click_action_open"
                         android:layout_height="wrap_content"
                         android:text="Open Login Item"
                         style="@style/RadioButton" />
@@ -154,9 +179,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
+                    android:id="@+id/login_click_action_description"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:text="When you click on a login item, password will automatically be copied to device clipboard."/>
+                    android:text="@string/login_action_copy"/>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
