@@ -132,29 +132,11 @@ class CreateLoginActivity : AppCompatActivity() {
             override fun onLoginCreated() {
                 val viewDialog = ViewDialog(activity)
                 viewDialog.showDialog()
-
-                //TODO: Remove this call
-                LoginsRepository.retrieveLoginsByAccountID(AuthRepository.getUserID(), object:
-                    LoginRetrieveListener {
-                    override fun onLoginsRetrieveSuccess(logins: ArrayList<Login>) {
-                        viewDialog.hideDialog()
-                        GateKeeperApplication.logins = logins
-                        val data = Intent()
-                        setResult(LoginsRepository.createLoginSuccess, data)
-
-                        finish()
-                    }
-
-                    override fun onLoginsRetrieveError(e: Exception) {
-                        viewDialog.hideDialog()
-                        val data = Intent()
-                        setResult(LoginsRepository.createLoginError, data)
-                        finish()
-                    }
-                })
-
-
-
+                GateKeeperApplication.logins.replaceAll { if (it.id == login?.id) login!! else it }
+                viewDialog.hideDialog()
+                val data = Intent()
+                setResult(LoginsRepository.createLoginSuccess, data)
+                finish()
             }
 
             override fun onLoginCreateError() {
@@ -181,28 +163,10 @@ class CreateLoginActivity : AppCompatActivity() {
                 override fun onLoginCreated() {
                     val viewDialog = ViewDialog(activity)
                     viewDialog.showDialog()
-
-                    LoginsRepository.retrieveLoginsByAccountID(AuthRepository.getUserID(), object:
-                        LoginRetrieveListener {
-                        override fun onLoginsRetrieveSuccess(logins: ArrayList<Login>) {
-                            viewDialog.hideDialog()
-                            GateKeeperApplication.logins = logins
-                            val data = Intent()
-                            setResult(LoginsRepository.createLoginSuccess, data)
-
-                            finish()
-                        }
-
-                        override fun onLoginsRetrieveError(e: Exception) {
-                            viewDialog.hideDialog()
-                            val data = Intent()
-                            setResult(LoginsRepository.createLoginError, data)
-                            finish()
-                        }
-                    })
-
-
-
+                    GateKeeperApplication.logins.add(loginObj)
+                    val data = Intent()
+                    setResult(LoginsRepository.createLoginSuccess, data)
+                    finish()
                 }
 
                 override fun onLoginCreateError() {
@@ -220,24 +184,11 @@ class CreateLoginActivity : AppCompatActivity() {
 
         LoginsRepository.deleteLogin(login!!, object: LoginDeleteListener {
             override fun onLoginDeleted() {
-                LoginsRepository.retrieveLoginsByAccountID(AuthRepository.getUserID(), object:
-                    LoginRetrieveListener {
-                    override fun onLoginsRetrieveSuccess(logins: ArrayList<Login>) {
-                        viewDialog.hideDialog()
-                        GateKeeperApplication.logins = logins
-                        val data = Intent()
-                        setResult(LoginsRepository.deleteLoginSuccess, data)
-
-                        finish()
-                    }
-
-                    override fun onLoginsRetrieveError(e: Exception) {
-                        viewDialog.hideDialog()
-                        val data = Intent()
-                        setResult(LoginsRepository.createLoginError, data)
-                        finish()
-                    }
-                })
+                GateKeeperApplication.logins.remove(login!!)
+                viewDialog.hideDialog()
+                val data = Intent()
+                setResult(LoginsRepository.deleteLoginSuccess, data)
+                finish()
             }
         })
     }
