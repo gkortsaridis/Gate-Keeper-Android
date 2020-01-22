@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.UI.Settings
 
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
+import gr.gkortsaridis.gatekeeper.UI.Authentication.PinAuthenticationActivity
 import info.hoang8f.android.segmented.SegmentedGroup
 
 class SettingsFragment(private val activity: Activity) : Fragment() {
@@ -63,8 +65,18 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
             }
         }
 
-        updateUI()
+        pinError2.setOnClickListener {
+            val intent = Intent(activity, PinAuthenticationActivity::class.java)
+            intent.putExtra("MODE", "PIN_SETUP")
+            startActivity(intent)
+        }
+
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateUI()
     }
 
     private fun updateUI() {

@@ -27,7 +27,7 @@ class CreatePasswordActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_password)
 
         auth = FirebaseAuth.getInstance()
-        email = "gkortsaridis@gmail.com" //TODO: get!
+        email = "" //TODO: get!
 
         password = findViewById(R.id.passwordET)
         repeatPassword = findViewById(R.id.repeatPasswordET)
