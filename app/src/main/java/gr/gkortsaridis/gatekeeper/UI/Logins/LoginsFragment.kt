@@ -27,6 +27,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
@@ -126,9 +127,17 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onLoginClicked(login: Login) { copyLoginPassword(login) }
+    override fun onLoginClicked(login: Login) {
+        val action = DataRepository.loginClickAction
+        if (action == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) { openLogin(login) }
+        else { copyLoginPassword(login) }
+    }
 
-    override fun onLoginActionClicked(login: Login) { openLogin(login) }
+    override fun onLoginActionClicked(login: Login) {
+        val action = DataRepository.loginClickAction
+        if (action == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) { copyLoginPassword(login) }
+        else { openLogin(login) }
+    }
 
     private fun openLogin(login: Login) {
         Log.i("Clicked", login.name)

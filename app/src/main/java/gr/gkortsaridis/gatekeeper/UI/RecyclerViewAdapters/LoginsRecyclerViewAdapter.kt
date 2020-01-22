@@ -12,6 +12,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Utils.dp
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 
 
@@ -78,6 +79,10 @@ class LoginsRecyclerViewAdapter(
             if(position == 0) {
                 this.view.setPadding(0,20.dp,0,0)
             }
+
+            val action = DataRepository.loginClickAction
+            if (action == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) { this.loginAction?.setBackgroundResource(R.drawable.copy) }
+            else { this.loginAction?.setBackgroundResource(R.drawable.writing) }
 
             this.view.setOnClickListener { listener.onLoginClicked(login) }
             this.loginAction?.setOnClickListener { listener.onLoginActionClicked(login) }
