@@ -101,7 +101,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gate Keeper v1.0.0"
+            android:text="@string/gate_keeper_version"
+            android:layout_marginLeft="16dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/flaticon_attribution"
             android:layout_margin="16dp"/>
 
     </LinearLayout>
