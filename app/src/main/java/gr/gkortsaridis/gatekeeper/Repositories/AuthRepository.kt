@@ -112,10 +112,10 @@ object AuthRepository {
             && encryptedPassword != null
             && encryptedPassword != ""
         ) {
-            val encryptedEmailData = Gson().fromJson(encryptedEmail, EncryptedData::class.java)
-            val encryptedPasswordData = Gson().fromJson(encryptedPassword, EncryptedData::class.java)
-
             try {
+                val encryptedEmailData = Gson().fromJson(encryptedEmail, EncryptedData::class.java)
+                val encryptedPasswordData = Gson().fromJson(encryptedPassword, EncryptedData::class.java)
+
                 val decryptedEmail = SecurityRepository.decryptWithKeystore(encryptedEmailData.encryptedData, encryptedEmailData.iv)
                 val decryptedPassword = SecurityRepository.decryptWithKeystore(encryptedPasswordData.encryptedData, encryptedPasswordData.iv)
 
