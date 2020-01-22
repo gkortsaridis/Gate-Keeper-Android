@@ -18,6 +18,7 @@ import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
 import gr.gkortsaridis.gatekeeper.UI.Devices.DevicesFragment
 import gr.gkortsaridis.gatekeeper.UI.Logins.LoginsFragment
 import gr.gkortsaridis.gatekeeper.UI.Notes.NotesFragment
+import gr.gkortsaridis.gatekeeper.UI.Settings.SettingsFragment
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -79,10 +80,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_item_account -> { fragmentToReplace =
                 MyAccountFragment(this)
-                supportActionBar?.title = "GateKeeper Account"
+                supportActionBar?.title = "My GateKeeper Account"
             }
             R.id.nav_item_settings -> { fragmentToReplace =
-                LoginsFragment(this)
+                SettingsFragment(this)
                 supportActionBar?.title = "GateKeeper Settings"
             }
             R.id.nav_item_devices -> { fragmentToReplace =

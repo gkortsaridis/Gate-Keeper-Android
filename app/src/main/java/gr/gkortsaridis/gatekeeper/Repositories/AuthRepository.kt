@@ -68,6 +68,7 @@ object AuthRepository {
             val bundle = Bundle()
             bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
             FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
+            saveCredentials(email, password)
             listener.onSignUpComplete(true, FirebaseSignInResult(result, null))
             result.user?.sendEmailVerification()
         }.addOnFailureListener {e: java.lang.Exception ->
@@ -111,10 +112,10 @@ object AuthRepository {
             && encryptedPassword != null
             && encryptedPassword != ""
         ) {
-            val encryptedEmailData = Gson().fromJson(encryptedEmail, EncryptedData::class.java)
-            val encryptedPasswordData = Gson().fromJson(encryptedPassword, EncryptedData::class.java)
-
             try {
+                val encryptedEmailData = Gson().fromJson(encryptedEmail, EncryptedData::class.java)
+                val encryptedPasswordData = Gson().fromJson(encryptedPassword, EncryptedData::class.java)
+
                 val decryptedEmail = SecurityRepository.decryptWithKeystore(encryptedEmailData.encryptedData, encryptedEmailData.iv)
                 val decryptedPassword = SecurityRepository.decryptWithKeystore(encryptedPasswordData.encryptedData, encryptedPasswordData.iv)
 

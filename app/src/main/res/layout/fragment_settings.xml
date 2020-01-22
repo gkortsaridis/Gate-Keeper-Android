@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".UI.Settings.SettingsFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/colorPrimaryDark">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:src="@mipmap/ic_launcher_round"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="130dp"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="5dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Authentication type"
+                    android:textColor="@color/mate_black"
+                    android:layout_marginBottom="8dp"
+                    android:textSize="18sp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="16dp"/>
+
+                <info.hoang8f.android.segmented.SegmentedGroup
+                    xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/segmented2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    segmentedgroup:sc_border_width="2dp"
+                    segmentedgroup:sc_corner_radius="10dp">
+
+                    <RadioButton
+                        android:id="@+id/button21"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Password"
+                        style="@style/RadioButton" />
+
+                    <RadioButton
+                        android:id="@+id/button22"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Bio"
+                        style="@style/RadioButton" />
+
+
+                    <RadioButton
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="PIN"
+                        style="@style/RadioButton" />
+                </info.hoang8f.android.segmented.SegmentedGroup>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="Your device will use Android Fingerprint authentication to securely log you to Gate Keeper."/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="5dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Login Click Action"
+                    android:textColor="@color/mate_black"
+                    android:layout_marginBottom="8dp"
+                    android:textSize="18sp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="16dp"/>
+
+                <info.hoang8f.android.segmented.SegmentedGroup
+                    xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    segmentedgroup:sc_border_width="2dp"
+                    segmentedgroup:sc_corner_radius="10dp">
+
+                    <RadioButton
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Copy Password"
+                        style="@style/RadioButton" />
+
+                    <RadioButton
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Open Login Item"
+                        style="@style/RadioButton" />
+
+                </info.hoang8f.android.segmented.SegmentedGroup>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="When you click on a login item, password will automatically be copied to device clipboard."/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
