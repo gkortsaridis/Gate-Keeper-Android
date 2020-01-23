@@ -46,7 +46,7 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
     private lateinit var fab: FloatingActionButton
     private lateinit var vaultName: TextView
     private lateinit var vaultView: LinearLayout
-    private lateinit var noLoginsMessage: TextView
+    private lateinit var noLoginsMessage: LinearLayout
     private var autofillManager: AutofillManager? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,7 +56,7 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         //RecyclerView Initialization
         loginsRV = view.findViewById(R.id.logins_recycler_view) as RecyclerView
         loginsRV.layoutManager = LinearLayoutManager(activity)
-        noLoginsMessage = view.findViewById(R.id.no_logins_message)
+        noLoginsMessage = view.findViewById(R.id.no_items_view)
 
         fab = view.findViewById(R.id.fab)
         vaultView = view.findViewById(R.id.vault_view)
@@ -90,6 +90,7 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
 
         vaultName.text = VaultRepository.getLastActiveVault().name
         noLoginsMessage.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
+        fab.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
     }
 
     private fun checkForAutofill() {

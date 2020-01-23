@@ -59,17 +59,24 @@ class PinAuthenticationActivity : AppCompatActivity() {
             override fun onComplete(pin: String?) {
                 if (!setupMode) {
                     //Not in setup mode. Sign In
-                    AuthRepository.signIn(activity, savedCredentials!!.email, savedCredentials!!.password, true, object: SignInListener{
-                        override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
-                            if (success) {
-                                AuthRepository.setApplicationUser(user.authResult!!.user!!)
-                                AuthRepository.proceedLoggedIn(activity)
-                            }else {
-                                Toast.makeText(activity, user.exception.toString(), Toast.LENGTH_SHORT).show()
+
+                    if (pin == DataRepository.pinLock) {
+                        AuthRepository.signIn(activity, savedCredentials!!.email, savedCredentials!!.password, true, object: SignInListener{
+                            override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
+                                if (success) {
+                                    AuthRepository.setApplicationUser(user.authResult!!.user!!)
+                                    AuthRepository.proceedLoggedIn(activity)
+                                }else {
+                                    Toast.makeText(activity, user.exception.toString(), Toast.LENGTH_SHORT).show()
+                                }
                             }
-                        }
-                        override fun onRegistrationNeeded(email: String) {  }
-                    })
+                            override fun onRegistrationNeeded(email: String) {  }
+                        })
+                    } else {
+                        Toast.makeText(activity, "Wrong PIN entered", Toast.LENGTH_SHORT).show()
+                        lockView.resetPinLockView()
+                    }
+
                 } else {
                     //In Setup Mode.
                     if (tempPin == "") {

@@ -135,7 +135,7 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
     private fun updateVaultsRecyclerView() {
         val action = intent.getStringExtra("action")
         val sortedVaults = ArrayList(GateKeeperApplication.vaults.sortedWith(compareBy {it.name}))
-        if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT) { sortedVaults.add(0, Vault("-1", AuthRepository.getUserID(), "All Vaults") )}
+        if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT && sortedVaults.size > 1) { sortedVaults.add(0, Vault("-1", AuthRepository.getUserID(), "All Vaults") )}
         vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(this, sortedVaults, vaultId, this)
     }
 

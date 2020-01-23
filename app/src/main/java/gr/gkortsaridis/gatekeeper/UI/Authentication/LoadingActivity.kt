@@ -1,5 +1,6 @@
 package gr.gkortsaridis.gatekeeper.UI.Authentication
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -37,7 +38,8 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
         NotesRepository.retrieveNotesByAccountID(AuthRepository.getUserID(), this)
 
         welcomeMessage = findViewById(R.id.welcome_message)
-        welcomeMessage.text = "Welcome back\n"+GateKeeperApplication.user?.displayName
+        val name = GateKeeperApplication.user?.displayName ?: ""
+        welcomeMessage.text = "Welcome back\n$name"
     }
 
     private fun openMainApplication() {

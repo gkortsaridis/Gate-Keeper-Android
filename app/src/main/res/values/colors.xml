@@ -6,5 +6,6 @@
 
     <color name="busy_grey">#E5E5E5</color>
     <color name="mate_black">#212121</color>
+    <color name="tone_black">#323232</color>
     <color name="error_red">#f44336</color>
 </resources>

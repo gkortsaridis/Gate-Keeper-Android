@@ -30,5 +30,6 @@
     <string name="sign_in">Sign In</string>
     <string name="new_user">New user?</string>
     <string name="sign_up">Sign Up</string>
+    <string name="vaults_explanation">Vaults are the main storage categorization area for your data. You can create multiple Vaults for Personal, Work, School, etc use</string>
 
 </resources>
