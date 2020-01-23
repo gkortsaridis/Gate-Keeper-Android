@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.autofill.AutofillManager
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -46,6 +47,7 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
     private lateinit var fab: FloatingActionButton
     private lateinit var vaultName: TextView
     private lateinit var vaultView: LinearLayout
+    private lateinit var addLoginButton: Button
     private lateinit var noLoginsMessage: LinearLayout
     private var autofillManager: AutofillManager? = null
 
@@ -53,16 +55,16 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_logins, container, false)
 
-        //RecyclerView Initialization
         loginsRV = view.findViewById(R.id.logins_recycler_view) as RecyclerView
         loginsRV.layoutManager = LinearLayoutManager(activity)
         noLoginsMessage = view.findViewById(R.id.no_items_view)
-
+        addLoginButton = view.findViewById(R.id.add_login_btn)
         fab = view.findViewById(R.id.fab)
         vaultView = view.findViewById(R.id.vault_view)
         vaultName = view.findViewById(R.id.vault_name)
 
-        fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode)}
+        addLoginButton.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
+        fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
         vaultView.setOnClickListener{
             val intent = Intent(activity, SelectVaultActivity::class.java)
             intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)

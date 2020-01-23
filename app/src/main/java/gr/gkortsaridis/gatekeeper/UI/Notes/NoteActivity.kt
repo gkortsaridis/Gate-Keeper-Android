@@ -225,6 +225,8 @@ class NoteActivity : AppCompatActivity() {
                         finishWithResult()
                     }
                 })
+            } else {
+              finishWithResult()
             }
 
         }else {
@@ -240,6 +242,8 @@ class NoteActivity : AppCompatActivity() {
                         finishWithResult()
                     }
                 })
+            } else {
+              finishWithResult()
             }
         }
 

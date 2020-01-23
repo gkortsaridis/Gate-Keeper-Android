@@ -31,5 +31,12 @@
     <string name="new_user">New user?</string>
     <string name="sign_up">Sign Up</string>
     <string name="vaults_explanation">Vaults are the main storage categorization area for your data. You can create multiple Vaults for Personal, Work, School, etc use</string>
+    <string name="no_cards_message">Your currently have no cards saved in this vault.</string>
+    <string name="no_cards_title">No Cards</string>
+    <string name="add">Add</string>
+    <string name="no_logins_title">No Logins</string>
+    <string name="no_logins_message">Your currently have no logins saved in this vault.</string>
+    <string name="no_notes_message">Your currently have no notes saved in this vault.</string>
+    <string name="no_notes_title">No Notes</string>
 
 </resources>

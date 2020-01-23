@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -33,7 +34,8 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
     private lateinit var notesAdapter: NotesRecyclerViewAdapter
     private lateinit var vaultView: LinearLayout
     private lateinit var vaultName: TextView
-    private lateinit var noNotesMessage: TextView
+    private lateinit var noNotesMessage: LinearLayout
+    private lateinit var addNoteBtn: Button
 
     private lateinit var currentVault: Vault
 
@@ -44,14 +46,17 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
 
         addNoteFab = view.findViewById(R.id.add_note)
         notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
+        vaultView = view.findViewById(R.id.vault_view)
+        vaultName = view.findViewById(R.id.vault_name)
+        noNotesMessage = view.findViewById(R.id.no_items_view)
+        addNoteBtn = view.findViewById(R.id.add_note_btn)
+
         notesRecyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         notesAdapter = NotesRecyclerViewAdapter(activity, getOrderedNotes(currentVault), this)
         notesRecyclerView.adapter = notesAdapter
-        addNoteFab.setOnClickListener { addNote() }
-        vaultView = view.findViewById(R.id.vault_view)
-        vaultName = view.findViewById(R.id.vault_name)
-        noNotesMessage = view.findViewById(R.id.no_notes_message)
 
+        addNoteBtn.setOnClickListener { addNote() }
+        addNoteFab.setOnClickListener { addNote() }
         vaultView.setOnClickListener { changeVault() }
         return view
     }

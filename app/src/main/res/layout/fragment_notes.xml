@@ -11,6 +11,12 @@
         android:layout_height="60dp"
         android:background="@color/colorPrimaryDark"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="90dp"
+        android:id="@+id/notes_recycler_view"/>
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,22 +72,45 @@
 
     </androidx.cardview.widget.CardView>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="You currently do not have any Notes saved in this vault. You can dive right in by clicking the + Button."
-        android:layout_marginTop="100dp"
-        android:layout_marginRight="16dp"
-        android:textSize="17sp"
-        android:layout_marginLeft="16dp"
-        android:id="@+id/no_notes_message"/>
+        android:orientation="vertical"
+        android:id="@+id/no_items_view"
+        android:layout_centerInParent="true">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/note_grey"
+            android:layout_gravity="center_horizontal"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_notes_title"
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/tone_black"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/tone_black"
+            android:text="@string/no_notes_message"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="90dp"
-        android:id="@+id/notes_recycler_view"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="@string/add"
+            android:id="@+id/add_note_btn"
+            android:foreground="?attr/selectableItemBackground"
+            android:background="@drawable/round_button_dark"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
