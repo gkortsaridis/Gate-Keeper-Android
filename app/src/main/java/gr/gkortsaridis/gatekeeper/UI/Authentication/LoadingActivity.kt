@@ -3,10 +3,12 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.postDelayed
 import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.*
@@ -24,8 +26,11 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
     private var devicesOk: Boolean = false
     private var cardsOk  : Boolean = false
     private var notesOk  : Boolean = false
+    private var timerOk : Boolean = false
+    private val timerDelaySeconds = 5
 
     private lateinit var welcomeMessage : TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,10 +45,15 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
         welcomeMessage = findViewById(R.id.welcome_message)
         val name = GateKeeperApplication.user?.displayName ?: ""
         welcomeMessage.text = "Welcome back\n$name"
+
+        Handler().postDelayed({
+            timerOk = true
+            openMainApplication()
+        }, (timerDelaySeconds * 1000).toLong())
     }
 
     private fun openMainApplication() {
-        if (loginsOk && vaultsOk && devicesOk && cardsOk && notesOk) {
+        if (loginsOk && vaultsOk && devicesOk && cardsOk && notesOk && timerOk) {
             DeviceRepository.logCurrentLogin(this)
 
             val intent = Intent(this, MainActivity::class.java)
