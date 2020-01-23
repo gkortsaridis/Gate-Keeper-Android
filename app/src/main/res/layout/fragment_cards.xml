@@ -121,6 +121,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
+        android:src="@drawable/plus"
         android:id="@+id/add_credit_card"/>
 
 </RelativeLayout>

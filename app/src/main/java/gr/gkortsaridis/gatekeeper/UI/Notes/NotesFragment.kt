@@ -80,6 +80,7 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
         notesAdapter.setNotes(notes)
         vaultName.text = currentVault.name
         noNotesMessage.visibility = if (notes.size > 0) View.GONE else View.VISIBLE
+        addNoteFab.visibility = if (notes.size > 0) View.VISIBLE else View.GONE
     }
 
     private fun getOrderedNotes(vault: Vault): ArrayList<Note> {

@@ -50,7 +50,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="16dp"
-        android:src="@drawable/vault"
+        android:src="@drawable/plus"
         android:id="@+id/add_vault"/>
 
 </RelativeLayout>
