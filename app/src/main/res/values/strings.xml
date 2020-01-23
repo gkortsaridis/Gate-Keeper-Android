@@ -24,5 +24,11 @@
     <string name="welcome">Welcome!</string>
     <string name="flaticon_attribution">Icons downloaded by www.flaticon.com</string>
     <string name="gate_keeper_version">Gate Keeper v1.0.0</string>
+    <string name="save_username">Save Username</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="sign_in">Sign In</string>
+    <string name="new_user">New user?</string>
+    <string name="sign_up">Sign Up</string>
 
 </resources>

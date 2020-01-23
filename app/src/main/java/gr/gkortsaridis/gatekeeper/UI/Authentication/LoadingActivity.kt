@@ -59,8 +59,12 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
 
     override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
         GateKeeperApplication.vaults = vaults
-        vaultsOk = true
-        openMainApplication()
+        if (vaults.size > 0) {
+            vaultsOk = true
+            openMainApplication()
+        }else {
+            showLoadingError()
+        }
     }
 
     override fun onCreditCardsReceived(cards: ArrayList<CreditCard>) {

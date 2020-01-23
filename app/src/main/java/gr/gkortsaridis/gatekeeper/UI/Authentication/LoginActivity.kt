@@ -44,7 +44,7 @@ class LoginActivity : AppCompatActivity(), SignInListener {
         if (loadedCredentials != null) {
             saveCredentials.isChecked = true
             email.setText(loadedCredentials.email)
-            password.setText(loadedCredentials.password)
+            //password.setText(loadedCredentials.password)
         }else{
             saveCredentials.isChecked = false
         }
@@ -91,8 +91,8 @@ class LoginActivity : AppCompatActivity(), SignInListener {
     }
 
     private fun proceedLogin(user: FirebaseSignInResult) {
-        if (saveCredentials.isChecked) { AuthRepository.saveCredentials(email = email.text.toString(), password = password.text.toString()) }
-        else { AuthRepository.clearCredentials() }
+        //Save credentials locally for decryption
+        AuthRepository.saveCredentials(email = email.text.toString(), password = password.text.toString())
 
         AuthRepository.setApplicationUser(user.authResult!!.user!!)
         AuthRepository.proceedLoggedIn(this)
