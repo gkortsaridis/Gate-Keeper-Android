@@ -39,8 +39,7 @@ import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 
 
-class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectListener {
-
+class LoginsFragment() : Fragment(), LoginSelectListener {
     private val TAG = "_LOGINS_FRAGMENT_"
 
     private lateinit var loginsRV: RecyclerView
@@ -84,9 +83,9 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         val logins = LoginsRepository.filterLoginsByCurrentVault(GateKeeperApplication.logins)
         loginsRV.adapter =
             LoginsRecyclerViewAdapter(
-                activity.baseContext,
+                activity!!.baseContext,
                 logins,
-                activity.packageManager,
+                activity!!.packageManager,
                 this
             )
 

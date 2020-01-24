@@ -2,9 +2,11 @@ package gr.gkortsaridis.gatekeeper.UI
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Typeface
+import android.media.Image
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.FrameLayout
+import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -12,6 +14,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.About.AboutFragment
 import gr.gkortsaridis.gatekeeper.UI.Account.MyAccountFragment
@@ -30,6 +33,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var drawer: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var contentFrame: FrameLayout
+
+    private lateinit var navName: TextView
+    private lateinit var navContainerPasswords: RelativeLayout
+    private lateinit var navContainerCards: RelativeLayout
+    private lateinit var navContainerNotes: RelativeLayout
+    private lateinit var navContainerDevices: RelativeLayout
+    private lateinit var navContainerAccount: RelativeLayout
+    private lateinit var navButtonSettings: ImageView
+    private lateinit var navButtonAbout: ImageView
+    private lateinit var navButtonLogout: ImageView
+    private lateinit var navTextPasswords: TextView
+    private lateinit var navTextCards: TextView
+    private lateinit var navTextNotes: TextView
+    private lateinit var navTextAccount: TextView
+    private lateinit var navTextDevices: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,9 +70,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView: NavigationView = findViewById(R.id.navigationView)
         navigationView.setNavigationItemSelectedListener(this)
 
-        displayFragment(LoginsFragment(this))
-        supportActionBar?.title = "GateKeeper Logins"
+        navName = findViewById(R.id.nav_name)
+        navContainerPasswords = findViewById(R.id.nav_container_passwords)
+        navContainerCards = findViewById(R.id.nav_container_cards)
+        navContainerNotes = findViewById(R.id.nav_container_notes)
+        navContainerAccount = findViewById(R.id.nav_container_account)
+        navContainerDevices = findViewById(R.id.nav_container_devices)
+        navButtonSettings = findViewById(R.id.nav_button_settings)
+        navButtonAbout = findViewById(R.id.nav_button_about)
+        navButtonLogout = findViewById(R.id.nav_button_logout)
+        navTextPasswords = findViewById(R.id.nav_text_passwords)
+        navTextCards = findViewById(R.id.nav_text_cards)
+        navTextNotes = findViewById(R.id.nav_text_notes)
+        navTextDevices = findViewById(R.id.nav_text_devices)
+        navTextAccount = findViewById(R.id.nav_text_account)
 
+        navContainerPasswords.setOnClickListener { switchFragment("Passwords") }
+        navContainerCards.setOnClickListener { switchFragment("Cards") }
+        navContainerNotes.setOnClickListener { switchFragment("Notes") }
+        navContainerDevices.setOnClickListener { switchFragment("Devices") }
+        navContainerAccount.setOnClickListener { switchFragment("Account") }
+        navButtonSettings.setOnClickListener { switchFragment("Settings") }
+        navButtonAbout.setOnClickListener { switchFragment("About") }
+        navButtonLogout.setOnClickListener { switchFragment("Logout") }
+
+
+        val userName = GateKeeperApplication.user?.displayName ?: GateKeeperApplication.user?.email ?: ""
+        navName.text = userName
+        switchFragment("Passwords")
     }
 
     private fun displayFragment(fragment: Fragment?){
@@ -69,40 +112,53 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
-    override fun onNavigationItemSelected(p0: MenuItem): Boolean {
-
+    private fun switchFragment(what: String) {
         var fragmentToReplace: Fragment? = null
 
-        when (p0.itemId) {
-            R.id.nav_item_logins -> { fragmentToReplace =
-                LoginsFragment(this)
+        navTextPasswords.typeface = Typeface.DEFAULT
+        navTextNotes.typeface = Typeface.DEFAULT
+        navTextCards.typeface = Typeface.DEFAULT
+        navTextDevices.typeface = Typeface.DEFAULT
+        navTextAccount.typeface = Typeface.DEFAULT
+
+        when (what) {
+            "Passwords" -> {
+                fragmentToReplace = LoginsFragment()
                 supportActionBar?.title = "GateKeeper Logins"
+                navTextPasswords.typeface = Typeface.DEFAULT_BOLD
             }
-            R.id.nav_item_cards -> { fragmentToReplace =
-                CardsFragment(this)
+            "Cards" -> {
+                fragmentToReplace = CardsFragment(this)
                 supportActionBar?.title = "GateKeeper Cards"
+                navTextCards.typeface = Typeface.DEFAULT_BOLD
             }
-            R.id.nav_item_notes -> { fragmentToReplace =
-                NotesFragment(this)
+            "Notes" -> {
+                fragmentToReplace = NotesFragment(this)
                 supportActionBar?.title = "GateKeeper Notes"
+                navTextNotes.typeface = Typeface.DEFAULT_BOLD
             }
-            R.id.nav_item_account -> { fragmentToReplace =
-                MyAccountFragment(this)
+            "Account" -> {
+                fragmentToReplace = MyAccountFragment(this)
                 supportActionBar?.title = "My GateKeeper Account"
+                navTextAccount.typeface = Typeface.DEFAULT_BOLD
             }
-            R.id.nav_item_settings -> { fragmentToReplace =
-                SettingsFragment(this)
+            "Devices" -> {
+                fragmentToReplace = DevicesFragment(this)
+                supportActionBar?.title = "GateKeeper Device History"
+                navTextDevices.typeface = Typeface.DEFAULT_BOLD
+            }
+            "Settings" -> {
+                fragmentToReplace = SettingsFragment(this)
                 supportActionBar?.title = "GateKeeper Settings"
             }
-            R.id.nav_item_devices -> { fragmentToReplace =
-                DevicesFragment(this)
-                supportActionBar?.title = "GateKeeper Device History"
-            }
-            R.id.nav_item_about -> { fragmentToReplace =
-                AboutFragment(this)
+            "About" -> {
+                fragmentToReplace = AboutFragment(this)
                 supportActionBar?.title = "About GateKeeper"
             }
-            R.id.nav_item_logout -> { fragmentToReplace = null}
+            "Logout" -> {
+                fragmentToReplace = null
+            }
+
         }
 
         if (fragmentToReplace != null) {
@@ -110,8 +166,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else { logout() }
 
         drawer.closeDrawer(GravityCompat.START)
-        return true
     }
+
+    override fun onNavigationItemSelected(p0: MenuItem): Boolean { return true }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
