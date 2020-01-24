@@ -22,11 +22,19 @@ class LoginsRecyclerViewAdapter(
     private val packageManager: PackageManager,
     private val listener: LoginSelectListener): RecyclerView.Adapter<LoginsRecyclerViewAdapter.LoginViewHolder>() {
 
+    private val RIGHT_SIDE = 0
+    private val LEFT_SIDE = 1
+
+    override fun getItemViewType(position: Int): Int {
+        return RIGHT_SIDE
+        //return if (position % 2 == 0) RIGHT_SIDE else LEFT_SIDE
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LoginViewHolder {
-        val inflatedView = LayoutInflater.from(context).inflate(R.layout.recycler_view_item_login, parent, false)
-        return LoginViewHolder(
-            inflatedView
-        )
+        val inflatedView =
+            if (viewType == LEFT_SIDE) LayoutInflater.from(context).inflate(R.layout.recycler_view_item_login_left, parent, false)
+            else LayoutInflater.from(context).inflate(R.layout.recycler_view_item_login_right, parent, false)
+        return LoginViewHolder(inflatedView)
     }
 
     override fun getItemCount(): Int {
@@ -44,7 +52,6 @@ class LoginsRecyclerViewAdapter(
         private var loginUsername: TextView? = null
         private var loginImage: ImageView? = null
         private var loginAction: ImageButton? = null
-        private var loginIcon: CardView? = null
         private var loginInitial: TextView? = null
         private var view: View = v
 
@@ -53,7 +60,6 @@ class LoginsRecyclerViewAdapter(
             loginUsername = view.findViewById(R.id.login_username)
             loginImage = view.findViewById(R.id.login_image)
             loginAction = view.findViewById(R.id.login_action)
-            loginIcon = view.findViewById(R.id.login_icon)
             loginInitial = view.findViewById(R.id.login_icon_initial)
         }
 
@@ -65,20 +71,24 @@ class LoginsRecyclerViewAdapter(
 
             val appIcon = app?.loadIcon(packageManager)
             if (appIcon != null) {
-                this.loginIcon?.visibility = View.GONE
+                this.loginInitial?.visibility = View.GONE
                 this.loginImage?.visibility = View.VISIBLE
                 this.loginImage?.setImageDrawable(appIcon)
             }else{
-                this.loginIcon?.visibility = View.VISIBLE
+                this.loginInitial?.visibility = View.VISIBLE
                 this.loginImage?.visibility = View.GONE
                 if (login.name.isNotEmpty()) {
-                    this.loginInitial?.text = login.name[0].toString()
+                    if (login.name.length > 1) {
+                        this.loginInitial?.text = login.name[0].toString().toUpperCase() + login.name[0].toString().toUpperCase()
+                    }else {
+                        this.loginInitial?.text = login.name[0].toString().toUpperCase()
+                    }
                 }
             }
 
-            if(position == 0) {
-                this.view.setPadding(0,20.dp,0,0)
-            }
+            //if(position == 0) {
+            //    this.view.setPadding(0,20.dp,0,0)
+            //}
 
             val action = DataRepository.loginClickAction
             if (action == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) { this.loginAction?.setBackgroundResource(R.drawable.copy) }

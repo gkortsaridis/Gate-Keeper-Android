@@ -68,6 +68,9 @@ dependencies {
 
     //PIN Auth
     implementation 'com.andrognito.pinlockview:pinlockview:2.1.0'
+
+    //Custom Shapes
+    implementation 'com.github.florent37:shapeofview:1.4.7'
 }
 
 apply plugin: 'com.google.gms.google-services'
