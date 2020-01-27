@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -27,6 +28,7 @@ import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.LOGIN_SORT_TYPE_NAME
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.deleteLoginSuccess
@@ -77,6 +79,19 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
             startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
         }
 
+        val sortTypes = arrayOf("Nickname", "Modified date")
+        loginsSortBtn.setOnClickListener {
+            val builder = AlertDialog.Builder(activity)
+            builder.setTitle("Sort by")
+            builder.setSingleChoiceItems(sortTypes, DataRepository.loginSortType) { dialog, which ->
+                DataRepository.loginSortType = which
+                updateUI()
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+        }
+
         return view
     }
 
@@ -87,6 +102,16 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
 
     private fun updateUI() {
         val logins = LoginsRepository.filterLoginsByCurrentVault(GateKeeperApplication.logins)
+        val sortType = DataRepository.loginSortType
+        if (sortType == LOGIN_SORT_TYPE_NAME) {
+            logins.sortBy { it.name.toLowerCase() }
+            loginsSortType.text = "passwords, sort by nickname"
+        }
+        else {
+            logins.sortBy { it.date_modified }
+            loginsSortType.text = "passwords, sort by modified date"
+        }
+
         loginsRV.adapter =
             LoginsRecyclerViewAdapter(
                 activity!!.baseContext,

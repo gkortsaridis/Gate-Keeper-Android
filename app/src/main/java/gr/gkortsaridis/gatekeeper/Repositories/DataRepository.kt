@@ -15,6 +15,7 @@ object DataRepository {
     private const val AUTH_TYPE = "authentication_type"
     private const val PIN_LOCK = "pin_lock"
     private const val LOGIN_CLICK_ACTION = "login_click_action"
+    private const val LOGIN_SORT_TYPE = "login_sort_type"
 
     private val prefs: SharedPreferences = GateKeeperApplication.instance.getSharedPreferences(PREFS_FILENAME, 0)
 
@@ -53,4 +54,8 @@ object DataRepository {
     var loginClickAction : Int
         get() = prefs.getInt(LOGIN_CLICK_ACTION, LoginsRepository.LOGIN_CLICK_ACTION_COPY)
         set(value) = prefs.edit().putInt(LOGIN_CLICK_ACTION, value).apply()
+
+    var loginSortType : Int
+        get() = prefs.getInt(LOGIN_SORT_TYPE, LoginsRepository.LOGIN_SORT_TYPE_NAME)
+        set(value) = prefs.edit().putInt(LOGIN_SORT_TYPE, value).apply()
 }
