@@ -15,10 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.autofill.AutofillManager
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,6 +45,11 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     private lateinit var vaultView: LinearLayout
     private lateinit var addLoginButton: Button
     private lateinit var noLoginsMessage: LinearLayout
+    private lateinit var loginsCounterContainer: LinearLayout
+    private lateinit var loginCount: TextView
+    private lateinit var loginsSortType: TextView
+    private lateinit var loginsSortBtn: ImageButton
+
     private var autofillManager: AutofillManager? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -61,6 +63,10 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         fab = view.findViewById(R.id.fab)
         vaultView = view.findViewById(R.id.vault_view)
         vaultName = view.findViewById(R.id.vault_name)
+        loginsCounterContainer = view.findViewById(R.id.logins_counter_container)
+        loginCount = view.findViewById(R.id.login_cnt)
+        loginsSortType = view.findViewById(R.id.logins_sort_type)
+        loginsSortBtn = view.findViewById(R.id.sort_logins)
 
         addLoginButton.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
@@ -89,9 +95,12 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
                 this
             )
 
+        loginCount.text = logins.size.toString()
+
         vaultName.text = VaultRepository.getLastActiveVault().name
         noLoginsMessage.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
         fab.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
+        loginsCounterContainer.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
     }
 
     private fun checkForAutofill() {

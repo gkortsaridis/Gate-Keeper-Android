@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (what) {
             "Passwords" -> {
                 fragmentToReplace = LoginsFragment()
-                supportActionBar?.title = "GateKeeper Logins"
+                supportActionBar?.title = "GateKeeper Passwords"
                 navTextPasswords.typeface = Typeface.DEFAULT_BOLD
                 navContainerPasswords.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
