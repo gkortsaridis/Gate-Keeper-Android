@@ -56,7 +56,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
 
         loginsRV = view.findViewById(R.id.logins_recycler_view) as RecyclerView
         loginsRV.layoutManager = LinearLayoutManager(activity)
-        /*noLoginsMessage = view.findViewById(R.id.no_items_view)
+        noLoginsMessage = view.findViewById(R.id.no_items_view)
         addLoginButton = view.findViewById(R.id.add_login_btn)
         fab = view.findViewById(R.id.fab)
         vaultView = view.findViewById(R.id.vault_view)
@@ -69,7 +69,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
             intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
             intent.putExtra("vault_id",VaultRepository.getLastActiveVault().id)
             startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
-        }*/
+        }
 
         return view
     }
@@ -89,9 +89,9 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
                 this
             )
 
-        //vaultName.text = VaultRepository.getLastActiveVault().name
-        //noLoginsMessage.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
-        //fab.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
+        vaultName.text = VaultRepository.getLastActiveVault().name
+        noLoginsMessage.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
+        fab.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
     }
 
     private fun checkForAutofill() {
