@@ -20,6 +20,9 @@ object LoginsRepository {
     const val LOGIN_CLICK_ACTION_COPY = 1
     const val LOGIN_CLICK_ACTION_OPEN = 2
 
+    const val LOGIN_SORT_TYPE_NAME = 0
+    const val LOGIN_SORT_TYPE_DATE_EDITED = 1
+
     val createLoginRequestCode = 1
     val createLoginSuccess = 2
     val createLoginError = 3
