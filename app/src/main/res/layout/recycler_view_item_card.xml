@@ -8,8 +8,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="5dp"
-        android:elevation="5dp"
+        app:cardCornerRadius="15dp"
+        android:elevation="10dp"
         android:layout_margin="16dp">
 
         <LinearLayout
@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:id="@+id/card_container"
+            android:background="@android:color/white"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical">
 
@@ -30,10 +31,17 @@
                 android:src="@drawable/mastercard"/>
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CARD NUMBER"
+                android:textSize="15sp"
+                android:layout_marginLeft="16dp"/>
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="XXXX XXXX XXXX XXXX"
                 android:id="@+id/card_number"
+                android:textStyle="bold"
                 android:layout_marginTop="8dp"
                 android:inputType="number"
                 android:textSize="24sp"
@@ -42,80 +50,68 @@
                 app:autoSizeTextType="uniform"
                 app:autoSizeMinTextSize="5sp"
                 app:autoSizeMaxTextSize="100sp"
-                app:autoSizeStepGranularity="1sp"
-                android:gravity="center_horizontal" />
+                app:autoSizeStepGranularity="1sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:autoSizeTextType="uniform"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp"
-                android:layout_marginLeft="16dp">
-                <TextView
+                android:orientation="horizontal">
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Expires: "
-                    android:textSize="18sp"
-                    android:id="@+id/expiration_date" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="MM"
-                    android:maxLength="2"
-                    android:textSize="18sp"
-                    android:inputType="date"
-                    android:id="@+id/expire_month" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CARD HOLDER"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="4dp"
+                        android:textSize="15sp"
+                        android:layout_marginLeft="16dp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:hint="Cardholder Name"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:id="@+id/cardholder_name"
+                        android:layout_marginBottom="16dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" / "
-                    android:textSize="18sp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="YY"
-                    android:textSize="18sp"
-                    android:maxLength="2"
-                    android:inputType="date"
-                    android:id="@+id/expire_year" />
+                </LinearLayout>
 
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
                     android:layout_weight="1"/>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="CVV"
-                    android:maxLength="4"
-                    android:textSize="18sp"
-                    android:inputType="number"
-                    android:layout_gravity="end"
-                    android:layout_marginRight="16dp"
-                    android:id="@+id/cvv"/>
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="EXPIRES"
+                        android:textSize="18sp"
+                        android:id="@+id/expiration_date" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="20/Feb"
+                        android:textStyle="bold"
+                        android:maxLength="2"
+                        android:textSize="18sp"
+                        android:inputType="date"
+                        android:id="@+id/expiry_date" />
+                </LinearLayout>
 
             </LinearLayout>
-
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:hint="Cardholder Name"
-                android:textSize="18sp"
-                android:id="@+id/cardholder_name"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp" />
-
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

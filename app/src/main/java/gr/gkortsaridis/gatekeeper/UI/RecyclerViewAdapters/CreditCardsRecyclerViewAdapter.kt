@@ -44,20 +44,16 @@ class CreditCardsRecyclerViewAdapter(
         private var cardType: ImageView? = null
         private var cardNumber: TextView? = null
         private var cardholderName: TextView? = null
-        private var cardExpiryDateMonth: TextView? = null
-        private var cardExpiryDateYear: TextView? = null
-        private var cardCVV: TextView? = null
+        private var cardExpiryDate: TextView? = null
         private var view: View = v
         private var cardContainer: LinearLayout? = null
 
         init {
             cardType = view.findViewById(R.id.card_type)
             cardNumber = view.findViewById(R.id.card_number)
-            cardExpiryDateMonth = view.findViewById(R.id.expire_month)
-            cardExpiryDateYear = view.findViewById(R.id.expire_year)
+            cardExpiryDate = view.findViewById(R.id.expiry_date)
             cardholderName = view.findViewById(R.id.cardholder_name)
             cardContainer = view.findViewById(R.id.card_container)
-            cardCVV = view.findViewById(R.id.cvv)
         }
 
         fun bindCard(card: CreditCard, position: Int, listener: CreditCardClickListener){
@@ -66,9 +62,7 @@ class CreditCardsRecyclerViewAdapter(
             }
 
             this.cardNumber?.text = card.number
-            this.cardExpiryDateMonth?.text = card.expirationDate
-            this.cardExpiryDateYear?.text = card.expirationDate
-            this.cardCVV?.text = "CVV: "+card.cvv
+            this.cardExpiryDate?.text = card.expirationDate
             this.cardholderName?.text = card.cardholderName
 
             when (card.type) {
