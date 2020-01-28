@@ -42,6 +42,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private lateinit var cardholderNameET: EditText
     private lateinit var cardNumberET: EditText
     private lateinit var expirationDateET: EditText
+    private lateinit var vaultET: EditText
     private lateinit var cvvET: EditText
 
     private lateinit var currentVault: Vault
@@ -64,6 +65,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cardholderNameET = view.findViewById(R.id.cardholder_name_et)
         cardNumberET = view.findViewById(R.id.card_number_et)
         expirationDateET = view.findViewById(R.id.expiration_date_et)
+        vaultET = view.findViewById(R.id.vault_et)
         cvvET = view.findViewById(R.id.cvv_et)
 
         val carouselLayoutManager = CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL)
@@ -104,6 +106,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cardNumberET.setText(activeCard?.number)
         expirationDateET.setText(activeCard?.expirationDate)
         cvvET.setText(activeCard?.cvv)
+        vaultET.setText(VaultRepository.getVaultByID(activeCard?.vaultId ?: "")?.name ?: "")
 
         noCardsMessage.visibility = if (filtered.size > 0) View.GONE else View.VISIBLE
         addCreditCard.visibility = if (filtered.size > 0) View.VISIBLE else View.GONE
