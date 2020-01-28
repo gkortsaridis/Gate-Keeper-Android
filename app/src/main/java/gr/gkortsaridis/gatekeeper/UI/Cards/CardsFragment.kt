@@ -13,6 +13,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.azoft.carousellayoutmanager.CarouselLayoutManager
+import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
+import com.azoft.carousellayoutmanager.CenterScrollListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -51,9 +54,17 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         addCardButton = view.findViewById(R.id.add_card_btn)
         noCardsMessage = view.findViewById(R.id.no_items_view)
 
+        val carouselLayoutManager = CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL)
+        carouselLayoutManager.setPostLayoutListener(CarouselZoomPostLayoutListener())
+
         cardsAdapter = CreditCardsRecyclerViewAdapter(activity, GateKeeperApplication.cards, this)
         cardsRecyclerView.adapter = cardsAdapter
-        cardsRecyclerView.layoutManager = GridLayoutManager(activity,1)
+        cardsRecyclerView.layoutManager = carouselLayoutManager//GridLayoutManager(activity,1)
+        cardsRecyclerView.setHasFixedSize(true)
+        cardsRecyclerView.addOnScrollListener(object: CenterScrollListener(){
+
+        })
+
 
         addCardButton.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
         addCreditCard.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }

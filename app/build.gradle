@@ -71,6 +71,9 @@ dependencies {
 
     //Custom Shapes
     implementation 'com.github.florent37:shapeofview:1.4.7'
+
+    //Carousel
+    implementation 'com.azoft.carousellayoutmanager:carousel:1.2.4'
 }
 
 apply plugin: 'com.google.gms.google-services'
