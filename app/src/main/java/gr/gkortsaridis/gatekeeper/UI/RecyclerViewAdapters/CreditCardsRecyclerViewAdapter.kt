@@ -57,10 +57,7 @@ class CreditCardsRecyclerViewAdapter(
         }
 
         fun bindCard(card: CreditCard, position: Int, listener: CreditCardClickListener){
-            if (position == 0) {
-                view.setPadding(0,20.dp, 0,0)
-            }
-
+            
             this.cardNumber?.text = card.number
             this.cardExpiryDate?.text = card.expirationDate
             this.cardholderName?.text = card.cardholderName

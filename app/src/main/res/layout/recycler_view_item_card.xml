@@ -105,7 +105,6 @@
                         android:layout_height="wrap_content"
                         android:hint="20/Feb"
                         android:textStyle="bold"
-                        android:maxLength="2"
                         android:textSize="18sp"
                         android:inputType="date"
                         android:id="@+id/expiry_date" />
