@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.UI.Cards
 
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -34,6 +35,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import com.whiteelephant.monthpicker.MonthPickerDialog
+import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Utils.hideKeyboard
 import java.util.*
 import kotlin.collections.ArrayList
@@ -99,9 +101,8 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         addCardButton.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
         addCreditCard.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
         vaultView.setOnClickListener { changeVault() }
-        expirationDateET.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) { showMonthYearPicker() }
-        }
+        expirationDateET.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) { showMonthYearPicker() } }
+        vaultET.setOnFocusChangeListener { _, hasFocus -> if(hasFocus) showVaultSelectorPicker() }
 
         return view
     }
@@ -124,6 +125,34 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
         noCardsMessage.visibility = if (filtered.size > 0) View.GONE else View.VISIBLE
         addCreditCard.visibility = if (filtered.size > 0) View.VISIBLE else View.GONE
+    }
+
+    private fun showVaultSelectorPicker() {
+        vaultET.clearFocus()
+        vaultET.hideKeyboard()
+
+        val vaults = GateKeeperApplication.vaults
+        val vaultNames = arrayOfNulls<String>(vaults.size)
+        var selected = -1
+        vaults.forEachIndexed { index, vault -> vaultNames[index] = vault.name }
+        vaults.forEachIndexed { index, vault -> if(vaultET.text.toString() == vault.name) selected = index }
+
+
+        val builder = AlertDialog.Builder(activity)
+        builder.setTitle("Select Card Vault")
+        builder.setSingleChoiceItems(vaultNames, selected) { dialog, which ->
+            vaultET.setText(vaultNames[which])
+            vaultET.clearFocus()
+            vaultET.hideKeyboard()
+
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.setOnCancelListener {
+            vaultET.clearFocus()
+            vaultET.hideKeyboard()
+        }
+        dialog.show()
     }
 
     private fun showMonthYearPicker() {
