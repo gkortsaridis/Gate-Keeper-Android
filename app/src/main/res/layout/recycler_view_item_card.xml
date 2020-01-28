@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="CARD NUMBER"
-                android:textSize="15sp"
+                android:textSize="17sp"
                 android:layout_marginLeft="16dp"/>
             <TextView
                 android:layout_width="match_parent"
@@ -44,7 +44,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"
                 android:inputType="number"
-                android:textSize="24sp"
+                android:textSize="27sp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 app:autoSizeTextType="uniform"
@@ -68,7 +68,7 @@
                         android:text="CARD HOLDER"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="4dp"
-                        android:textSize="15sp"
+                        android:textSize="17sp"
                         android:layout_marginLeft="16dp"/>
                     <TextView
                         android:layout_width="match_parent"
@@ -76,7 +76,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
                         android:hint="Cardholder Name"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:id="@+id/cardholder_name"
                         android:layout_marginBottom="16dp" />
@@ -98,7 +98,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="EXPIRES"
-                        android:textSize="18sp"
+                        android:textSize="17sp"
                         android:id="@+id/expiration_date" />
 
                     <TextView
@@ -106,7 +106,7 @@
                         android:layout_height="wrap_content"
                         android:hint="20/Feb"
                         android:textStyle="bold"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:inputType="date"
                         android:id="@+id/expiry_date" />
                 </LinearLayout>

@@ -29,6 +29,15 @@ import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.CreditCardsRecyclerVie
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import gr.gkortsaridis.gatekeeper.Utils.LinePagerIndicatorDecoration
+import android.widget.DatePicker
+import android.app.DatePickerDialog
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
+import com.whiteelephant.monthpicker.MonthPickerDialog
+import gr.gkortsaridis.gatekeeper.Utils.hideKeyboard
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener {
 
@@ -90,9 +99,14 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         addCardButton.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
         addCreditCard.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
         vaultView.setOnClickListener { changeVault() }
+        expirationDateET.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) { showMonthYearPicker() }
+        }
 
         return view
     }
+
+
 
     private fun updateUI() {
         currentVault = VaultRepository.getLastActiveVault()
@@ -110,6 +124,39 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
         noCardsMessage.visibility = if (filtered.size > 0) View.GONE else View.VISIBLE
         addCreditCard.visibility = if (filtered.size > 0) View.VISIBLE else View.GONE
+    }
+
+    private fun showMonthYearPicker() {
+        expirationDateET.clearFocus()
+        expirationDateET.hideKeyboard()
+
+        val builder = MonthPickerDialog.Builder(activity,
+            MonthPickerDialog.OnDateSetListener { selectedMonth, selectedYear ->
+                val months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec")
+                expirationDateET.setText("${months[selectedMonth]}/$selectedYear")
+                expirationDateET.clearFocus()
+                expirationDateET.hideKeyboard()
+            }, 2020, Calendar.JANUARY)
+
+        val dialog = builder.setActivatedMonth(Calendar.JULY)
+            .setMinYear(2020)
+            .setActivatedYear(2020)
+            .setMaxYear(2030)
+            .setActivatedYear(2020)
+            .setActivatedMonth(4)
+            .setTitle("Select Card Expiration Date")
+            .build()
+
+        dialog.setOnCancelListener {
+            expirationDateET.clearFocus()
+            expirationDateET.hideKeyboard()
+        }
+        dialog.setOnDismissListener {
+            expirationDateET.clearFocus()
+            expirationDateET.hideKeyboard()
+        }
+        dialog.show()
+
     }
 
     override fun onCreditCardClicked(card: CreditCard) {
