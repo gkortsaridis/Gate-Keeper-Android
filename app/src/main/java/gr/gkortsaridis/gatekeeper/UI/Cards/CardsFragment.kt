@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,11 +27,11 @@ import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.CreditCardsRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
-import gr.gkortsaridis.gatekeeper.Utils.FourDigitCardFormatWatcher
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
-import gr.gkortsaridis.gatekeeper.Utils.LinePagerIndicatorDecoration
-import gr.gkortsaridis.gatekeeper.Utils.hideKeyboard
+import gr.gkortsaridis.gatekeeper.Utils.*
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CARD_STATE_DONE
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CARD_STATE_EDITED
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener {
@@ -47,11 +48,16 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private lateinit var expirationDateET: EditText
     private lateinit var vaultET: EditText
     private lateinit var cvvET: EditText
+    private lateinit var cardNicknameET: EditText
 
     private lateinit var currentVault: Vault
 
     private lateinit var filtered: ArrayList<CreditCard>
+    private lateinit var cardStates: ArrayList<Int>
     private var activeCard : CreditCard? = null
+    private val rvDisabler = RecyclerViewDisabler()
+    private lateinit var inputLineBackground: Drawable
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,9 +74,13 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cardholderNameET = view.findViewById(R.id.cardholder_name_et)
         cardNumberET = view.findViewById(R.id.card_number_et)
         expirationDateET = view.findViewById(R.id.expiration_date_et)
+        cardNicknameET = view.findViewById(R.id.card_nickname_et)
         vaultET = view.findViewById(R.id.vault_et)
         cvvET = view.findViewById(R.id.cvv_et)
         cardNumberET.addTextChangedListener(FourDigitCardFormatWatcher(null))
+
+        inputLineBackground = cardNumberET.background
+        cardStates = ArrayList()
 
         val stackLayoutManager = StackLayoutManager()
         cardsAdapter = CreditCardsRecyclerViewAdapter(activity, GateKeeperApplication.cards, this)
@@ -90,6 +100,8 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         vaultView.setOnClickListener { changeVault() }
         expirationDateET.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) { showMonthYearPicker() } }
         vaultET.setOnFocusChangeListener { _, hasFocus -> if(hasFocus) showVaultSelectorPicker() }
+
+        toggleBottomInputs(false)
 
         return view
     }
@@ -113,10 +125,10 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     @SuppressLint("RestrictedApi")
     private fun updateUI() {
         vaultName.text = currentVault.name
-        cardsAdapter.updateCards(filtered)
 
         if (activeCard == null) { activeCard = filtered[0] }
 
+        cardNicknameET.setText(activeCard?.cardName)
         cardholderNameET.setText(activeCard?.cardholderName)
         cardNumberET.setText(activeCard?.number)
         expirationDateET.setText(activeCard?.expirationDate)
@@ -188,10 +200,35 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
     }
 
-    override fun onCreditCardClicked(card: CreditCard) {
-        val intent = Intent(activity, CreateCreditCardActivity::class.java)
-        intent.putExtra("card_id", card.id)
-        startActivity(intent)
+    override fun onCreditCardClicked(card: CreditCard) { }
+
+    override fun onCreditCardEditButtonClicked(card: CreditCard, position: Int) {
+        if (cardStates[position] == CARD_STATE_DONE) {
+            cardStates[position] = CARD_STATE_EDITED
+            cardsRecyclerView.addOnItemTouchListener(rvDisabler)
+        } else {
+            cardStates[position] = CARD_STATE_DONE
+            cardsRecyclerView.removeOnItemTouchListener(rvDisabler)
+        }
+
+        toggleBottomInputs(cardStates[position] == CARD_STATE_EDITED)
+        cardsAdapter.updateCards(filtered, cardStates)
+    }
+
+    private fun toggleBottomInputs(canEdit: Boolean) {
+        cardholderNameET.background = if(canEdit) inputLineBackground else null
+        cardNumberET.background = if(canEdit) inputLineBackground else null
+        expirationDateET.background = if(canEdit) inputLineBackground else null
+        cvvET.background = if(canEdit) inputLineBackground else null
+        vaultET.background = if(canEdit) inputLineBackground else null
+        cardNicknameET.background = if(canEdit) inputLineBackground else null
+
+        cardNicknameET.isFocusable = canEdit
+        cardholderNameET.isFocusable = canEdit
+        cardNumberET.isFocusable = canEdit
+        expirationDateET.isFocusable = canEdit
+        cvvET.isFocusable = canEdit
+        vaultET.isFocusable = canEdit
     }
 
     private fun changeVault() {
@@ -205,6 +242,9 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         super.onResume()
         currentVault = VaultRepository.getLastActiveVault()
         filtered = CreditCardRepository.filterCardsByVault(currentVault)
+        cardStates.clear()
+        for (card in filtered) { cardStates.add(CARD_STATE_DONE) }
+        cardsAdapter.updateCards(filtered, cardStates)
         updateUI()
     }
 

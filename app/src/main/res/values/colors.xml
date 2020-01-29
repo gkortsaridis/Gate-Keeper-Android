@@ -9,4 +9,5 @@
     <color name="mate_black">#212121</color>
     <color name="tone_black">#323232</color>
     <color name="error_red">#f44336</color>
+    <color name="editable_card">#ffcdd2</color>
 </resources>

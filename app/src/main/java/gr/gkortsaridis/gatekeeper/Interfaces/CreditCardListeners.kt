@@ -5,6 +5,7 @@ import java.lang.Exception
 
 interface CreditCardClickListener {
     fun onCreditCardClicked(card: CreditCard)
+    fun onCreditCardEditButtonClicked(card:CreditCard, position: Int)
 }
 
 interface CreditCardRetrieveListener {
