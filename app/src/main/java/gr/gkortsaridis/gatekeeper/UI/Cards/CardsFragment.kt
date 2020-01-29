@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper.UI.Cards
 
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -8,22 +9,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.azoft.carousellayoutmanager.CarouselLayoutManager
-import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
-import com.azoft.carousellayoutmanager.CenterScrollListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.littlemango.stacklayoutmanager.StackLayoutManager
 import com.whiteelephant.monthpicker.MonthPickerDialog
+import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.CreditCardsRecyclerViewAdapter
@@ -74,27 +72,21 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cvvET = view.findViewById(R.id.cvv_et)
         cardNumberET.addTextChangedListener(FourDigitCardFormatWatcher(null))
 
-        val carouselLayoutManager = CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL)
-        carouselLayoutManager.setPostLayoutListener(CarouselZoomPostLayoutListener())
-
+        val stackLayoutManager = StackLayoutManager()
         cardsAdapter = CreditCardsRecyclerViewAdapter(activity, GateKeeperApplication.cards, this)
         cardsRecyclerView.adapter = cardsAdapter
-        cardsRecyclerView.layoutManager = carouselLayoutManager
+        cardsRecyclerView.layoutManager = stackLayoutManager
         cardsRecyclerView.setHasFixedSize(true)
-        cardsRecyclerView.addOnScrollListener(object: CenterScrollListener(){
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == 0) {
-                    val item = carouselLayoutManager.centerItemPosition
-                    activeCard = filtered[item]
-                    updateUI()
-                }
+        stackLayoutManager.setItemChangedListener (object: StackLayoutManager.ItemChangedListener{
+            override fun onItemChanged(position: Int) {
+                activeCard = filtered[position]
+                updateUI()
             }
         })
         cardsRecyclerView.addItemDecoration(LinePagerIndicatorDecoration())
 
         addCardButton.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
-        addCreditCard.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
+        addCreditCard.setOnClickListener { createCard() }
         vaultView.setOnClickListener { changeVault() }
         expirationDateET.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) { showMonthYearPicker() } }
         vaultET.setOnFocusChangeListener { _, hasFocus -> if(hasFocus) showVaultSelectorPicker() }
@@ -102,11 +94,24 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         return view
     }
 
+    private fun createCard() {
+        val card = CreditCard( id = "-1",
+            cardName = "",
+            type = CardType.Unknown,
+            number = "",
+            expirationDate = "20/23",
+            cvv = "",
+            cardholderName = "",
+            vaultId = VaultRepository.getLastActiveRealVault().id,
+            accountId = AuthRepository.getUserID())
 
+        filtered.add(0,card)
+        updateUI()
+        cardsRecyclerView.smoothScrollToPosition(0)
+    }
 
+    @SuppressLint("RestrictedApi")
     private fun updateUI() {
-        currentVault = VaultRepository.getLastActiveVault()
-        filtered = CreditCardRepository.filterCardsByVault(currentVault)
         vaultName.text = currentVault.name
         cardsAdapter.updateCards(filtered)
 
@@ -198,6 +203,8 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
     override fun onResume() {
         super.onResume()
+        currentVault = VaultRepository.getLastActiveVault()
+        filtered = CreditCardRepository.filterCardsByVault(currentVault)
         updateUI()
     }
 

@@ -31,11 +31,8 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.azoft.carousellayoutmanager.CarouselLayoutManager;
+import com.littlemango.stacklayoutmanager.StackLayoutManager;
 
 public class LinePagerIndicatorDecoration extends RecyclerView.ItemDecoration {
 
@@ -96,8 +93,8 @@ public class LinePagerIndicatorDecoration extends RecyclerView.ItemDecoration {
 
 
         // find active page (which should be highlighted)
-        CarouselLayoutManager layoutManager = (CarouselLayoutManager) parent.getLayoutManager();
-        int activePosition = layoutManager.getCenterItemPosition();
+        StackLayoutManager layoutManager = (StackLayoutManager) parent.getLayoutManager();
+        int activePosition = layoutManager.getFirstVisibleItemPosition();
         //int activePosition = layoutManager.findFirstVisibleItemPosition();
         if (activePosition == RecyclerView.NO_POSITION) {
             return;
