@@ -133,6 +133,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Card Number"
+                        android:inputType="phone"
                         android:id="@+id/card_number_et"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"/>
@@ -185,6 +186,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
+                    app:passwordToggleEnabled="true"
                     android:layout_height="wrap_content">
 
                     <EditText
@@ -192,7 +194,7 @@
                         android:layout_height="wrap_content"
                         android:hint="CVV"
                         android:id="@+id/cvv_et"
-                        android:inputType="textPassword"
+                        android:inputType="numberPassword"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"/>
 

@@ -9,7 +9,7 @@ import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 
-class FourDigitCardFormatWatcher(private val cardType : ImageView) : TextWatcher {
+class FourDigitCardFormatWatcher(private val cardType : ImageView?) : TextWatcher {
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
@@ -36,26 +36,26 @@ class FourDigitCardFormatWatcher(private val cardType : ImageView) : TextWatcher
             //Check Card Type
             when (CreditCardRepository.getCreditCardType(s.toString())) {
                 CardType.Visa -> {
-                    this.cardType.visibility = View.VISIBLE
-                    this.cardType.setImageResource(R.drawable.visa)
+                    this.cardType?.visibility = View.VISIBLE
+                    this.cardType?.setImageResource(R.drawable.visa)
                 }
                 CardType.Mastercard -> {
-                    this.cardType.visibility = View.VISIBLE
-                    this.cardType.setImageResource(R.drawable.mastercard)
+                    this.cardType?.visibility = View.VISIBLE
+                    this.cardType?.setImageResource(R.drawable.mastercard)
                 }
                 CardType.DiscoverCard -> {
-                    this.cardType.visibility = View.VISIBLE
-                    this.cardType.setImageResource(R.drawable.discover)
+                    this.cardType?.visibility = View.VISIBLE
+                    this.cardType?.setImageResource(R.drawable.discover)
                 }
                 CardType.DinersClub -> {
-                    this.cardType.visibility = View.VISIBLE
-                    this.cardType.setImageResource(R.drawable.discover)
+                    this.cardType?.visibility = View.VISIBLE
+                    this.cardType?.setImageResource(R.drawable.discover)
                 }
                 CardType.Amex -> {
-                    this.cardType.visibility = View.VISIBLE
-                    this.cardType.setImageResource(R.drawable.amex)
+                    this.cardType?.visibility = View.VISIBLE
+                    this.cardType?.setImageResource(R.drawable.amex)
                 }
-                null -> this.cardType.visibility = View.INVISIBLE
+                null -> this.cardType?.visibility = View.INVISIBLE
             }
 
         }

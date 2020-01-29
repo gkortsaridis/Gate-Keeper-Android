@@ -77,6 +77,10 @@ dependencies {
 
     //Month-Year picker
     implementation 'com.whiteelephant:monthandyearpicker:1.3.0'
+
+    //Vega Layout Manager
+    implementation 'com.stone.vega.library:VegaLayoutManager:1.0.6'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

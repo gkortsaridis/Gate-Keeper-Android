@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.stone.vega.library.VegaLayoutManager
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
@@ -59,7 +60,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         val view = inflater.inflate(R.layout.fragment_logins, container, false)
 
         loginsRV = view.findViewById(R.id.logins_recycler_view) as RecyclerView
-        loginsRV.layoutManager = LinearLayoutManager(activity)
+        loginsRV.layoutManager = VegaLayoutManager()
         noLoginsMessage = view.findViewById(R.id.no_items_view)
         addLoginButton = view.findViewById(R.id.add_login_btn)
         fab = view.findViewById(R.id.fab)

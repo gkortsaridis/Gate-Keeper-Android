@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +18,7 @@ import com.azoft.carousellayoutmanager.CarouselLayoutManager
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
 import com.azoft.carousellayoutmanager.CenterScrollListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.whiteelephant.monthpicker.MonthPickerDialog
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
@@ -28,17 +28,11 @@ import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.CreditCardsRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
+import gr.gkortsaridis.gatekeeper.Utils.FourDigitCardFormatWatcher
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import gr.gkortsaridis.gatekeeper.Utils.LinePagerIndicatorDecoration
-import android.widget.DatePicker
-import android.app.DatePickerDialog
-import android.content.Context
-import android.view.inputmethod.InputMethodManager
-import com.whiteelephant.monthpicker.MonthPickerDialog
-import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Utils.hideKeyboard
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener {
@@ -78,6 +72,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         expirationDateET = view.findViewById(R.id.expiration_date_et)
         vaultET = view.findViewById(R.id.vault_et)
         cvvET = view.findViewById(R.id.cvv_et)
+        cardNumberET.addTextChangedListener(FourDigitCardFormatWatcher(null))
 
         val carouselLayoutManager = CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL)
         carouselLayoutManager.setPostLayoutListener(CarouselZoomPostLayoutListener())
