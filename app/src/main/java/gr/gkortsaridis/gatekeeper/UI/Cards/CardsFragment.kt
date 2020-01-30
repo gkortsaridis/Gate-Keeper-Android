@@ -212,6 +212,8 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
                     override fun onCardUpdated(card: CreditCard) {
                         GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
                         viewDialog.hideDialog()
+
+                        updateUI()
                     }
                 })
             }
@@ -255,9 +257,11 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
     @SuppressLint("RestrictedApi")
     private fun updateUI() {
-        vaultName.text = currentVault.name
 
-        if (activeCard == null) { activeCard = filtered[0] }
+        if (activeCard == null) {
+            activeCard = filtered[0]
+        }
+        vaultName.text = VaultRepository.getVaultByID(activeCard!!.vaultId)?.name
 
         cardNicknameET.setText(activeCard?.cardName)
         cardholderNameET.setText(activeCard?.cardholderName)
