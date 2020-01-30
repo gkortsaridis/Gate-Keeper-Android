@@ -7,6 +7,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,6 +62,12 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private val rvDisabler = RecyclerViewDisabler()
     private lateinit var inputLineBackground: Drawable
 
+    private var cardNicknameInputType: Int = -1
+    private var cardNumberInputType: Int = -1
+    private var cardholderNameInputType: Int = -1
+    private var cardExpirationInputType: Int = -1
+    private var cardCVVInputType: Int = -1
+    private var cardVaultInputType: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -109,6 +116,13 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
         saveAction.setOnClickListener { endEditing(true) }
         cancelAction.setOnClickListener { endEditing(false) }
+
+        cardNicknameInputType = cardNicknameET.inputType
+        cardNumberInputType = cardNumberET.inputType
+        cardholderNameInputType = cardholderNameET.inputType
+        cardExpirationInputType = expirationDateET.inputType
+        cardCVVInputType = cvvET.inputType
+        cardVaultInputType = vaultET.inputType
 
         toggleBottomInputs(false)
 
@@ -240,12 +254,12 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cardNicknameET.background = if(canEdit) inputLineBackground else null
 
         editActionsContainer.visibility = if (canEdit) View.VISIBLE else View.GONE
-        /*cardNicknameET.isFocusable = canEdit
-        cardholderNameET.isFocusable = canEdit
-        cardNumberET.isFocusable = canEdit
-        expirationDateET.isFocusable = canEdit
-        cvvET.isFocusable = canEdit
-        vaultET.isFocusable = canEdit*/
+        cardNicknameET.inputType = if (canEdit) cardNicknameInputType else InputType.TYPE_NULL
+        cardNumberET.inputType = if (canEdit) cardNumberInputType else InputType.TYPE_NULL
+        cardholderNameET.inputType = if (canEdit) cardholderNameInputType else InputType.TYPE_NULL
+        expirationDateET.inputType = if (canEdit) cardExpirationInputType else InputType.TYPE_NULL
+        cvvET.inputType = if (canEdit) cardCVVInputType else InputType.TYPE_NULL
+        vaultET.inputType = if (canEdit) cardVaultInputType else InputType.TYPE_NULL
     }
 
     private fun changeVault() {
