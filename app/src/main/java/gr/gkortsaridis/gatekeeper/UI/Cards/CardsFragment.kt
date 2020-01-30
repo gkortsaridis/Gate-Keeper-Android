@@ -7,7 +7,9 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,6 +63,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private var activeCard : CreditCard? = null
     private val rvDisabler = RecyclerViewDisabler()
     private lateinit var inputLineBackground: Drawable
+    private var isEditing = false
 
     private var cardNicknameInputType: Int = -1
     private var cardNumberInputType: Int = -1
@@ -111,8 +114,8 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         addCardButton.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
         addCreditCard.setOnClickListener { createCard() }
         vaultView.setOnClickListener { changeVault() }
-        expirationDateET.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) { showMonthYearPicker() } }
-        vaultET.setOnFocusChangeListener { _, hasFocus -> if(hasFocus) showVaultSelectorPicker() }
+        expirationDateET.setOnFocusChangeListener { _, hasFocus -> if (hasFocus && isEditing) { showMonthYearPicker() } }
+        vaultET.setOnFocusChangeListener { _, hasFocus -> if(hasFocus && isEditing) showVaultSelectorPicker() }
 
         saveAction.setOnClickListener { endEditing(true) }
         cancelAction.setOnClickListener { endEditing(false) }
@@ -124,6 +127,55 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cardCVVInputType = cvvET.inputType
         cardVaultInputType = vaultET.inputType
 
+        cardholderNameET.addTextChangedListener(object: TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {  }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+
+            override fun afterTextChanged(s: Editable?) {
+                val tempCard = activeCard?.copy()
+                if (tempCard != null) {
+                    tempCard.cardholderName = s.toString()
+                    val tempFiltered = filtered
+                    tempFiltered.replaceAll { if (it.id == tempCard.id) tempCard else it }
+                    cardsAdapter.updateCards(tempFiltered, cardStates)
+                }
+            }
+        })
+
+        cardNumberET.addTextChangedListener(FourDigitCardFormatWatcher(null))
+        cardNumberET.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                val tempCard = activeCard?.copy()
+                if (tempCard != null) {
+                    tempCard.number = s.toString()
+                    val tempFiltered = filtered
+                    tempFiltered.replaceAll { if (it.id == tempCard.id) tempCard else it }
+                    cardsAdapter.updateCards(tempFiltered, cardStates)
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {  }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {  }
+        })
+
+        cvvET.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                val tempCard = activeCard?.copy()
+                if (tempCard != null) {
+                    tempCard.cvv = s.toString()
+                    val tempFiltered = filtered
+                    tempFiltered.replaceAll { if (it.id == tempCard.id) tempCard else it }
+                    cardsAdapter.updateCards(tempFiltered, cardStates)
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {  }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {  }
+        })
+
         toggleBottomInputs(false)
 
         return view
@@ -131,8 +183,24 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
     private fun endEditing(save: Boolean) {
         toggleBottomInputs(false)
-        val position = filtered.indexOf(activeCard)
-        onCreditCardEditButtonClicked(activeCard!!, position)
+        var position = -1
+        filtered.forEachIndexed{ pos, card -> if (card.id == activeCard?.id) { position = pos } }
+
+        if (position != -1) {
+            onCreditCardEditButtonClicked(activeCard!!, position)
+        }
+
+
+        if (!save) {
+            cardNicknameET.setText(activeCard?.cardName)
+            cardNumberET.setText(activeCard?.number)
+            cardholderNameET.setText(activeCard?.cardholderName)
+            expirationDateET.setText(activeCard?.expirationDate)
+            cvvET.setText(activeCard?.cvv)
+            vaultET.setText(VaultRepository.getVaultByID(activeCard?.vaultId ?: "")?.name)
+        }
+
+
     }
 
     private fun createCard() {
@@ -260,6 +328,8 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         expirationDateET.inputType = if (canEdit) cardExpirationInputType else InputType.TYPE_NULL
         cvvET.inputType = if (canEdit) cardCVVInputType else InputType.TYPE_NULL
         vaultET.inputType = if (canEdit) cardVaultInputType else InputType.TYPE_NULL
+
+        addCreditCard.visibility = if (canEdit) View.GONE else View.VISIBLE
     }
 
     private fun changeVault() {
