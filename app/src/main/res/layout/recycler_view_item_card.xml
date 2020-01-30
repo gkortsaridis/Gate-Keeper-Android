@@ -33,37 +33,6 @@
                     android:layout_gravity="center_vertical"
                     android:id="@+id/card_state_btn"
                     android:background="@drawable/edit_black"/>
-                <com.github.florent37.shapeofview.shapes.RoundRectView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:elevation="4dp"
-                    android:id="@+id/save_card_shape"
-                    android:layout_gravity="center_vertical"
-                    app:shape_roundRect_bottomLeftRadius="15dp"
-                    app:shape_roundRect_bottomRightRadius="15dp"
-                    app:shape_roundRect_topLeftRadius="15dp"
-                    app:shape_roundRect_topRightRadius="15dp">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:background="#7cb342"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:id="@+id/save_card"
-                        android:padding="5dp">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:background="@drawable/tick"/>
-
-                        <TextView
-                            android:layout_marginLeft="8dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@android:color/white"
-                            android:text="Save"/>
-                    </LinearLayout>
-                </com.github.florent37.shapeofview.shapes.RoundRectView>
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"

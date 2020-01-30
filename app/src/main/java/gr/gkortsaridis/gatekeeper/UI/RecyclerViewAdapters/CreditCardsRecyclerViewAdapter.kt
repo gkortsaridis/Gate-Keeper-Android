@@ -58,8 +58,6 @@ class CreditCardsRecyclerViewAdapter(
         private var cardContainer: LinearLayout? = null
         private var context: Context = context
         private var editCard: ImageButton? = null
-        private var saveCard: LinearLayout? = null
-        private var saveCardShape: RoundRectView? = null
 
         init {
             cardType = view.findViewById(R.id.card_type)
@@ -68,8 +66,6 @@ class CreditCardsRecyclerViewAdapter(
             cardholderName = view.findViewById(R.id.cardholder_name)
             cardContainer = view.findViewById(R.id.card_container)
             editCard = view.findViewById(R.id.card_state_btn)
-            saveCard = view.findViewById(R.id.save_card)
-            saveCardShape = view.findViewById(R.id.save_card_shape)
         }
 
         fun bindCard(card: CreditCard, state:Int, position: Int, listener: CreditCardClickListener){
@@ -77,11 +73,9 @@ class CreditCardsRecyclerViewAdapter(
             if (state == CARD_STATE_EDITED) {
                 cardContainer?.setBackgroundColor(context.resources.getColor(R.color.editable_card))
                 editCard?.visibility = View.GONE
-                saveCardShape?.visibility = View.VISIBLE
             }else {
                 cardContainer?.setBackgroundColor(context.resources.getColor(android.R.color.white))
                 editCard?.visibility = View.VISIBLE
-                saveCardShape?.visibility = View.GONE
             }
 
             this.cardNumber?.text = card.number
@@ -97,7 +91,6 @@ class CreditCardsRecyclerViewAdapter(
             }
 
             editCard?.setOnClickListener { listener.onCreditCardEditButtonClicked(card, position) }
-            saveCard?.setOnClickListener { listener.onCreditCardEditButtonClicked(card, position) }
             cardContainer?.setOnClickListener{ listener.onCreditCardClicked(card) }
         }
 

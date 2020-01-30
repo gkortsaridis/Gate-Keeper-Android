@@ -10,4 +10,5 @@
     <color name="tone_black">#323232</color>
     <color name="error_red">#f44336</color>
     <color name="editable_card">#ffcdd2</color>
+    <color name="done_green">#7cb342</color>
 </resources>

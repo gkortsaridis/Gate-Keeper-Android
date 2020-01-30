@@ -87,6 +87,77 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginLeft="16dp"
+                android:id="@+id/edit_actions_container"
+                android:layout_marginRight="16dp">
+                <com.github.florent37.shapeofview.shapes.RoundRectView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    app:shape_roundRect_bottomRightRadius="20dp"
+                    app:shape_roundRect_bottomLeftRadius="20dp"
+                    app:shape_roundRect_topRightRadius="20dp"
+                    app:shape_roundRect_topLeftRadius="20dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:background="@color/done_green"
+                        android:id="@+id/card_save_action"
+                        android:padding="10dp">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/tick"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Save"
+                            android:textColor="@android:color/white"
+                            android:layout_marginLeft="8dp"
+                            android:layout_gravity="center_vertical"/>
+                    </LinearLayout>
+                </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+                <com.github.florent37.shapeofview.shapes.RoundRectView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    app:shape_roundRect_bottomRightRadius="20dp"
+                    app:shape_roundRect_bottomLeftRadius="20dp"
+                    app:shape_roundRect_topRightRadius="20dp"
+                    app:shape_roundRect_topLeftRadius="20dp"
+                    android:layout_marginLeft="16dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:background="@color/error_red"
+                        android:id="@+id/card_cancel_action"
+                        android:padding="10dp">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/tick"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cancel"
+                            android:textColor="@android:color/white"
+                            android:layout_marginLeft="8dp"
+                            android:layout_gravity="center_vertical"/>
+                    </LinearLayout>
+                </com.github.florent37.shapeofview.shapes.RoundRectView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginLeft="16dp">
 

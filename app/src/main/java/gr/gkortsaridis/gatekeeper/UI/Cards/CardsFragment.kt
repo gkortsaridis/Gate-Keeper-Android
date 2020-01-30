@@ -49,6 +49,9 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private lateinit var vaultET: EditText
     private lateinit var cvvET: EditText
     private lateinit var cardNicknameET: EditText
+    private lateinit var editActionsContainer: LinearLayout
+    private lateinit var saveAction: LinearLayout
+    private lateinit var cancelAction: LinearLayout
 
     private lateinit var currentVault: Vault
 
@@ -77,6 +80,9 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cardNicknameET = view.findViewById(R.id.card_nickname_et)
         vaultET = view.findViewById(R.id.vault_et)
         cvvET = view.findViewById(R.id.cvv_et)
+        editActionsContainer = view.findViewById(R.id.edit_actions_container)
+        saveAction = view.findViewById(R.id.card_save_action)
+        cancelAction = view.findViewById(R.id.card_cancel_action)
         cardNumberET.addTextChangedListener(FourDigitCardFormatWatcher(null))
 
         inputLineBackground = cardNumberET.background
@@ -101,9 +107,18 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         expirationDateET.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) { showMonthYearPicker() } }
         vaultET.setOnFocusChangeListener { _, hasFocus -> if(hasFocus) showVaultSelectorPicker() }
 
+        saveAction.setOnClickListener { endEditing(true) }
+        cancelAction.setOnClickListener { endEditing(false) }
+
         toggleBottomInputs(false)
 
         return view
+    }
+
+    private fun endEditing(save: Boolean) {
+        toggleBottomInputs(false)
+        val position = filtered.indexOf(activeCard)
+        onCreditCardEditButtonClicked(activeCard!!, position)
     }
 
     private fun createCard() {
@@ -208,6 +223,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             cardsRecyclerView.addOnItemTouchListener(rvDisabler)
         } else {
             cardStates[position] = CARD_STATE_DONE
+            cardsRecyclerView.setOnTouchListener { _, _-> false }
             cardsRecyclerView.removeOnItemTouchListener(rvDisabler)
         }
 
@@ -223,12 +239,13 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         vaultET.background = if(canEdit) inputLineBackground else null
         cardNicknameET.background = if(canEdit) inputLineBackground else null
 
-        cardNicknameET.isFocusable = canEdit
+        editActionsContainer.visibility = if (canEdit) View.VISIBLE else View.GONE
+        /*cardNicknameET.isFocusable = canEdit
         cardholderNameET.isFocusable = canEdit
         cardNumberET.isFocusable = canEdit
         expirationDateET.isFocusable = canEdit
         cvvET.isFocusable = canEdit
-        vaultET.isFocusable = canEdit
+        vaultET.isFocusable = canEdit*/
     }
 
     private fun changeVault() {
