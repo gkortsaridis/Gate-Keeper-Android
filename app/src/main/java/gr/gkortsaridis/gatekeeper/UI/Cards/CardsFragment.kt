@@ -22,8 +22,10 @@ import com.whiteelephant.monthpicker.MonthPickerDialog
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
@@ -182,14 +184,12 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     }
 
     private fun endEditing(save: Boolean) {
+        val viewDialog = ViewDialog(activity)
+
         toggleBottomInputs(false)
         var position = -1
         filtered.forEachIndexed{ pos, card -> if (card.id == activeCard?.id) { position = pos } }
-
-        if (position != -1) {
-            onCreditCardEditButtonClicked(activeCard!!, position)
-        }
-
+        if (position != -1) { onCreditCardEditButtonClicked(activeCard!!, position) }
 
         if (!save) {
             cardNicknameET.setText(activeCard?.cardName)
@@ -198,9 +198,43 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             expirationDateET.setText(activeCard?.expirationDate)
             cvvET.setText(activeCard?.cvv)
             vaultET.setText(VaultRepository.getVaultByID(activeCard?.vaultId ?: "")?.name)
+        } else if (allDataFilled() && dataDifferentFromCurrentlySaved()) {
+            if (activeCard != null) {
+                activeCard!!.cardName = cardNicknameET.text.toString()
+                activeCard!!.number = cardNumberET.text.toString()
+                activeCard!!.cardholderName = cardholderNameET.text.toString()
+                activeCard!!.cvv = cvvET.text.toString()
+                activeCard!!.type = CreditCardRepository.getCreditCardType(activeCard!!.number)
+                activeCard!!.expirationDate = expirationDateET.text.toString()
+                viewDialog.showDialog()
+
+                CreditCardRepository.updateCreditCard(activeCard!!, object: CreditCardUpdateListener {
+                    override fun onCardUpdated(card: CreditCard) {
+                        GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
+                        viewDialog.hideDialog()
+                    }
+                })
+            }
+        } else {
+            Toast.makeText(activity, "You cannot leave blank card fields", Toast.LENGTH_SHORT).show()
         }
 
+    }
 
+    private fun dataDifferentFromCurrentlySaved(): Boolean {
+        return cardNumberET.text.toString() != activeCard?.number
+                || cardholderNameET.text.toString() != activeCard?.cardholderName
+                || cvvET.text.toString() != activeCard?.cvv
+                || expirationDateET.text.toString() != activeCard?.expirationDate?.substring(0,2)
+                || cardNicknameET.text.toString() != activeCard?.cardName
+                || vaultET.text.toString() != VaultRepository.getVaultByID(activeCard?.vaultId ?: "")?.name
+    }
+
+    private fun allDataFilled(): Boolean {
+        return cardNumberET.text.toString().trim() != ""
+                && cardholderNameET.text.toString().trim() != ""
+                && cvvET.text.toString().trim() != ""
+                && expirationDateET.text.toString().trim() != ""
     }
 
     private fun createCard() {
@@ -313,6 +347,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cardsAdapter.updateCards(filtered, cardStates)
     }
 
+    @SuppressLint("RestrictedApi")
     private fun toggleBottomInputs(canEdit: Boolean) {
         cardholderNameET.background = if(canEdit) inputLineBackground else null
         cardNumberET.background = if(canEdit) inputLineBackground else null
