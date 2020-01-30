@@ -77,82 +77,87 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="280dp"
-                android:layout_below="@+id/height"
-                android:id="@+id/cards_recycler_view"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="280dp"
+                    android:id="@+id/cards_recycler_view"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginLeft="16dp"
-                android:id="@+id/edit_actions_container"
-                android:layout_marginRight="16dp">
-                <com.github.florent37.shapeofview.shapes.RoundRectView
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    app:shape_roundRect_bottomRightRadius="20dp"
-                    app:shape_roundRect_bottomLeftRadius="20dp"
-                    app:shape_roundRect_topRightRadius="20dp"
-                    app:shape_roundRect_topLeftRadius="20dp">
-
-                    <LinearLayout
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginTop="32dp"
+                    android:id="@+id/edit_actions_container"
+                    android:layout_marginRight="16dp">
+                    <com.github.florent37.shapeofview.shapes.RoundRectView
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:background="@color/done_green"
-                        android:id="@+id/card_save_action"
-                        android:padding="10dp">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/tick"/>
+                        android:layout_height="40dp"
+                        app:shape_roundRect_bottomRightRadius="20dp"
+                        app:shape_roundRect_bottomLeftRadius="20dp"
+                        app:shape_roundRect_topRightRadius="20dp"
+                        app:shape_roundRect_topLeftRadius="20dp">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Save"
-                            android:textColor="@android:color/white"
-                            android:layout_marginLeft="8dp"
-                            android:layout_gravity="center_vertical"/>
-                    </LinearLayout>
-                </com.github.florent37.shapeofview.shapes.RoundRectView>
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:background="@color/done_green"
+                            android:id="@+id/card_save_action"
+                            android:padding="10dp">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_vertical"
+                                android:src="@drawable/tick"/>
 
-                <com.github.florent37.shapeofview.shapes.RoundRectView
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    app:shape_roundRect_bottomRightRadius="20dp"
-                    app:shape_roundRect_bottomLeftRadius="20dp"
-                    app:shape_roundRect_topRightRadius="20dp"
-                    app:shape_roundRect_topLeftRadius="20dp"
-                    android:layout_marginLeft="16dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Save"
+                                android:textColor="@android:color/white"
+                                android:layout_marginLeft="8dp"
+                                android:layout_gravity="center_vertical"/>
+                        </LinearLayout>
+                    </com.github.florent37.shapeofview.shapes.RoundRectView>
 
-                    <LinearLayout
+                    <com.github.florent37.shapeofview.shapes.RoundRectView
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:background="@color/error_red"
-                        android:id="@+id/card_cancel_action"
-                        android:padding="10dp">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/tick"/>
+                        android:layout_height="40dp"
+                        app:shape_roundRect_bottomRightRadius="20dp"
+                        app:shape_roundRect_bottomLeftRadius="20dp"
+                        app:shape_roundRect_topRightRadius="20dp"
+                        app:shape_roundRect_topLeftRadius="20dp"
+                        android:layout_marginLeft="16dp">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Cancel"
-                            android:textColor="@android:color/white"
-                            android:layout_marginLeft="8dp"
-                            android:layout_gravity="center_vertical"/>
-                    </LinearLayout>
-                </com.github.florent37.shapeofview.shapes.RoundRectView>
-            </LinearLayout>
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:background="@color/error_red"
+                            android:id="@+id/card_cancel_action"
+                            android:padding="10dp">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_vertical"
+                                android:src="@drawable/tick"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cancel"
+                                android:textColor="@android:color/white"
+                                android:layout_marginLeft="8dp"
+                                android:layout_gravity="center_vertical"/>
+                        </LinearLayout>
+                    </com.github.florent37.shapeofview.shapes.RoundRectView>
+                </LinearLayout>
+            </RelativeLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -234,6 +239,7 @@
                         android:layout_height="wrap_content"
                         android:hint="Card Number"
                         android:inputType="phone"
+                        android:maxLength="19"
                         android:id="@+id/card_number_et"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"/>
@@ -263,6 +269,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Expiration Date"
+                        android:inputType="none"
                         android:id="@+id/expiration_date_et"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"/>
@@ -323,6 +330,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Vault"
+                        android:inputType="none"
                         android:id="@+id/vault_et"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"/>

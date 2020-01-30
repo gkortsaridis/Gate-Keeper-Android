@@ -57,7 +57,7 @@ class CreditCardsRecyclerViewAdapter(
         private var view: View = v
         private var cardContainer: LinearLayout? = null
         private var context: Context = context
-        private var editCard: ImageButton? = null
+        private var editCard: LinearLayout? = null
 
         init {
             cardType = view.findViewById(R.id.card_type)

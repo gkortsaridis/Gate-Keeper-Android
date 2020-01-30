@@ -27,12 +27,39 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:orientation="horizontal">
-                <ImageButton
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+
+                <com.github.florent37.shapeofview.shapes.RoundRectView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
-                    android:id="@+id/card_state_btn"
-                    android:background="@drawable/edit_black"/>
+                    app:shape_roundRect_bottomRightRadius="20dp"
+                    app:shape_roundRect_bottomLeftRadius="20dp"
+                    app:shape_roundRect_topRightRadius="20dp"
+                    app:shape_roundRect_topLeftRadius="20dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:background="@color/done_green"
+                        android:id="@+id/card_state_btn"
+                        android:padding="10dp">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/edit"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Edit"
+                            android:textColor="@android:color/white"
+                            android:layout_marginLeft="8dp"
+                            android:layout_gravity="center_vertical"/>
+                    </LinearLayout>
+                </com.github.florent37.shapeofview.shapes.RoundRectView>
+
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
@@ -71,44 +98,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:weightSum="4"
                 android:orientation="horizontal">
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:layout_height="50dp"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CARD HOLDER"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="4dp"
-                        android:textSize="17sp"
-                        android:layout_marginLeft="16dp"/>
+                        android:textSize="17sp"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
                         android:hint="Cardholder Name"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:id="@+id/cardholder_name"
-                        android:layout_marginBottom="16dp" />
+                        android:id="@+id/cardholder_name" />
 
                 </LinearLayout>
 
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"/>
-
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginRight="16dp">
+                    android:orientation="vertical">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
