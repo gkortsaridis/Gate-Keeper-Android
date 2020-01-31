@@ -25,6 +25,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
@@ -68,6 +69,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private val rvDisabler = RecyclerViewDisabler()
     private lateinit var inputLineBackground: Drawable
     private var isEditing = false
+    private var isCreate = true
 
     private var cardNicknameInputType: Int = -1
     private var cardNumberInputType: Int = -1
@@ -214,6 +216,14 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             expirationDateET.setText(activeCard?.expirationDate)
             cvvET.setText(activeCard?.cvv)
             vaultET.setText(VaultRepository.getVaultByID(activeCard?.vaultId ?: "")?.name)
+
+            if (isCreate) {
+                filtered.removeAt(0)
+                cardStates.removeAt(0)
+                updateCards()
+                updateUI()
+                isCreate = false
+            }
         } else if (allDataFilled() && dataDifferentFromCurrentlySaved()) {
             if (activeCard != null) {
                 activeCard!!.cardName = cardNicknameET.text.toString()
@@ -225,14 +235,29 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
                 activeCard!!.vaultId = activeCardVault!!.id
                 viewDialog.showDialog()
 
-                CreditCardRepository.updateCreditCard(activeCard!!, object: CreditCardUpdateListener {
-                    override fun onCardUpdated(card: CreditCard) {
-                        GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
-                        viewDialog.hideDialog()
-                        updateCards()
-                        updateUI()
-                    }
-                })
+                if (isCreate) {
+                    CreditCardRepository.encryptAndStoreCard(activity, activeCard!!, object:
+                        CreditCardCreateListener {
+                        override fun onCreditCardCreated(card: CreditCard) {
+                            viewDialog.hideDialog()
+                            GateKeeperApplication.cards.add(card)
+                            updateCards()
+                            updateUI()
+                        }
+
+                        override fun onCreditCardCreateError() { }
+                    })
+                } else {
+                    CreditCardRepository.updateCreditCard(activeCard!!, object: CreditCardUpdateListener {
+                        override fun onCardUpdated(card: CreditCard) {
+                            GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
+                            viewDialog.hideDialog()
+                            updateCards()
+                            updateUI()
+                        }
+                    })
+                }
+
             }
         } else {
             Toast.makeText(activity, "You cannot leave blank card fields", Toast.LENGTH_SHORT).show()
@@ -257,6 +282,8 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     }
 
     private fun createCard() {
+        isCreate = true
+
         val card = CreditCard( id = "-1",
             cardName = "",
             type = CardType.Unknown,
@@ -267,9 +294,14 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             vaultId = VaultRepository.getLastActiveRealVault().id,
             accountId = AuthRepository.getUserID())
 
+
         filtered.add(0,card)
+        cardStates.add(0, CARD_STATE_DONE)
+        activeCard = card
+        activeCardVault = VaultRepository.getLastActiveRealVault()
         updateUI()
         cardsRecyclerView.smoothScrollToPosition(0)
+        onCreditCardEditButtonClicked(card,0)
     }
 
     @SuppressLint("RestrictedApi")
@@ -281,6 +313,13 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             activeCard = filtered[0]
             activeCardVault = VaultRepository.getVaultByID(activeCard!!.vaultId)
         }
+
+        cardStates.clear()
+        for (card in filtered) { cardStates.add(CARD_STATE_DONE) }
+        if (!cardsRecyclerView.isComputingLayout) {
+            cardsAdapter.updateCards(filtered, cardStates)
+        }
+
 
         if (activeCard != null && filtered.isNotEmpty()) {
             dataContainer.visibility = View.VISIBLE
@@ -374,7 +413,9 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         }
 
         toggleBottomInputs(cardStates[position] == CARD_STATE_EDITED)
-        cardsAdapter.updateCards(filtered, cardStates)
+        if (!cardsRecyclerView.isComputingLayout) {
+            cardsAdapter.updateCards(filtered, cardStates)
+        }
     }
 
     @SuppressLint("RestrictedApi")
@@ -417,11 +458,6 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             activeCard = filtered[0]
             activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
         }
-
-        cardStates.clear()
-        for (card in filtered) { cardStates.add(CARD_STATE_DONE) }
-        cardsAdapter.updateCards(filtered, cardStates)
-
     }
 
 }

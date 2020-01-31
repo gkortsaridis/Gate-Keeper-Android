@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginLeft="32dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="36dp"
                     android:id="@+id/edit_actions_container"
                     android:layout_marginRight="16dp">
                     <com.github.florent37.shapeofview.shapes.RoundRectView
@@ -200,7 +200,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/user"/>
+                    android:src="@drawable/account_grey"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
