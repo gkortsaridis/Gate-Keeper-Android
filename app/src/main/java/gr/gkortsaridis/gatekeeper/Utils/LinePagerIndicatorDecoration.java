@@ -102,14 +102,17 @@ public class LinePagerIndicatorDecoration extends RecyclerView.ItemDecoration {
 
         // find offset of active page (if the user is scrolling)
         final View activeChild = layoutManager.findViewByPosition(activePosition);
-        int left = activeChild.getLeft();
-        int width = activeChild.getWidth();
+        if (activeChild != null) {
+            int left = activeChild.getLeft();
+            int width = activeChild.getWidth();
 
-        // on swipe the active item will be positioned from [-width, 0]
-        // interpolate offset for smooth animation
-        float progress = mInterpolator.getInterpolation(left * -1 / (float) width);
+            // on swipe the active item will be positioned from [-width, 0]
+            // interpolate offset for smooth animation
+            float progress = mInterpolator.getInterpolation(left * -1 / (float) width);
 
-        drawHighlights(c, indicatorStartX, indicatorPosY, activePosition, progress, itemCount);
+            drawHighlights(c, indicatorStartX, indicatorPosY, activePosition, progress, itemCount);
+        }
+
     }
 
     private void drawInactiveIndicators(Canvas c, float indicatorStartX, float indicatorPosY, int itemCount) {

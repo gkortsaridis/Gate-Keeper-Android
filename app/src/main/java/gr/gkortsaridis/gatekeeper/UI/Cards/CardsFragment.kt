@@ -57,12 +57,14 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private lateinit var editActionsContainer: LinearLayout
     private lateinit var saveAction: LinearLayout
     private lateinit var cancelAction: LinearLayout
+    private lateinit var dataContainer: LinearLayout
 
     private lateinit var currentVault: Vault
 
     private lateinit var filtered: ArrayList<CreditCard>
     private lateinit var cardStates: ArrayList<Int>
     private var activeCard : CreditCard? = null
+    private var activeCardVault : Vault? = null
     private val rvDisabler = RecyclerViewDisabler()
     private lateinit var inputLineBackground: Drawable
     private var isEditing = false
@@ -95,6 +97,8 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         editActionsContainer = view.findViewById(R.id.edit_actions_container)
         saveAction = view.findViewById(R.id.card_save_action)
         cancelAction = view.findViewById(R.id.card_cancel_action)
+        dataContainer = view.findViewById(R.id.data_container)
+
         cardNumberET.addTextChangedListener(FourDigitCardFormatWatcher(null))
 
         inputLineBackground = cardNumberET.background
@@ -108,6 +112,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         stackLayoutManager.setItemChangedListener (object: StackLayoutManager.ItemChangedListener{
             override fun onItemChanged(position: Int) {
                 activeCard = filtered[position]
+                activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
                 updateUI()
             }
         })
@@ -217,6 +222,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
                 activeCard!!.cvv = cvvET.text.toString()
                 activeCard!!.type = CreditCardRepository.getCreditCardType(activeCard!!.number)
                 activeCard!!.expirationDate = expirationDateET.text.toString()
+                activeCard!!.vaultId = activeCardVault!!.id
                 viewDialog.showDialog()
 
                 CreditCardRepository.updateCreditCard(activeCard!!, object: CreditCardUpdateListener {
@@ -269,17 +275,25 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     @SuppressLint("RestrictedApi")
     private fun updateUI() {
 
-        if (activeCard == null) {
-            activeCard = filtered[0]
-        }
-        vaultName.text = VaultRepository.getVaultByID(activeCard!!.vaultId)?.name
+        vaultName.text = VaultRepository.getLastActiveVault().name
 
-        cardNicknameET.setText(activeCard?.cardName)
-        cardholderNameET.setText(activeCard?.cardholderName)
-        cardNumberET.setText(activeCard?.number)
-        expirationDateET.setText(activeCard?.expirationDate)
-        cvvET.setText(activeCard?.cvv)
-        vaultET.setText(VaultRepository.getVaultByID(activeCard?.vaultId ?: "")?.name ?: "")
+        if (activeCard == null && filtered.isNotEmpty()) {
+            activeCard = filtered[0]
+            activeCardVault = VaultRepository.getVaultByID(activeCard!!.vaultId)
+        }
+
+        if (activeCard != null && filtered.isNotEmpty()) {
+            dataContainer.visibility = View.VISIBLE
+
+            cardNicknameET.setText(activeCard!!.cardName)
+            cardholderNameET.setText(activeCard!!.cardholderName)
+            cardNumberET.setText(activeCard!!.number)
+            expirationDateET.setText(activeCard!!.expirationDate)
+            cvvET.setText(activeCard!!.cvv)
+            vaultET.setText(activeCardVault!!.name)
+        } else {
+            dataContainer.visibility = View.GONE
+        }
 
         noCardsMessage.visibility = if (filtered.size > 0) View.GONE else View.VISIBLE
         addCreditCard.visibility = if (filtered.size > 0) View.VISIBLE else View.GONE
@@ -394,6 +408,11 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         super.onResume()
         currentVault = VaultRepository.getLastActiveVault()
         filtered = CreditCardRepository.filterCardsByVault(currentVault)
+        if (!filtered.contains(activeCard) && filtered.isNotEmpty()) {
+            activeCard = filtered[0]
+            activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
+        }
+
         cardStates.clear()
         for (card in filtered) { cardStates.add(CARD_STATE_DONE) }
         cardsAdapter.updateCards(filtered, cardStates)
