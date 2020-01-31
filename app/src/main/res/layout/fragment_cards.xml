@@ -301,6 +301,7 @@
                         android:layout_height="wrap_content"
                         android:hint="CVV"
                         android:id="@+id/cvv_et"
+                        android:maxLength="4"
                         android:inputType="numberPassword"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"/>

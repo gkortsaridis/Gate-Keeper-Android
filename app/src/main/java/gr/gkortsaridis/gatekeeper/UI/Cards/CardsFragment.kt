@@ -132,50 +132,60 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cardholderNameET.addTextChangedListener(object: TextWatcher{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {  }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-
-            override fun afterTextChanged(s: Editable?) {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val tempCard = activeCard?.copy()
                 if (tempCard != null) {
                     tempCard.cardholderName = s.toString()
                     val tempFiltered = filtered
                     tempFiltered.replaceAll { if (it.id == tempCard.id) tempCard else it }
-                    cardsAdapter.updateCards(tempFiltered, cardStates)
+                    if (!cardsRecyclerView.isComputingLayout) {
+                        cardsAdapter.updateCards(tempFiltered, cardStates)
+                    }
                 }
             }
-        })
 
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+        })
         cardNumberET.addTextChangedListener(FourDigitCardFormatWatcher(null))
         cardNumberET.addTextChangedListener(object: TextWatcher{
             override fun afterTextChanged(s: Editable?) {
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {  }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val tempCard = activeCard?.copy()
                 if (tempCard != null) {
                     tempCard.number = s.toString()
                     val tempFiltered = filtered
                     tempFiltered.replaceAll { if (it.id == tempCard.id) tempCard else it }
-                    cardsAdapter.updateCards(tempFiltered, cardStates)
+                    if (!cardsRecyclerView.isComputingLayout) {
+                        cardsAdapter.updateCards(tempFiltered, cardStates)
+                    }
                 }
+            }
+        })
+        cvvET.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {  }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {  }
-        })
-
-        cvvET.addTextChangedListener(object: TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val tempCard = activeCard?.copy()
                 if (tempCard != null) {
                     tempCard.cvv = s.toString()
                     val tempFiltered = filtered
                     tempFiltered.replaceAll { if (it.id == tempCard.id) tempCard else it }
-                    cardsAdapter.updateCards(tempFiltered, cardStates)
+                    if (!cardsRecyclerView.isComputingLayout) {
+                        cardsAdapter.updateCards(tempFiltered, cardStates)
+                    }
                 }
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {  }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {  }
         })
 
         toggleBottomInputs(false)
@@ -184,6 +194,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     }
 
     private fun endEditing(save: Boolean) {
+        isEditing = false
         val viewDialog = ViewDialog(activity)
 
         toggleBottomInputs(false)
@@ -339,6 +350,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
     override fun onCreditCardEditButtonClicked(card: CreditCard, position: Int) {
         if (cardStates[position] == CARD_STATE_DONE) {
+            isEditing = true
             cardStates[position] = CARD_STATE_EDITED
             cardsRecyclerView.addOnItemTouchListener(rvDisabler)
         } else {
