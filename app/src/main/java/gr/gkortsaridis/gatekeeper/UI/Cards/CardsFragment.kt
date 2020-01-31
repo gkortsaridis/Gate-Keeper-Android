@@ -229,7 +229,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
                     override fun onCardUpdated(card: CreditCard) {
                         GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
                         viewDialog.hideDialog()
-
+                        updateCards()
                         updateUI()
                     }
                 })
@@ -316,7 +316,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             vaultET.setText(vaultNames[which])
             vaultET.clearFocus()
             vaultET.hideKeyboard()
-
+            activeCardVault = vaults[which]
             dialog.dismiss()
         }
         val dialog = builder.create()
@@ -406,6 +406,11 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
     override fun onResume() {
         super.onResume()
+        updateCards()
+        updateUI()
+    }
+
+    private fun updateCards() {
         currentVault = VaultRepository.getLastActiveVault()
         filtered = CreditCardRepository.filterCardsByVault(currentVault)
         if (!filtered.contains(activeCard) && filtered.isNotEmpty()) {
@@ -416,7 +421,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cardStates.clear()
         for (card in filtered) { cardStates.add(CARD_STATE_DONE) }
         cardsAdapter.updateCards(filtered, cardStates)
-        updateUI()
+
     }
 
 }
