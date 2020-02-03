@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+
+    <com.wajahatkarim3.easyflipview.EasyFlipView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/flip_view"
+        app:flipOnTouch="false"
+        app:flipEnabled="true"
+        app:flipDuration="400"
+        app:flipType="vertical"
+        app:flipFrom="front">
+
+        <!-- Back Layout Goes Here -->
+        <include layout="@layout/credit_card_edit_back"/>
+
+        <!-- Front Layout Goes Here -->
+        <include layout="@layout/credit_card_edit_front"/>
+
+    </com.wajahatkarim3.easyflipview.EasyFlipView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@android:color/transparent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:weightSum="2">
+
+        <com.github.florent37.shapeofview.shapes.RoundRectView
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginRight="8dp"
+            app:shape_roundRect_bottomLeftRadius="20dp"
+            app:shape_roundRect_topLeftRadius="20dp"
+            app:shape_roundRect_topRightRadius="20dp"
+            app:shape_roundRect_bottomRightRadius="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:background="@color/done_green"
+                android:id="@+id/flip_card_btn"
+                android:padding="10dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/edit"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Save"
+                    android:layout_marginLeft="8dp"
+                    android:textColor="@android:color/white"/>
+            </LinearLayout>
+        </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+        <com.github.florent37.shapeofview.shapes.RoundRectView
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            app:shape_roundRect_bottomLeftRadius="20dp"
+            app:shape_roundRect_topLeftRadius="20dp"
+            app:shape_roundRect_topRightRadius="20dp"
+            app:shape_roundRect_bottomRightRadius="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:background="@color/error_red"
+                android:id="@+id/cancel_btn"
+                android:padding="10dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/delete"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"
+                    android:layout_marginLeft="8dp"
+                    android:textColor="@android:color/white"/>
+            </LinearLayout>
+        </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+    </LinearLayout>
+</LinearLayout>
+

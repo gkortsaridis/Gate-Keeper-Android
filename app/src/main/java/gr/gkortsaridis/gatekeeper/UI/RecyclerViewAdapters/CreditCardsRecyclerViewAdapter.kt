@@ -4,12 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.florent37.shapeofview.shapes.RoundRectView
+import com.wajahatkarim3.easyflipview.EasyFlipView
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
@@ -57,7 +56,9 @@ class CreditCardsRecyclerViewAdapter(
         private var view: View = v
         private var cardContainer: LinearLayout? = null
         private var context: Context = context
-        private var editCard: LinearLayout? = null
+        private var flipCard: LinearLayout? = null
+        private var flipBackCard: LinearLayout? = null
+        private var flipView: EasyFlipView? = null
 
         init {
             cardType = view.findViewById(R.id.card_type)
@@ -65,17 +66,19 @@ class CreditCardsRecyclerViewAdapter(
             cardExpiryDate = view.findViewById(R.id.expiry_date)
             cardholderName = view.findViewById(R.id.cardholder_name)
             cardContainer = view.findViewById(R.id.card_container)
-            editCard = view.findViewById(R.id.card_state_btn)
+            flipCard = view.findViewById(R.id.flip_card_btn)
+            flipBackCard = view.findViewById(R.id.flip_card_back_btn)
+            flipView = view.findViewById(R.id.flip_view)
         }
 
         fun bindCard(card: CreditCard, state:Int, position: Int, listener: CreditCardClickListener){
 
             if (state == CARD_STATE_EDITED) {
                 cardContainer?.setBackgroundColor(context.resources.getColor(R.color.editable_card))
-                editCard?.visibility = View.GONE
+                flipCard?.visibility = View.GONE
             }else {
                 cardContainer?.setBackgroundColor(context.resources.getColor(android.R.color.white))
-                editCard?.visibility = View.VISIBLE
+                flipCard?.visibility = View.VISIBLE
             }
 
             this.cardNumber?.text = card.number
@@ -90,7 +93,8 @@ class CreditCardsRecyclerViewAdapter(
                 CardType.Mastercard -> { cardType?.setImageResource(R.drawable.mastercard) }
             }
 
-            editCard?.setOnClickListener { listener.onCreditCardEditButtonClicked(card, position) }
+            flipCard?.setOnClickListener { flipView?.flipTheView() }
+            flipBackCard?.setOnClickListener { flipView?.flipTheView() }
             cardContainer?.setOnClickListener{ listener.onCreditCardClicked(card) }
         }
 

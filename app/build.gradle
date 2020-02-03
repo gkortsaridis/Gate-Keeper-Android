@@ -80,6 +80,12 @@ dependencies {
 
     //Stack Layout Manager
     implementation 'com.littlemango:stacklayoutmanager:1.0.5'
+
+    //Card Flip
+    implementation 'com.wajahatkarim3.EasyFlipView:EasyFlipView:2.1.2'
+
+    //Keyboard listener
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
