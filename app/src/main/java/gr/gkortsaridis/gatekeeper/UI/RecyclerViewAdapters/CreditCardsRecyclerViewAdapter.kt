@@ -21,12 +21,6 @@ class CreditCardsRecyclerViewAdapter(
     private var cards: ArrayList<CreditCard>,
     private val listener: CreditCardClickListener): RecyclerView.Adapter<CreditCardsRecyclerViewAdapter.CreditCardViewHolder>() {
 
-    private var states: ArrayList<Int> = ArrayList()
-
-    init {
-        for (card in cards) { states.add(CARD_STATE_DONE) }
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreditCardViewHolder {
         val inflatedView = LayoutInflater.from(context).inflate(R.layout.recycler_view_item_card, parent, false)
         return CreditCardViewHolder(inflatedView, context)
@@ -38,12 +32,11 @@ class CreditCardsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: CreditCardViewHolder, position: Int) {
         val vaultItem = cards[position]
-        holder.bindCard(vaultItem, states[position], position, listener)
+        holder.bindCard(vaultItem,  position, listener)
     }
 
-    fun updateCards(cards: ArrayList<CreditCard>, states: ArrayList<Int>) {
+    fun updateCards(cards: ArrayList<CreditCard>) {
         this.cards = cards
-        this.states = states
         notifyDataSetChanged()
     }
 
@@ -71,15 +64,7 @@ class CreditCardsRecyclerViewAdapter(
             flipView = view.findViewById(R.id.flip_view)
         }
 
-        fun bindCard(card: CreditCard, state:Int, position: Int, listener: CreditCardClickListener){
-
-            if (state == CARD_STATE_EDITED) {
-                cardContainer?.setBackgroundColor(context.resources.getColor(R.color.editable_card))
-                flipCard?.visibility = View.GONE
-            }else {
-                cardContainer?.setBackgroundColor(context.resources.getColor(android.R.color.white))
-                flipCard?.visibility = View.VISIBLE
-            }
+        fun bindCard(card: CreditCard, position: Int, listener: CreditCardClickListener){
 
             this.cardNumber?.text = card.number
             this.cardExpiryDate?.text = card.expirationDate
