@@ -129,11 +129,22 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Personal Monzo"
+                android:text="Personal"
                 android:textColor="@android:color/white"
                 android:textSize="30sp"
                 android:id="@+id/card_nickname_tv"
                 android:layout_centerInParent="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="[1/3]"
+                android:textColor="@android:color/white"
+                android:textSize="19sp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginBottom="8dp"
+                android:id="@+id/card_counter_tv"
+                android:layout_alignParentBottom="true"/>
         </RelativeLayout>
     </com.github.florent37.shapeofview.shapes.ArcView>
 

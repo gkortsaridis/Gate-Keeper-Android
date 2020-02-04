@@ -41,6 +41,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private lateinit var bottomArc: ArcView
     private lateinit var cardNickname: TextView
     private lateinit var currentVault: Vault
+    private lateinit var cardCounter: TextView
 
     private lateinit var filtered: ArrayList<CreditCard>
     private var activeCard : CreditCard? = null
@@ -60,6 +61,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         noCardsMessage = view.findViewById(R.id.no_items_view)
         bottomArc = view.findViewById(R.id.bottom_arc)
         cardNickname = view.findViewById(R.id.card_nickname_tv)
+        cardCounter = view.findViewById(R.id.card_counter_tv)
 
         val stackLayoutManager = StackLayoutManager(StackLayoutManager.ScrollOrientation.BOTTOM_TO_TOP)
         stackLayoutManager.setItemOffset(100)
@@ -71,7 +73,6 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             override fun onItemChanged(position: Int) {
                 activeCard = filtered[position]
                 activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
-                cardNickname.text = "["+(position+1)+"/"+filtered.size+"] "+activeCard?.cardName
                 updateUI()
             }
         })
@@ -99,6 +100,13 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
         if (!cardsRecyclerView.isComputingLayout) {
             cardsAdapter.updateCards(filtered)
+        }
+
+        filtered.forEachIndexed { index, creditCard ->
+            if (creditCard.id == activeCard?.id) {
+                cardCounter.text = "[${index + 1}/${filtered.size}]"
+                cardNickname.text = activeCard?.cardName
+            }
         }
 
         noCardsMessage.visibility = if (filtered.size > 0) View.GONE else View.VISIBLE
