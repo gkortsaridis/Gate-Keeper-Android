@@ -132,6 +132,7 @@
                 android:text="Personal Monzo"
                 android:textColor="@android:color/white"
                 android:textSize="30sp"
+                android:id="@+id/card_nickname_tv"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
     </com.github.florent37.shapeofview.shapes.ArcView>

@@ -41,7 +41,7 @@
                         <EditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Card Alias"
+                            android:hint="@string/card_alias"
                             android:layout_marginLeft="8dp"
                             android:layout_marginRight="8dp"
                             android:id="@+id/card_alias_ET"/>
@@ -57,7 +57,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select Vault"
+                    android:text="@string/select_vault"
                     android:layout_marginLeft="16dp"
                     android:layout_marginBottom="8dp"/>
                 <LinearLayout
@@ -88,7 +88,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Personal"
+                                android:text="@string/personal"
                                 android:id="@+id/vault_name"
                                 android:textSize="17sp"
                                 android:layout_gravity="center_vertical"
@@ -109,7 +109,7 @@
                             <EditText
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="CVV"
+                                android:hint="@string/cvv"
                                 android:layout_marginLeft="8dp"
                                 android:layout_marginRight="8dp"
                                 android:id="@+id/cvv_ET"/>
@@ -148,7 +148,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Flip Card"
+                        android:text="@string/flip_card"
                         android:layout_marginLeft="8dp"
                         android:textColor="@android:color/white"/>
                 </LinearLayout>
@@ -166,6 +166,8 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:background="@color/error_red"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:id="@+id/card_delete_btn"
                     android:padding="10dp">
                     <ImageView
@@ -173,6 +175,13 @@
                         android:layout_height="20dp"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/delete"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/delete_card"
+                        android:layout_marginLeft="8dp"
+                        android:textColor="@android:color/white"/>
                 </LinearLayout>
             </com.github.florent37.shapeofview.shapes.RoundRectView>
 

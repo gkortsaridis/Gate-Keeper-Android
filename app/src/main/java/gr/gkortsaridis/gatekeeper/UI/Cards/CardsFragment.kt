@@ -20,6 +20,7 @@ import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
+import gr.gkortsaridis.gatekeeper.Interfaces.MyDialogFragmentListeners
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
@@ -28,7 +29,7 @@ import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 
 
-class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener {
+class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener, MyDialogFragmentListeners {
 
     private lateinit var cardsRecyclerView: RecyclerView
     private lateinit var addCreditCard: FloatingActionButton
@@ -38,7 +39,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private lateinit var addCardButton: Button
     private lateinit var noCardsMessage: LinearLayout
     private lateinit var bottomArc: ArcView
-
+    private lateinit var cardNickname: TextView
     private lateinit var currentVault: Vault
 
     private lateinit var filtered: ArrayList<CreditCard>
@@ -58,6 +59,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         addCardButton = view.findViewById(R.id.add_card_btn)
         noCardsMessage = view.findViewById(R.id.no_items_view)
         bottomArc = view.findViewById(R.id.bottom_arc)
+        cardNickname = view.findViewById(R.id.card_nickname_tv)
 
         val stackLayoutManager = StackLayoutManager(StackLayoutManager.ScrollOrientation.BOTTOM_TO_TOP)
         stackLayoutManager.setItemOffset(100)
@@ -69,6 +71,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             override fun onItemChanged(position: Int) {
                 activeCard = filtered[position]
                 activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
+                cardNickname.text = "["+(position+1)+"/"+filtered.size+"] "+activeCard?.cardName
                 updateUI()
             }
         })
@@ -81,7 +84,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     }
 
     private fun createCard() {
-        val cardDialogFragment = CardInfoFragment(card = null, isCreate = true)
+        val cardDialogFragment = CardInfoFragment(card = null, isCreate = true, listeners = this)
         cardDialogFragment.show(fragmentManager!!, null)
     }
 
@@ -103,7 +106,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     }
 
     override fun onCreditCardClicked(card: CreditCard) {
-        val cardDialogFragment = CardInfoFragment(card = card, isCreate = false)
+        val cardDialogFragment = CardInfoFragment(card = card, isCreate = false, listeners = this)
         cardDialogFragment.show(fragmentManager!!, null)
     }
 
@@ -131,4 +134,8 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         }
     }
 
+    override fun onDismissed() {
+        super.onDismissed()
+        updateUI()
+    }
 }

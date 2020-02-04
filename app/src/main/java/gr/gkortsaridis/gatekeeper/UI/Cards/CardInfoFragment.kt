@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.UI.Cards
 
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -22,7 +23,9 @@ import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
+import gr.gkortsaridis.gatekeeper.Interfaces.MyDialogFragmentListeners
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
@@ -32,7 +35,7 @@ import gr.gkortsaridis.gatekeeper.Utils.dp
 import java.util.*
 
 
-class CardInfoFragment(private var card: CreditCard?, private val isCreate: Boolean) : DialogFragment(), TextWatcher {
+class CardInfoFragment(private var card: CreditCard?, private val isCreate: Boolean, private val listeners: MyDialogFragmentListeners) : DialogFragment(), TextWatcher {
 
     private lateinit var cardVault: Vault
 
@@ -51,6 +54,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
     private lateinit var cardNickname: EditText
     private lateinit var saveText: TextView
     private lateinit var saveIcon: ImageView
+    private lateinit var deleteCardBtn: LinearLayout
 
     private var backCardShown: Boolean = false
 
@@ -91,6 +95,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         cardNickname = view.findViewById(R.id.card_alias_ET)
         saveText = view.findViewById(R.id.save_text)
         saveIcon = view.findViewById(R.id.save_icon)
+        deleteCardBtn = view.findViewById(R.id.card_delete_btn)
 
         cardNumberET.setText(card?.number)
         cardholderNameET.setText(card?.cardholderName)
@@ -104,6 +109,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         cancelBtn.setOnClickListener { dismiss() }
         vaultContainer.setOnClickListener { showVaultSelectorPicker() }
         expiryDateContainer.setOnClickListener { showMonthYearPicker() }
+        deleteCardBtn.setOnClickListener { deleteCard() }
 
         cardNumberET.addTextChangedListener(this)
         cardholderNameET.addTextChangedListener(this)
@@ -113,6 +119,30 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
 
         toggleSaveButton()
         return view
+    }
+
+    private fun deleteCard() {
+        val viewDialog = ViewDialog(activity!!)
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Card Delete")
+        builder.setMessage("Are you sure you want to delete this card?")
+        builder.setPositiveButton("YES") { dialog, _ ->
+            viewDialog.showDialog()
+            CreditCardRepository.deleteCreditCard(card!!, object: CreditCardDeleteListener{
+                override fun onCardDeleted() {
+                    GateKeeperApplication.cards.remove(card!!)
+                    viewDialog.hideDialog()
+                    dialog.dismiss()
+                    Toast.makeText(context, getString(R.string.card_deleted), Toast.LENGTH_SHORT).show()
+                    dismiss()
+                }
+            })
+        }
+        builder.setNegativeButton("NO") { dialog, _ ->
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun saveCard() {
@@ -254,5 +284,8 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
-
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        listeners.onDismissed()
+    }
 }
