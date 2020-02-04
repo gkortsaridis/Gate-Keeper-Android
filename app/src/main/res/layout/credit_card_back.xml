@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="290dp">
+    android:layout_height="250dp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardCornerRadius="15dp"
+        app:cardCornerRadius="10dp"
         android:elevation="10dp"
         android:layout_margin="16dp">
 
@@ -28,10 +28,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"/>
 
-                <View
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:background="#E0DFE0"/>
+                    android:background="#E0DFE0">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Personal Card"
+                        android:textColor="@color/mate_black"
+                        android:textSize="18sp"
+                        android:id="@+id/card_nickname_tv"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"/>
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -39,15 +49,39 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:orientation="horizontal"
                     android:weightSum="10">
 
-                    <View
+                    <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="5"
-                        android:background="#E0DFE0"/>
+                        android:background="#E0DFE0">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/vault_view"
+                            android:paddingLeft="16dp"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_height="20dp"
+                                android:src="@drawable/vault_white"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/personal"
+                                android:id="@+id/vault_name"
+                                android:textSize="17sp"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@android:color/white"
+                                android:layout_marginLeft="8dp"/>
+                        </LinearLayout>
+
+                    </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -57,6 +91,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="123"
+                            android:fontFamily="@font/credit_card"
+                            android:id="@+id/cvv_tv"
                             android:layout_centerInParent="true"/>
                     </RelativeLayout>
                     <View
@@ -73,42 +109,27 @@
             <com.github.florent37.shapeofview.shapes.RoundRectView
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                app:shape_roundRect_bottomRightRadius="20dp">
+                app:shape_roundRect_bottomRightRadius="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:id="@+id/flip_card_back_btn"
-                    android:background="@color/done_green"
+                    android:background="@color/colorPrimary"
                     android:padding="10dp">
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/refresh"/>
-                </LinearLayout>
-            </com.github.florent37.shapeofview.shapes.RoundRectView>
 
-            <com.github.florent37.shapeofview.shapes.RoundRectView
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                app:shape_roundRect_topLeftRadius="20dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:background="@color/error_red"
-                    android:id="@+id/card_delete_btn"
-                    android:padding="10dp">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/delete"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="@string/flip_card"
+                        android:textColor="@android:color/white" />
                 </LinearLayout>
             </com.github.florent37.shapeofview.shapes.RoundRectView>
 

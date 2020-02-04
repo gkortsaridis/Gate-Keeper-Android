@@ -13,8 +13,10 @@ import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CARD_STATE_DONE
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CARD_STATE_EDITED
+import org.w3c.dom.Text
 
 class CreditCardsRecyclerViewAdapter(
     private val context: Context,
@@ -52,6 +54,9 @@ class CreditCardsRecyclerViewAdapter(
         private var flipCard: LinearLayout? = null
         private var flipBackCard: LinearLayout? = null
         private var flipView: EasyFlipView? = null
+        private var cardNickname: TextView? = null
+        private var cardVault: TextView? = null
+        private var cardCVV: TextView? = null
 
         init {
             cardType = view.findViewById(R.id.card_type)
@@ -62,13 +67,19 @@ class CreditCardsRecyclerViewAdapter(
             flipCard = view.findViewById(R.id.flip_card_btn)
             flipBackCard = view.findViewById(R.id.flip_card_back_btn)
             flipView = view.findViewById(R.id.flip_view)
+            cardNickname = view.findViewById(R.id.card_nickname_tv)
+            cardVault = view.findViewById(R.id.vault_name)
+            cardCVV = view.findViewById(R.id.cvv_tv)
         }
 
         fun bindCard(card: CreditCard, position: Int, listener: CreditCardClickListener){
 
             this.cardNumber?.text = card.number
             this.cardExpiryDate?.text = card.expirationDate
-            this.cardholderName?.text = card.cardholderName
+            this.cardholderName?.text = card.cardholderName.toUpperCase()
+            this.cardNickname?.text = card.cardName
+            this.cardVault?.text = VaultRepository.getVaultByID(card.vaultId)!!.name
+            this.cardCVV?.text = "CVV: ${card.cvv}"
 
             when (card.type) {
                 CardType.Visa -> { cardType?.setImageResource(R.drawable.visa) }

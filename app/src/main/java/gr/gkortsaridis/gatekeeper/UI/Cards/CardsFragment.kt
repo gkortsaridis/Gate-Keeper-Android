@@ -64,7 +64,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         cardCounter = view.findViewById(R.id.card_counter_tv)
 
         val stackLayoutManager = StackLayoutManager(StackLayoutManager.ScrollOrientation.BOTTOM_TO_TOP)
-        stackLayoutManager.setItemOffset(100)
+        stackLayoutManager.setItemOffset(50)
         cardsAdapter = CreditCardsRecyclerViewAdapter(activity, GateKeeperApplication.cards, this)
         cardsRecyclerView.adapter = cardsAdapter
         cardsRecyclerView.layoutManager = stackLayoutManager

@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="290dp">
+    android:layout_height="250dp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardCornerRadius="15dp"
+        app:cardCornerRadius="10dp"
         android:elevation="10dp"
         android:layout_margin="16dp">
 
@@ -29,13 +29,13 @@
                     <com.github.florent37.shapeofview.shapes.RoundRectView
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
-                        app:shape_roundRect_bottomRightRadius="20dp">
+                        app:shape_roundRect_bottomRightRadius="10dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:orientation="horizontal"
-                            android:background="@color/done_green"
+                            android:background="@color/colorPrimary"
                             android:id="@+id/flip_card_btn"
                             android:padding="10dp">
                             <ImageView
@@ -43,6 +43,12 @@
                                 android:layout_height="20dp"
                                 android:layout_gravity="center_vertical"
                                 android:src="@drawable/refresh"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:text="@string/flip_card"
+                                android:textColor="@android:color/white" />
                         </LinearLayout>
                     </com.github.florent37.shapeofview.shapes.RoundRectView>
 
@@ -69,10 +75,10 @@
                 android:layout_height="wrap_content"
                 android:hint="XXXX XXXX XXXX XXXX"
                 android:id="@+id/card_number"
-                android:textStyle="bold"
+                android:fontFamily="@font/credit_card"
                 android:layout_marginTop="8dp"
                 android:inputType="number"
-                android:textSize="27sp"
+                android:textSize="24sp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 app:autoSizeTextType="uniform"
@@ -103,7 +109,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Cardholder Name"
+                        android:hint="CARDHOLDER NAME"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:id="@+id/cardholder_name" />
