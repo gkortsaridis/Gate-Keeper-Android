@@ -73,7 +73,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             }
         })
 
-        addCardButton.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
+        addCardButton.setOnClickListener { createCard() }
         addCreditCard.setOnClickListener { createCard() }
         vaultView.setOnClickListener { changeVault() }
 

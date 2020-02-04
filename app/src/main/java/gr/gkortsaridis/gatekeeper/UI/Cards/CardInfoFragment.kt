@@ -14,6 +14,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.text.trimmedLength
 import androidx.fragment.app.DialogFragment
 import com.wajahatkarim3.easyflipview.EasyFlipView
 import com.whiteelephant.monthpicker.MonthPickerDialog
@@ -24,6 +25,7 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
+import gr.gkortsaridis.gatekeeper.Utils.CreditCardFormattingTextWatcher
 import gr.gkortsaridis.gatekeeper.Utils.dp
 import java.util.*
 
@@ -72,7 +74,6 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
             cardVault = VaultRepository.getVaultByID(card!!.vaultId)!!
         }
 
-
         flipCard = view.findViewById(R.id.flip_view)
         flipToBack = view.findViewById(R.id.flip_to_back)
         flipToFront = view.findViewById(R.id.flip_to_front)
@@ -106,6 +107,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         cardholderNameET.addTextChangedListener(this)
         cardNickname.addTextChangedListener(this)
         cvvET.addTextChangedListener(this)
+        cardNumberET.addTextChangedListener(CreditCardFormattingTextWatcher(cardNumberET))
 
         toggleSaveButton()
         return view
@@ -183,9 +185,15 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         } else {
 
             if (cardShouldSave()) {
-                saveBtn.setBackgroundColor(resources.getColor(R.color.done_green))
-                saveBtn.setOnClickListener { saveCard() }
-                saveText.text = "Save"
+                if (cardDataAreValid()) {
+                    saveBtn.setBackgroundColor(resources.getColor(R.color.done_green))
+                    saveBtn.setOnClickListener { saveCard() }
+                    saveText.text = "Save"
+                } else {
+                    saveBtn.setBackgroundColor(resources.getColor(R.color.greyish))
+                    saveBtn.setOnClickListener { }
+                    saveText.text = "Card Data not valid"
+                }
             } else {
                 saveBtn.setBackgroundColor(resources.getColor(R.color.greyish))
                 saveBtn.setOnClickListener { }
@@ -194,6 +202,12 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
 
         }
 
+    }
+
+    private fun cardDataAreValid(): Boolean {
+        return (cardNumberET.text.toString().replace(" ","").length == 16
+                && (if (card?.type == CardType.Amex) cvvET.text.toString().length == 4 else cvvET.text.toString().length == 3) //CVV : 4 lenght for AMEX, 3 for rest
+                )
     }
 
     private fun cardShouldSave(): Boolean {

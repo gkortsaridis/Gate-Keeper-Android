@@ -14,7 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".UI.Authentication.PinAuthenticationActivity"></activity>
-        <activity android:name=".UI.Cards.CreateCreditCardActivity" />
         <activity android:name=".UI.Notes.NoteActivity" />
         <activity android:name=".UI.Authentication.BioAuthenticationActivity" />
         <activity android:name=".UI.Logins.ApplicationSelector" />

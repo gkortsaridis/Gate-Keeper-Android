@@ -80,6 +80,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"
                 android:inputType="number"
+                android:maxLength="19"
                 android:textSize="27sp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
@@ -114,6 +115,7 @@
                         android:layout_height="wrap_content"
                         android:hint="Cardholder Name"
                         android:textSize="20sp"
+                        android:maxLength="22"
                         android:textStyle="bold"
                         android:id="@+id/cardholder_name_et" />
 

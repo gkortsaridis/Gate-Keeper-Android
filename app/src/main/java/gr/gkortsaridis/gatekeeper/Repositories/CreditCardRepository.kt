@@ -23,20 +23,19 @@ object CreditCardRepository {
     }
 
     fun getCreditCardType(cardNumber: String): CardType {
-        if (cardNumber.isNotEmpty()) {
-            if (cardNumber.length > 1) {
-                if (cardNumber.substring(0,2) == "37") { return CardType.Amex }
-                else if (cardNumber.substring(0,2) == "38") { return CardType.DinersClub }
-            }
 
-            return when {
-                cardNumber[0] == '4' -> CardType.Visa
-                cardNumber[0] == '5' -> CardType.Mastercard
-                cardNumber[0] == '6' -> CardType.DiscoverCard
-                else -> CardType.Unknown
-            }
+        val VISA_PREFIX = "4"
+        val MASTERCARD_PREFIX = "51,52,53,54,55,"
+        val DISCOVER_PREFIX = "6011"
+        val AMEX_PREFIX = "34,37,"
 
-        }else { return CardType.Unknown }
+        return when {
+            cardNumber.substring(0, 1) == VISA_PREFIX -> CardType.Visa
+            MASTERCARD_PREFIX.contains(cardNumber.substring(0, 2) + ",") -> CardType.Mastercard
+            AMEX_PREFIX.contains(cardNumber.substring(0, 2) + ",") -> CardType.Amex
+            cardNumber.substring(0, 4) == DISCOVER_PREFIX -> CardType.DiscoverCard
+            else -> CardType.Unknown
+        }
 
     }
 
