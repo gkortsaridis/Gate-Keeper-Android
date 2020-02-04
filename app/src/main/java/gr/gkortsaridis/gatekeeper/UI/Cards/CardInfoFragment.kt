@@ -10,17 +10,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.wajahatkarim3.easyflipview.EasyFlipView
 import com.whiteelephant.monthpicker.MonthPickerDialog
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
+import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.dp
 import java.util.*
 
 
 class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
+
+    private lateinit var cardVault: Vault
 
     private lateinit var cardNumberET: EditText
     private lateinit var cardholderNameET: EditText
@@ -31,11 +36,15 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
     private lateinit var flipCard: EasyFlipView
     private lateinit var saveBtn: LinearLayout
     private lateinit var cancelBtn: LinearLayout
+    private lateinit var vaultContainer: LinearLayout
+    private lateinit var vaultName: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_card_info, container, false)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        cardVault = VaultRepository.getVaultByID(card.vaultId)!!
 
         flipCard = view.findViewById(R.id.flip_view)
         flipToBack = view.findViewById(R.id.flip_to_back)
@@ -43,16 +52,23 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
         cardNumberET = view.findViewById(R.id.card_number_et)
         cardholderNameET = view.findViewById(R.id.cardholder_name_et)
         expiryDateET = view.findViewById(R.id.expiry_date_et)
+        cvvET = view.findViewById(R.id.cvv_ET)
         saveBtn = view.findViewById(R.id.save_btn)
         cancelBtn = view.findViewById(R.id.cancel_btn)
+        vaultContainer = view.findViewById(R.id.vault_view)
+        vaultName = view.findViewById(R.id.vault_name)
 
         cardNumberET.setText(card.number)
         cardholderNameET.setText(card.cardholderName)
         expiryDateET.setText(card.expirationDate)
+        vaultName.text = cardVault.name
+
         flipToBack.setOnClickListener { flipCard.flipTheView() }
         flipToFront.setOnClickListener { flipCard.flipTheView() }
         saveBtn.setOnClickListener { saveCard() }
         cancelBtn.setOnClickListener { dismiss() }
+        vaultContainer.setOnClickListener { showVaultSelectorPicker() }
+
 
         return view
     }
@@ -67,29 +83,22 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
     }
 
     private fun showVaultSelectorPicker() {
-        //vaultET.clearFocus()
-        //vaultET.hideKeyboard()
 
         val vaults = GateKeeperApplication.vaults
         val vaultNames = arrayOfNulls<String>(vaults.size)
         var selected = -1
         vaults.forEachIndexed { index, vault -> vaultNames[index] = vault.name }
-        //vaults.forEachIndexed { index, vault -> if(vaultET.text.toString() == vault.name) selected = index }
-
+        vaults.forEachIndexed { index, vault -> if(cardVault.id == vault.id) selected = index }
 
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Select Card Vault")
         builder.setSingleChoiceItems(vaultNames, selected) { dialog, which ->
-            //vaultET.setText(vaultNames[which])
-            //vaultET.clearFocus()
-            //vaultET.hideKeyboard()
+            cardVault = vaults[which]
+            vaultName.text = cardVault.name
             dialog.dismiss()
         }
         val dialog = builder.create()
-        dialog.setOnCancelListener {
-            //vaultET.clearFocus()
-            //vaultET.hideKeyboard()
-        }
+        dialog.setOnCancelListener { }
         dialog.show()
     }
 
