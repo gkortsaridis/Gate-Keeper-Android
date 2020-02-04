@@ -17,16 +17,18 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.wajahatkarim3.easyflipview.EasyFlipView
 import com.whiteelephant.monthpicker.MonthPickerDialog
+import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.dp
 import java.util.*
 
 
-class CardInfoFragment(private val card: CreditCard) : DialogFragment(), TextWatcher {
+class CardInfoFragment(private var card: CreditCard?, private val isCreate: Boolean) : DialogFragment(), TextWatcher {
 
     private lateinit var cardVault: Vault
 
@@ -46,12 +48,30 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment(), TextWat
     private lateinit var saveText: TextView
     private lateinit var saveIcon: ImageView
 
+    private var backCardShown: Boolean = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_card_info, container, false)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        cardVault = VaultRepository.getVaultByID(card.vaultId)!!
+        if (isCreate) {
+            card = CreditCard(
+                id = "",
+                cardName = "",
+                type = CardType.Unknown,
+                number = "",
+                expirationDate = "",
+                cvv = "",
+                cardholderName = "",
+                vaultId = VaultRepository.getLastActiveRealVault().id,
+                accountId = AuthRepository.getUserID()
+            )
+            cardVault = VaultRepository.getLastActiveRealVault()
+        } else {
+            cardVault = VaultRepository.getVaultByID(card!!.vaultId)!!
+        }
+
 
         flipCard = view.findViewById(R.id.flip_view)
         flipToBack = view.findViewById(R.id.flip_to_back)
@@ -69,11 +89,11 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment(), TextWat
         saveText = view.findViewById(R.id.save_text)
         saveIcon = view.findViewById(R.id.save_icon)
 
-        cardNumberET.setText(card.number)
-        cardholderNameET.setText(card.cardholderName)
-        cardNickname.setText(card.cardName)
-        cvvET.setText(card.cvv)
-        expiryDateTV.text = card.expirationDate
+        cardNumberET.setText(card?.number)
+        cardholderNameET.setText(card?.cardholderName)
+        cardNickname.setText(card?.cardName)
+        cvvET.setText(card?.cvv)
+        expiryDateTV.text = card?.expirationDate
         vaultName.text = cardVault.name
 
         flipToBack.setOnClickListener { flipCard.flipTheView() }
@@ -144,26 +164,46 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment(), TextWat
     }
 
     private fun toggleSaveButton() {
-        if (cardShouldSave()) {
-            saveBtn.setBackgroundColor(resources.getColor(R.color.done_green))
-            saveBtn.setOnClickListener { saveCard() }
-            saveText.text = "Save"
+        if (isCreate) {
+
+            if(!backCardShown) {
+                saveBtn.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+                saveBtn.setOnClickListener {
+                    flipCard.flipTheView()
+                    backCardShown = true
+                    toggleSaveButton()
+                }
+                saveText.text = "Next"
+            } else {
+                saveBtn.setBackgroundColor(resources.getColor(R.color.done_green))
+                saveBtn.setOnClickListener { saveCard() }
+                saveText.text = "Save"
+            }
+
         } else {
-            saveBtn.setBackgroundColor(resources.getColor(R.color.greyish))
-            saveBtn.setOnClickListener { }
-            saveText.text = "Nothing to save"
+
+            if (cardShouldSave()) {
+                saveBtn.setBackgroundColor(resources.getColor(R.color.done_green))
+                saveBtn.setOnClickListener { saveCard() }
+                saveText.text = "Save"
+            } else {
+                saveBtn.setBackgroundColor(resources.getColor(R.color.greyish))
+                saveBtn.setOnClickListener { }
+                saveText.text = "Nothing to save"
+            }
+
         }
+
     }
 
     private fun cardShouldSave(): Boolean {
-        return (card.cardholderName != cardholderNameET.text.toString()
-                || card.number != cardNumberET.text.toString()
-                || card.expirationDate != expiryDateTV.text.toString()
-                || card.cvv != cvvET.text.toString()
-                || card.cardName != cardNickname.text.toString()
-                || card.vaultId != cardVault.id)
+        return (card?.cardholderName != cardholderNameET.text.toString()
+                || card?.number != cardNumberET.text.toString()
+                || card?.expirationDate != expiryDateTV.text.toString()
+                || card?.cvv != cvvET.text.toString()
+                || card?.cardName != cardNickname.text.toString()
+                || card?.vaultId != cardVault.id)
     }
-
 
     override fun afterTextChanged(s: Editable?) { toggleSaveButton() }
 

@@ -81,7 +81,8 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     }
 
     private fun createCard() {
-
+        val cardDialogFragment = CardInfoFragment(card = null, isCreate = true)
+        cardDialogFragment.show(fragmentManager!!, null)
     }
 
     @SuppressLint("RestrictedApi")
@@ -102,7 +103,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     }
 
     override fun onCreditCardClicked(card: CreditCard) {
-        val cardDialogFragment = CardInfoFragment(card)
+        val cardDialogFragment = CardInfoFragment(card = card, isCreate = false)
         cardDialogFragment.show(fragmentManager!!, null)
     }
 
