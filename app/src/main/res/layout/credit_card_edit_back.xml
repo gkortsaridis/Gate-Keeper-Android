@@ -29,36 +29,92 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="#E0DFE0"/>
-
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"/>
+                    android:layout_height="50dp"
+                    android:background="#E0DFE0">
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Card Alias"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
+                            android:id="@+id/card_alias_ET"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Vault"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginBottom="8dp"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:orientation="horizontal"
                     android:weightSum="10">
 
-                    <View
+                    <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="5"
-                        android:background="#E0DFE0"/>
+                        android:background="#E0DFE0">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/vault_view"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:paddingLeft="16dp"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_height="30dp"
+                                android:src="@drawable/vault_white"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Personal"
+                                android:id="@+id/vault_name"
+                                android:textSize="19sp"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@android:color/white"
+                                android:layout_marginLeft="8dp"/>
+                        </LinearLayout>
+
+                    </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:background="#f2f0ee"
                         android:layout_weight="3">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="CVV: 123"
-                            android:layout_centerInParent="true"/>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="CVV"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="8dp"
+                                android:id="@+id/cvv_ET"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
                     </RelativeLayout>
                     <View
                         android:layout_width="0dp"
