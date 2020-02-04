@@ -7,13 +7,11 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.text.trimmedLength
 import androidx.fragment.app.DialogFragment
 import com.wajahatkarim3.easyflipview.EasyFlipView
@@ -21,9 +19,13 @@ import com.whiteelephant.monthpicker.MonthPickerDialog
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
+import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.CreditCardFormattingTextWatcher
 import gr.gkortsaridis.gatekeeper.Utils.dp
@@ -114,7 +116,34 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
     }
 
     private fun saveCard() {
-        dismiss()
+        card?.number = cardNumberET.text.toString()
+        card?.cardholderName = cardholderNameET.text.toString()
+        card?.expirationDate = expiryDateTV.text.toString()
+        card?.cardName = cardNickname.text.toString()
+        card?.vaultId = cardVault.id
+        card?.cvv = cvvET.text.toString()
+
+        val viewDialog = ViewDialog(activity!!)
+        if (isCreate) {
+            CreditCardRepository.encryptAndStoreCard(activity!!, card!!, object: CreditCardCreateListener{
+                override fun onCreditCardCreated(card: CreditCard) {
+                    GateKeeperApplication.cards.add(card)
+                    Toast.makeText(context, getString(R.string.card_created), Toast.LENGTH_SHORT).show()
+                    dismiss()
+                }
+            })
+        }else {
+            viewDialog.showDialog()
+            CreditCardRepository.updateCreditCard(card!!, object: CreditCardUpdateListener{
+                override fun onCardUpdated(card: CreditCard) {
+                    viewDialog.hideDialog()
+                    GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
+                    dismiss()
+                    Toast.makeText(context, getString(R.string.card_updated), Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+
     }
 
     override fun onResume() {

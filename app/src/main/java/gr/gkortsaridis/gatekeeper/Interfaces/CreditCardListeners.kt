@@ -15,7 +15,7 @@ interface CreditCardRetrieveListener {
 
 interface CreditCardCreateListener {
     fun onCreditCardCreated(card: CreditCard)
-    fun onCreditCardCreateError()
+    fun onCreditCardCreateError() {}
 }
 
 interface CreditCardDeleteListener {
