@@ -130,15 +130,27 @@
                         android:text="EXPIRES"
                         android:textSize="17sp"
                         android:id="@+id/expiration_date" />
-
-                    <EditText
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="20/Feb"
-                        android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:inputType="date"
-                        android:id="@+id/expiry_date_et" />
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:id="@+id/expiry_date_view"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="20/Feb"
+                            android:textStyle="bold"
+                            android:layout_marginTop="9dp"
+                            android:textSize="20sp"
+                            android:textColor="@color/edittext_black"
+                            android:id="@+id/expiry_date_et" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/underline_grey"/>
+                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>

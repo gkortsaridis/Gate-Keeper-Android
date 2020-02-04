@@ -29,7 +29,7 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
 
     private lateinit var cardNumberET: EditText
     private lateinit var cardholderNameET: EditText
-    private lateinit var expiryDateET: EditText
+    private lateinit var expiryDateTV: TextView
     private lateinit var cvvET: EditText
     private lateinit var flipToBack: LinearLayout
     private lateinit var flipToFront: LinearLayout
@@ -38,6 +38,7 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
     private lateinit var cancelBtn: LinearLayout
     private lateinit var vaultContainer: LinearLayout
     private lateinit var vaultName: TextView
+    private lateinit var expiryDateContainer: LinearLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -51,16 +52,17 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
         flipToFront = view.findViewById(R.id.flip_to_front)
         cardNumberET = view.findViewById(R.id.card_number_et)
         cardholderNameET = view.findViewById(R.id.cardholder_name_et)
-        expiryDateET = view.findViewById(R.id.expiry_date_et)
+        expiryDateTV = view.findViewById(R.id.expiry_date_et)
         cvvET = view.findViewById(R.id.cvv_ET)
         saveBtn = view.findViewById(R.id.save_btn)
         cancelBtn = view.findViewById(R.id.cancel_btn)
         vaultContainer = view.findViewById(R.id.vault_view)
         vaultName = view.findViewById(R.id.vault_name)
+        expiryDateContainer = view.findViewById(R.id.expiry_date_view)
 
         cardNumberET.setText(card.number)
         cardholderNameET.setText(card.cardholderName)
-        expiryDateET.setText(card.expirationDate)
+        expiryDateTV.text = card.expirationDate
         vaultName.text = cardVault.name
 
         flipToBack.setOnClickListener { flipCard.flipTheView() }
@@ -68,6 +70,7 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
         saveBtn.setOnClickListener { saveCard() }
         cancelBtn.setOnClickListener { dismiss() }
         vaultContainer.setOnClickListener { showVaultSelectorPicker() }
+        expiryDateContainer.setOnClickListener { showMonthYearPicker() }
 
 
         return view
@@ -103,15 +106,10 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
     }
 
     private fun showMonthYearPicker() {
-        //expirationDateET.clearFocus()
-        //expirationDateET.hideKeyboard()
-
         val builder = MonthPickerDialog.Builder(activity,
             MonthPickerDialog.OnDateSetListener { selectedMonth, selectedYear ->
                 val months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec")
-                //expirationDateET.setText("${months[selectedMonth]}/$selectedYear")
-                //expirationDateET.clearFocus()
-                //expirationDateET.hideKeyboard()
+                expiryDateTV.text = "${months[selectedMonth]}/$selectedYear"
             }, 2020, Calendar.JANUARY)
 
         val dialog = builder.setActivatedMonth(Calendar.JULY)
@@ -123,16 +121,9 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
             .setTitle("Select Card Expiration Date")
             .build()
 
-        dialog.setOnCancelListener {
-            //expirationDateET.clearFocus()
-            //expirationDateET.hideKeyboard()
-        }
-        dialog.setOnDismissListener {
-            //expirationDateET.clearFocus()
-            //expirationDateET.hideKeyboard()
-        }
+        dialog.setOnCancelListener {}
+        dialog.setOnDismissListener {}
         dialog.show()
-
     }
 
 }
