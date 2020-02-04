@@ -5,10 +5,13 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -23,7 +26,7 @@ import gr.gkortsaridis.gatekeeper.Utils.dp
 import java.util.*
 
 
-class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
+class CardInfoFragment(private val card: CreditCard) : DialogFragment(), TextWatcher {
 
     private lateinit var cardVault: Vault
 
@@ -39,6 +42,9 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
     private lateinit var vaultContainer: LinearLayout
     private lateinit var vaultName: TextView
     private lateinit var expiryDateContainer: LinearLayout
+    private lateinit var cardNickname: EditText
+    private lateinit var saveText: TextView
+    private lateinit var saveIcon: ImageView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -59,25 +65,34 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
         vaultContainer = view.findViewById(R.id.vault_view)
         vaultName = view.findViewById(R.id.vault_name)
         expiryDateContainer = view.findViewById(R.id.expiry_date_view)
+        cardNickname = view.findViewById(R.id.card_alias_ET)
+        saveText = view.findViewById(R.id.save_text)
+        saveIcon = view.findViewById(R.id.save_icon)
 
         cardNumberET.setText(card.number)
         cardholderNameET.setText(card.cardholderName)
+        cardNickname.setText(card.cardName)
+        cvvET.setText(card.cvv)
         expiryDateTV.text = card.expirationDate
         vaultName.text = cardVault.name
 
         flipToBack.setOnClickListener { flipCard.flipTheView() }
         flipToFront.setOnClickListener { flipCard.flipTheView() }
-        saveBtn.setOnClickListener { saveCard() }
         cancelBtn.setOnClickListener { dismiss() }
         vaultContainer.setOnClickListener { showVaultSelectorPicker() }
         expiryDateContainer.setOnClickListener { showMonthYearPicker() }
 
+        cardNumberET.addTextChangedListener(this)
+        cardholderNameET.addTextChangedListener(this)
+        cardNickname.addTextChangedListener(this)
+        cvvET.addTextChangedListener(this)
 
+        toggleSaveButton()
         return view
     }
 
     private fun saveCard() {
-
+        dismiss()
     }
 
     override fun onResume() {
@@ -99,6 +114,7 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
             cardVault = vaults[which]
             vaultName.text = cardVault.name
             dialog.dismiss()
+            toggleSaveButton()
         }
         val dialog = builder.create()
         dialog.setOnCancelListener { }
@@ -110,6 +126,7 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
             MonthPickerDialog.OnDateSetListener { selectedMonth, selectedYear ->
                 val months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec")
                 expiryDateTV.text = "${months[selectedMonth]}/$selectedYear"
+                toggleSaveButton()
             }, 2020, Calendar.JANUARY)
 
         val dialog = builder.setActivatedMonth(Calendar.JULY)
@@ -125,5 +142,34 @@ class CardInfoFragment(private val card: CreditCard) : DialogFragment() {
         dialog.setOnDismissListener {}
         dialog.show()
     }
+
+    private fun toggleSaveButton() {
+        if (cardShouldSave()) {
+            saveBtn.setBackgroundColor(resources.getColor(R.color.done_green))
+            saveBtn.setOnClickListener { saveCard() }
+            saveText.text = "Save"
+        } else {
+            saveBtn.setBackgroundColor(resources.getColor(R.color.greyish))
+            saveBtn.setOnClickListener { }
+            saveText.text = "Nothing to save"
+        }
+    }
+
+    private fun cardShouldSave(): Boolean {
+        return (card.cardholderName != cardholderNameET.text.toString()
+                || card.number != cardNumberET.text.toString()
+                || card.expirationDate != expiryDateTV.text.toString()
+                || card.cvv != cvvET.text.toString()
+                || card.cardName != cardNickname.text.toString()
+                || card.vaultId != cardVault.id)
+    }
+
+
+    override fun afterTextChanged(s: Editable?) { toggleSaveButton() }
+
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
 
 }
