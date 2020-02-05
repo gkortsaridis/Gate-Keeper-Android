@@ -36,14 +36,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
-                        android:background="@color/done_green"
+                        android:background="@color/colorPrimary"
                         android:id="@+id/flip_to_back"
                         android:padding="10dp">
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/refresh"/>
+                            android:src="@drawable/reflect"
+                            android:rotation="90"/>
 
                         <TextView
                             android:layout_width="wrap_content"
