@@ -104,7 +104,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
         filtered.forEachIndexed { index, creditCard ->
             if (creditCard.id == activeCard?.id) {
-                cardCounter.text = "[${index + 1}/${filtered.size}]"
+                cardCounter.text = "${index + 1}/${filtered.size}"
                 cardNickname.text = activeCard?.cardName
             }
         }
