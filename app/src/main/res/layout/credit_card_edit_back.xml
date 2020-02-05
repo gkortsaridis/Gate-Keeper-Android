@@ -27,28 +27,36 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"/>
+                    android:layout_height="55dp"/>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="#E0DFE0">
 
-                    <com.google.android.material.textfield.TextInputLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="50dp"
+                        android:background="#E0DFE0"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/name"/>
 
-                        <EditText
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/card_alias"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginRight="8dp"
-                            android:id="@+id/card_alias_ET"/>
+                            android:layout_height="wrap_content">
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/card_alias"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="8dp"
+                                android:id="@+id/card_alias_ET"/>
 
-                </RelativeLayout>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"

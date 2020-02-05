@@ -20,6 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"
+                android:id="@+id/card_container_back"
                 android:background="@android:color/white"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:orientation="vertical">
@@ -32,15 +33,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="#E0DFE0">
-                    <TextView
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Personal Card"
-                        android:textColor="@color/mate_black"
-                        android:textSize="18sp"
-                        android:id="@+id/card_nickname_tv"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="16dp"/>
+                        android:layout_marginLeft="16dp"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/name"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Personal Card"
+                            android:textColor="@color/mate_black"
+                            android:textSize="18sp"
+                            android:layout_gravity="center_vertical"
+                            android:id="@+id/card_nickname_tv"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="16dp"/>
+
+                    </LinearLayout>
+
                 </RelativeLayout>
 
                 <RelativeLayout

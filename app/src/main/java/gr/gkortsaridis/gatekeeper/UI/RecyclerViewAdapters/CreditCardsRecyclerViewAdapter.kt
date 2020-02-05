@@ -50,6 +50,7 @@ class CreditCardsRecyclerViewAdapter(
         private var cardExpiryDate: TextView? = null
         private var view: View = v
         private var cardContainer: LinearLayout? = null
+        private var cardContainerBack: LinearLayout? = null
         private var context: Context = context
         private var flipCard: LinearLayout? = null
         private var flipBackCard: LinearLayout? = null
@@ -70,6 +71,7 @@ class CreditCardsRecyclerViewAdapter(
             cardNickname = view.findViewById(R.id.card_nickname_tv)
             cardVault = view.findViewById(R.id.vault_name)
             cardCVV = view.findViewById(R.id.cvv_tv)
+            cardContainerBack = view.findViewById(R.id.card_container_back)
         }
 
         fun bindCard(card: CreditCard, position: Int, listener: CreditCardClickListener){
@@ -92,6 +94,7 @@ class CreditCardsRecyclerViewAdapter(
             flipCard?.setOnClickListener { flipView?.flipTheView() }
             flipBackCard?.setOnClickListener { flipView?.flipTheView() }
             cardContainer?.setOnClickListener{ listener.onCreditCardClicked(card) }
+            cardContainerBack?.setOnClickListener { listener.onCreditCardClicked(card) }
         }
 
     }
