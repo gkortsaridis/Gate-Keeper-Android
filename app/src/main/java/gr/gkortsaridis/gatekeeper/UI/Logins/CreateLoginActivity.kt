@@ -40,7 +40,7 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var notes: EditText
     private lateinit var applicationView: ImageButton
     private lateinit var vaultView: LinearLayout
-    private lateinit var saveUpdateButton: Button
+    private lateinit var saveUpdateButton: RelativeLayout
     private lateinit var vaultName: TextView
     private lateinit var copyUsername: ImageButton
     private lateinit var copyPassword: ImageButton
