@@ -42,14 +42,14 @@ class NoteActivity : AppCompatActivity() {
     private lateinit var bottomSheetContainer: RelativeLayout
     private lateinit var noteBackground: RelativeLayout
     private lateinit var deleteNote: LinearLayout
-    private lateinit var circleBlue: Button
-    private lateinit var circleCream: Button
-    private lateinit var circleGreen: Button
-    private lateinit var circleOrange: Button
-    private lateinit var circlePink: Button
-    private lateinit var circleRed: Button
-    private lateinit var circleWhite: Button
-    private lateinit var circleYellow: Button
+    private lateinit var circleBlue: LinearLayout
+    private lateinit var circleCream: LinearLayout
+    private lateinit var circleGreen: LinearLayout
+    private lateinit var circleOrange: LinearLayout
+    private lateinit var circlePink: LinearLayout
+    private lateinit var circleRed: LinearLayout
+    private lateinit var circleWhite: LinearLayout
+    private lateinit var circleYellow: LinearLayout
 
     private lateinit var noteColor: NoteColor
     private lateinit var note : Note
