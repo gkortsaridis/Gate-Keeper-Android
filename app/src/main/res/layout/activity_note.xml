@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:id="@+id/note_background"
         android:layout_height="match_parent"
+        android:background="@color/busy_grey"
         tools:context=".UI.Notes.NoteActivity">
 
         <com.github.florent37.shapeofview.shapes.RoundRectView
@@ -54,7 +55,6 @@
                 </RelativeLayout>
             </com.github.florent37.shapeofview.shapes.RoundRectView>
 
-
         <ScrollView
             android:layout_below="@+id/height"
             android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                 android:padding="16dp"
                 android:hint="Body"
                 android:text="This is the body"
-                android:background="@null"
+                android:background="@android:color/transparent"
                 android:cursorVisible="true"/>
         </ScrollView>
 
