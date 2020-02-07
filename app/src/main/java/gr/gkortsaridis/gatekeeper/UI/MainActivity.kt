@@ -3,6 +3,7 @@ package gr.gkortsaridis.gatekeeper.UI
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.media.Image
 import android.os.Bundle
 import android.view.MenuItem
@@ -13,9 +14,17 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.UI.About.AboutFragment
 import gr.gkortsaridis.gatekeeper.UI.Account.MyAccountFragment
 import gr.gkortsaridis.gatekeeper.UI.Authentication.AuthenticationBaseActivity
@@ -24,6 +33,8 @@ import gr.gkortsaridis.gatekeeper.UI.Devices.DevicesFragment
 import gr.gkortsaridis.gatekeeper.UI.Logins.LoginsFragment
 import gr.gkortsaridis.gatekeeper.UI.Notes.NotesFragment
 import gr.gkortsaridis.gatekeeper.UI.Settings.SettingsFragment
+import gr.gkortsaridis.gatekeeper.Utils.GlideApp
+import gr.gkortsaridis.gatekeeper.Utils.dp
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -48,6 +59,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navTextNotes: TextView
     private lateinit var navTextAccount: TextView
     private lateinit var navTextDevices: TextView
+    private lateinit var profileImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +96,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navTextNotes = findViewById(R.id.nav_text_notes)
         navTextDevices = findViewById(R.id.nav_text_devices)
         navTextAccount = findViewById(R.id.nav_text_account)
+        profileImage = findViewById(R.id.profile_image)
 
         navContainerPasswords.setOnClickListener { switchFragment("Passwords") }
         navContainerCards.setOnClickListener { switchFragment("Cards") }
@@ -95,9 +108,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navButtonLogout.setOnClickListener { switchFragment("Logout") }
 
 
+        GlideApp
+            .with(this)
+            .load(getUserImageReference())
+            .placeholder(R.drawable.camera)
+            .listener(object: RequestListener<Drawable> {
+                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    profileImage.setImageResource(R.mipmap.ic_launcher_round)
+                    return false
+                }
+
+                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    return false
+                }
+            })
+            .into(profileImage)
+
         val userName = GateKeeperApplication.user?.displayName ?: GateKeeperApplication.user?.email ?: ""
         navName.text = userName
         switchFragment("Passwords")
+    }
+
+    private fun getUserImageReference(): StorageReference {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imagesRef = storageRef.child("userImages")
+        return imagesRef.child(AuthRepository.getUserID()+".jpg")
     }
 
     private fun displayFragment(fragment: Fragment?){
