@@ -29,6 +29,7 @@ object NotesRepository {
         db.collection("notes")
             .add(notehash)
             .addOnCompleteListener {
+                note.id = it.result?.id ?: ""
                 listener?.onNoteCreated(note)
             }
     }
