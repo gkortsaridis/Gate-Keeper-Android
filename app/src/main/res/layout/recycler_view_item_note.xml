@@ -19,7 +19,7 @@
         <ImageView
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:src="@drawable/star_on"
+            android:src="@drawable/star_on_grey"
             android:layout_marginTop="8dp"
             android:layout_marginLeft="8dp"
             android:id="@+id/note_pinned"/>

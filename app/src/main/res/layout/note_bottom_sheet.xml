@@ -1,180 +1,266 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#fff"
+    android:id="@+id/bottom_sheet"
     android:orientation="vertical"
+    android:background="@color/busy_grey"
     app:behavior_peekHeight="106dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/top_shadow"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/vault_view"
-        android:foreground="?attr/selectableItemBackground">
-        <ImageView
-            android:layout_width="30dp"
-            android:alpha="0.5"
-            android:layout_height="30dp"
-            android:layout_margin="10dp"
-            android:src="@drawable/vault" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Personal"
-            android:id="@+id/vault_name"
-            android:layout_gravity="center_vertical"/>
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:id="@+id/bottom_container">
-
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Modified at\nWed 23 April 2019, 14:32"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="52dp"
-            android:id="@+id/note_modified"
-            android:layout_marginLeft="16dp"
-            android:gravity="center_horizontal"/>
-
-        <ImageButton
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:id="@+id/note_extra"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/dots"/>
-
-    </RelativeLayout>
-
-    <LinearLayout
+    <com.github.florent37.shapeofview.shapes.RoundRectView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:id="@+id/delete_note"
-        android:padding="8dp">
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/delete_grey"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delete"
-            android:layout_marginLeft="16dp"/>
-    </LinearLayout>
+        app:shape_roundRect_topRightRadius="20dp"
+        app:shape_roundRect_topLeftRadius="20dp"
+        android:elevation="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="16dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp">
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/color_palette"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Background Color"
-            android:layout_marginLeft="16dp"/>
-    </LinearLayout>
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <Button
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/circle_blue"
-                android:layout_marginRight="16dp"
-                android:id="@+id/circle_blue"
-                android:foreground="?android:attr/selectableItemBackground" />
+            android:background="@color/colorAccent"
+            android:orientation="vertical">
 
 
-            <Button
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/circle_cream"
-                android:layout_marginRight="16dp"
-                android:id="@+id/circle_cream"
-                android:foreground="?android:attr/selectableItemBackground" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/vault_view"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:foreground="?attr/selectableItemBackground">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:alpha="0.5"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/vault" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Personal"
+                    android:textStyle="bold"
+                    android:id="@+id/vault_name"
+                    android:layout_gravity="center_vertical"/>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:id="@+id/bottom_container">
 
 
-            <Button
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/circle_green"
-                android:layout_marginRight="16dp"
-                android:id="@+id/circle_green"
-                android:foreground="?android:attr/selectableItemBackground" />
 
-            <Button
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/circle_orange"
-                android:layout_marginRight="16dp"
-                android:id="@+id/circle_orange"
-                android:foreground="?android:attr/selectableItemBackground" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Modified at\nWed 23 April 2019, 14:32"
+                    android:layout_centerInParent="true"
+                    android:textStyle="bold"
+                    android:layout_marginRight="52dp"
+                    android:id="@+id/note_modified"
+                    android:layout_marginLeft="16dp"
+                    android:gravity="center_horizontal"/>
 
-            <Button
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/circle_pink"
-                android:layout_marginRight="16dp"
-                android:id="@+id/circle_pink"
-                android:foreground="?android:attr/selectableItemBackground" />
+                <ImageButton
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:tintMode="src_atop"
+                    android:tint="@android:color/white"
+                    android:layout_marginRight="16dp"
+                    android:id="@+id/note_extra"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/dots"/>
 
-            <Button
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/circle_red"
-                android:layout_marginRight="16dp"
-                android:id="@+id/circle_red"
-                android:foreground="?android:attr/selectableItemBackground" />
+            </RelativeLayout>
 
-            <Button
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/circle_white"
-                android:layout_marginRight="16dp"
-                android:id="@+id/circle_white"
-                android:foreground="?android:attr/selectableItemBackground" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:id="@+id/delete_note"
+                android:padding="8dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/delete_grey"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:layout_marginLeft="16dp"/>
+            </LinearLayout>
 
-            <Button
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/circle_yellow"
-                android:layout_marginRight="16dp"
-                android:id="@+id/circle_yellow"
-                android:foreground="?android:attr/selectableItemBackground" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/color_palette"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Background Color"
+                    android:layout_marginLeft="16dp"/>
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <com.github.florent37.shapeofview.shapes.CircleView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:shape_circle_borderColor="#666666"
+                        app:shape_circle_borderWidth="1dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:id="@+id/circle_blue"
+                            android:orientation="horizontal"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:background="#A7D9D6"/>
+                    </com.github.florent37.shapeofview.shapes.CircleView>
+
+                    <com.github.florent37.shapeofview.shapes.CircleView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:shape_circle_borderColor="#666666"
+                        android:layout_marginLeft="8dp"
+                        app:shape_circle_borderWidth="1dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:id="@+id/circle_cream"
+                            android:orientation="horizontal"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:background="#FDE79D"/>
+                    </com.github.florent37.shapeofview.shapes.CircleView>
+
+                    <com.github.florent37.shapeofview.shapes.CircleView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:shape_circle_borderColor="#666666"
+                        android:layout_marginLeft="8dp"
+                        app:shape_circle_borderWidth="1dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:id="@+id/circle_green"
+                            android:orientation="horizontal"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:background="#82CC74"/>
+                    </com.github.florent37.shapeofview.shapes.CircleView>
+
+                    <com.github.florent37.shapeofview.shapes.CircleView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:shape_circle_borderColor="#666666"
+                        android:layout_marginLeft="8dp"
+                        app:shape_circle_borderWidth="1dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:id="@+id/circle_orange"
+                            android:orientation="horizontal"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:background="#F66522"/>
+                    </com.github.florent37.shapeofview.shapes.CircleView>
+
+                    <com.github.florent37.shapeofview.shapes.CircleView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:shape_circle_borderColor="#666666"
+                        android:layout_marginLeft="8dp"
+                        app:shape_circle_borderWidth="1dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:id="@+id/circle_pink"
+                            android:orientation="horizontal"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:background="#F0A1A6"/>
+                    </com.github.florent37.shapeofview.shapes.CircleView>
+
+                    <com.github.florent37.shapeofview.shapes.CircleView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:shape_circle_borderColor="#666666"
+                        android:layout_marginLeft="8dp"
+                        app:shape_circle_borderWidth="1dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:id="@+id/circle_red"
+                            android:orientation="horizontal"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:background="#F65A34"/>
+                    </com.github.florent37.shapeofview.shapes.CircleView>
+
+                    <com.github.florent37.shapeofview.shapes.CircleView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:shape_circle_borderColor="#666666"
+                        android:layout_marginLeft="8dp"
+                        app:shape_circle_borderWidth="1dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:id="@+id/circle_white"
+                            android:orientation="horizontal"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:background="#fafafa"/>
+                    </com.github.florent37.shapeofview.shapes.CircleView>
+
+                    <com.github.florent37.shapeofview.shapes.CircleView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:shape_circle_borderColor="#666666"
+                        android:layout_marginLeft="8dp"
+                        app:shape_circle_borderWidth="1dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:id="@+id/circle_yellow"
+                            android:orientation="horizontal"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:background="#FEF735"/>
+                    </com.github.florent37.shapeofview.shapes.CircleView>
+
+                </LinearLayout>
+            </HorizontalScrollView>
 
         </LinearLayout>
-    </HorizontalScrollView>
+
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
 
 </LinearLayout>
+
