@@ -38,5 +38,14 @@
     <string name="no_logins_message">Your currently have no logins saved in this vault.</string>
     <string name="no_notes_message">Your currently have no notes saved in this vault.</string>
     <string name="no_notes_title">No Notes</string>
+    <string name="card_deleted">Card successfully deleted</string>
+    <string name="card_created">Card successfully created</string>
+    <string name="card_updated">Card successfully updated</string>
+    <string name="delete_card">Delete Card</string>
+    <string name="flip_card">Flip Card</string>
+    <string name="card_alias">Card Alias</string>
+    <string name="select_vault">Select Vault</string>
+    <string name="personal">Personal</string>
+    <string name="cvv">CVV</string>
 
 </resources>
