@@ -12,28 +12,51 @@
         android:layout_height="match_parent"
         tools:context=".UI.Notes.NoteActivity">
 
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/toolbar"/>
+        <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:elevation="4dp"
+                android:id="@+id/height"
+                android:layout_marginTop="-4dp"
+                android:layout_marginRight="-4dp"
+                android:layout_marginLeft="-4dp"
+                android:layout_marginBottom="4dp"
+                app:shape_roundRect_bottomLeftRadius="40dp">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="70dp"
-            android:layout_marginRight="70dp"
-            android:layout_marginTop="16dp"
-            tools:text="Note Title"
-            android:hint="Title"
-            android:inputType="text"
-            android:id="@+id/note_title"
-            android:background="@null"
-            android:cursorVisible="true"
-            android:textColor="@color/mate_black"
-            android:textStyle="bold"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimaryDark">
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:theme="@style/ThemeOverlay.AppCompat.Dark"
+                        android:id="@+id/toolbar"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="70dp"
+                        android:layout_marginRight="70dp"
+                        android:layout_marginTop="16dp"
+                        tools:text="Note Title"
+                        android:hint="Title"
+                        android:inputType="text"
+                        android:id="@+id/note_title"
+                        android:background="@null"
+                        android:cursorVisible="true"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@android:color/white"
+                        android:textStyle="bold"/>
+
+
+                </RelativeLayout>
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+
 
         <ScrollView
-            android:layout_below="@+id/toolbar"
+            android:layout_below="@+id/height"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="106dp">
