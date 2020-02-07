@@ -19,7 +19,22 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDark"
             app:theme="@style/ThemeOverlay.AppCompat.Dark"
-            android:id="@+id/toolbar"/>
+            android:id="@+id/toolbar">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:id="@+id/delete_login_btn"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/bin"/>
+            </RelativeLayout>
+
+
+        </androidx.appcompat.widget.Toolbar>
 
         <RelativeLayout
             android:layout_width="match_parent"
