@@ -256,7 +256,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
             } else {
                 saveBtn.setBackgroundColor(resources.getColor(R.color.greyish))
                 saveBtn.setOnClickListener { }
-                saveText.text = "Nothing to save"
+                saveText.text = "Save"
             }
 
         }
