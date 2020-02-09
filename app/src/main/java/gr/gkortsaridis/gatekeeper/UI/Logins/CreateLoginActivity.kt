@@ -46,6 +46,7 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var copyUsername: ImageButton
     private lateinit var copyPassword: ImageButton
     private lateinit var deleteLogin: ImageButton
+    private lateinit var title: TextView
     private lateinit var url: EditText
 
     private var vaultToAdd: Vault? = null
@@ -75,6 +76,7 @@ class CreateLoginActivity : AppCompatActivity() {
         copyPassword = findViewById(R.id.copy_password)
         copyUsername = findViewById(R.id.copy_username)
         deleteLogin = findViewById(R.id.delete_login_btn)
+        title = findViewById(R.id.title)
 
         copyUsername.setOnClickListener { copy(username.text.toString(), "Username") }
         copyPassword.setOnClickListener { copy(password.text.toString(), "Password") }
@@ -91,12 +93,12 @@ class CreateLoginActivity : AppCompatActivity() {
 
         val loginId = intent.getStringExtra("login_id")
         if (loginId == null) {
-            supportActionBar?.title = "Create new login"
+            title.text = "Create new Password"
             vaultToAdd = VaultRepository.getLastActiveRealVault()
             saveUpdateButton.setOnClickListener { createLogin() }
         } else {
             login = LoginsRepository.getLoginById(loginId)
-            supportActionBar?.title = "Edit Login"
+            title.text = "Edit Password"
             vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
             saveUpdateButton.setOnClickListener { updateLogin() }
         }
