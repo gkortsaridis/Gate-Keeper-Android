@@ -35,7 +35,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/profileImage"
                 android:src="@drawable/camera"
-                android:padding="50dp"
+                android:padding="150dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:scaleType="centerCrop"

@@ -141,7 +141,7 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
             .placeholder(R.drawable.camera)
             .listener(object: RequestListener<Drawable>{
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    profileImage.setPadding(50.dp,50.dp,50.dp,50.dp)
+                    profileImage.setPadding(150.dp,150.dp,150.dp,150.dp)
                     profileImage.setImageResource(R.drawable.camera)
                     return false
                 }
