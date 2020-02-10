@@ -13,7 +13,6 @@ import android.widget.Button
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.biometric.BiometricManager
-import gr.gkortsaridis.gatekeeper.Entities.Login
 
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
@@ -71,7 +70,19 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        setupSegmentedControl()
         updateUI()
+    }
+
+    private fun setupSegmentedControl() {
+        val canAuthenticateWithBio = BiometricManager.from(activity).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
+
+        bioAuth.visibility = if (canAuthenticateWithBio) View.VISIBLE else View.GONE
+        authTypeSegmentedGroup.weightSum = if (canAuthenticateWithBio) 3f else 2f
+
+        if (!canAuthenticateWithBio && DataRepository.preferredAuthType == AuthRepository.PIN_SIGN_IN) {
+            DataRepository.preferredAuthType = AuthRepository.PASSWORD_SIGN_IN
+        }
     }
 
     private fun updateUI() {
@@ -85,7 +96,7 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
 
         if (preferredAuthType == AuthRepository.BIO_SIN_IN && canAuthenticateWithBio) {
             bioAuth.isChecked = true
-            authTypeDescription.text = getString(R.string.auth_type_fingerprint_description)
+            authTypeDescription.text = getString(R.string.auth_type_biometric_description)
         } else if (preferredAuthType == AuthRepository.PIN_SIGN_IN) {
             val pinSet = DataRepository.pinLock.isNotEmpty()
             pinAuth.isChecked = true

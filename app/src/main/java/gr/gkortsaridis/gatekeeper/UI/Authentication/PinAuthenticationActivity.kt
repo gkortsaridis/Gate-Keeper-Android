@@ -85,8 +85,8 @@ class PinAuthenticationActivity : AppCompatActivity() {
                         lockView.resetPinLockView()
                     } else {
                       if (tempPin == pin!!) {
-                          DataRepository.pinLock = pin
                           Toast.makeText(activity, "Your PIN is successfully setup", Toast.LENGTH_SHORT).show()
+                          DataRepository.pinLock = pin
                           DataRepository.preferredAuthType = AuthRepository.PIN_SIGN_IN
                           finish()
                       }

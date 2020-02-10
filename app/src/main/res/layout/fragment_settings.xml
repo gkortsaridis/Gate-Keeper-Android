@@ -95,7 +95,7 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:id="@+id/auth_type_description"
-                    android:text="@string/auth_type_fingerprint_description"/>
+                    android:text="@string/auth_type_biometric_description"/>
 
                 <Button
                     android:layout_width="wrap_content"
