@@ -97,25 +97,14 @@
                     android:id="@+id/auth_type_description"
                     android:text="@string/auth_type_fingerprint_description"/>
 
-
-                <TextView
+                <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:textColor="@color/error_red"
-                    android:layout_marginRight="16dp"
-                    android:id="@+id/pin_error_1"
-                    android:text="PIN is not setup yet. Password authentication will be used instead."/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:id="@+id/pin_error_2"
-                    android:textColor="@color/error_red"
-                    android:text="Click here to setup your PIN"/>
+                    android:padding="16dp"
+                    android:id="@+id/setup_pin"
+                    android:background="@android:color/transparent"
+                    android:text="SETUP GATEKEEPER PIN"
+                    android:textColor="@color/colorPrimary"/>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

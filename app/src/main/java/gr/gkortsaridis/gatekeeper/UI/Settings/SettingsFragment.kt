@@ -2,12 +2,14 @@ package gr.gkortsaridis.gatekeeper.UI.Settings
 
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.biometric.BiometricManager
@@ -27,12 +29,11 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
     private lateinit var bioAuth: RadioButton
     private lateinit var passAuth: RadioButton
     private lateinit var pinAuth: RadioButton
-    private lateinit var pinError1: TextView
-    private lateinit var pinError2: TextView
     private lateinit var authTypeDescription: TextView
     private lateinit var loginClickCopy: RadioButton
     private lateinit var loginClickOpen: RadioButton
     private lateinit var loginClickDescription: TextView
+    private lateinit var setupPin: Button
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -42,13 +43,12 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
         passAuth = view.findViewById(R.id.auth_type_pass)
         pinAuth = view.findViewById(R.id.auth_type_pin)
         authTypeSegmentedGroup = view.findViewById(R.id.auth_type_segmented)
-        pinError1 = view.findViewById(R.id.pin_error_1)
-        pinError2 = view.findViewById(R.id.pin_error_2)
         authTypeDescription = view.findViewById(R.id.auth_type_description)
         loginClickSegmentedGroup = view.findViewById(R.id.login_click_action_segmented)
         loginClickCopy = view.findViewById(R.id.login_click_action_copy)
         loginClickOpen = view.findViewById(R.id.login_click_action_open)
         loginClickDescription = view.findViewById(R.id.login_click_action_description)
+        setupPin = view.findViewById(R.id.setup_pin)
 
         authTypeSegmentedGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
@@ -65,12 +65,7 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
             }
         }
 
-        pinError2.setOnClickListener {
-            val intent = Intent(activity, PinAuthenticationActivity::class.java)
-            intent.putExtra("MODE", "PIN_SETUP")
-            startActivity(intent)
-        }
-
+        setupPin.setOnClickListener { setupPin() }
         return view
     }
 
@@ -86,8 +81,7 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
         val canAuthenticateWithBio = BiometricManager.from(activity).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
 
         authTypeDescription.visibility = View.VISIBLE
-        pinError1.visibility = View.GONE
-        pinError2.visibility = View.GONE
+        setupPin.visibility = View.GONE
 
         if (preferredAuthType == AuthRepository.BIO_SIN_IN && canAuthenticateWithBio) {
             bioAuth.isChecked = true
@@ -95,8 +89,7 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
         } else if (preferredAuthType == AuthRepository.PIN_SIGN_IN) {
             val pinSet = DataRepository.pinLock.isNotEmpty()
             pinAuth.isChecked = true
-            pinError1.visibility = if (pinSet) View.GONE else View.VISIBLE
-            pinError2.visibility = if (pinSet) View.GONE else View.VISIBLE
+            setupPin.visibility = View.VISIBLE
             authTypeDescription.visibility = if(pinSet) View.VISIBLE else View.GONE
             authTypeDescription.text = getString(R.string.auth_type_pin_description)
         } else {
@@ -116,14 +109,32 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
         }
     }
 
+    private fun setupPin() {
+        val intent = Intent(activity, PinAuthenticationActivity::class.java)
+        intent.putExtra("MODE", "PIN_SETUP")
+        startActivity(intent)
+    }
+
+
     private fun setPreferredLoginClickAction(type: Int) {
         DataRepository.loginClickAction = type
         updateUI()
     }
 
     private fun setPreferredAuthType(type: Int) {
-        DataRepository.preferredAuthType = type
-        updateUI()
+        if (type == AuthRepository.PIN_SIGN_IN && DataRepository.pinLock.isNullOrEmpty()) {
+            val builder = AlertDialog.Builder(activity)
+            builder.setTitle("GateKeeper PIN not set")
+            builder.setMessage("Your PIN is not set yet. Please setup a PIN if you want to use this authentication method")
+            builder.setPositiveButton("Setup") { dialog, which -> setupPin() }
+            builder.setNegativeButton("Cancel") { dialog,which -> setPreferredAuthType(DataRepository.preferredAuthType) }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        } else {
+            DataRepository.preferredAuthType = type
+            updateUI()
+        }
     }
 
 }
