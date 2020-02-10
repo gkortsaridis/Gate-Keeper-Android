@@ -89,6 +89,7 @@ class CreditCardsRecyclerViewAdapter(
                 CardType.DinersClub -> { cardType?.setImageResource(R.drawable.discover) } //TODO: change
                 CardType.DiscoverCard -> { cardType?.setImageResource(R.drawable.discover) }
                 CardType.Mastercard -> { cardType?.setImageResource(R.drawable.mastercard) }
+                CardType.Unknown -> {cardType?.visibility = View.INVISIBLE}
             }
 
             flipCard?.setOnClickListener { flipView?.flipTheView() }
