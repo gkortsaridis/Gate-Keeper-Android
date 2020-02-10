@@ -106,7 +106,11 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         expiryDateTV.text = card?.expirationDate
         vaultName.text = cardVault.name
 
-        flipToBack.setOnClickListener { flipCard.flipTheView() }
+        flipToBack.setOnClickListener {
+            backCardShown = true
+            flipCard.flipTheView()
+            toggleSaveButton()
+        }
         flipToFront.setOnClickListener { flipCard.flipTheView() }
         cancelBtn.setOnClickListener { dismiss() }
         vaultContainer.setOnClickListener { showVaultSelectorPicker() }
@@ -265,31 +269,42 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
                 }
                 saveText.text = "Next"
             } else {
-                saveBtn.setBackgroundColor(resources.getColor(R.color.done_green))
-                saveBtn.setOnClickListener { saveCard() }
                 saveText.text = "Save"
+                if (cardDataAreFilled()) {
+                    saveBtn.setBackgroundColor(resources.getColor(R.color.done_green))
+                    saveBtn.setOnClickListener { saveCard() }
+                } else {
+                    saveBtn.setBackgroundColor(resources.getColor(R.color.greyish))
+                    saveBtn.setOnClickListener { }
+                }
             }
 
         } else {
+            saveText.text = "Save"
 
             if (cardShouldSave()) {
                 if (cardDataAreValid()) {
                     saveBtn.setBackgroundColor(resources.getColor(R.color.done_green))
                     saveBtn.setOnClickListener { saveCard() }
-                    saveText.text = "Save"
                 } else {
                     saveBtn.setBackgroundColor(resources.getColor(R.color.greyish))
                     saveBtn.setOnClickListener { }
-                    saveText.text = "Card Data not valid"
                 }
             } else {
                 saveBtn.setBackgroundColor(resources.getColor(R.color.greyish))
                 saveBtn.setOnClickListener { }
-                saveText.text = "Save"
             }
 
         }
 
+    }
+
+    private fun cardDataAreFilled(): Boolean {
+        return (cardNumberET.text.isNotBlank()
+                && cardholderNameET.text.isNotBlank()
+                && expiryDateTV.text.isNotBlank()
+                && cvvET.text.isNotBlank()
+                && cardNickname.text.isNotBlank())
     }
 
     private fun cardDataAreValid(): Boolean {
