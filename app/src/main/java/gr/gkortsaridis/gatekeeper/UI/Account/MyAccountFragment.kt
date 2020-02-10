@@ -151,8 +151,6 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
                     return false
                 }
             })
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(true)
             .into(profileImage)
 
     }
