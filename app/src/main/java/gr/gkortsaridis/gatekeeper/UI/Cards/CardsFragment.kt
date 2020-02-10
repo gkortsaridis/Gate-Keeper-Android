@@ -12,8 +12,10 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.florent37.shapeofview.shapes.ArcView
+import com.github.florent37.shapeofview.shapes.CircleView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.littlemango.stacklayoutmanager.StackLayoutManager
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
@@ -87,6 +89,15 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private fun createCard() {
         val cardDialogFragment = CardInfoFragment(card = null, isCreate = true, listeners = this)
         cardDialogFragment.show(fragmentManager!!, null)
+        fragmentManager!!.registerFragmentLifecycleCallbacks(object: FragmentManager.FragmentLifecycleCallbacks(){
+            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+                super.onFragmentDestroyed(fm, f)
+                onResume()
+
+                fragmentManager!!.unregisterFragmentLifecycleCallbacks(this)
+            }
+        }, false)
+
     }
 
     @SuppressLint("RestrictedApi")
@@ -102,12 +113,20 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
             cardsAdapter.updateCards(filtered)
         }
 
-        filtered.forEachIndexed { index, creditCard ->
-            if (creditCard.id == activeCard?.id) {
-                cardCounter.text = "${index + 1}/${filtered.size}"
-                cardNickname.text = activeCard?.cardName
+        if (filtered.isNotEmpty()) {
+            filtered.forEachIndexed { index, creditCard ->
+                if (creditCard.id == activeCard?.id) {
+                    bottomArc.visibility = View.VISIBLE
+                    cardCounter.text = "${index + 1}/${filtered.size}"
+                    cardNickname.text = activeCard?.cardName
+                }
             }
+        } else {
+            bottomArc.visibility = View.GONE
+            cardCounter.text = ""
+            cardNickname.text = ""
         }
+
 
         noCardsMessage.visibility = if (filtered.size > 0) View.GONE else View.VISIBLE
         addCreditCard.visibility = if (filtered.size > 0) View.VISIBLE else View.GONE
@@ -116,6 +135,14 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     override fun onCreditCardClicked(card: CreditCard) {
         val cardDialogFragment = CardInfoFragment(card = card, isCreate = false, listeners = this)
         cardDialogFragment.show(fragmentManager!!, null)
+        fragmentManager!!.registerFragmentLifecycleCallbacks(object: FragmentManager.FragmentLifecycleCallbacks(){
+            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+                super.onFragmentDestroyed(fm, f)
+                onResume()
+
+                fragmentManager!!.unregisterFragmentLifecycleCallbacks(this)
+            }
+        }, false)
     }
 
     override fun onCreditCardEditButtonClicked(card: CreditCard, position: Int) {  }
