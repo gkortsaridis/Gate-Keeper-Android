@@ -47,5 +47,6 @@
     <string name="select_vault">Select Vault</string>
     <string name="personal">Personal</string>
     <string name="cvv">CVV</string>
+    <string name="update_account_details">Update Account Details</string>
 
 </resources>
