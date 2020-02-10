@@ -109,9 +109,13 @@ object LoginsRepository {
     }
 
     fun filterLoginsByVault(logins: ArrayList<Login>, vault: Vault): ArrayList<Login> {
-        if (vault.id == "-1") { return logins }
+        val vaultIds = arrayListOf<String>()
+        GateKeeperApplication.vaults.forEach { vaultIds.add(it.id) }
+        val parentedLogins = ArrayList(logins.filter { vaultIds.contains(it.vault_id) })
 
-        val filtered = logins.filter {
+        if (vault.id == "-1") { return parentedLogins }
+
+        val filtered = parentedLogins.filter {
             it.vault_id == vault.id
         }
 
