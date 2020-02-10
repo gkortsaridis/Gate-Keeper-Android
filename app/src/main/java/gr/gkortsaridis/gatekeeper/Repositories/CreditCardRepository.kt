@@ -12,6 +12,7 @@ import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
+import gr.gkortsaridis.gatekeeper.R
 
 object CreditCardRepository {
 
@@ -33,14 +34,28 @@ object CreditCardRepository {
         val DISCOVER_PREFIX = "6011"
         val AMEX_PREFIX = "34,37,"
 
-        return when {
-            cardNumber.substring(0, 1) == VISA_PREFIX -> CardType.Visa
-            MASTERCARD_PREFIX.contains(cardNumber.substring(0, 2) + ",") -> CardType.Mastercard
-            AMEX_PREFIX.contains(cardNumber.substring(0, 2) + ",") -> CardType.Amex
-            cardNumber.substring(0, 4) == DISCOVER_PREFIX -> CardType.DiscoverCard
-            else -> CardType.Unknown
+        return if (cardNumber.isNotEmpty() && cardNumber.substring(0, 1) == VISA_PREFIX) {
+            CardType.Visa
+        } else if (cardNumber.length >= 2 && MASTERCARD_PREFIX.contains(cardNumber.substring(0, 2) + ",")) {
+            CardType.Mastercard
+        } else if (cardNumber.length >= 2 && AMEX_PREFIX.contains(cardNumber.substring(0, 2) + ",")) {
+            CardType.Amex
+        } else if (cardNumber.length >= 4 && cardNumber.substring(0, 4) == DISCOVER_PREFIX) {
+            CardType.DiscoverCard
+        } else {
+            CardType.Unknown
         }
+    }
 
+    fun getCreditCardTypeImage(card: CreditCard): Int? {
+        return when (card.type) {
+            CardType.Unknown -> null
+            CardType.DiscoverCard -> R.drawable.discover
+            CardType.Amex -> R.drawable.amex
+            CardType.Mastercard -> R.drawable.mastercard
+            CardType.Visa -> R.drawable.visa
+            CardType.DinersClub -> R.drawable.discover
+        }
     }
 
     fun deleteCreditCard(card: CreditCard, listener: CreditCardDeleteListener) {

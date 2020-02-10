@@ -54,6 +54,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
     private lateinit var cardNickname: EditText
     private lateinit var saveText: TextView
     private lateinit var saveIcon: ImageView
+    private lateinit var cardType: ImageView
     private lateinit var deleteCardBtn: LinearLayout
 
     private var backCardShown: Boolean = false
@@ -96,6 +97,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         saveText = view.findViewById(R.id.save_text)
         saveIcon = view.findViewById(R.id.save_icon)
         deleteCardBtn = view.findViewById(R.id.card_delete_btn)
+        cardType = view.findViewById(R.id.card_type)
 
         cardNumberET.setText(card?.number)
         cardholderNameET.setText(card?.cardholderName)
@@ -111,14 +113,40 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         expiryDateContainer.setOnClickListener { showMonthYearPicker() }
         deleteCardBtn.setOnClickListener { deleteCard() }
 
+        //These are for save validations
         cardNumberET.addTextChangedListener(this)
         cardholderNameET.addTextChangedListener(this)
         cardNickname.addTextChangedListener(this)
         cvvET.addTextChangedListener(this)
+
+        //This is for the Card Type only
+        cardNumberET.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                card?.type = CreditCardRepository.getCreditCardType(s.toString())
+                updateCardTypeImage()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        //This is to format the card number
         cardNumberET.addTextChangedListener(CreditCardFormattingTextWatcher(cardNumberET))
 
         toggleSaveButton()
+        updateCardTypeImage()
         return view
+    }
+
+    private fun updateCardTypeImage() {
+        val image = CreditCardRepository.getCreditCardTypeImage(card!!)
+        if (image == null) {
+            cardType.visibility = View.INVISIBLE
+        } else {
+            cardType.visibility = View.VISIBLE
+            cardType.setImageResource(image)
+        }
     }
 
     private fun deleteCard() {
@@ -152,6 +180,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         card?.cardName = cardNickname.text.toString()
         card?.vaultId = cardVault.id
         card?.cvv = cvvET.text.toString()
+        card?.type = CreditCardRepository.getCreditCardType(card?.number ?: "")
 
         val viewDialog = ViewDialog(activity!!)
         if (isCreate) {
