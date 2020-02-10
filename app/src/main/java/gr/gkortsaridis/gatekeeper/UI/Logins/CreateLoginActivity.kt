@@ -8,6 +8,7 @@ import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -44,6 +45,8 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var vaultName: TextView
     private lateinit var copyUsername: ImageButton
     private lateinit var copyPassword: ImageButton
+    private lateinit var deleteLogin: ImageButton
+    private lateinit var title: TextView
     private lateinit var url: EditText
 
     private var vaultToAdd: Vault? = null
@@ -72,9 +75,12 @@ class CreateLoginActivity : AppCompatActivity() {
         vaultName = findViewById(R.id.vault_name)
         copyPassword = findViewById(R.id.copy_password)
         copyUsername = findViewById(R.id.copy_username)
+        deleteLogin = findViewById(R.id.delete_login_btn)
+        title = findViewById(R.id.title)
 
         copyUsername.setOnClickListener { copy(username.text.toString(), "Username") }
         copyPassword.setOnClickListener { copy(password.text.toString(), "Password") }
+        deleteLogin.setOnClickListener { deleteLogin() }
 
         vaultView.setOnClickListener {
             val intent = Intent(this, SelectVaultActivity::class.java)
@@ -87,12 +93,12 @@ class CreateLoginActivity : AppCompatActivity() {
 
         val loginId = intent.getStringExtra("login_id")
         if (loginId == null) {
-            supportActionBar?.title = "Create new login"
+            title.text = "Create new Password"
             vaultToAdd = VaultRepository.getLastActiveRealVault()
             saveUpdateButton.setOnClickListener { createLogin() }
         } else {
             login = LoginsRepository.getLoginById(loginId)
-            supportActionBar?.title = "Edit Login"
+            title.text = "Edit Password"
             vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
             saveUpdateButton.setOnClickListener { updateLogin() }
         }
@@ -118,6 +124,7 @@ class CreateLoginActivity : AppCompatActivity() {
         notes.setText(login?.notes)
         url.setText(login?.url)
         vaultName.text = vaultToAdd?.name
+        deleteLogin.visibility = if (login != null) View.VISIBLE else View.GONE
     }
 
     private fun updateLogin() {
@@ -191,18 +198,6 @@ class CreateLoginActivity : AppCompatActivity() {
                 finish()
             }
         })
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (login != null) {
-            menuInflater.inflate(R.menu.delete_item_menu, menu)
-        }
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_delete) { deleteLogin() }
-        return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

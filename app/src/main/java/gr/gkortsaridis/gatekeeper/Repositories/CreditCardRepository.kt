@@ -16,9 +16,13 @@ import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 object CreditCardRepository {
 
     fun filterCardsByVault(vault: Vault) : ArrayList<CreditCard> {
-        if (vault.id == "-1") { return GateKeeperApplication.cards }
+        val vaultIds = arrayListOf<String>()
+        GateKeeperApplication.vaults.forEach { vaultIds.add(it.id) }
+        val parentedCards = ArrayList(GateKeeperApplication.cards.filter { vaultIds.contains(it.vaultId) })
 
-        val filtered = GateKeeperApplication.cards.filter { it.vaultId == vault.id }
+        if (vault.id == "-1") { return parentedCards }
+
+        val filtered = parentedCards.filter { it.vaultId == vault.id }
         return ArrayList(filtered)
     }
 
