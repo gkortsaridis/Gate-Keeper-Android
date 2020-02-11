@@ -16,7 +16,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.transition.Fade
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -42,7 +41,7 @@ import io.noties.tumbleweed.Timeline
 import io.noties.tumbleweed.Tween
 import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
-import io.noties.tumbleweed.android.types.Translation
+import io.noties.tumbleweed.android.types.Scale
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -107,44 +106,45 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 super.onDrawerStateChanged(newState)
                 if (newState == DrawerLayout.STATE_SETTLING && !drawer.isDrawerOpen(GravityCompat.START)) {
 
-                    val animationLength = 0.25f
+                    val bigScale = 1.15f
+                    val waitTime = 0.1f
                     val returnAnimationLength = 0.25f
-                    val animationDistance = 20.dp.toFloat()
-                    val transition = io.noties.tumbleweed.equations.Cubic.IN
+                    val transition = io.noties.tumbleweed.equations.Back.IN
 
                     youAreSecuredTV.alpha = 0f
+
 
                     Timeline.createSequence()
                         .push(
                             Timeline.createParallel()
                                 .push(
                                     Timeline.createSequence()
-                                        .push(Tween.to(navTextPasswords, Translation.XY, animationLength).target(animationDistance, 0f).ease(transition))
-                                        .push(Tween.to(navTextPasswords, Translation.XY, returnAnimationLength).target(0f, 0f).ease(transition))
+                                        .push(Tween.to(navTextPasswords, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextPasswords, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
                                 )
                                 .push(
                                     Timeline.createSequence()
-                                        .pushPause(0.1f)
-                                        .push(Tween.to(navTextCards, Translation.XY, animationLength).target(animationDistance, 0f).ease(transition))
-                                        .push(Tween.to(navTextCards, Translation.XY, returnAnimationLength).target(0f, 0f).ease(transition))
+                                        .pushPause(waitTime)
+                                        .push(Tween.to(navTextCards, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextCards, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
                                 )
                                 .push(
                                     Timeline.createSequence()
-                                        .pushPause(0.2f)
-                                        .push(Tween.to(navTextNotes, Translation.XY, animationLength).target(animationDistance, 0f).ease(transition))
-                                        .push(Tween.to(navTextNotes, Translation.XY, returnAnimationLength).target(0f, 0f).ease(transition))
+                                        .pushPause(waitTime*2)
+                                        .push(Tween.to(navTextNotes, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextNotes, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
                                 )
                                 .push(
                                     Timeline.createSequence()
-                                        .pushPause(0.3f)
-                                        .push(Tween.to(navTextAccount, Translation.XY, animationLength).target(animationDistance, 0f).ease(transition))
-                                        .push(Tween.to(navTextAccount, Translation.XY, returnAnimationLength).target(0f, 0f).ease(transition))
+                                        .pushPause(waitTime*3)
+                                        .push(Tween.to(navTextAccount, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextAccount, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
                                 )
                                 .push(
                                     Timeline.createSequence()
-                                        .pushPause(0.4f)
-                                        .push(Tween.to(navTextDevices, Translation.XY, animationLength).target(animationDistance, 0f).ease(transition))
-                                        .push(Tween.to(navTextDevices, Translation.XY, returnAnimationLength).target(0f, 0f).ease(transition))
+                                        .pushPause(waitTime*4)
+                                        .push(Tween.to(navTextDevices, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextDevices, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
                                 )
                         )
                         .push(
