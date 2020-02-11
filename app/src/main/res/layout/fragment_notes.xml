@@ -115,11 +115,13 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:alpha="0.0"
         android:background="@color/colorPrimary"
         android:layout_alignParentBottom="true"
         android:src="@drawable/plus"
         android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="-56dp"
         android:id="@+id/add_note"/>
 
 </RelativeLayout>

@@ -202,7 +202,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         Toast.makeText(context, login.name+" password copied", Toast.LENGTH_SHORT).show()
     }
 
-    fun animateFabIn() {
+    private fun animateFabIn() {
         Timeline.createParallel()
             .push(Tween.to(fab, Alpha.VIEW, 1.0f).target(1.0f))
             .push(Tween.to(fab, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
