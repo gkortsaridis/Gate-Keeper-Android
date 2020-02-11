@@ -140,6 +140,8 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
 
         toggleSaveButton()
         updateCardTypeImage()
+
+        deleteCardBtn.visibility = if (isCreate) View.GONE else View.VISIBLE
         return view
     }
 

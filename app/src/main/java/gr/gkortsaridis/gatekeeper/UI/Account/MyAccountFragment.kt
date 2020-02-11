@@ -136,7 +136,8 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
     private fun getUserImageReference(): StorageReference {
         val storageRef = FirebaseStorage.getInstance().reference
         val imagesRef = storageRef.child("userImages")
-        return imagesRef.child(AuthRepository.getUserID()+".jpg")
+        val a = imagesRef.child(AuthRepository.getUserID()+".jpg")
+        return a
     }
 
     private fun createByteArrayToUpload(inputStream: InputStream): ByteArray {
@@ -151,18 +152,8 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
             .with(activity)
             .load(getUserImageReference())
             .placeholder(R.drawable.camera)
-            .listener(object: RequestListener<Drawable>{
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    profileImage.setPadding(150.dp,150.dp,150.dp,150.dp)
-                    profileImage.setImageResource(R.drawable.camera)
-                    return false
-                }
-
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    profileImage.setPadding(0,0,0,0)
-                    return false
-                }
-            })
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
             .into(profileImage)
 
     }
