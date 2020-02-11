@@ -1,26 +1,31 @@
 package gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters
 
+import android.R.attr.bitmap
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.cardview.widget.CardView
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.core.graphics.drawable.toBitmap
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import gr.gkortsaridis.gatekeeper.Entities.Login
-import gr.gkortsaridis.gatekeeper.Utils.dp
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
+import gr.gkortsaridis.gatekeeper.Utils.dp
 
 
 class LoginsRecyclerViewAdapter(
@@ -60,6 +65,7 @@ class LoginsRecyclerViewAdapter(
         private var loginImage: ImageView? = null
         private var loginAction: ImageButton? = null
         private var loginInitial: TextView? = null
+        private var loginImgContainer: RelativeLayout? = null
         private var view: View = v
 
         init {
@@ -68,6 +74,7 @@ class LoginsRecyclerViewAdapter(
             loginImage = view.findViewById(R.id.login_image)
             loginAction = view.findViewById(R.id.login_action)
             loginInitial = view.findViewById(R.id.login_icon_initial)
+            loginImgContainer = view.findViewById(R.id.login_img_container)
         }
 
         fun bindLogin(login: Login, position: Int, context: Context, packageManager: PackageManager, listener: LoginSelectListener){
@@ -101,6 +108,12 @@ class LoginsRecyclerViewAdapter(
                         }
 
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            val bitmap = resource?.toBitmap(8.dp, 8.dp)!!
+
+                            Palette.from(bitmap).generate {
+                                loginImgContainer?.setBackgroundColor(it?.getDominantColor(context.resources.getColor(R.color.colorAccent))!!)
+                            }
+
                             return false
                         }
                     })
