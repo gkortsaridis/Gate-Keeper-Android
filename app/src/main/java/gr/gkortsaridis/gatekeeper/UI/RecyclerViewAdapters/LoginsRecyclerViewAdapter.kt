@@ -3,6 +3,7 @@ package gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters
 import android.R.attr.bitmap
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.drawToBitmap
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.DataSource
@@ -66,6 +68,7 @@ class LoginsRecyclerViewAdapter(
         private var loginAction: ImageButton? = null
         private var loginInitial: TextView? = null
         private var loginImgContainer: RelativeLayout? = null
+        private var loginImgContainer2: View? = null
         private var view: View = v
 
         init {
@@ -75,6 +78,7 @@ class LoginsRecyclerViewAdapter(
             loginAction = view.findViewById(R.id.login_action)
             loginInitial = view.findViewById(R.id.login_icon_initial)
             loginImgContainer = view.findViewById(R.id.login_img_container)
+            loginImgContainer2 = view.findViewById(R.id.login_img_container_2)
         }
 
         fun bindLogin(login: Login, position: Int, context: Context, packageManager: PackageManager, listener: LoginSelectListener){
@@ -88,32 +92,20 @@ class LoginsRecyclerViewAdapter(
                 this.loginInitial?.visibility = View.GONE
                 this.loginImage?.visibility = View.VISIBLE
                 this.loginImage?.setImageDrawable(appIcon)
+                val bitmapDrawable = this.loginImage?.drawable
+                val bitmap = bitmapDrawable?.toBitmap()!!
+                colorImageBackground(context, bitmap)
             } else {
                 this.loginImage?.visibility = View.VISIBLE
                 GlideApp.with(context)
                     .load("https://besticon-demo.herokuapp.com/icon?url="+login.url+"&size=80..120..200")
                     .placeholder(R.drawable.camera)
                     .listener(object: RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            loginInitial?.visibility = View.VISIBLE
-                            loginImage?.visibility = View.GONE
-                            if (login.name.isNotEmpty()) {
-                                if (login.name.length > 1) {
-                                    loginInitial?.text = login.name[0].toString().toUpperCase() + login.name[0].toString().toUpperCase()
-                                }else {
-                                    loginInitial?.text = login.name[0].toString().toUpperCase()
-                                }
-                            }
-                            return false
-                        }
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean { return false }
 
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                             val bitmap = resource?.toBitmap(8.dp, 8.dp)!!
-
-                            Palette.from(bitmap).generate {
-                                loginImgContainer?.setBackgroundColor(it?.getDominantColor(context.resources.getColor(R.color.colorAccent))!!)
-                            }
-
+                            colorImageBackground(context, bitmap)
                             return false
                         }
                     })
@@ -126,6 +118,13 @@ class LoginsRecyclerViewAdapter(
 
             this.view.setOnClickListener { listener.onLoginClicked(login) }
             this.loginAction?.setOnClickListener { listener.onLoginActionClicked(login) }
+        }
+
+        private fun colorImageBackground(context: Context, bitmap: Bitmap) {
+            Palette.from(bitmap).generate {
+                loginImgContainer?.setBackgroundColor(it?.getDominantColor( context.resources.getColor(R.color.colorAccent))!!)
+                loginImgContainer2?.setBackgroundColor(it?.getDominantColor( context.resources.getColor(R.color.colorAccent))!!)
+            }
         }
 
     }
