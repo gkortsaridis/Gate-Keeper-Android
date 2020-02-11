@@ -4,10 +4,12 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.media.Image
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -15,10 +17,10 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -35,6 +37,11 @@ import gr.gkortsaridis.gatekeeper.UI.Notes.NotesFragment
 import gr.gkortsaridis.gatekeeper.UI.Settings.SettingsFragment
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.Timeline
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import io.noties.tumbleweed.android.types.Scale
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -60,10 +67,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navTextAccount: TextView
     private lateinit var navTextDevices: TextView
     private lateinit var profileImage: ImageView
+    private lateinit var passwordsRoundRect: RoundRectView
+    private lateinit var cardsRoundRect: RoundRectView
+    private lateinit var notesRoundRect: RoundRectView
+    private lateinit var accountRoundRect: RoundRectView
+    private lateinit var devicesRoundRect: RoundRectView
+    private lateinit var youAreSecuredTV: TextView
+
+    private lateinit var loginsFragment: LoginsFragment
+    private lateinit var cardsFragment: CardsFragment
+    private lateinit var notesFragment: NotesFragment
+    private lateinit var accountFragment: MyAccountFragment
+    private lateinit var devicesFragment: DevicesFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        loginsFragment = LoginsFragment()
+        cardsFragment = CardsFragment(this)
+        notesFragment = NotesFragment(this)
+        accountFragment = MyAccountFragment(this)
+        devicesFragment = DevicesFragment(this)
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -76,6 +101,59 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.string.navigation_drawer_close
         )
         drawer.addDrawerListener(toggle)
+        drawer.addDrawerListener(object: DrawerLayout.SimpleDrawerListener(){
+            override fun onDrawerStateChanged(newState: Int) {
+                super.onDrawerStateChanged(newState)
+                if (newState == DrawerLayout.STATE_SETTLING && !drawer.isDrawerOpen(GravityCompat.START)) {
+
+                    val bigScale = 1.15f
+                    val waitTime = 0.1f
+                    val returnAnimationLength = 0.25f
+                    val transition = io.noties.tumbleweed.equations.Back.IN
+
+                    youAreSecuredTV.alpha = 0f
+
+
+                    Timeline.createSequence()
+                        .push(
+                            Timeline.createParallel()
+                                .push(
+                                    Timeline.createSequence()
+                                        .push(Tween.to(navTextPasswords, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextPasswords, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
+                                )
+                                .push(
+                                    Timeline.createSequence()
+                                        .pushPause(waitTime)
+                                        .push(Tween.to(navTextCards, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextCards, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
+                                )
+                                .push(
+                                    Timeline.createSequence()
+                                        .pushPause(waitTime*2)
+                                        .push(Tween.to(navTextNotes, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextNotes, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
+                                )
+                                .push(
+                                    Timeline.createSequence()
+                                        .pushPause(waitTime*3)
+                                        .push(Tween.to(navTextAccount, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextAccount, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
+                                )
+                                .push(
+                                    Timeline.createSequence()
+                                        .pushPause(waitTime*4)
+                                        .push(Tween.to(navTextDevices, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextDevices, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
+                                )
+                        )
+                        .push(
+                            Tween.to(youAreSecuredTV, Alpha.VIEW, 1.0f).target(1.0f)
+                        )
+                        .start(ViewTweenManager.get(passwordsRoundRect))
+                }
+            }
+        })
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
@@ -97,6 +175,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navTextDevices = findViewById(R.id.nav_text_devices)
         navTextAccount = findViewById(R.id.nav_text_account)
         profileImage = findViewById(R.id.profile_image)
+        passwordsRoundRect = findViewById(R.id.passwords_rectview)
+        cardsRoundRect = findViewById(R.id.cards_rectview)
+        notesRoundRect = findViewById(R.id.notes_rectview)
+        accountRoundRect = findViewById(R.id.account_rectview)
+        devicesRoundRect = findViewById(R.id.devices_rectview)
+        youAreSecuredTV = findViewById(R.id.your_are_secured_tv)
 
         navContainerPasswords.setOnClickListener { switchFragment("Passwords") }
         navContainerCards.setOnClickListener { switchFragment("Cards") }
@@ -172,27 +256,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 supportActionBar?.title = "GateKeeper Passwords"
                 navTextPasswords.typeface = Typeface.DEFAULT_BOLD
                 navContainerPasswords.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+                //loginsFragment.animateFabIn()
             }
             "Cards" -> {
-                fragmentToReplace = CardsFragment(this)
+                fragmentToReplace = cardsFragment
                 supportActionBar?.title = "GateKeeper Cards"
                 navTextCards.typeface = Typeface.DEFAULT_BOLD
                 navContainerCards.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "Notes" -> {
-                fragmentToReplace = NotesFragment(this)
+                fragmentToReplace = notesFragment
                 supportActionBar?.title = "GateKeeper Notes"
                 navTextNotes.typeface = Typeface.DEFAULT_BOLD
                 navContainerNotes.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "Account" -> {
-                fragmentToReplace = MyAccountFragment(this)
+                fragmentToReplace = accountFragment
                 supportActionBar?.title = "My GateKeeper Account"
                 navTextAccount.typeface = Typeface.DEFAULT_BOLD
                 navContainerAccount.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "Devices" -> {
-                fragmentToReplace = DevicesFragment(this)
+                fragmentToReplace = devicesFragment
                 supportActionBar?.title = "GateKeeper Device History"
                 navTextDevices.typeface = Typeface.DEFAULT_BOLD
                 navContainerDevices.setBackgroundColor(resources.getColor(R.color.colorPrimary))

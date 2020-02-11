@@ -25,6 +25,13 @@ import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.NotesRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.Timeline
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import io.noties.tumbleweed.android.types.Translation
+import io.noties.tumbleweed.equations.Cubic
 import java.io.Serializable
 
 class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListener {
@@ -58,6 +65,8 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
         addNoteBtn.setOnClickListener { addNote() }
         addNoteFab.setOnClickListener { addNote() }
         vaultView.setOnClickListener { changeVault() }
+
+        animateFabIn()
         return view
     }
 
@@ -110,6 +119,13 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
         super.onResume()
         currentVault = VaultRepository.getLastActiveVault()
         updateUI()
+    }
+
+    private fun animateFabIn() {
+        Timeline.createParallel()
+            .push(Tween.to(addNoteFab, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(addNoteFab, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .start(ViewTweenManager.get(addNoteFab))
     }
 
 }

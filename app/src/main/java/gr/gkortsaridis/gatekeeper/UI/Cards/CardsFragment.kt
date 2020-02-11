@@ -29,6 +29,13 @@ import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.CreditCardsRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.Timeline
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import io.noties.tumbleweed.android.types.Translation
+import io.noties.tumbleweed.equations.Cubic
 
 
 class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener, MyDialogFragmentListeners {
@@ -82,7 +89,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         addCardButton.setOnClickListener { createCard() }
         addCreditCard.setOnClickListener { createCard() }
         vaultView.setOnClickListener { changeVault() }
-
+        animateFabIn()
         return view
     }
 
@@ -116,13 +123,15 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         if (filtered.isNotEmpty()) {
             filtered.forEachIndexed { index, creditCard ->
                 if (creditCard.id == activeCard?.id) {
-                    bottomArc.visibility = View.VISIBLE
+                    if (bottomArc.alpha == 0.0f) { animateArcIn() }
+                    //bottomArc.visibility = View.VISIBLE
                     cardCounter.text = "${index + 1}/${filtered.size}"
                     cardNickname.text = activeCard?.cardName
                 }
             }
         } else {
-            bottomArc.visibility = View.GONE
+            if (bottomArc.alpha == 1.0f) { animateArcOut() }
+            //bottomArc.visibility = View.GONE
             cardCounter.text = ""
             cardNickname.text = ""
         }
@@ -173,4 +182,26 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         super.onDismissed()
         updateUI()
     }
+
+    private fun animateFabIn() {
+        Timeline.createParallel()
+            .push(Tween.to(addCreditCard, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(addCreditCard, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .start(ViewTweenManager.get(addCreditCard))
+    }
+
+    private fun animateArcIn() {
+        Timeline.createParallel()
+            .push(Tween.to(bottomArc, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(bottomArc, Translation.XY).target(0f,-150.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .start(ViewTweenManager.get(bottomArc))
+    }
+
+    private fun animateArcOut() {
+        Timeline.createParallel()
+            .push(Tween.to(bottomArc, Alpha.VIEW, 1.0f).target(0.0f))
+            .push(Tween.to(bottomArc, Translation.XY).target(0f,150.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .start(ViewTweenManager.get(bottomArc))
+    }
+
 }

@@ -121,6 +121,8 @@
         app:shape_arc_height="20dp"
         android:id="@+id/bottom_arc"
         app:shape_arc_position="top"
+        android:layout_marginBottom="-150dp"
+        android:alpha="0.0"
         android:layout_alignParentBottom="true">
         <RelativeLayout
             android:layout_width="match_parent"
@@ -170,7 +172,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="-56dp"
+        android:alpha="0.0"
         android:src="@drawable/plus"
         android:id="@+id/add_credit_card"/>
 

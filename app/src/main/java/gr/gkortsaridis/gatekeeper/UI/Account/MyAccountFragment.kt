@@ -22,6 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
@@ -32,6 +33,12 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.Timeline
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import io.noties.tumbleweed.android.types.Translation
+import io.noties.tumbleweed.equations.Cubic
 import kotlinx.android.synthetic.main.fragment_my_account.*
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -43,6 +50,8 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
     private lateinit var sendConfirmation : TextView
     private lateinit var emailConfirmed : LinearLayout
     private lateinit var profileImage : ImageView
+    private lateinit var accountImageContainer: RoundRectView
+    private lateinit var accountInfoContainer: RoundRectView
 
     private val PICK_PHOTO_FOR_AVATAR = 1
     private val viewDialog = ViewDialog(activity)
@@ -53,11 +62,14 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
         emailConfirmed = view.findViewById(R.id.verified_email_link)
         sendConfirmation = view.findViewById(R.id.verify_email_here)
         profileImage = view.findViewById(R.id.profileImage)
+        accountImageContainer = view.findViewById(R.id.account_image_container)
+        accountInfoContainer = view.findViewById(R.id.account_info_container)
 
         sendConfirmation.setOnClickListener { sendEmailConfirmation() }
         profileImage.setOnClickListener { pickImage() }
         emailConfirmed.visibility = if (user?.isEmailVerified!!) View.GONE else View.VISIBLE
         displayUserImg()
+        animateContainersIn()
         return view
     }
 
@@ -152,6 +164,23 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
                 }
             })
             .into(profileImage)
+
+    }
+
+    private fun animateContainersIn() {
+        Timeline.createParallel()
+            .push(
+                Timeline.createParallel()
+                    .push(Tween.to(accountImageContainer, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(accountImageContainer, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .push(
+                Timeline.createParallel()
+                    .pushPause(0.3f)
+                    .push(Tween.to(accountInfoContainer, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(accountInfoContainer, Translation.XY).target(370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .start(ViewTweenManager.get(accountImageContainer))
 
     }
 }

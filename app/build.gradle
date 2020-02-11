@@ -86,6 +86,11 @@ dependencies {
 
     //Keyboard listener
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
+
+    //Tumbleweed animations
+    implementation 'io.noties:tumbleweed:2.1.0'
+    implementation 'io.noties:tumbleweed-android:2.1.0'
+    implementation 'io.noties:tumbleweed-android-kt:2.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
