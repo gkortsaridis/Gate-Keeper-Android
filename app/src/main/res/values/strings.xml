@@ -47,5 +47,6 @@
     <string name="personal">Personal</string>
     <string name="cvv">CVV</string>
     <string name="update_account_details">Update Account Details</string>
+    <string name="you_are_secured">You are secured</string>
 
 </resources>

@@ -4,21 +4,24 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.media.Image
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.transition.Fade
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -35,6 +38,11 @@ import gr.gkortsaridis.gatekeeper.UI.Notes.NotesFragment
 import gr.gkortsaridis.gatekeeper.UI.Settings.SettingsFragment
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.Timeline
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import io.noties.tumbleweed.android.types.Translation
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -60,6 +68,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navTextAccount: TextView
     private lateinit var navTextDevices: TextView
     private lateinit var profileImage: ImageView
+    private lateinit var passwordsRoundRect: RoundRectView
+    private lateinit var cardsRoundRect: RoundRectView
+    private lateinit var notesRoundRect: RoundRectView
+    private lateinit var accountRoundRect: RoundRectView
+    private lateinit var devicesRoundRect: RoundRectView
+    private lateinit var youAreSecuredTV: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +90,58 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.string.navigation_drawer_close
         )
         drawer.addDrawerListener(toggle)
+        drawer.addDrawerListener(object: DrawerLayout.SimpleDrawerListener(){
+            override fun onDrawerStateChanged(newState: Int) {
+                super.onDrawerStateChanged(newState)
+                if (newState == DrawerLayout.STATE_SETTLING && !drawer.isDrawerOpen(GravityCompat.START)) {
+
+                    val animationLength = 0.25f
+                    val returnAnimationLength = 0.25f
+                    val animationDistance = 20.dp.toFloat()
+                    val transition = io.noties.tumbleweed.equations.Cubic.IN
+
+                    youAreSecuredTV.alpha = 0f
+
+                    Timeline.createSequence()
+                        .push(
+                            Timeline.createParallel()
+                                .push(
+                                    Timeline.createSequence()
+                                        .push(Tween.to(navTextPasswords, Translation.XY, animationLength).target(animationDistance, 0f).ease(transition))
+                                        .push(Tween.to(navTextPasswords, Translation.XY, returnAnimationLength).target(0f, 0f).ease(transition))
+                                )
+                                .push(
+                                    Timeline.createSequence()
+                                        .pushPause(0.1f)
+                                        .push(Tween.to(navTextCards, Translation.XY, animationLength).target(animationDistance, 0f).ease(transition))
+                                        .push(Tween.to(navTextCards, Translation.XY, returnAnimationLength).target(0f, 0f).ease(transition))
+                                )
+                                .push(
+                                    Timeline.createSequence()
+                                        .pushPause(0.2f)
+                                        .push(Tween.to(navTextNotes, Translation.XY, animationLength).target(animationDistance, 0f).ease(transition))
+                                        .push(Tween.to(navTextNotes, Translation.XY, returnAnimationLength).target(0f, 0f).ease(transition))
+                                )
+                                .push(
+                                    Timeline.createSequence()
+                                        .pushPause(0.3f)
+                                        .push(Tween.to(navTextAccount, Translation.XY, animationLength).target(animationDistance, 0f).ease(transition))
+                                        .push(Tween.to(navTextAccount, Translation.XY, returnAnimationLength).target(0f, 0f).ease(transition))
+                                )
+                                .push(
+                                    Timeline.createSequence()
+                                        .pushPause(0.4f)
+                                        .push(Tween.to(navTextDevices, Translation.XY, animationLength).target(animationDistance, 0f).ease(transition))
+                                        .push(Tween.to(navTextDevices, Translation.XY, returnAnimationLength).target(0f, 0f).ease(transition))
+                                )
+                        )
+                        .push(
+                            Tween.to(youAreSecuredTV, Alpha.VIEW, 1.0f).target(1.0f)
+                        )
+                        .start(ViewTweenManager.get(passwordsRoundRect))
+                }
+            }
+        })
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
@@ -97,6 +163,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navTextDevices = findViewById(R.id.nav_text_devices)
         navTextAccount = findViewById(R.id.nav_text_account)
         profileImage = findViewById(R.id.profile_image)
+        passwordsRoundRect = findViewById(R.id.passwords_rectview)
+        cardsRoundRect = findViewById(R.id.cards_rectview)
+        notesRoundRect = findViewById(R.id.notes_rectview)
+        accountRoundRect = findViewById(R.id.account_rectview)
+        devicesRoundRect = findViewById(R.id.devices_rectview)
+        youAreSecuredTV = findViewById(R.id.your_are_secured_tv)
 
         navContainerPasswords.setOnClickListener { switchFragment("Passwords") }
         navContainerCards.setOnClickListener { switchFragment("Cards") }
