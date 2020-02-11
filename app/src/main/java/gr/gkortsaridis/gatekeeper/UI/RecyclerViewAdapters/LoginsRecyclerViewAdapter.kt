@@ -2,18 +2,25 @@ package gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Utils.dp
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
+import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 
 
 class LoginsRecyclerViewAdapter(
@@ -74,21 +81,31 @@ class LoginsRecyclerViewAdapter(
                 this.loginInitial?.visibility = View.GONE
                 this.loginImage?.visibility = View.VISIBLE
                 this.loginImage?.setImageDrawable(appIcon)
-            }else{
-                this.loginInitial?.visibility = View.VISIBLE
-                this.loginImage?.visibility = View.GONE
-                if (login.name.isNotEmpty()) {
-                    if (login.name.length > 1) {
-                        this.loginInitial?.text = login.name[0].toString().toUpperCase() + login.name[0].toString().toUpperCase()
-                    }else {
-                        this.loginInitial?.text = login.name[0].toString().toUpperCase()
-                    }
-                }
-            }
+            } else {
+                this.loginImage?.visibility = View.VISIBLE
+                GlideApp.with(context)
+                    .load("https://besticon-demo.herokuapp.com/icon?url="+login.url+"&size=80..120..200")
+                    .placeholder(R.drawable.camera)
+                    .listener(object: RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                            loginInitial?.visibility = View.VISIBLE
+                            loginImage?.visibility = View.GONE
+                            if (login.name.isNotEmpty()) {
+                                if (login.name.length > 1) {
+                                    loginInitial?.text = login.name[0].toString().toUpperCase() + login.name[0].toString().toUpperCase()
+                                }else {
+                                    loginInitial?.text = login.name[0].toString().toUpperCase()
+                                }
+                            }
+                            return false
+                        }
 
-            //if(position == 0) {
-            //    this.view.setPadding(0,20.dp,0,0)
-            //}
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            return false
+                        }
+                    })
+                    .into(loginImage!!)
+            }
 
             val action = DataRepository.loginClickAction
             if (action == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) { this.loginAction?.setBackgroundResource(R.drawable.copy) }
