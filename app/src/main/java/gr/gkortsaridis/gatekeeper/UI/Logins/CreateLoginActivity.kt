@@ -6,19 +6,19 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import com.github.florent37.shapeofview.shapes.ArcView
 import com.google.firebase.Timestamp
-import gr.gkortsaridis.gatekeeper.Entities.*
+import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
@@ -27,6 +27,10 @@ import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_APP_REQUEST_CODE
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 
 
 class CreateLoginActivity : AppCompatActivity() {
@@ -48,6 +52,7 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var deleteLogin: ImageButton
     private lateinit var title: TextView
     private lateinit var url: EditText
+    private lateinit var saveUpdateArc: ArcView
 
     private var vaultToAdd: Vault? = null
     private var login: Login? = null
@@ -77,6 +82,7 @@ class CreateLoginActivity : AppCompatActivity() {
         copyUsername = findViewById(R.id.copy_username)
         deleteLogin = findViewById(R.id.delete_login_btn)
         title = findViewById(R.id.title)
+        saveUpdateArc = findViewById(R.id.save_arc)
 
         copyUsername.setOnClickListener { copy(username.text.toString(), "Username") }
         copyPassword.setOnClickListener { copy(password.text.toString(), "Password") }
@@ -101,6 +107,13 @@ class CreateLoginActivity : AppCompatActivity() {
             title.text = "Edit Password"
             vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
             saveUpdateButton.setOnClickListener { updateLogin() }
+        }
+
+        KeyboardVisibilityEvent.setEventListener(activity) { isOpen ->
+            Tween
+                .to(saveUpdateArc, Alpha.VIEW, 0.3F)
+                .target( if (isOpen) 0.0f else 1.0f)
+                .start(ViewTweenManager.get(saveUpdateArc))
         }
 
         updateUI()

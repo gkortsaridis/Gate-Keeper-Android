@@ -124,6 +124,7 @@
         android:elevation="4dp"
         app:shape_arc_position="top"
         app:shape_arc_height="20dp"
+        android:id="@+id/save_arc"
         android:layout_alignParentBottom="true">
 
         <RelativeLayout
