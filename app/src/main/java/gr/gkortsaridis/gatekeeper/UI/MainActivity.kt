@@ -75,9 +75,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var devicesRoundRect: RoundRectView
     private lateinit var youAreSecuredTV: TextView
 
+    private lateinit var loginsFragment: LoginsFragment
+    private lateinit var cardsFragment: CardsFragment
+    private lateinit var notesFragment: NotesFragment
+    private lateinit var accountFragment: MyAccountFragment
+    private lateinit var devicesFragment: DevicesFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        loginsFragment = LoginsFragment()
+        cardsFragment = CardsFragment(this)
+        notesFragment = NotesFragment(this)
+        accountFragment = MyAccountFragment(this)
+        devicesFragment = DevicesFragment(this)
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -244,27 +256,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 supportActionBar?.title = "GateKeeper Passwords"
                 navTextPasswords.typeface = Typeface.DEFAULT_BOLD
                 navContainerPasswords.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+                //loginsFragment.animateFabIn()
             }
             "Cards" -> {
-                fragmentToReplace = CardsFragment(this)
+                fragmentToReplace = cardsFragment
                 supportActionBar?.title = "GateKeeper Cards"
                 navTextCards.typeface = Typeface.DEFAULT_BOLD
                 navContainerCards.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "Notes" -> {
-                fragmentToReplace = NotesFragment(this)
+                fragmentToReplace = notesFragment
                 supportActionBar?.title = "GateKeeper Notes"
                 navTextNotes.typeface = Typeface.DEFAULT_BOLD
                 navContainerNotes.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "Account" -> {
-                fragmentToReplace = MyAccountFragment(this)
+                fragmentToReplace = accountFragment
                 supportActionBar?.title = "My GateKeeper Account"
                 navTextAccount.typeface = Typeface.DEFAULT_BOLD
                 navContainerAccount.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "Devices" -> {
-                fragmentToReplace = DevicesFragment(this)
+                fragmentToReplace = devicesFragment
                 supportActionBar?.title = "GateKeeper Device History"
                 navTextDevices.typeface = Typeface.DEFAULT_BOLD
                 navContainerDevices.setBackgroundColor(resources.getColor(R.color.colorPrimary))
