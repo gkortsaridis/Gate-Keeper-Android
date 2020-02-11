@@ -17,6 +17,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
@@ -206,6 +207,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     return false
                 }
             })
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(profileImage)
 
         val userName = GateKeeperApplication.user?.displayName ?: GateKeeperApplication.user?.email ?: ""
