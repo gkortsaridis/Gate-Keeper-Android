@@ -8,6 +8,7 @@ import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -86,7 +87,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
         copyUsername.setOnClickListener { copy(username.text.toString(), "Username") }
         copyPassword.setOnClickListener { copy(password.text.toString(), "Password") }
-        deleteLogin.setOnClickListener { deleteLogin() }
+        deleteLogin.setOnClickListener { showDeleteLoginDialog() }
 
         vaultView.setOnClickListener {
             val intent = Intent(this, SelectVaultActivity::class.java)
@@ -114,6 +115,8 @@ class CreateLoginActivity : AppCompatActivity() {
                 .to(saveUpdateArc, Alpha.VIEW, 0.3F)
                 .target( if (isOpen) 0.0f else 1.0f)
                 .start(ViewTweenManager.get(saveUpdateArc))
+
+            saveUpdateButton.visibility = if (isOpen) View.GONE else View.VISIBLE
         }
 
         updateUI()
@@ -211,6 +214,19 @@ class CreateLoginActivity : AppCompatActivity() {
                 finish()
             }
         })
+    }
+
+    private fun showDeleteLoginDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Delete Password")
+        builder.setMessage("Are you sure you want to delete this Password item?")
+        builder.setPositiveButton("YES"){dialog, _ ->
+            dialog.cancel()
+            deleteLogin()
+        }
+        builder.setNegativeButton("No"){dialog, _ -> dialog.cancel() }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
