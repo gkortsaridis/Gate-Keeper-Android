@@ -154,7 +154,23 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
             .placeholder(R.drawable.camera)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
-            .into(profileImage)
+            .listener(object: RequestListener<Drawable>{
+                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    activity.runOnUiThread {
+                        profileImage.setPadding(150.dp,150.dp,150.dp,150.dp)
+                    }
+                    return false
+                }
+
+                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    activity.runOnUiThread {
+                        profileImage.setPadding(0,0,0,0)
+                        profileImage.setImageDrawable(resource)
+                    }
+                    return false
+                }
+            }).submit()
+
 
     }
 
