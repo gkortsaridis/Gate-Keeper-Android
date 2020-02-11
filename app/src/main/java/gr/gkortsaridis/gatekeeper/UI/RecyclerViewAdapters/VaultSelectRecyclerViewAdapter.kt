@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -36,30 +37,25 @@ class VaultSelectRecyclerViewAdapter(
     class VaultViewHolder(v: View): RecyclerView.ViewHolder(v) {
 
         private var vaultName: TextView? = null
-        private var editView: RelativeLayout? = null
-        private var deleteView: RelativeLayout? = null
+        private var dots: ImageButton? = null
         private var view: LinearLayout? = null
 
         init {
             view = v.findViewById(R.id.vault_main_container)
-            editView = v.findViewById(R.id.vault_edit_container)
-            deleteView = v.findViewById(R.id.vault_delete_container)
+            dots = v.findViewById(R.id.dots)
             vaultName = v.findViewById(R.id.vault_name)
         }
 
         fun bindVault(vault: Vault, activeVault: String?, listener: VaultClickListener){
-            if (vault.id == "-1") {
-                editView?.visibility = View.GONE
-                deleteView?.visibility = View.GONE
-            }
+            if (vault.id == "-1") { dots?.visibility = View.GONE }
 
             view?.setOnClickListener{ listener.onVaultClicked(vault) }
-            editView?.setOnClickListener { listener.onVaultEditClicked(vault) }
-            deleteView?.setOnClickListener { listener.onVaultDeleteClicked(vault) }
             this.vaultName?.text = vault.name
             if (vault.id == activeVault) {
                 this.vaultName?.typeface = Typeface.DEFAULT_BOLD
             }
+
+            dots?.setOnClickListener { listener.onVaultOptionsClicker(vault) }
         }
 
     }

@@ -28,6 +28,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.DeviceRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.VaultSelectRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import gr.gkortsaridis.gatekeeper.Utils.dp
 
 
 class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditListener {
@@ -74,13 +75,23 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
 
     }
 
-    override fun onVaultEditClicked(vault: Vault) {
+    override fun onVaultDeleted() {
+        viewDialog.hideDialog()
+        updateVaultsRecyclerView()
+    }
+
+    override fun onVaultRenamed() {
+        viewDialog.hideDialog()
+        updateVaultsRecyclerView()
+    }
+
+    override fun onVaultOptionsClicker(vault: Vault) {
         val builder = AlertDialog.Builder(this)
         val parent = RelativeLayout(this)
         parent.layoutParams = ViewGroup.LayoutParams(
             RelativeLayout.LayoutParams.MATCH_PARENT,
             RelativeLayout.LayoutParams.WRAP_CONTENT)
-        parent.setPadding(50,50,50,50)
+        parent.setPadding(16.dp,16.dp,16.dp,16.dp)
         val input = EditText(this)
         input.layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -89,20 +100,25 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
         input.setText(vault.name)
         parent.addView(input)
 
-        builder.setTitle("Rename Vault")
-        builder.setMessage("Set a new name for this vault")
+        builder.setTitle(vault.name)
+        builder.setMessage("Vault Details")
         builder.setView(parent)
 
         builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
-        builder.setPositiveButton("OK") { _, _ ->
+        builder.setNeutralButton("Delete") { dialog, _ ->
+            dialog.cancel()
+            displayVaultDeleteDialog(vault)
+        }
+        builder.setPositiveButton("SET NAME") { _, _ ->
             viewDialog.showDialog()
             VaultRepository.renameVault(input.text.toString(), vault, this)
         }
 
         builder.show()
+
     }
 
-    override fun onVaultDeleteClicked(vault: Vault) {
+    private fun displayVaultDeleteDialog(vault: Vault){
         if (GateKeeperApplication.vaults.size > 1) {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Delete Vault")
@@ -118,18 +134,6 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
         }else {
             Toast.makeText(this,"You cannot delete your only Vault", Toast.LENGTH_SHORT).show()
         }
-
-
-    }
-
-    override fun onVaultDeleted() {
-        viewDialog.hideDialog()
-        updateVaultsRecyclerView()
-    }
-
-    override fun onVaultRenamed() {
-        viewDialog.hideDialog()
-        updateVaultsRecyclerView()
     }
 
     private fun updateVaultsRecyclerView() {
