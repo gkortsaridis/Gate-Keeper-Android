@@ -18,6 +18,7 @@ class VaultSelectRecyclerViewAdapter(
     private val context: Context,
     private val vaults: ArrayList<Vault>,
     private val active_vault: String?,
+    private val hideExtras: Boolean,
     private val listener: VaultClickListener): RecyclerView.Adapter<VaultSelectRecyclerViewAdapter.VaultViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VaultViewHolder {
@@ -31,7 +32,7 @@ class VaultSelectRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: VaultViewHolder, position: Int) {
         val vaultItem = vaults[position]
-        holder.bindVault(vaultItem, active_vault, listener)
+        holder.bindVault(vaultItem, active_vault, hideExtras, listener)
     }
 
     class VaultViewHolder(v: View): RecyclerView.ViewHolder(v) {
@@ -46,7 +47,7 @@ class VaultSelectRecyclerViewAdapter(
             vaultName = v.findViewById(R.id.vault_name)
         }
 
-        fun bindVault(vault: Vault, activeVault: String?, listener: VaultClickListener){
+        fun bindVault(vault: Vault, activeVault: String?, hideExtras: Boolean, listener: VaultClickListener){
             if (vault.id == "-1") { dots?.visibility = View.GONE }
 
             view?.setOnClickListener{ listener.onVaultClicked(vault) }
@@ -55,6 +56,7 @@ class VaultSelectRecyclerViewAdapter(
                 this.vaultName?.typeface = Typeface.DEFAULT_BOLD
             }
 
+            dots?.visibility = if (hideExtras) View.GONE else View.VISIBLE
             dots?.setOnClickListener { listener.onVaultOptionsClicker(vault) }
         }
 

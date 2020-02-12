@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
+import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RelativeLayout
@@ -38,11 +39,12 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
     private lateinit var addVaultFab: FloatingActionButton
     private var vaultId: String? = null
     private val viewDialog = ViewDialog(this)
+    private var action: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_vault)
-
+        action = intent.getStringExtra("action")
         vaultId = intent.getStringExtra("vault_id")
 
         addVaultFab = findViewById(R.id.add_vault)
@@ -57,6 +59,8 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
         vaultsRecyclerView = findViewById(R.id.vault_recycler_view)
         vaultsRecyclerView.layoutManager = LinearLayoutManager(this)
         updateVaultsRecyclerView()
+
+        addVaultFab.visibility = if(action == GateKeeperConstants.ACTION_CHANGE_VAULT) View.GONE else View.VISIBLE
 
         addVaultFab.setOnClickListener { createVault() }
     }
@@ -137,10 +141,16 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
     }
 
     private fun updateVaultsRecyclerView() {
-        val action = intent.getStringExtra("action")
         val sortedVaults = ArrayList(GateKeeperApplication.vaults.sortedWith(compareBy {it.name}))
-        if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT && sortedVaults.size > 1) { sortedVaults.add(0, Vault("-1", AuthRepository.getUserID(), "All Vaults") )}
-        vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(this, sortedVaults, vaultId, this)
+        if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT && sortedVaults.size > 1) {
+            sortedVaults.add(0, Vault("-1", AuthRepository.getUserID(), "All Vaults") )
+        }
+        vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(
+            this,
+            sortedVaults,
+            vaultId,
+            action == GateKeeperConstants.ACTION_CHANGE_VAULT,
+            this)
     }
 
     private fun createVault() {
