@@ -16,37 +16,60 @@
             android:background="@color/colorPrimaryDark"/>
     </com.github.florent37.shapeofview.shapes.RoundRectView>
 
-    <com.github.florent37.shapeofview.shapes.RoundRectView
+    <LinearLayout
         android:layout_width="370dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="-20dp"
         android:id="@+id/account_image_container"
-        android:elevation="5dp"
         android:layout_marginRight="-370dp"
         android:alpha="0.0"
         android:layout_gravity="right"
-        app:shape_roundRect_topLeftRadius="150dp"
-        app:shape_roundRect_bottomLeftRadius="150dp">
+        android:orientation="vertical">
+        <com.github.florent37.shapeofview.shapes.RoundRectView
+            android:layout_width="370dp"
+            android:layout_height="wrap_content"
+            android:elevation="5dp"
+            app:shape_roundRect_topLeftRadius="150dp"
+            app:shape_roundRect_bottomLeftRadius="150dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="@color/colorPrimaryDark">
-
-            <ImageView
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/profileImage"
-                android:src="@drawable/camera"
-                android:padding="150dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:scaleType="centerCrop"
-                android:background="@color/busy_grey"/>
+                android:layout_height="300dp"
+                android:background="@color/colorPrimaryDark">
 
-        </RelativeLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/profileImage"
+                    android:src="@drawable/camera"
+                    android:padding="150dp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:scaleType="centerCrop"
+                    android:background="@color/busy_grey"/>
 
-    </com.github.florent37.shapeofview.shapes.RoundRectView>
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/image_loading"
+                    android:visibility="gone"/>
+            </RelativeLayout>
+
+        </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update Profile Image"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_gravity="right"
+            android:background="@android:color/transparent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="8dp"
+            android:id="@+id/update_profile_image"/>
+
+    </LinearLayout>
 
     <com.github.florent37.shapeofview.shapes.RoundRectView
         android:layout_width="370dp"

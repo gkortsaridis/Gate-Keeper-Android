@@ -92,6 +92,11 @@ dependencies {
     implementation 'io.noties:tumbleweed:2.1.0'
     implementation 'io.noties:tumbleweed-android:2.1.0'
     implementation 'io.noties:tumbleweed-android-kt:2.1.0'
+
+    //Image Picker
+    implementation 'com.github.dhaval2404:imagepicker:1.6'
+    implementation 'com.github.florent37:inline-activity-result-kotlin:1.0.1'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

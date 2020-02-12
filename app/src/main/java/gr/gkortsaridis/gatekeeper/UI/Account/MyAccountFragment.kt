@@ -2,28 +2,22 @@ package gr.gkortsaridis.gatekeeper.UI.Account
 
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.florent37.shapeofview.shapes.RoundRectView
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -50,10 +44,11 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
     private lateinit var sendConfirmation : TextView
     private lateinit var emailConfirmed : LinearLayout
     private lateinit var profileImage : ImageView
-    private lateinit var accountImageContainer: RoundRectView
+    private lateinit var accountImageContainer: LinearLayout
     private lateinit var accountInfoContainer: RoundRectView
+    private lateinit var updatePictureBtn: Button
+    private lateinit var imageLoading: ProgressBar
 
-    private val PICK_PHOTO_FOR_AVATAR = 1
     private val viewDialog = ViewDialog(activity)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -64,9 +59,11 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
         profileImage = view.findViewById(R.id.profileImage)
         accountImageContainer = view.findViewById(R.id.account_image_container)
         accountInfoContainer = view.findViewById(R.id.account_info_container)
+        updatePictureBtn = view.findViewById(R.id.update_profile_image)
+        imageLoading = view.findViewById(R.id.image_loading)
 
         sendConfirmation.setOnClickListener { sendEmailConfirmation() }
-        profileImage.setOnClickListener { pickImage() }
+        updatePictureBtn.setOnClickListener { pickImage() }
         emailConfirmed.visibility = if (user?.isEmailVerified!!) View.GONE else View.VISIBLE
         displayUserImg()
         animateContainersIn()
@@ -104,33 +101,31 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
     }
 
     private fun pickImage() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "image/*"
-        startActivityForResult(intent, PICK_PHOTO_FOR_AVATAR)
+        ImagePicker.with(this)
+            .compress(1024)
+            .maxResultSize(1080, 1080)
+            .start { resultCode, data ->
+                if (resultCode == Activity.RESULT_OK) {
+                    val fileUri = data?.data
+                    val inputStream = fileUri?.let { activity.contentResolver.openInputStream(it) }
+                    val imgData = inputStream?.let { createByteArrayToUpload(it) }
+                    if (imgData != null) { uploadImageToFirebase(imgData) }
+                }
+            }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == PICK_PHOTO_FOR_AVATAR && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                //Retrieve selected Image
-                val inputStream = data.data?.let { activity.contentResolver.openInputStream(it) }
-                val imgData = inputStream?.let { createByteArrayToUpload(it) }
-                if (imgData != null) {
-                    getUserImageReference().putBytes(imgData).addOnCompleteListener {
-                        run {
-                            if (it.isSuccessful) {
-                                displayUserImg()
-                            } else {
-                                Toast.makeText(activity, "ERROR", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
+    private fun uploadImageToFirebase(bytes: ByteArray) {
+        imageLoading.visibility = View.VISIBLE
+        getUserImageReference().putBytes(bytes).addOnCompleteListener {
+            run {
+                imageLoading.visibility = View.GONE
+                if (it.isSuccessful) {
+                    displayUserImg()
+                } else {
+                    Toast.makeText(activity, "ERROR", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
     }
 
     private fun getUserImageReference(): StorageReference {
@@ -148,6 +143,7 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
     }
 
     private fun displayUserImg() {
+        imageLoading.visibility = View.VISIBLE
         GlideApp
             .with(activity)
             .load(getUserImageReference())
@@ -157,6 +153,7 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
             .listener(object: RequestListener<Drawable>{
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                     activity.runOnUiThread {
+                        imageLoading.visibility = View.GONE
                         profileImage.setPadding(150.dp,150.dp,150.dp,150.dp)
                     }
                     return false
@@ -164,6 +161,7 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
 
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                     activity.runOnUiThread {
+                        imageLoading.visibility = View.GONE
                         profileImage.setPadding(0,0,0,0)
                         profileImage.setImageDrawable(resource)
                     }
