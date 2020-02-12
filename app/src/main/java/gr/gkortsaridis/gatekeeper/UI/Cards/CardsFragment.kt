@@ -10,12 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.florent37.shapeofview.shapes.ArcView
-import com.github.florent37.shapeofview.shapes.CircleView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.littlemango.stacklayoutmanager.StackLayoutManager
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
@@ -47,10 +50,11 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private lateinit var vaultName: TextView
     private lateinit var addCardButton: Button
     private lateinit var noCardsMessage: LinearLayout
-    private lateinit var bottomArc: ArcView
+    private lateinit var bottomArc: RelativeLayout
     private lateinit var cardNickname: TextView
     private lateinit var currentVault: Vault
     private lateinit var cardCounter: TextView
+    private lateinit var adView: AdView
 
     private lateinit var filtered: ArrayList<CreditCard>
     private var activeCard : CreditCard? = null
@@ -71,6 +75,10 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         bottomArc = view.findViewById(R.id.bottom_arc)
         cardNickname = view.findViewById(R.id.card_nickname_tv)
         cardCounter = view.findViewById(R.id.card_counter_tv)
+        adView = view.findViewById(R.id.adview)
+        MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
 
         val stackLayoutManager = StackLayoutManager(StackLayoutManager.ScrollOrientation.BOTTOM_TO_TOP)
         stackLayoutManager.setItemOffset(50)
@@ -186,7 +194,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private fun animateFabIn() {
         Timeline.createParallel()
             .push(Tween.to(addCreditCard, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(addCreditCard, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(addCreditCard, Translation.XY).target(0f,-122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(addCreditCard))
     }
 

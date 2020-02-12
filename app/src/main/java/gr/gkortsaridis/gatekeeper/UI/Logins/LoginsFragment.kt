@@ -1,11 +1,9 @@
 package gr.gkortsaridis.gatekeeper.UI.Logins
 
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -19,7 +17,6 @@ import android.view.autofill.AutofillManager
 import android.widget.*
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -62,10 +59,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     private lateinit var loginCount: TextView
     private lateinit var loginsSortType: TextView
     private lateinit var loginsSortBtn: ImageButton
-
-
     private lateinit var mAdView: AdView
-    private val mAppUnitId: String by lazy { "ca-app-pub-4492385836648698~3680446633" }
 
     private var autofillManager: AutofillManager? = null
 
@@ -84,9 +78,9 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         loginCount = view.findViewById(R.id.login_cnt)
         loginsSortType = view.findViewById(R.id.logins_sort_type)
         loginsSortBtn = view.findViewById(R.id.sort_logins)
-        mAdView = view.findViewById(R.id.logins_adview)
 
-        MobileAds.initialize(context!!, mAppUnitId)
+        mAdView = view.findViewById(R.id.adview)
+        MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
         val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)
 

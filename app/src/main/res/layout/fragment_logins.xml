@@ -170,14 +170,20 @@
             android:layout_marginTop="8dp"/>
     </LinearLayout>
 
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/logins_adview"
+    <com.github.florent37.shapeofview.shapes.RoundRectView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id_testing">
-    </com.google.android.gms.ads.AdView>
+        app:shape_roundRect_topLeftRadius="80dp">
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id_testing"/>
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
+
 
 </RelativeLayout>
