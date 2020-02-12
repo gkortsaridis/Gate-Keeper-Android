@@ -18,6 +18,9 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.florent37.shapeofview.shapes.RoundRectView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -38,7 +41,7 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 
-class MyAccountFragment(private val activity: Activity) : Fragment() {
+class MyAccountFragment : Fragment() {
 
     private val user = GateKeeperApplication.user
     private lateinit var sendConfirmation : TextView
@@ -48,11 +51,15 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
     private lateinit var accountInfoContainer: RoundRectView
     private lateinit var updatePictureBtn: Button
     private lateinit var imageLoading: ProgressBar
+    private lateinit var adsContainer: RoundRectView
+    private lateinit var adView: AdView
 
-    private val viewDialog = ViewDialog(activity)
+    private lateinit var viewDialog: ViewDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_my_account, container, false)
+
+        viewDialog = ViewDialog(activity!!)
 
         emailConfirmed = view.findViewById(R.id.verified_email_link)
         sendConfirmation = view.findViewById(R.id.verify_email_here)
@@ -61,6 +68,11 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
         accountInfoContainer = view.findViewById(R.id.account_info_container)
         updatePictureBtn = view.findViewById(R.id.update_profile_image)
         imageLoading = view.findViewById(R.id.image_loading)
+        adsContainer = view.findViewById(R.id.adview_container)
+        adView = view.findViewById(R.id.adview)
+        MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
 
         sendConfirmation.setOnClickListener { sendEmailConfirmation() }
         updatePictureBtn.setOnClickListener { pickImage() }
@@ -107,7 +119,7 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
             .start { resultCode, data ->
                 if (resultCode == Activity.RESULT_OK) {
                     val fileUri = data?.data
-                    val inputStream = fileUri?.let { activity.contentResolver.openInputStream(it) }
+                    val inputStream = fileUri?.let { activity!!.contentResolver.openInputStream(it) }
                     val imgData = inputStream?.let { createByteArrayToUpload(it) }
                     if (imgData != null) { uploadImageToFirebase(imgData) }
                 }
@@ -145,14 +157,14 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
     private fun displayUserImg() {
         imageLoading.visibility = View.VISIBLE
         GlideApp
-            .with(activity)
+            .with(activity!!)
             .load(getUserImageReference())
             .placeholder(R.drawable.camera)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
             .listener(object: RequestListener<Drawable>{
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    activity.runOnUiThread {
+                    activity!!.runOnUiThread {
                         imageLoading.visibility = View.GONE
                         profileImage.setPadding(150.dp,150.dp,150.dp,150.dp)
                     }
@@ -160,7 +172,7 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
                 }
 
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    activity.runOnUiThread {
+                    activity!!.runOnUiThread {
                         imageLoading.visibility = View.GONE
                         profileImage.setPadding(0,0,0,0)
                         profileImage.setImageDrawable(resource)
@@ -184,6 +196,12 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
                     .pushPause(0.3f)
                     .push(Tween.to(accountInfoContainer, Alpha.VIEW, 1.0f).target(1.0f))
                     .push(Tween.to(accountInfoContainer, Translation.XY).target(370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .push(
+                Timeline.createParallel()
+                    .pushPause(0.5f)
+                    .push(Tween.to(adsContainer, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(adsContainer, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
             )
             .start(ViewTweenManager.get(accountImageContainer))
 

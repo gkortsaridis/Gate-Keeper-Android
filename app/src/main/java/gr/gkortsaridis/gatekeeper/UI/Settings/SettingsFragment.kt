@@ -21,7 +21,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.UI.Authentication.PinAuthenticationActivity
 import info.hoang8f.android.segmented.SegmentedGroup
 
-class SettingsFragment(private val activity: Activity) : Fragment() {
+class SettingsFragment : Fragment() {
 
     private lateinit var authTypeSegmentedGroup: SegmentedGroup
     private lateinit var loginClickSegmentedGroup: SegmentedGroup
@@ -75,7 +75,7 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
     }
 
     private fun setupSegmentedControl() {
-        val canAuthenticateWithBio = BiometricManager.from(activity).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
+        val canAuthenticateWithBio = BiometricManager.from(activity!!).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
 
         bioAuth.visibility = if (canAuthenticateWithBio) View.VISIBLE else View.GONE
         authTypeSegmentedGroup.weightSum = if (canAuthenticateWithBio) 3f else 2f
@@ -89,7 +89,7 @@ class SettingsFragment(private val activity: Activity) : Fragment() {
 
         //AUTHENTICATION TYPE UI
         val preferredAuthType = AuthRepository.getPreferredAuthType()
-        val canAuthenticateWithBio = BiometricManager.from(activity).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
+        val canAuthenticateWithBio = BiometricManager.from(activity!!).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
 
         authTypeDescription.visibility = View.VISIBLE
         setupPin.visibility = View.GONE

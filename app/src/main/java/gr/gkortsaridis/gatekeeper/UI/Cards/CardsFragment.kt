@@ -41,7 +41,7 @@ import io.noties.tumbleweed.android.types.Translation
 import io.noties.tumbleweed.equations.Cubic
 
 
-class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener, MyDialogFragmentListeners {
+class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListeners {
 
     private lateinit var cardsRecyclerView: RecyclerView
     private lateinit var addCreditCard: FloatingActionButton
@@ -82,7 +82,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
         val stackLayoutManager = StackLayoutManager(StackLayoutManager.ScrollOrientation.BOTTOM_TO_TOP)
         stackLayoutManager.setItemOffset(50)
-        cardsAdapter = CreditCardsRecyclerViewAdapter(activity, GateKeeperApplication.cards, this)
+        cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, GateKeeperApplication.cards, this)
         cardsRecyclerView.adapter = cardsAdapter
         cardsRecyclerView.layoutManager = stackLayoutManager
         cardsRecyclerView.setHasFixedSize(true)

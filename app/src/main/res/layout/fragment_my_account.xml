@@ -160,6 +160,35 @@
 
     </com.github.florent37.shapeofview.shapes.RoundRectView>
 
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        android:layout_width="370dp"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:layout_marginRight="-370dp"
+        android:alpha="0.0"
+        android:id="@+id/adview_container"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="right"
+        app:shape_roundRect_topLeftRadius="150dp"
+        app:shape_roundRect_bottomLeftRadius="150dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@color/colorPrimaryDark">
+            <com.google.android.gms.ads.AdView
+                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/adview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorAccent"
+                ads:adSize="BANNER"
+                ads:adUnitId="@string/banner_ad_unit_id_testing"/>
+        </RelativeLayout>
+
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+
     <View
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

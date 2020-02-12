@@ -36,7 +36,7 @@ import io.noties.tumbleweed.android.types.Alpha
 import io.noties.tumbleweed.android.types.Translation
 import io.noties.tumbleweed.equations.Cubic
 
-class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListener {
+class NotesFragment : Fragment(), NoteClickListener {
 
     private lateinit var addNoteFab : FloatingActionButton
     private lateinit var notesRecyclerView : RecyclerView
@@ -69,7 +69,7 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
         adView.loadAd(adRequest)
 
         notesRecyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        notesAdapter = NotesRecyclerViewAdapter(activity, getOrderedNotes(currentVault), this)
+        notesAdapter = NotesRecyclerViewAdapter(activity!!, getOrderedNotes(currentVault), this)
         notesRecyclerView.adapter = notesAdapter
 
         addNoteBtn.setOnClickListener { addNote() }

@@ -17,7 +17,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.DevicesRecyclerViewAdapter
 
 
-class DevicesFragment(private val activity: Activity) : Fragment(), DeviceClickListener {
+class DevicesFragment : Fragment(), DeviceClickListener {
 
     private lateinit var devicesRecyclerView: RecyclerView
 
