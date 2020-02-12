@@ -21,6 +21,9 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.stone.vega.library.VegaLayoutManager
 import gr.gkortsaridis.gatekeeper.Entities.Login
@@ -60,6 +63,10 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     private lateinit var loginsSortType: TextView
     private lateinit var loginsSortBtn: ImageButton
 
+
+    private lateinit var mAdView: AdView
+    private val mAppUnitId: String by lazy { "ca-app-pub-4492385836648698~3680446633" }
+
     private var autofillManager: AutofillManager? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -77,6 +84,12 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         loginCount = view.findViewById(R.id.login_cnt)
         loginsSortType = view.findViewById(R.id.logins_sort_type)
         loginsSortBtn = view.findViewById(R.id.sort_logins)
+        mAdView = view.findViewById(R.id.logins_adview)
+
+        MobileAds.initialize(context!!, mAppUnitId)
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
+
 
         addLoginButton.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
@@ -205,7 +218,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     private fun animateFabIn() {
         Timeline.createParallel()
             .push(Tween.to(fab, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(fab, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(fab, Translation.XY).target(0f,-122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(fab))
     }
 }

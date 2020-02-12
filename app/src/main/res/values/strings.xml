@@ -3,6 +3,9 @@
     <string name="navigation_drawer_open">drawer_open</string>
     <string name="navigation_drawer_close">drawer_close</string>
 
+    <string name="banner_ad_unit_id">ca-app-pub-4492385836648698/2722588186</string>
+    <string name="banner_ad_unit_id_testing">ca-app-pub-3940256099942544/6300978111</string>
+
     <string name="my_logins">Logins</string>
     <string name="my_account">My Account</string>
     <string name="settings">Settings</string>

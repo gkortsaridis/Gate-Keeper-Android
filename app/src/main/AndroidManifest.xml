@@ -15,6 +15,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-4492385836648698~3680446633"/>
+
         <activity android:name=".UI.Authentication.PinAuthenticationActivity"></activity>
         <activity android:name=".UI.Notes.NoteActivity" />
         <activity android:name=".UI.Authentication.BioAuthenticationActivity" />
