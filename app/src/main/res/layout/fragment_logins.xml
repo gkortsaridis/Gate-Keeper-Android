@@ -173,6 +173,9 @@
     <com.github.florent37.shapeofview.shapes.RoundRectView
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:layout_marginBottom="-50dp"
+        android:alpha="0.0"
+        android:id="@+id/adview_container"
         android:layout_alignParentBottom="true"
         app:shape_roundRect_topLeftRadius="80dp">
         <com.google.android.gms.ads.AdView
