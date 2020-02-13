@@ -81,6 +81,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var devicesRoundRect: RoundRectView
     private lateinit var youAreSecuredTV: TextView
 
+    private var currentFragment = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -239,7 +241,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun switchFragment(what: String) {
         var fragmentToReplace: Fragment? = null
-
+        currentFragment = what
         navTextPasswords.typeface = Typeface.DEFAULT
         navTextNotes.typeface = Typeface.DEFAULT
         navTextCards.typeface = Typeface.DEFAULT
@@ -328,6 +330,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         for (fragment in supportFragmentManager.fragments) {
             fragment.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("fragment", currentFragment)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val lastActiveFragment = (savedInstanceState["fragment"] ?: "") as String
+        if (lastActiveFragment != "") {
+            switchFragment(lastActiveFragment)
         }
     }
 
