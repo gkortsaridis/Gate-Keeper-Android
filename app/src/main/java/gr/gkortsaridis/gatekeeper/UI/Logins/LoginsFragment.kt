@@ -1,11 +1,9 @@
 package gr.gkortsaridis.gatekeeper.UI.Logins
 
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -19,8 +17,11 @@ import android.view.autofill.AutofillManager
 import android.widget.*
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.florent37.shapeofview.shapes.RoundRectView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.stone.vega.library.VegaLayoutManager
 import gr.gkortsaridis.gatekeeper.Entities.Login
@@ -59,6 +60,8 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     private lateinit var loginCount: TextView
     private lateinit var loginsSortType: TextView
     private lateinit var loginsSortBtn: ImageButton
+    private lateinit var mAdView: AdView
+    private lateinit var adViewContainer: RoundRectView
 
     private var autofillManager: AutofillManager? = null
 
@@ -77,6 +80,13 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         loginCount = view.findViewById(R.id.login_cnt)
         loginsSortType = view.findViewById(R.id.logins_sort_type)
         loginsSortBtn = view.findViewById(R.id.sort_logins)
+        adViewContainer = view.findViewById(R.id.adview_container)
+
+        mAdView = view.findViewById(R.id.adview)
+        MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
+
 
         addLoginButton.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
@@ -100,7 +110,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
             dialog.show()
         }
 
-        animateFabIn()
+        animateItemsIn()
         return view
     }
 
@@ -202,10 +212,12 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         Toast.makeText(context, login.name+" password copied", Toast.LENGTH_SHORT).show()
     }
 
-    private fun animateFabIn() {
+    private fun animateItemsIn() {
         Timeline.createParallel()
             .push(Tween.to(fab, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(fab, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(fab, Translation.XY).target(0f,-122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(adViewContainer, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(adViewContainer, Translation.XY).target(0f,-50.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(fab))
     }
 }

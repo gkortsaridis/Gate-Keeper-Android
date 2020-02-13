@@ -114,58 +114,46 @@
             android:layout_marginTop="8dp"/>
     </LinearLayout>
 
-    <com.github.florent37.shapeofview.shapes.ArcView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:elevation="4dp"
-        app:shape_arc_height="20dp"
+        android:layout_height="wrap_content"
         android:id="@+id/bottom_arc"
-        app:shape_arc_position="top"
-        android:layout_marginBottom="-150dp"
+        android:layout_marginBottom="-122dp"
         android:alpha="0.0"
         android:layout_alignParentBottom="true">
-        <RelativeLayout
+
+        <TextView
+            android:id="@+id/card_nickname_tv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimaryDark">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Personal"
-                android:textColor="@android:color/white"
-                android:textSize="30sp"
-                android:id="@+id/card_nickname_tv"
-                android:layout_centerInParent="true"/>
+            android:layout_height="wrap_content"
+            android:layout_marginRight="86dp"
+            android:layout_marginLeft="16dp"
+            android:text="Personal"
+            android:textColor="@color/mate_black"
+            android:textSize="25sp" />
 
-            <com.github.florent37.shapeofview.shapes.CircleView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginLeft="-30dp"
-                android:layout_marginBottom="-30dp"
-                android:layout_alignParentBottom="true">
-
-                <RelativeLayout
+        <com.github.florent37.shapeofview.shapes.RoundRectView
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_marginTop="32dp"
+            android:elevation="5dp"
+            app:shape_roundRect_topLeftRadius="50dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimaryDark">
+                <com.google.android.gms.ads.AdView
+                    xmlns:ads="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/adview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@android:color/white">
-                    <TextView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:text="[1/3]"
-                        android:textSize="19sp"
-                        android:layout_marginLeft="25dp"
-                        android:layout_marginBottom="25dp"
-                        android:gravity="center"
-                        android:id="@+id/card_counter_tv"
-                        android:layout_alignParentBottom="true"/>
-                </RelativeLayout>
+                    android:background="@color/colorAccent"
+                    ads:adSize="SMART_BANNER"
+                    ads:adUnitId="@string/banner_ad_unit_id"/>
+            </RelativeLayout>
+        </com.github.florent37.shapeofview.shapes.RoundRectView>
+    </RelativeLayout>
 
-
-            </com.github.florent37.shapeofview.shapes.CircleView>
-
-
-        </RelativeLayout>
-    </com.github.florent37.shapeofview.shapes.ArcView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"

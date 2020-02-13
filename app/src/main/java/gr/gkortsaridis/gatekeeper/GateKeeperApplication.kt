@@ -17,6 +17,7 @@ class GateKeeperApplication : Application() {
         lateinit var instance: GateKeeperApplication private set
         var user: FirebaseUser? = null
         var user_id: String? = null
+        val admobAppID = "ca-app-pub-4492385836648698~3680446633"
 
         lateinit var logins: ArrayList<Login>
         lateinit var vaults: ArrayList<Vault>

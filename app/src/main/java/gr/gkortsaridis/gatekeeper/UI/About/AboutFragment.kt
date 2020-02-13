@@ -10,7 +10,7 @@ import android.view.ViewGroup
 
 import gr.gkortsaridis.gatekeeper.R
 
-class AboutFragment(private val activity: Activity) : Fragment() {
+class AboutFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment

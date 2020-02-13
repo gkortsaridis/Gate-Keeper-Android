@@ -13,13 +13,16 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.github.florent37.shapeofview.shapes.RoundRectView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.NotesRecyclerViewAdapter
@@ -32,9 +35,8 @@ import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
 import io.noties.tumbleweed.android.types.Translation
 import io.noties.tumbleweed.equations.Cubic
-import java.io.Serializable
 
-class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListener {
+class NotesFragment : Fragment(), NoteClickListener {
 
     private lateinit var addNoteFab : FloatingActionButton
     private lateinit var notesRecyclerView : RecyclerView
@@ -43,6 +45,8 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
     private lateinit var vaultName: TextView
     private lateinit var noNotesMessage: LinearLayout
     private lateinit var addNoteBtn: Button
+    private lateinit var adContainer: RoundRectView
+    private lateinit var adView: AdView
 
     private lateinit var currentVault: Vault
 
@@ -57,16 +61,22 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
         vaultName = view.findViewById(R.id.vault_name)
         noNotesMessage = view.findViewById(R.id.no_items_view)
         addNoteBtn = view.findViewById(R.id.add_note_btn)
+        adContainer = view.findViewById(R.id.adview_container)
+        adView = view.findViewById(R.id.adview)
+
+        MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
 
         notesRecyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        notesAdapter = NotesRecyclerViewAdapter(activity, getOrderedNotes(currentVault), this)
+        notesAdapter = NotesRecyclerViewAdapter(activity!!, getOrderedNotes(currentVault), this)
         notesRecyclerView.adapter = notesAdapter
 
         addNoteBtn.setOnClickListener { addNote() }
         addNoteFab.setOnClickListener { addNote() }
         vaultView.setOnClickListener { changeVault() }
 
-        animateFabIn()
+        animateItemsIn()
         return view
     }
 
@@ -121,10 +131,12 @@ class NotesFragment(private var activity: Activity) : Fragment(), NoteClickListe
         updateUI()
     }
 
-    private fun animateFabIn() {
+    private fun animateItemsIn() {
         Timeline.createParallel()
             .push(Tween.to(addNoteFab, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(addNoteFab, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(addNoteFab, Translation.XY).target(0f,-122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(adContainer, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(adContainer, Translation.XY).target(0f,-50.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(addNoteFab))
     }
 

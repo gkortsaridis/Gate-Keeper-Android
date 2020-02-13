@@ -10,12 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.florent37.shapeofview.shapes.ArcView
-import com.github.florent37.shapeofview.shapes.CircleView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.littlemango.stacklayoutmanager.StackLayoutManager
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
@@ -38,7 +41,7 @@ import io.noties.tumbleweed.android.types.Translation
 import io.noties.tumbleweed.equations.Cubic
 
 
-class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener, MyDialogFragmentListeners {
+class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListeners {
 
     private lateinit var cardsRecyclerView: RecyclerView
     private lateinit var addCreditCard: FloatingActionButton
@@ -47,10 +50,10 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private lateinit var vaultName: TextView
     private lateinit var addCardButton: Button
     private lateinit var noCardsMessage: LinearLayout
-    private lateinit var bottomArc: ArcView
+    private lateinit var bottomArc: RelativeLayout
     private lateinit var cardNickname: TextView
     private lateinit var currentVault: Vault
-    private lateinit var cardCounter: TextView
+    private lateinit var adView: AdView
 
     private lateinit var filtered: ArrayList<CreditCard>
     private var activeCard : CreditCard? = null
@@ -70,11 +73,14 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         noCardsMessage = view.findViewById(R.id.no_items_view)
         bottomArc = view.findViewById(R.id.bottom_arc)
         cardNickname = view.findViewById(R.id.card_nickname_tv)
-        cardCounter = view.findViewById(R.id.card_counter_tv)
+        adView = view.findViewById(R.id.adview)
+        MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
 
         val stackLayoutManager = StackLayoutManager(StackLayoutManager.ScrollOrientation.BOTTOM_TO_TOP)
         stackLayoutManager.setItemOffset(50)
-        cardsAdapter = CreditCardsRecyclerViewAdapter(activity, GateKeeperApplication.cards, this)
+        cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, GateKeeperApplication.cards, this)
         cardsRecyclerView.adapter = cardsAdapter
         cardsRecyclerView.layoutManager = stackLayoutManager
         cardsRecyclerView.setHasFixedSize(true)
@@ -90,6 +96,7 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
         addCreditCard.setOnClickListener { createCard() }
         vaultView.setOnClickListener { changeVault() }
         animateFabIn()
+        animateArcIn()
         return view
     }
 
@@ -125,14 +132,12 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
                 if (creditCard.id == activeCard?.id) {
                     if (bottomArc.alpha == 0.0f) { animateArcIn() }
                     //bottomArc.visibility = View.VISIBLE
-                    cardCounter.text = "${index + 1}/${filtered.size}"
-                    cardNickname.text = activeCard?.cardName
+                    cardNickname.text = "${index + 1}/${filtered.size} ${activeCard?.cardName}"
                 }
             }
         } else {
             if (bottomArc.alpha == 1.0f) { animateArcOut() }
             //bottomArc.visibility = View.GONE
-            cardCounter.text = ""
             cardNickname.text = ""
         }
 
@@ -186,21 +191,21 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
     private fun animateFabIn() {
         Timeline.createParallel()
             .push(Tween.to(addCreditCard, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(addCreditCard, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(addCreditCard, Translation.XY).target(0f,-122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(addCreditCard))
     }
 
     private fun animateArcIn() {
         Timeline.createParallel()
             .push(Tween.to(bottomArc, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(bottomArc, Translation.XY).target(0f,-150.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(bottomArc, Translation.XY).target(0f,-122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(bottomArc))
     }
 
     private fun animateArcOut() {
         Timeline.createParallel()
             .push(Tween.to(bottomArc, Alpha.VIEW, 1.0f).target(0.0f))
-            .push(Tween.to(bottomArc, Translation.XY).target(0f,150.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(bottomArc, Translation.XY).target(0f,122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(bottomArc))
     }
 
