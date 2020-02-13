@@ -28,6 +28,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "version"
+    productFlavors {
+        prod {
+            dimension "version"
+            resValue 'string', 'banner_ad_unit_id', '"ca-app-pub-4492385836648698/2722588186"'
+        }
+
+        develop {
+            dimension "version"
+            resValue 'string', 'banner_ad_unit_id', '"ca-app-pub-3940256099942544/6300978111"'
+        }
+
+    }
 }
 
 dependencies {

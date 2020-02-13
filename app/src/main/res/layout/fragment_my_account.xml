@@ -182,7 +182,7 @@
                         android:layout_height="match_parent"
                         android:background="@color/colorAccent"
                         ads:adSize="BANNER"
-                        ads:adUnitId="@string/banner_ad_unit_id_testing"/>
+                        ads:adUnitId="@string/banner_ad_unit_id"/>
                 </RelativeLayout>
 
             </com.github.florent37.shapeofview.shapes.RoundRectView>
