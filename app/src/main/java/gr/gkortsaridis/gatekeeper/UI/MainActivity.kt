@@ -35,6 +35,7 @@ import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
 import gr.gkortsaridis.gatekeeper.UI.Devices.DevicesFragment
 import gr.gkortsaridis.gatekeeper.UI.Logins.LoginsFragment
 import gr.gkortsaridis.gatekeeper.UI.Notes.NotesFragment
+import gr.gkortsaridis.gatekeeper.UI.PasswordGenerator.PasswordGeneratorFragment
 import gr.gkortsaridis.gatekeeper.UI.Settings.SettingsFragment
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import gr.gkortsaridis.gatekeeper.Utils.dp
@@ -59,21 +60,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navContainerNotes: RelativeLayout
     private lateinit var navContainerDevices: RelativeLayout
     private lateinit var navContainerAccount: RelativeLayout
+    private lateinit var navContainerPassGen: RelativeLayout
     private lateinit var navButtonSettings: ImageView
     private lateinit var navButtonAbout: ImageView
     private lateinit var navButtonLogout: ImageView
+
     private lateinit var navTextPasswords: TextView
     private lateinit var navTextCards: TextView
     private lateinit var navTextNotes: TextView
     private lateinit var navTextAccount: TextView
+    private lateinit var navTextPassGen: TextView
     private lateinit var navTextDevices: TextView
+
     private lateinit var profileImage: ImageView
     private lateinit var passwordsRoundRect: RoundRectView
     private lateinit var cardsRoundRect: RoundRectView
     private lateinit var notesRoundRect: RoundRectView
     private lateinit var accountRoundRect: RoundRectView
+    private lateinit var passGenRoundRect: RoundRectView
     private lateinit var devicesRoundRect: RoundRectView
     private lateinit var youAreSecuredTV: TextView
+
+    private var currentFragment = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,6 +140,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 .push(
                                     Timeline.createSequence()
                                         .pushPause(waitTime*4)
+                                        .push(Tween.to(navTextPassGen, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
+                                        .push(Tween.to(navTextPassGen, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
+                                )
+                                .push(
+                                    Timeline.createSequence()
+                                        .pushPause(waitTime*5)
                                         .push(Tween.to(navTextDevices, Scale.XY, returnAnimationLength).target(bigScale, bigScale).ease(transition))
                                         .push(Tween.to(navTextDevices, Scale.XY, returnAnimationLength).target(1.0f, 1.0f).ease(transition))
                                 )
@@ -155,6 +169,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navContainerNotes = findViewById(R.id.nav_container_notes)
         navContainerAccount = findViewById(R.id.nav_container_account)
         navContainerDevices = findViewById(R.id.nav_container_devices)
+        navContainerPassGen = findViewById(R.id.nav_container_pass_gen)
         navButtonSettings = findViewById(R.id.nav_button_settings)
         navButtonAbout = findViewById(R.id.nav_button_about)
         navButtonLogout = findViewById(R.id.nav_button_logout)
@@ -162,6 +177,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navTextCards = findViewById(R.id.nav_text_cards)
         navTextNotes = findViewById(R.id.nav_text_notes)
         navTextDevices = findViewById(R.id.nav_text_devices)
+        navTextPassGen = findViewById(R.id.nav_text_pass_gen)
         navTextAccount = findViewById(R.id.nav_text_account)
         profileImage = findViewById(R.id.profile_image)
         passwordsRoundRect = findViewById(R.id.passwords_rectview)
@@ -169,17 +185,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         notesRoundRect = findViewById(R.id.notes_rectview)
         accountRoundRect = findViewById(R.id.account_rectview)
         devicesRoundRect = findViewById(R.id.devices_rectview)
+        passGenRoundRect = findViewById(R.id.pass_gen_rectview)
         youAreSecuredTV = findViewById(R.id.your_are_secured_tv)
 
         navContainerPasswords.setOnClickListener { switchFragment("Passwords") }
         navContainerCards.setOnClickListener { switchFragment("Cards") }
         navContainerNotes.setOnClickListener { switchFragment("Notes") }
+        navContainerPassGen.setOnClickListener { switchFragment("PasswordGenerator") }
         navContainerDevices.setOnClickListener { switchFragment("Devices") }
         navContainerAccount.setOnClickListener { switchFragment("Account") }
         navButtonSettings.setOnClickListener { switchFragment("Settings") }
         navButtonAbout.setOnClickListener { switchFragment("About") }
         navButtonLogout.setOnClickListener { switchFragment("Logout") }
-
 
         GlideApp
             .with(this)
@@ -224,16 +241,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun switchFragment(what: String) {
         var fragmentToReplace: Fragment? = null
-
+        currentFragment = what
         navTextPasswords.typeface = Typeface.DEFAULT
         navTextNotes.typeface = Typeface.DEFAULT
         navTextCards.typeface = Typeface.DEFAULT
         navTextDevices.typeface = Typeface.DEFAULT
         navTextAccount.typeface = Typeface.DEFAULT
+        navTextPassGen.typeface = Typeface.DEFAULT
         navContainerPasswords.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
         navContainerCards.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
         navContainerNotes.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
         navContainerDevices.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
+        navContainerPassGen.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
         navContainerAccount.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
         navButtonSettings.setBackgroundColor(resources.getColor(android.R.color.transparent))
         navButtonAbout.setBackgroundColor(resources.getColor(android.R.color.transparent))
@@ -266,6 +285,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 supportActionBar?.title = "My GateKeeper Account"
                 navTextAccount.typeface = Typeface.DEFAULT_BOLD
                 navContainerAccount.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+            }
+            "PasswordGenerator" -> {
+                fragmentToReplace = PasswordGeneratorFragment()
+                supportActionBar?.title = "GateKeeper Password Generator"
+                navTextPassGen.typeface = Typeface.DEFAULT_BOLD
+                navContainerPassGen.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "Devices" -> {
                 fragmentToReplace = DevicesFragment()
@@ -305,6 +330,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         for (fragment in supportFragmentManager.fragments) {
             fragment.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("fragment", currentFragment)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val lastActiveFragment = (savedInstanceState["fragment"] ?: "") as String
+        if (lastActiveFragment != "") {
+            switchFragment(lastActiveFragment)
         }
     }
 
