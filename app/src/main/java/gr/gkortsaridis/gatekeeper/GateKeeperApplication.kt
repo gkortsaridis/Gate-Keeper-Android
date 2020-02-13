@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper
 
 import android.app.Application
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseUser
 import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
@@ -11,6 +12,7 @@ class GateKeeperApplication : Application() {
         super.onCreate()
         instance = this
         user_id = DataRepository.savedUser
+        MobileAds.initialize(this, admobAppID)
     }
 
     companion object {

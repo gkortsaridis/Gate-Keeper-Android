@@ -83,7 +83,6 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         adViewContainer = view.findViewById(R.id.adview_container)
 
         mAdView = view.findViewById(R.id.adview)
-        MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
         val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)
 

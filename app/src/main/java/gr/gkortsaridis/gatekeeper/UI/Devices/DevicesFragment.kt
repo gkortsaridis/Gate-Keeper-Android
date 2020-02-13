@@ -42,7 +42,6 @@ class DevicesFragment : Fragment(), DeviceClickListener {
         devicesRecyclerView.layoutManager = LinearLayoutManager(context!!)
         updateDeviceList()
 
-        MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
         animateAdIn()

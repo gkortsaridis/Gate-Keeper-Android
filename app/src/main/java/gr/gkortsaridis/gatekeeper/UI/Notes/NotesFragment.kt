@@ -64,7 +64,6 @@ class NotesFragment : Fragment(), NoteClickListener {
         adContainer = view.findViewById(R.id.adview_container)
         adView = view.findViewById(R.id.adview)
 
-        MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
 

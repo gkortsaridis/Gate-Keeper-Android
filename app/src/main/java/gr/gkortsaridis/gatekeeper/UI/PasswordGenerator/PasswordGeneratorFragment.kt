@@ -10,6 +10,8 @@ import android.widget.ImageButton
 import android.widget.RadioGroup
 import android.widget.Switch
 import android.widget.TextView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Utils.PasswordGenerator
@@ -24,6 +26,7 @@ class PasswordGeneratorFragment : Fragment() {
     private lateinit var refresh: ImageButton
     private lateinit var hide: ImageButton
     private lateinit var lengthSegmented: RadioGroup
+    private lateinit var adView: AdView
 
     private var hasLetters = true
     private var hasCapitals = true
@@ -44,6 +47,10 @@ class PasswordGeneratorFragment : Fragment() {
         refresh = view.findViewById(R.id.refresh_btn)
         hide = view.findViewById(R.id.hide_btn)
         lengthSegmented = view.findViewById(R.id.length_segmented)
+        adView = view.findViewById(R.id.adview)
+
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
 
         lettersSw.isChecked = hasLetters
         capitalsSw.isChecked = hasCapitals
