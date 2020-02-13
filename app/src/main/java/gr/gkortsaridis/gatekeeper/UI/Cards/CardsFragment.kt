@@ -53,7 +53,6 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
     private lateinit var bottomArc: RelativeLayout
     private lateinit var cardNickname: TextView
     private lateinit var currentVault: Vault
-    private lateinit var cardCounter: TextView
     private lateinit var adView: AdView
 
     private lateinit var filtered: ArrayList<CreditCard>
@@ -74,7 +73,6 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         noCardsMessage = view.findViewById(R.id.no_items_view)
         bottomArc = view.findViewById(R.id.bottom_arc)
         cardNickname = view.findViewById(R.id.card_nickname_tv)
-        cardCounter = view.findViewById(R.id.card_counter_tv)
         adView = view.findViewById(R.id.adview)
         MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
         val adRequest = AdRequest.Builder().build()
@@ -98,6 +96,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         addCreditCard.setOnClickListener { createCard() }
         vaultView.setOnClickListener { changeVault() }
         animateFabIn()
+        animateArcIn()
         return view
     }
 
@@ -133,14 +132,12 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
                 if (creditCard.id == activeCard?.id) {
                     if (bottomArc.alpha == 0.0f) { animateArcIn() }
                     //bottomArc.visibility = View.VISIBLE
-                    cardCounter.text = "${index + 1}/${filtered.size}"
-                    cardNickname.text = activeCard?.cardName
+                    cardNickname.text = "${index + 1}/${filtered.size} ${activeCard?.cardName}"
                 }
             }
         } else {
             if (bottomArc.alpha == 1.0f) { animateArcOut() }
             //bottomArc.visibility = View.GONE
-            cardCounter.text = ""
             cardNickname.text = ""
         }
 
@@ -201,14 +198,14 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
     private fun animateArcIn() {
         Timeline.createParallel()
             .push(Tween.to(bottomArc, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(bottomArc, Translation.XY).target(0f,-150.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(bottomArc, Translation.XY).target(0f,-122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(bottomArc))
     }
 
     private fun animateArcOut() {
         Timeline.createParallel()
             .push(Tween.to(bottomArc, Alpha.VIEW, 1.0f).target(0.0f))
-            .push(Tween.to(bottomArc, Translation.XY).target(0f,150.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(bottomArc, Translation.XY).target(0f,122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(bottomArc))
     }
 
