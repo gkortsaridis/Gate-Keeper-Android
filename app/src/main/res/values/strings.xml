@@ -49,4 +49,7 @@
     <string name="update_account_details">Update Account Details</string>
     <string name="you_are_secured">You are secured</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
