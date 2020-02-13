@@ -74,7 +74,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         bottomArc = view.findViewById(R.id.bottom_arc)
         cardNickname = view.findViewById(R.id.card_nickname_tv)
         adView = view.findViewById(R.id.adview)
-        MobileAds.initialize(context!!, GateKeeperApplication.admobAppID)
+
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
 
