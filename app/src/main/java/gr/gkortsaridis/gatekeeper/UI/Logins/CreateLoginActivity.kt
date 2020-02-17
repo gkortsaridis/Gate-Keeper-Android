@@ -150,6 +150,7 @@ class CreateLoginActivity : AppCompatActivity() {
         login?.notes = notes.text.toString()
         login?.url = url.text.toString()
         login?.vault_id = vaultToAdd!!.id
+        login?.date_modified = Timestamp.now()
 
         LoginsRepository.encryptAndUpdateLogin(this, login!!, object : LoginCreateListener{
             override fun onLoginCreated() {

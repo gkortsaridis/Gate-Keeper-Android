@@ -127,6 +127,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         }
         else {
             logins.sortBy { it.date_modified }
+            logins.reverse()
             loginsSortType.text = "passwords, sort by modified date"
         }
 
