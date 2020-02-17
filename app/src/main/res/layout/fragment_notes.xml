@@ -71,7 +71,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="60dp"
         android:clipToPadding="false"
-        android:paddingBottom="50dp"
+        android:paddingBottom="90dp"
         android:paddingTop="30dp"
         android:id="@+id/notes_recycler_view"/>
 
@@ -129,9 +129,9 @@
 
     <com.github.florent37.shapeofview.shapes.RoundRectView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="90dp"
         android:id="@+id/adview_container"
-        android:layout_marginBottom="-50dp"
+        android:layout_marginBottom="-90dp"
         android:alpha="0.0"
         android:layout_alignParentBottom="true"
         app:shape_roundRect_topLeftRadius="80dp">

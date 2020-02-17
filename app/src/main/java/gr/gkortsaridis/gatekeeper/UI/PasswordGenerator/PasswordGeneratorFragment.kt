@@ -10,11 +10,19 @@ import android.widget.ImageButton
 import android.widget.RadioGroup
 import android.widget.Switch
 import android.widget.TextView
+import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Utils.PasswordGenerator
+import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.Timeline
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import io.noties.tumbleweed.android.types.Translation
+import io.noties.tumbleweed.equations.Cubic
 
 class PasswordGeneratorFragment : Fragment() {
 
@@ -27,6 +35,7 @@ class PasswordGeneratorFragment : Fragment() {
     private lateinit var hide: ImageButton
     private lateinit var lengthSegmented: RadioGroup
     private lateinit var adView: AdView
+    private lateinit var adContainer: RoundRectView
 
     private var hasLetters = true
     private var hasCapitals = true
@@ -48,9 +57,11 @@ class PasswordGeneratorFragment : Fragment() {
         hide = view.findViewById(R.id.hide_btn)
         lengthSegmented = view.findViewById(R.id.length_segmented)
         adView = view.findViewById(R.id.adview)
+        adContainer = view.findViewById(R.id.adview_container)
 
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
+        animateAdContainerIn()
 
         lettersSw.isChecked = hasLetters
         capitalsSw.isChecked = hasCapitals
@@ -140,6 +151,13 @@ class PasswordGeneratorFragment : Fragment() {
             for (i in 5..length) { hiddenPart += "*" }
             result.text = password.substring(0,4)+hiddenPart
         }
+    }
+
+    private fun animateAdContainerIn() {
+        Timeline.createParallel()
+            .push(Tween.to(adContainer, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(adContainer, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .start(ViewTweenManager.get(adContainer))
     }
 
 

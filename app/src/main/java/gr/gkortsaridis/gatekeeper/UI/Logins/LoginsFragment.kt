@@ -215,9 +215,9 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     private fun animateItemsIn() {
         Timeline.createParallel()
             .push(Tween.to(fab, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(fab, Translation.XY).target(0f,-122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(fab, Translation.XY).target(0f,-162.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .push(Tween.to(adViewContainer, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(adViewContainer, Translation.XY).target(0f,-50.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(adViewContainer, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(fab))
     }
 }
