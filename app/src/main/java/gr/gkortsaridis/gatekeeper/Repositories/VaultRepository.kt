@@ -3,6 +3,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
@@ -36,7 +37,7 @@ object VaultRepository {
     fun createVault(vaultName: String, listener: VaultCreateListener) {
         val db = FirebaseFirestore.getInstance()
 
-        val vault = Vault("", AuthRepository.getUserID(), vaultName)
+        val vault = Vault("", AuthRepository.getUserID(), vaultName, VaultColor.White)
 
         db.collection("vaults")
             .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "vault" to SecurityRepository.encryptObjectWithUserCredentials(vault) ))
@@ -69,7 +70,7 @@ object VaultRepository {
     }
 
     fun getVaultByID(id: String): Vault? {
-        if (id == "-1") { return Vault("-1", AuthRepository.getUserID(), "All Vaults") }
+        if (id == "-1") { return Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White) }
 
         for (vault in GateKeeperApplication.vaults) {
             if (vault.id == id) {
@@ -99,12 +100,13 @@ object VaultRepository {
         return vaultToReturn
     }
 
-    fun renameVault(newName: String, vault: Vault, listener: VaultEditListener) {
+    fun editVault(newName: String, color: VaultColor, vault: Vault, listener: VaultEditListener) {
 
         vault.name = newName
+        vault.color = color
 
         val vaulthash = hashMapOf(
-            "name" to SecurityRepository.encryptObjectWithUserCredentials(vault.name),
+            "vault" to SecurityRepository.encryptObjectWithUserCredentials(vault),
             "account_id" to AuthRepository.getUserID()
         )
 
@@ -113,7 +115,7 @@ object VaultRepository {
             .document(vault.id)
             .set(vaulthash)
             .addOnCompleteListener {
-                listener.onVaultRenamed()
+                listener.onVaultEdited(vault)
             }
 
     }

@@ -25,6 +25,10 @@ interface VaultClickListener {
 }
 
 interface VaultEditListener {
-    fun onVaultRenamed()
-    fun onVaultDeleted()
+    fun onVaultEdited(vault: Vault)
+    fun onVaultDeleted(){}
+}
+
+interface VaultInfoDismissListener {
+    fun onVaultInfoFragmentDismissed()
 }
