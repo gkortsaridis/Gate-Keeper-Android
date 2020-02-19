@@ -22,5 +22,7 @@
     <color name="vault_blue_2">#42a5f5</color>
     <color name="vault_yellow_1">#fdd835</color>
     <color name="vault_yellow_2">#ffee58</color>
+    <color name="vault_white_1">#eeeeee</color>
+    <color name="vault_white_2">#ffffff</color>
 
 </resources>

@@ -111,6 +111,10 @@ class CreditCardsRecyclerViewAdapter(
                     cardContainer?.setBackgroundResource(R.drawable.vault_color_yellow)
                     cardContainerBack?.setBackgroundResource(R.drawable.vault_color_yellow)
                 }
+                VaultColor.White -> {
+                    cardContainer?.setBackgroundResource(R.drawable.vault_color_white)
+                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_white)
+                }
             }
 
             flipCard?.setOnClickListener { flipView?.flipTheView() }

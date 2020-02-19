@@ -41,7 +41,7 @@
                 app:shape_roundRect_topRightRadius="10dp"
                 app:shape_roundRect_bottomRightRadius="10dp"
                 app:shape_roundRect_bottomLeftRadius="10dp"
-                app:shape_roundRect_borderWidth="1dp"
+                app:shape_roundRect_borderWidth="2dp"
                 android:id="@+id/red_color_container"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="8dp">
@@ -58,7 +58,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 app:shape_roundRect_topLeftRadius="10dp"
-                app:shape_roundRect_borderWidth="1dp"
+                app:shape_roundRect_borderWidth="2dp"
                 app:shape_roundRect_topRightRadius="10dp"
                 app:shape_roundRect_bottomRightRadius="10dp"
                 app:shape_roundRect_bottomLeftRadius="10dp"
@@ -80,7 +80,7 @@
                 app:shape_roundRect_topLeftRadius="10dp"
                 app:shape_roundRect_topRightRadius="10dp"
                 app:shape_roundRect_bottomRightRadius="10dp"
-                app:shape_roundRect_borderWidth="1dp"
+                app:shape_roundRect_borderWidth="2dp"
                 app:shape_roundRect_bottomLeftRadius="10dp"
                 android:id="@+id/blue_color_container"
                 android:layout_marginLeft="8dp"
@@ -112,6 +112,26 @@
                     android:foreground="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:background="@color/vault_yellow_1"/>
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:shape_roundRect_topLeftRadius="10dp"
+                app:shape_roundRect_topRightRadius="10dp"
+                app:shape_roundRect_bottomRightRadius="10dp"
+                app:shape_roundRect_borderWidth="2dp"
+                android:id="@+id/white_color_container"
+                app:shape_roundRect_bottomLeftRadius="10dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/white_color"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:background="@color/vault_white_2"/>
             </com.github.florent37.shapeofview.shapes.RoundRectView>
 
         </LinearLayout>

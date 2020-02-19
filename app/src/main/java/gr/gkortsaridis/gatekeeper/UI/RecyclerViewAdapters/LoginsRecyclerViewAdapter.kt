@@ -111,6 +111,11 @@ class LoginsRecyclerViewAdapter(
                     loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_yellow_1))
                     loginImgContainer?.setBackgroundResource(R.drawable.vault_color_yellow)
                 }
+                VaultColor.White -> {
+                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_yellow)
+                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_white_1))
+                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_white)
+                }
             }
 
             val app = LoginsRepository.getApplicationInfoByPackageName(login.url, packageManager)

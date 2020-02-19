@@ -31,10 +31,12 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
     private lateinit var greenColorContainer: RoundRectView
     private lateinit var blueColorContainer: RoundRectView
     private lateinit var yellowColorContainer: RoundRectView
+    private lateinit var whiteColorContainer: RoundRectView
     private lateinit var redColor: View
     private lateinit var greenColor: View
     private lateinit var blueColor: View
     private lateinit var yellowColor: View
+    private lateinit var whiteColor: View
     private lateinit var saveVault: Button
     private lateinit var vaultBackground: View
     private lateinit var deleteVault: Button
@@ -57,6 +59,8 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
         blueColor = view.findViewById(R.id.blue_color)
         yellowColorContainer = view.findViewById(R.id.yellow_color_container)
         yellowColor = view.findViewById(R.id.yellow_color)
+        whiteColorContainer = view.findViewById(R.id.white_color_container)
+        whiteColor = view.findViewById(R.id.white_color)
         saveVault = view.findViewById(R.id.save_vault)
         vaultBackground = view.findViewById(R.id.vault_background)
         deleteVault = view.findViewById(R.id.delete_vault)
@@ -93,6 +97,10 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
             vaultColor = VaultColor.Yellow
             updateColors()
         }
+        whiteColor.setOnClickListener {
+            vaultColor = VaultColor.White
+            updateColors()
+        }
         vaultName.addTextChangedListener(object: TextWatcher{
             override fun afterTextChanged(s: Editable?) { vaultNameInCard.text = s.toString() }
 
@@ -110,10 +118,11 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
     }
 
     private fun updateColors() {
-        redColorContainer.setBorderColor(resources.getColor(android.R.color.transparent))
-        greenColorContainer.setBorderColor(resources.getColor(android.R.color.transparent))
-        blueColorContainer.setBorderColor(resources.getColor(android.R.color.transparent))
-        yellowColorContainer.setBorderColor(resources.getColor(android.R.color.transparent))
+        redColorContainer.setBorderColor(resources.getColor(R.color.underline_grey))
+        greenColorContainer.setBorderColor(resources.getColor(R.color.underline_grey))
+        blueColorContainer.setBorderColor(resources.getColor(R.color.underline_grey))
+        yellowColorContainer.setBorderColor(resources.getColor(R.color.underline_grey))
+        whiteColorContainer.setBorderColor(resources.getColor(R.color.underline_grey))
 
 
         when (vaultColor) {
@@ -133,6 +142,10 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
             VaultColor.Yellow -> {
                 yellowColorContainer.setBorderColor(resources.getColor(R.color.mate_black))
                 vaultBackground.setBackgroundResource(R.drawable.vault_color_yellow)
+            }
+            VaultColor.White -> {
+                whiteColorContainer.setBorderColor(resources.getColor(R.color.mate_black))
+                vaultBackground.setBackgroundColor(resources.getColor(R.color.white))
             }
         }
 
