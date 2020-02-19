@@ -13,36 +13,38 @@ import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
 object VaultRepository {
 
     fun setupVaultsForNewUser(user: FirebaseUser, listener: VaultSetupListener) {
+        val personalVault = Vault(id = "", name = "Personal", account_id = AuthRepository.getUserID(), color = VaultColor.White)
         retrieveVaultsByAccountID(user.uid, object: VaultRetrieveListener {
             override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
                 if (vaults.size > 0) {
                     listener.onVaultSetupComplete()
                 }else{
-                    createVault("Personal", object : VaultCreateListener {
-                        override fun onVaultCreated() { listener.onVaultSetupComplete() }
+                    createVault(personalVault, object : VaultCreateListener {
+                        override fun onVaultCreated(vault: Vault) { listener.onVaultSetupComplete() }
                         override fun onVaultCreateError() { listener.onVaultSetupError() }
                     })
                 }
             }
 
             override fun onVaultsRetrieveError(e: Exception) {
-                createVault("Personal", object : VaultCreateListener {
-                    override fun onVaultCreated() { listener.onVaultSetupComplete() }
+                createVault(personalVault, object : VaultCreateListener {
+                    override fun onVaultCreated(vault: Vault) { listener.onVaultSetupComplete() }
                     override fun onVaultCreateError() { listener.onVaultSetupError() }
                 })
             }
         })
     }
 
-    fun createVault(vaultName: String, listener: VaultCreateListener) {
+    fun createVault(vault: Vault, listener: VaultCreateListener) {
         val db = FirebaseFirestore.getInstance()
-
-        val vault = Vault("", AuthRepository.getUserID(), vaultName, VaultColor.White)
 
         db.collection("vaults")
             .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "vault" to SecurityRepository.encryptObjectWithUserCredentials(vault) ))
             .addOnCompleteListener {
-                if (it.isSuccessful) { listener.onVaultCreated() }
+                if (it.isSuccessful) {
+                    vault.id = it.result!!.id
+                    listener.onVaultCreated(vault)
+                }
                 else { listener.onVaultCreateError() }
             }
     }

@@ -35,7 +35,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:orientation="horizontal"
-                            android:background="@color/colorPrimary"
+                            android:background="@color/mate_black"
                             android:id="@+id/flip_card_btn"
                             android:padding="10dp">
                             <ImageView

@@ -90,26 +90,6 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
         vaultInfoFragment.show(supportFragmentManager,null)
     }
 
-
-
-    private fun displayVaultDeleteDialog(vault: Vault){
-        if (GateKeeperApplication.vaults.size > 1) {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Delete Vault")
-            builder.setMessage("Are you sure you wish to delete this vault and its content?")
-
-            builder.setNegativeButton("No") { dialog, _ -> dialog.cancel() }
-            builder.setPositiveButton("Yes") { _, _ ->
-                viewDialog.showDialog()
-                VaultRepository.deleteVault(vault, this)
-            }
-
-            builder.show()
-        }else {
-            Toast.makeText(this,"You cannot delete your only Vault", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun updateVaultsRecyclerView() {
         val sortedVaults = ArrayList(GateKeeperApplication.vaults.sortedWith(compareBy {it.name}))
         if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT && sortedVaults.size > 1) {
@@ -124,45 +104,9 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
     }
 
     private fun createVault() {
-        val viewDialog = ViewDialog(this)
-        val builder = AlertDialog.Builder(this)
-        val parent = RelativeLayout(this)
-        parent.layoutParams = ViewGroup.LayoutParams(
-            RelativeLayout.LayoutParams.MATCH_PARENT,
-            RelativeLayout.LayoutParams.WRAP_CONTENT)
-        parent.setPadding(50,50,50,50)
-        val input = EditText(this)
-        input.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT)
-        input.inputType = InputType.TYPE_CLASS_TEXT
-        parent.addView(input)
-
-        builder.setTitle("Create Vault")
-        builder.setMessage("Set a name for your new vault")
-        builder.setView(parent)
-
-        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
-        builder.setPositiveButton("OK") { _, _ ->
-            viewDialog.showDialog()
-            VaultRepository.createVault(input.text.toString(),object : VaultCreateListener{
-                override fun onVaultCreated() {
-                    VaultRepository.retrieveVaultsByAccountID(AuthRepository.getUserID(),object: VaultRetrieveListener{
-                        override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
-                            GateKeeperApplication.vaults = vaults
-                            viewDialog.hideDialog()
-                            updateVaultsRecyclerView()
-                        }
-
-                        override fun onVaultsRetrieveError(e: Exception) { viewDialog.hideDialog() }
-                    })
-                }
-
-                override fun onVaultCreateError() {}
-            })
-        }
-
-        builder.show()
+        val newVault = Vault(id = "-1", account_id = AuthRepository.getUserID(), name = "", color = VaultColor.White)
+        val vaultInfoFragment = VaultInfoFragment(newVault, this)
+        vaultInfoFragment.show(supportFragmentManager,null)
     }
 
     override fun onVaultInfoFragmentDismissed() {

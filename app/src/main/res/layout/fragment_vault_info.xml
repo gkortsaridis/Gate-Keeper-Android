@@ -148,7 +148,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Personal"
+                    android:text="Vault Name"
                     android:id="@+id/vault_name"
                     android:textColor="@color/mate_black"
                     android:textSize="17sp"
@@ -165,12 +165,31 @@
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save"
-        android:background="@android:color/transparent"
-        android:layout_gravity="right"
-        android:id="@+id/save_vault"/>
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:background="@android:color/transparent"
+            android:id="@+id/delete_vault"/>
+
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:background="@android:color/transparent"
+            android:id="@+id/save_vault"/>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,23 +1,30 @@
 package gr.gkortsaridis.gatekeeper.UI.Vaults
 
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.github.florent37.shapeofview.shapes.RoundRectView
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultInfoDismissListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 
-class VaultInfoFragment(private val vault: Vault, private val listener: VaultInfoDismissListener) : DialogFragment(), VaultEditListener {
+class VaultInfoFragment(private val vault: Vault, private val listener: VaultInfoDismissListener) : DialogFragment() {
 
     private lateinit var vaultName: EditText
     private lateinit var redColorContainer: RoundRectView
@@ -30,11 +37,16 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
     private lateinit var yellowColor: View
     private lateinit var saveVault: Button
     private lateinit var vaultBackground: View
+    private lateinit var deleteVault: Button
+    private lateinit var vaultNameInCard: TextView
+    private lateinit var dialog: ViewDialog
 
     private lateinit var vaultColor: VaultColor
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_vault_info, container, false)
+
+        dialog = ViewDialog(activity!!)
 
         vaultName = view.findViewById(R.id.vault_name_et)
         redColorContainer = view.findViewById(R.id.red_color_container)
@@ -47,8 +59,24 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
         yellowColor = view.findViewById(R.id.yellow_color)
         saveVault = view.findViewById(R.id.save_vault)
         vaultBackground = view.findViewById(R.id.vault_background)
+        deleteVault = view.findViewById(R.id.delete_vault)
+        vaultNameInCard = view.findViewById(R.id.vault_name)
 
-        saveVault.setOnClickListener { saveVault() }
+        saveVault.setOnClickListener {
+            if (vault.id == "-1"){
+                createVault()
+                deleteVault.visibility = View.GONE
+            } else {
+                saveVault()
+                if (GateKeeperApplication.vaults.size > 1) {
+                    deleteVault.visibility = View.VISIBLE
+                } else {
+                    deleteVault.visibility = View.GONE
+                }
+            }
+        }
+        deleteVault.setOnClickListener { displayVaultDeleteDialog(vault) }
+
         redColor.setOnClickListener {
             vaultColor = VaultColor.Red
             updateColors()
@@ -65,6 +93,14 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
             vaultColor = VaultColor.Yellow
             updateColors()
         }
+        vaultName.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) { vaultNameInCard.text = s.toString() }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
 
         vaultName.setText(vault.name)
         vaultColor = vault.color ?: VaultColor.White
@@ -102,17 +138,55 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
 
     }
 
+    private fun createVault() {
+        vault.name = vaultName.text.toString()
+        vault.color = vaultColor
+        dialog.showDialog()
+        VaultRepository.createVault(vault, object : VaultCreateListener {
+            override fun onVaultCreated(vault: Vault) {
+                dialog.hideDialog()
+                GateKeeperApplication.vaults.add(vault)
+                listener.onVaultInfoFragmentDismissed()
+                dismiss()
+            }
+        })
+    }
+
+    private fun displayVaultDeleteDialog(vault: Vault){
+        if (GateKeeperApplication.vaults.size > 1) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Delete Vault")
+            builder.setMessage("Are you sure you wish to delete this vault and its content?")
+
+            builder.setNegativeButton("No") { dialog, _ -> dialog.cancel() }
+            builder.setPositiveButton("Yes") { _, _ ->
+                dialog.showDialog()
+                VaultRepository.deleteVault(vault, object: VaultEditListener{
+                    override fun onVaultDeleted() {
+                        super.onVaultDeleted()
+                        dialog.hideDialog()
+                        GateKeeperApplication.vaults.remove(vault)
+                        listener.onVaultInfoFragmentDismissed()
+                        dismiss()
+                    }
+                })
+            }
+
+            builder.show()
+        }else {
+            Toast.makeText(context,"You cannot delete your only Vault", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun saveVault() {
-        VaultRepository.editVault(vaultName.text.toString(), vaultColor, vault, this)
+        dialog.showDialog()
+        VaultRepository.editVault(vaultName.text.toString(), vaultColor, vault, object: VaultEditListener{
+            override fun onVaultEdited(vault: Vault) {
+                dialog.hideDialog()
+                GateKeeperApplication.vaults.replaceAll { if(it.id == vault.id) vault else it }
+                listener.onVaultInfoFragmentDismissed()
+                dismiss()
+            }
+        })
     }
-
-    override fun onVaultEdited(vault: Vault) {
-        GateKeeperApplication.vaults.replaceAll { if(it.id == vault.id) vault else it }
-        listener.onVaultInfoFragmentDismissed()
-        dismiss()
-    }
-
-    override fun onVaultDeleted() {
-    }
-
 }
