@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.text.trimmedLength
 import androidx.fragment.app.DialogFragment
+import com.google.firebase.Timestamp
 import com.wajahatkarim3.easyflipview.EasyFlipView
 import com.whiteelephant.monthpicker.MonthPickerDialog
 import gr.gkortsaridis.gatekeeper.Entities.*
@@ -74,7 +75,8 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
                 cvv = "",
                 cardholderName = "",
                 vaultId = VaultRepository.getLastActiveRealVault().id,
-                accountId = AuthRepository.getUserID()
+                accountId = AuthRepository.getUserID(),
+                modifiedDate = Timestamp.now()
             )
             cardVault = VaultRepository.getLastActiveRealVault()
         } else {
@@ -215,6 +217,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         card?.vaultId = cardVault.id
         card?.cvv = cvvET.text.toString()
         card?.type = CreditCardRepository.getCreditCardType(card?.number ?: "")
+        card?.modifiedDate = Timestamp.now()
 
         val viewDialog = ViewDialog(activity!!)
         if (isCreate) {
