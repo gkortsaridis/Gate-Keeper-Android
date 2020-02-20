@@ -22,10 +22,12 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import gr.gkortsaridis.gatekeeper.Utils.dp
 
@@ -69,6 +71,7 @@ class LoginsRecyclerViewAdapter(
         private var loginInitial: TextView? = null
         private var loginImgContainer: RelativeLayout? = null
         private var loginImgContainer2: View? = null
+        private var loginBackground: View? = null
         private var view: View = v
 
         init {
@@ -79,11 +82,41 @@ class LoginsRecyclerViewAdapter(
             loginInitial = view.findViewById(R.id.login_icon_initial)
             loginImgContainer = view.findViewById(R.id.login_img_container)
             loginImgContainer2 = view.findViewById(R.id.login_img_container_2)
+            loginBackground = view.findViewById(R.id.login_background)
         }
 
         fun bindLogin(login: Login, position: Int, context: Context, packageManager: PackageManager, listener: LoginSelectListener){
             this.loginName?.text = login.name
             this.loginUsername?.text = login.username
+
+            val vault = VaultRepository.getVaultByID(login.vault_id)
+            when (vault?.color) {
+                VaultColor.Red -> {
+                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_red)
+                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_red_1))
+                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_red)
+                }
+                VaultColor.Green -> {
+                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_green)
+                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_green_1))
+                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_green)
+                }
+                VaultColor.Blue -> {
+                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_blue)
+                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_blue_1))
+                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_blue)
+                }
+                VaultColor.Yellow -> {
+                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_yellow)
+                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_yellow_1))
+                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_yellow)
+                }
+                VaultColor.White -> {
+                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_yellow)
+                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_white_1))
+                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_white)
+                }
+            }
 
             val app = LoginsRepository.getApplicationInfoByPackageName(login.url, packageManager)
 
@@ -94,7 +127,7 @@ class LoginsRecyclerViewAdapter(
                 this.loginImage?.setImageDrawable(appIcon)
                 val bitmapDrawable = this.loginImage?.drawable
                 val bitmap = bitmapDrawable?.toBitmap()!!
-                colorImageBackground(context, bitmap)
+                //colorImageBackground(context, bitmap)
             } else {
                 this.loginImage?.visibility = View.VISIBLE
                 GlideApp.with(context)
@@ -105,7 +138,7 @@ class LoginsRecyclerViewAdapter(
 
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                             val bitmap = resource?.toBitmap(8.dp, 8.dp)!!
-                            colorImageBackground(context, bitmap)
+                            //colorImageBackground(context, bitmap)
                             return false
                         }
                     })

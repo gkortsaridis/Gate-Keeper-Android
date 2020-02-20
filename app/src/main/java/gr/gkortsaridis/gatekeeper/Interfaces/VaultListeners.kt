@@ -3,8 +3,8 @@ package gr.gkortsaridis.gatekeeper.Interfaces
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 
 interface VaultCreateListener {
-    fun onVaultCreated()
-    fun onVaultCreateError()
+    fun onVaultCreated(vault: Vault)
+    fun onVaultCreateError(){}
 }
 
 interface VaultSetupListener {
@@ -25,6 +25,10 @@ interface VaultClickListener {
 }
 
 interface VaultEditListener {
-    fun onVaultRenamed()
-    fun onVaultDeleted()
+    fun onVaultEdited(vault: Vault){}
+    fun onVaultDeleted(){}
+}
+
+interface VaultInfoDismissListener {
+    fun onVaultInfoFragmentDismissed()
 }

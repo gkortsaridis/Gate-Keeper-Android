@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wajahatkarim3.easyflipview.EasyFlipView
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
@@ -90,6 +91,30 @@ class CreditCardsRecyclerViewAdapter(
                 CardType.DiscoverCard -> { cardType?.setImageResource(R.drawable.discover) }
                 CardType.Mastercard -> { cardType?.setImageResource(R.drawable.mastercard) }
                 CardType.Unknown -> {cardType?.visibility = View.INVISIBLE}
+            }
+
+            val vault = VaultRepository.getVaultByID(card.vaultId)
+            when (vault?.color) {
+                VaultColor.Red -> {
+                    cardContainer?.setBackgroundResource(R.drawable.vault_color_red)
+                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_red)
+                }
+                VaultColor.Green -> {
+                    cardContainer?.setBackgroundResource(R.drawable.vault_color_green)
+                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_green)
+                }
+                VaultColor.Blue -> {
+                    cardContainer?.setBackgroundResource(R.drawable.vault_color_blue)
+                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_blue)
+                }
+                VaultColor.Yellow -> {
+                    cardContainer?.setBackgroundResource(R.drawable.vault_color_yellow)
+                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_yellow)
+                }
+                VaultColor.White -> {
+                    cardContainer?.setBackgroundResource(R.drawable.vault_color_white)
+                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_white)
+                }
             }
 
             flipCard?.setOnClickListener { flipView?.flipTheView() }
