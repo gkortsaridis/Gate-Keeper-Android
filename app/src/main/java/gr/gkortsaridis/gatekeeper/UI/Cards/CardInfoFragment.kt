@@ -17,10 +17,7 @@ import androidx.core.text.trimmedLength
 import androidx.fragment.app.DialogFragment
 import com.wajahatkarim3.easyflipview.EasyFlipView
 import com.whiteelephant.monthpicker.MonthPickerDialog
-import gr.gkortsaridis.gatekeeper.Entities.CardType
-import gr.gkortsaridis.gatekeeper.Entities.CreditCard
-import gr.gkortsaridis.gatekeeper.Entities.Vault
-import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
+import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardDeleteListener
@@ -32,6 +29,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.CreditCardFormattingTextWatcher
 import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.paths.Linear
 import java.util.*
 
 
@@ -56,6 +54,8 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
     private lateinit var saveIcon: ImageView
     private lateinit var cardType: ImageView
     private lateinit var deleteCardBtn: LinearLayout
+    private lateinit var cardContainer: LinearLayout
+    private lateinit var cardContainerBack: LinearLayout
 
     private var backCardShown: Boolean = false
 
@@ -98,6 +98,8 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         saveIcon = view.findViewById(R.id.save_icon)
         deleteCardBtn = view.findViewById(R.id.card_delete_btn)
         cardType = view.findViewById(R.id.card_type)
+        cardContainer = view.findViewById(R.id.card_container)
+        cardContainerBack = view.findViewById(R.id.card_container_back)
 
         cardNumberET.setText(card?.number)
         cardholderNameET.setText(card?.cardholderName)
@@ -140,9 +142,35 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
 
         toggleSaveButton()
         updateCardTypeImage()
+        colorCard()
 
         deleteCardBtn.visibility = if (isCreate) View.GONE else View.VISIBLE
         return view
+    }
+
+    private fun colorCard() {
+        when(cardVault.color) {
+            VaultColor.Red -> {
+                cardContainer.setBackgroundResource(R.drawable.vault_color_red)
+                cardContainerBack.setBackgroundResource(R.drawable.vault_color_red)
+            }
+            VaultColor.Yellow -> {
+                cardContainer.setBackgroundResource(R.drawable.vault_color_yellow)
+                cardContainerBack.setBackgroundResource(R.drawable.vault_color_yellow)
+            }
+            VaultColor.Blue -> {
+                cardContainer.setBackgroundResource(R.drawable.vault_color_blue)
+                cardContainerBack.setBackgroundResource(R.drawable.vault_color_blue)
+            }
+            VaultColor.Green -> {
+                cardContainer.setBackgroundResource(R.drawable.vault_color_green)
+                cardContainerBack.setBackgroundResource(R.drawable.vault_color_green)
+            }
+            VaultColor.White -> {
+                cardContainer.setBackgroundResource(R.drawable.vault_color_white)
+                cardContainerBack.setBackgroundResource(R.drawable.vault_color_white)
+            }
+        }
     }
 
     private fun updateCardTypeImage() {
@@ -231,6 +259,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
             vaultName.text = cardVault.name
             dialog.dismiss()
             toggleSaveButton()
+            colorCard()
         }
         val dialog = builder.create()
         dialog.setOnCancelListener { }
