@@ -90,28 +90,34 @@ class LoginsRecyclerViewAdapter(
             this.loginUsername?.text = login.username
 
             val vault = VaultRepository.getVaultByID(login.vault_id)
+            var color = ""
             when (vault?.color) {
                 VaultColor.Red -> {
+                    color = "e53935"
                     //loginBackground?.setBackgroundResource(R.drawable.vault_color_red)
                     loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_red_1))
                     loginImgContainer?.setBackgroundResource(R.drawable.vault_color_red)
                 }
                 VaultColor.Green -> {
+                    color = "4caf50"
                     //loginBackground?.setBackgroundResource(R.drawable.vault_color_green)
                     loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_green_1))
                     loginImgContainer?.setBackgroundResource(R.drawable.vault_color_green)
                 }
                 VaultColor.Blue -> {
+                    color = "1e88e5"
                     //loginBackground?.setBackgroundResource(R.drawable.vault_color_blue)
                     loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_blue_1))
                     loginImgContainer?.setBackgroundResource(R.drawable.vault_color_blue)
                 }
                 VaultColor.Yellow -> {
+                    color = "fdd835"
                     //loginBackground?.setBackgroundResource(R.drawable.vault_color_yellow)
                     loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_yellow_1))
                     loginImgContainer?.setBackgroundResource(R.drawable.vault_color_yellow)
                 }
                 VaultColor.White -> {
+                    color = "eeeeee"
                     //loginBackground?.setBackgroundResource(R.drawable.vault_color_yellow)
                     loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_white_1))
                     loginImgContainer?.setBackgroundResource(R.drawable.vault_color_white)
@@ -131,7 +137,7 @@ class LoginsRecyclerViewAdapter(
             } else {
                 this.loginImage?.visibility = View.VISIBLE
                 GlideApp.with(context)
-                    .load("https://besticon-demo.herokuapp.com/icon?url="+login.url+"&size=80..120..200")
+                    .load("https://besticon-demo.herokuapp.com/icon?url="+login.url+"&size=30..100..150&fallback_icon_color="+color)
                     .placeholder(R.drawable.camera)
                     .listener(object: RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean { return false }
