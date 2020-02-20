@@ -99,7 +99,6 @@ class NoteActivity : AppCompatActivity() {
         noteModified.text = "Edited at $formattedDate"
         noteBody.setText(note.body)
 
-        changeColor(noteColor)
         updateUI()
     }
 
@@ -129,12 +128,6 @@ class NoteActivity : AppCompatActivity() {
         intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_VAULT)
         intent.putExtra("vault_id",vaultToAdd.id)
         startActivityForResult(intent, GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE)
-    }
-
-    private fun changeColor(color: NoteColor) {
-        //noteColor = color
-        //noteBackground.setBackgroundColor(Color.parseColor(color.value))
-        //bottomSheetLayout.setBackgroundColor(Color.parseColor(color.value))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -179,6 +172,7 @@ class NoteActivity : AppCompatActivity() {
 
     private fun updateNoteAndFinish() {
         val viewDialog = ViewDialog(this)
+
         VaultRepository.setActiveVault(vaultToAdd)
         if (note.id != "") {
             if (isNoteChanged()) {
@@ -245,6 +239,10 @@ class NoteActivity : AppCompatActivity() {
     }
 
     private fun finishWithResult() {
+        if (note.id != VaultRepository.getLastActiveVault().id) {
+            VaultRepository.setActiveVault(VaultRepository.allVaults)
+        }
+
         val intent = Intent()
         setResult(1, intent)
         finish()

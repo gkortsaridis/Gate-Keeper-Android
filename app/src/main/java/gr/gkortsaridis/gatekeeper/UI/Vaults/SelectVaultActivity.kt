@@ -93,7 +93,7 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
     private fun updateVaultsRecyclerView() {
         val sortedVaults = ArrayList(GateKeeperApplication.vaults.sortedWith(compareBy {it.name}))
         if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT && sortedVaults.size > 1) {
-            sortedVaults.add(0, Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White) )
+            sortedVaults.add(0, VaultRepository.allVaults )
         }
         vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(
             this,
