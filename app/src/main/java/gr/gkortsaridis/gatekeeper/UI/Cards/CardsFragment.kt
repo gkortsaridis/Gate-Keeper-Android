@@ -177,6 +177,8 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
     private fun updateCards() {
         currentVault = VaultRepository.getLastActiveVault()
         filtered = CreditCardRepository.filterCardsByVault(currentVault)
+        filtered.sortBy { it.modifiedDate }
+        filtered.reverse()
         if (!filtered.contains(activeCard) && filtered.isNotEmpty()) {
             activeCard = filtered[0]
             activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
