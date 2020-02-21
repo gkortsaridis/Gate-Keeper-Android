@@ -2,7 +2,6 @@ package gr.gkortsaridis.gatekeeper.UI.Cards
 
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,11 +13,14 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.github.florent37.shapeofview.shapes.ArcView
+import androidx.recyclerview.widget.SnapHelper
+import com.azoft.carousellayoutmanager.CarouselLayoutManager
+import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
+import com.azoft.carousellayoutmanager.CenterScrollListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.littlemango.stacklayoutmanager.StackLayoutManager
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
@@ -78,19 +80,22 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
 
-        val stackLayoutManager = StackLayoutManager(StackLayoutManager.ScrollOrientation.BOTTOM_TO_TOP)
-        stackLayoutManager.setItemOffset(50)
         cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, GateKeeperApplication.cards, this)
         cardsRecyclerView.adapter = cardsAdapter
-        cardsRecyclerView.layoutManager = stackLayoutManager
+        cardsRecyclerView.addOnScrollListener(CenterScrollListener())
+
+        //cardsRecyclerView.layoutManager = stackLayoutManager
+        //cardsRecyclerView.setHasFixedSize(true)
+
+        val layoutManager = CarouselLayoutManager(CarouselLayoutManager.VERTICAL)
+        layoutManager.setPostLayoutListener(CarouselZoomPostLayoutListener())
+        layoutManager.addOnItemSelectionListener {
+            activeCard = filtered[it]
+            activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
+            updateUI(updateCards = false)
+        }
+        cardsRecyclerView.layoutManager = layoutManager
         cardsRecyclerView.setHasFixedSize(true)
-        stackLayoutManager.setItemChangedListener (object: StackLayoutManager.ItemChangedListener{
-            override fun onItemChanged(position: Int) {
-                activeCard = filtered[position]
-                activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
-                updateUI()
-            }
-        })
 
         addCardButton.setOnClickListener { createCard() }
         addCreditCard.setOnClickListener { createCard() }
@@ -115,7 +120,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
     }
 
     @SuppressLint("RestrictedApi")
-    private fun updateUI() {
+    private fun updateUI(updateCards: Boolean) {
         vaultName.text = VaultRepository.getLastActiveVault().name
 
         if (activeCard == null && filtered.isNotEmpty()) {
@@ -123,7 +128,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
             activeCardVault = VaultRepository.getVaultByID(activeCard!!.vaultId)
         }
 
-        if (!cardsRecyclerView.isComputingLayout) {
+        if (!cardsRecyclerView.isComputingLayout && updateCards) {
             cardsAdapter.updateCards(filtered)
         }
 
@@ -171,7 +176,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
     override fun onResume() {
         super.onResume()
         updateCards()
-        updateUI()
+        updateUI(updateCards = true)
     }
 
     private fun updateCards() {
@@ -187,27 +192,27 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
 
     override fun onDismissed() {
         super.onDismissed()
-        updateUI()
+        updateUI(updateCards = true)
     }
 
     private fun animateFabIn() {
         Timeline.createParallel()
             .push(Tween.to(addCreditCard, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(addCreditCard, Translation.XY).target(0f,-162.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(addCreditCard, Translation.XY).target(0f,-158.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(addCreditCard))
     }
 
     private fun animateArcIn() {
         Timeline.createParallel()
             .push(Tween.to(bottomArc, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(bottomArc, Translation.XY).target(0f,-122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(bottomArc, Translation.XY).target(0f,-130.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(bottomArc))
     }
 
     private fun animateArcOut() {
         Timeline.createParallel()
             .push(Tween.to(bottomArc, Alpha.VIEW, 1.0f).target(0.0f))
-            .push(Tween.to(bottomArc, Translation.XY).target(0f,122.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(bottomArc, Translation.XY).target(0f,130.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(bottomArc))
     }
 

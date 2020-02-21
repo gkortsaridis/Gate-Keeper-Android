@@ -71,7 +71,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@+id/height"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="130dp"
         android:id="@+id/cards_recycler_view"/>
 
     <LinearLayout
@@ -118,24 +119,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/bottom_arc"
-        android:layout_marginBottom="-122dp"
+        android:layout_marginBottom="-130dp"
         android:alpha="0.0"
+        android:background="@color/colorPrimaryDark"
         android:layout_alignParentBottom="true">
 
         <TextView
             android:id="@+id/card_nickname_tv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginTop="4dp"
             android:layout_marginRight="86dp"
             android:layout_marginLeft="16dp"
             android:text="Personal"
-            android:textColor="@color/mate_black"
+            android:textColor="@color/white"
             android:textSize="25sp" />
 
         <com.github.florent37.shapeofview.shapes.RoundRectView
             android:layout_width="match_parent"
             android:layout_height="90dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="40dp"
             android:elevation="5dp"
             app:shape_roundRect_topLeftRadius="50dp">
             <RelativeLayout
