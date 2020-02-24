@@ -5,7 +5,7 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 
 object DataRepository {
 
-    private const val PREFS_FILENAME = "gatekeeper.prefs"
+    const val PREFS_FILENAME = "gatekeeper.prefs"
     private const val CREDENTIALS_EMAIL = "user_credentials_email"
     private const val CREDENTIALS_PASSWORD = "user_credentials_password"
     private const val SAVED_LOGINS = "saved_logins"
