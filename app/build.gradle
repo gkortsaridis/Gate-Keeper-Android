@@ -26,8 +26,8 @@ android {
         minSdkVersion 24
         multiDexEnabled true
         targetSdkVersion 29
-        versionCode 6
-        versionName "0.6"
+        versionCode 7
+        versionName "0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -58,7 +58,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.biometric:biometric:1.0.1'
     implementation 'com.google.android.gms:play-services-ads:18.3.0'
-    
+
     //Billing
     implementation 'com.android.billingclient:billing:2.1.0'
     implementation 'com.android.billingclient:billing-ktx:2.1.0'
