@@ -1,6 +1,8 @@
 package gr.gkortsaridis.gatekeeper
 
 import android.app.Application
+import android.util.Log
+import com.android.billingclient.api.*
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
@@ -15,7 +17,9 @@ import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository.PREFS_FILENAME
 
-class GateKeeperApplication : Application() {
+class GateKeeperApplication : Application(), PurchasesUpdatedListener {
+
+    lateinit private var billingClient: BillingClient
 
     override fun onCreate() {
         super.onCreate()
@@ -34,6 +38,26 @@ class GateKeeperApplication : Application() {
             client.start()
         }
 
+
+        /*billingClient = BillingClient
+            .newBuilder(this)
+            .setListener(this)
+            .enablePendingPurchases()
+            .build()
+        billingClient.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(billingResult: BillingResult) {
+                if (billingResult.responseCode ==  BillingClient.BillingResponseCode.OK) {
+                    // The BillingClient is ready. You can query purchases here.
+                }
+
+                Log.i("ON BILLING SETUP FINISHED", billingResult.toString())
+
+            }
+            override fun onBillingServiceDisconnected() {
+                // Try to restart the connection on the next request to
+                // Google Play by calling the startConnection() method.
+            }
+        })*/
     }
 
     companion object {
@@ -47,6 +71,11 @@ class GateKeeperApplication : Application() {
         lateinit var cards: ArrayList<CreditCard>
         lateinit var notes: ArrayList<Note>
         var devices: ArrayList<Device>? = null
+    }
+
+    override fun onPurchasesUpdated(p0: BillingResult?, p1: MutableList<Purchase>?) {
+        Log.i("ON PURCHASES UPDATED", p0.toString())
+
     }
 
 
