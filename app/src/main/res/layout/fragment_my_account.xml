@@ -163,6 +163,25 @@
                 android:layout_width="370dp"
                 android:layout_height="wrap_content"
                 android:elevation="5dp"
+                android:id="@+id/status_container"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="right"
+                app:shape_roundRect_topLeftRadius="150dp"
+                app:shape_roundRect_bottomLeftRadius="150dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:id="@+id/go_to_status"
+                    android:background="@color/colorPrimaryDark">
+                </RelativeLayout>
+
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:elevation="5dp"
                 android:layout_marginRight="-370dp"
                 android:alpha="0.0"
                 android:id="@+id/adview_container"
