@@ -16,12 +16,13 @@ import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 
 class GateKeeperApplication : Application() {
 
-
     override fun onCreate() {
         super.onCreate()
         instance = this
         user_id = DataRepository.savedUser
         MobileAds.initialize(this, admobAppID)
+
+        networkFlipperPlugin = NetworkFlipperPlugin()
 
         SoLoader.init(this, false)
         if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
@@ -29,13 +30,15 @@ class GateKeeperApplication : Application() {
             client.addPlugin(InspectorFlipperPlugin(this, DescriptorMapping.withDefaults()))
             client.addPlugin(SharedPreferencesFlipperPlugin(this))
             client.addPlugin(NavigationFlipperPlugin.getInstance())
-            client.addPlugin(NetworkFlipperPlugin())
+            client.addPlugin(networkFlipperPlugin)
 
             client.start()
         }
     }
 
     companion object {
+
+        lateinit var networkFlipperPlugin: NetworkFlipperPlugin
         lateinit var instance: GateKeeperApplication private set
         var user: FirebaseUser? = null
         var user_id: String? = null
