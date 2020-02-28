@@ -4,10 +4,15 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
+import gr.gkortsaridis.gatekeeper.Entities.Network.RespAuthentication
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
+import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.http.Body
+import retrofit2.http.POST
 import java.security.cert.CertificateException
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HostnameVerifier
@@ -96,8 +101,8 @@ object GateKeeperAPI {
     val api = retrofit.create(GateKeeperInterface::class.java)
 
     interface GateKeeperInterface {
-        /*@GET(BuildConfig.JSON_BASE_ENDPOINT + "api/search/getflydates")
-        fun getFlyDates(@Query("originairportcode") origin: String, @Query("destinationairportcode") destination: String): Observable<List<FlightDays>>*/
+        @POST("/auth/signIn")
+        fun signIn(@Body body: ReqBodyUsernameHash): Observable<RespAuthentication>
     }
 
 }

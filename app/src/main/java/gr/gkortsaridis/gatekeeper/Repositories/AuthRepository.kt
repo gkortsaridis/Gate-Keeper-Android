@@ -11,11 +11,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.*
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.Authentication.LoadingActivity
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
+import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
 object AuthRepository {
@@ -31,9 +36,27 @@ object AuthRepository {
     val RC_SIGN_IN : Int = 1
 
     fun signIn(activity:Activity, email: String, password: String, check: Boolean, listener: SignInListener) {
+        val hash = pbkdf2_lib.createHash(password = password, username = email)
+        val reqBodyUsernameHash = ReqBodyUsernameHash(username = email, hash = password)
+
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
-        auth.signInWithEmailAndPassword(email, password)
+
+        GateKeeperAPI.api.signIn(reqBodyUsernameHash)
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (it.errorCode != -1) {
+                    val bundle = Bundle()
+                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
+                    FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+                    listener.onSignInComplete(true, it.data.userId)
+                } else {
+                    listener.onSignInComplete(false, it.errorCode, it.errorMsg)
+                }
+            }
+
+        /*auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 viewDialog.hideDialog()
 
@@ -45,7 +68,7 @@ object AuthRepository {
                 }else {
                     listener.onSignInComplete(false, FirebaseSignInResult(null,it.exception))
                 }
-            }
+            }*/
     }
 
     fun googleSignIn(activity: Activity) {
@@ -77,9 +100,9 @@ object AuthRepository {
         }
     }
 
-    fun setApplicationUser(user: FirebaseUser) {
-        GateKeeperApplication.user = user
-        DataRepository.savedUser = user.uid
+    fun setApplicationUser(userId: String) {
+        GateKeeperApplication.user = userId
+        DataRepository.savedUser = userId
     }
 
     fun proceedLoggedIn(activity: Activity) {
