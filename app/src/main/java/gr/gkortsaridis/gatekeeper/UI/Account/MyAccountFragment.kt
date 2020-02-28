@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.UI.Account
 
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
@@ -52,6 +53,7 @@ class MyAccountFragment : Fragment() {
     private lateinit var updatePictureBtn: Button
     private lateinit var imageLoading: ProgressBar
     private lateinit var adsContainer: RoundRectView
+    private lateinit var goToStatus: RelativeLayout
     private lateinit var adView: AdView
 
     private lateinit var viewDialog: ViewDialog
@@ -70,10 +72,12 @@ class MyAccountFragment : Fragment() {
         imageLoading = view.findViewById(R.id.image_loading)
         adsContainer = view.findViewById(R.id.adview_container)
         adView = view.findViewById(R.id.adview)
+        goToStatus = view.findViewById(R.id.go_to_status)
 
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
 
+        goToStatus.setOnClickListener { goToStatus() }
         sendConfirmation.setOnClickListener { sendEmailConfirmation() }
         updatePictureBtn.setOnClickListener { pickImage() }
         emailConfirmed.visibility = if (user?.isEmailVerified!!) View.GONE else View.VISIBLE
@@ -91,6 +95,10 @@ class MyAccountFragment : Fragment() {
         user_uid.text = "Your personal ID is: ${user?.uid}"
 
         update_account_btn.setOnClickListener { updateProfile(name = full_name_et.text.toString()) }
+    }
+
+    private fun goToStatus() {
+        context?.startActivity(Intent(activity, AccountStatusActivity::class.java))
     }
 
     private fun sendEmailConfirmation(){

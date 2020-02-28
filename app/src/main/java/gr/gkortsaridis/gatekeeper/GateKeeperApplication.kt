@@ -13,9 +13,9 @@ import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseUser
 import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
-import gr.gkortsaridis.gatekeeper.Repositories.DataRepository.PREFS_FILENAME
 
 class GateKeeperApplication : Application() {
+
 
     override fun onCreate() {
         super.onCreate()
@@ -27,13 +27,12 @@ class GateKeeperApplication : Application() {
         if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
             val client = AndroidFlipperClient.getInstance(this)
             client.addPlugin(InspectorFlipperPlugin(this, DescriptorMapping.withDefaults()))
-            client.addPlugin(SharedPreferencesFlipperPlugin(this, PREFS_FILENAME))
+            client.addPlugin(SharedPreferencesFlipperPlugin(this))
             client.addPlugin(NavigationFlipperPlugin.getInstance())
             client.addPlugin(NetworkFlipperPlugin())
 
             client.start()
         }
-
     }
 
     companion object {
@@ -48,6 +47,5 @@ class GateKeeperApplication : Application() {
         lateinit var notes: ArrayList<Note>
         var devices: ArrayList<Device>? = null
     }
-
 
 }

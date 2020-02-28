@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_grey"
+    android:id="@+id/background"
     tools:context=".UI.Logins.CreateLoginActivity"
     android:orientation="vertical">
 
@@ -67,6 +68,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:id="@+id/roundrect_selector"
                     android:background="@color/colorPrimaryDark">
 
                     <LinearLayout
@@ -170,6 +172,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
+                    android:id="@+id/login_info"
                     android:background="@android:color/white"
                     android:orientation="vertical">
 
