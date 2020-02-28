@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,7 @@ import com.github.florent37.shapeofview.shapes.ArcView
 import com.google.firebase.Timestamp
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
@@ -54,6 +56,7 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var title: TextView
     private lateinit var url: EditText
     private lateinit var saveUpdateArc: ArcView
+    private lateinit var loginInfo: LinearLayout
 
     private var vaultToAdd: Vault? = null
     private var login: Login? = null
@@ -84,6 +87,7 @@ class CreateLoginActivity : AppCompatActivity() {
         deleteLogin = findViewById(R.id.delete_login_btn)
         title = findViewById(R.id.title)
         saveUpdateArc = findViewById(R.id.save_arc)
+        loginInfo = findViewById(R.id.login_info)
 
         copyUsername.setOnClickListener { copy(username.text.toString(), "Username") }
         copyPassword.setOnClickListener { copy(password.text.toString(), "Password") }
@@ -141,6 +145,14 @@ class CreateLoginActivity : AppCompatActivity() {
         url.setText(login?.url)
         vaultName.text = vaultToAdd?.name
         deleteLogin.visibility = if (login != null) View.VISIBLE else View.GONE
+
+        when (vaultToAdd?.color) {
+            VaultColor.Red -> { loginInfo.setBackgroundResource(R.drawable.vault_color_red) }
+            VaultColor.Green -> { loginInfo.setBackgroundResource(R.drawable.vault_color_green) }
+            VaultColor.Blue -> { loginInfo.setBackgroundResource(R.drawable.vault_color_blue) }
+            VaultColor.Yellow -> { loginInfo.setBackgroundResource(R.drawable.vault_color_yellow) }
+            VaultColor.White -> { loginInfo.setBackgroundResource(R.drawable.vault_color_white) }
+        }
     }
 
     private fun updateLogin() {
