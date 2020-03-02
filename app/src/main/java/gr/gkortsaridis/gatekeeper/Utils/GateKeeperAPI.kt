@@ -119,6 +119,10 @@ object GateKeeperAPI {
         @POST("/vaults/")
         fun createVault(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
+        //LOGINS
+        @POST("/logins/")
+        fun createLogin(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
+
     }
 
 }

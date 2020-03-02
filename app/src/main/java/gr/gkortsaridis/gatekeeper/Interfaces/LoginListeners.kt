@@ -10,7 +10,7 @@ interface LoginRetrieveListener {
 
 interface LoginCreateListener {
     fun onLoginCreated()
-    fun onLoginCreateError()
+    fun onLoginCreateError(errorCode: Int, errorMsg: String)
 }
 
 interface LoginDeleteListener {

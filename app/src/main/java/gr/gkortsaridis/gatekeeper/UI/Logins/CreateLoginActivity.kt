@@ -175,7 +175,7 @@ class CreateLoginActivity : AppCompatActivity() {
                 finish()
             }
 
-            override fun onLoginCreateError() {
+            override fun onLoginCreateError(errorCode: Int, errorMsg: String) {
                 val data = Intent()
                 setResult(LoginsRepository.createLoginError, data)
                 finish()
@@ -184,6 +184,9 @@ class CreateLoginActivity : AppCompatActivity() {
     }
 
     private fun createLogin() {
+        val viewDialog = ViewDialog(activity)
+        viewDialog.showDialog()
+
         val loginObj = Login(account_id = AuthRepository.getUserID(),
             vault_id = vaultToAdd!!.id,
             name = name.text.toString(),
@@ -197,15 +200,16 @@ class CreateLoginActivity : AppCompatActivity() {
 
         LoginsRepository.encryptAndStoreLogin(this, loginObj, object : LoginCreateListener{
                 override fun onLoginCreated() {
-                    val viewDialog = ViewDialog(activity)
-                    viewDialog.showDialog()
+                    viewDialog.hideDialog()
                     GateKeeperApplication.logins.add(loginObj)
                     val data = Intent()
                     setResult(LoginsRepository.createLoginSuccess, data)
                     finish()
                 }
 
-                override fun onLoginCreateError() {
+                override fun onLoginCreateError(errorCode: Int, errorMsg: String) {
+                    viewDialog.hideDialog()
+                    Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
                     val data = Intent()
                     setResult(LoginsRepository.createLoginError, data)
                     finish()

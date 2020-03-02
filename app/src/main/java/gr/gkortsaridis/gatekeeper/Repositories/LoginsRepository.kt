@@ -1,5 +1,6 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,7 +15,10 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
+import io.reactivex.schedulers.Schedulers
 
+@SuppressLint("CheckResult")
 object LoginsRepository {
 
     const val LOGIN_CLICK_ACTION_COPY = 1
@@ -32,26 +36,20 @@ object LoginsRepository {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
-        val encryptedLogin = SecurityRepository.encryptObjectWithUserCredentials(login)
-
-        val loginhash = hashMapOf(
-            "login" to encryptedLogin,
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("logins")
-            .add(loginhash)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
+        GateKeeperAPI.api.createLogin(SecurityRepository.createEncryptedDataRequestBody(login))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(Schedulers.newThread())
+            .subscribe (
+                {
                     viewDialog.hideDialog()
-                    listener.onLoginCreated()
-                }
-                else {
+                    if (it.errorCode == -1) { listener.onLoginCreated() }
+                    else { listener.onLoginCreateError(it.errorCode, it.errorMsg) }
+                },
+                {
                     viewDialog.hideDialog()
-                    listener.onLoginCreateError()
+                    listener.onLoginCreateError(it.hashCode(), it.localizedMessage ?: "")
                 }
-            }
+            )
     }
 
     fun encryptAndUpdateLogin(activity: Activity, login: Login, listener: LoginCreateListener) {
@@ -75,7 +73,7 @@ object LoginsRepository {
                 }
                 else {
                     viewDialog.hideDialog()
-                    listener.onLoginCreateError()
+                    listener.onLoginCreateError(1, "")
                 }
             }
     }
