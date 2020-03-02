@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
@@ -59,28 +58,18 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
         AuthRepository.signUp(this, email,password, this)
     }
 
-    override fun onSignUpComplete(success: Boolean, user: FirebaseSignInResult) {
-        if (success) {
-            AuthRepository.setApplicationUser(user.authResult!!.user!!)
-            VaultRepository.setupVaultsForNewUser(GateKeeperApplication.user!!, object: VaultSetupListener {
-                override fun onVaultSetupComplete() {
-                    finalizeSetup()
-                }
-                override fun onVaultSetupError() { showSetupError() }
-            })
-        }else{
-            when (user.exception) {
-                is com.google.firebase.auth.FirebaseAuthUserCollisionException -> {
-                    Toast.makeText(this, "User with this email already exists", Toast.LENGTH_SHORT).show()
-                }
-                is com.google.firebase.auth.FirebaseAuthWeakPasswordException -> {
-                    Toast.makeText(this, "Weak password! Should be at least 6 characters", Toast.LENGTH_SHORT).show()
-                }
-                else -> {
-                    Log.i(TAG, "EXCETION${user.exception}")
-                }
+    override fun onSignUpComplete(user: String) {
+        AuthRepository.setApplicationUser(user)
+        VaultRepository.setupVaultsForNewUser(user, object: VaultSetupListener {
+            override fun onVaultSetupComplete() {
+                finalizeSetup()
             }
-        }
+            override fun onVaultSetupError() { showSetupError() }
+        })
+    }
+
+    override fun onSignUpError(errorCode: Int, errorMsg: String) {
+        Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show()
     }
 
     fun finalizeSetup() { AuthRepository.proceedLoggedIn(this) }

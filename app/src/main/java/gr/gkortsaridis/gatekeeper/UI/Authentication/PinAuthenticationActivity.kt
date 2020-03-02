@@ -61,16 +61,15 @@ class PinAuthenticationActivity : AppCompatActivity() {
                     //Not in setup mode. Sign In
 
                     if (pin == DataRepository.pinLock) {
-                        AuthRepository.signIn(activity, savedCredentials!!.email, savedCredentials!!.password, true, object: SignInListener{
-                            override fun onSignInError(success: Boolean, user: FirebaseSignInResult) {
-                                if (success) {
-                                    AuthRepository.setApplicationUser(user.authResult!!.user!!)
-                                    AuthRepository.proceedLoggedIn(activity)
-                                }else {
-                                    Toast.makeText(activity, user.exception.toString(), Toast.LENGTH_SHORT).show()
-                                }
+                        AuthRepository.signIn(activity, savedCredentials!!.email, savedCredentials.password, true, object: SignInListener{
+                            override fun onSignInComplete(userId: String) {
+                                AuthRepository.setApplicationUser(userId)
+                                AuthRepository.proceedLoggedIn(activity)
                             }
-                            override fun onRegistrationNeeded(email: String) {  }
+
+                            override fun onSignInError(errorCode: Int, errorMsg: String) {
+                                Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
+                            }
                         })
                     } else {
                         Toast.makeText(activity, "Wrong PIN entered", Toast.LENGTH_SHORT).show()

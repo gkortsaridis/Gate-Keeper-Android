@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodySignUp
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
 import gr.gkortsaridis.gatekeeper.Entities.Network.RespAuthentication
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
@@ -11,6 +12,7 @@ import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
 import java.security.cert.CertificateException
@@ -94,8 +96,9 @@ object GateKeeperAPI {
 
     private val retrofit = Retrofit.Builder()
         .client(jet2Client)
-        .baseUrl("http://localhost:8080")
+        .baseUrl("http://10.202.73.36:8080")
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     val api = retrofit.create(GateKeeperInterface::class.java)
@@ -103,6 +106,9 @@ object GateKeeperAPI {
     interface GateKeeperInterface {
         @POST("/auth/signIn")
         fun signIn(@Body body: ReqBodyUsernameHash): Observable<RespAuthentication>
+
+        @POST("/auth/signUp")
+        fun signUp(@Body body: ReqBodySignUp): Observable<RespAuthentication>
     }
 
 }

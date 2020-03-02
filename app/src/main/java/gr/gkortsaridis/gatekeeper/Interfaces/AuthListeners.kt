@@ -11,5 +11,6 @@ interface SignInListener {
 }
 
 interface SignUpListener {
-    fun onSignUpComplete (success: Boolean, user: FirebaseSignInResult)
+    fun onSignUpComplete (user: String)
+    fun onSignUpError (errorCode: Int, errorMsg: String)
 }

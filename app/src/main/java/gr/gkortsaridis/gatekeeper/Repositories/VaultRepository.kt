@@ -14,9 +14,9 @@ object VaultRepository {
 
     val allVaults =  Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White)
 
-    fun setupVaultsForNewUser(user: FirebaseUser, listener: VaultSetupListener) {
+    fun setupVaultsForNewUser(userId: String, listener: VaultSetupListener) {
         val personalVault = Vault(id = "", name = "Personal", account_id = AuthRepository.getUserID(), color = VaultColor.White)
-        retrieveVaultsByAccountID(user.uid, object: VaultRetrieveListener {
+        retrieveVaultsByAccountID(userId, object: VaultRetrieveListener {
             override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
                 if (vaults.size > 0) {
                     listener.onVaultSetupComplete()
