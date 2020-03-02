@@ -109,7 +109,6 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-
         vaultName.setText(vault.name)
         vaultColor = vault.color ?: VaultColor.White
         updateColors()

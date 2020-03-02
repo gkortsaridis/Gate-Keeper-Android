@@ -4,9 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
-import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodySignUp
-import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
-import gr.gkortsaridis.gatekeeper.Entities.Network.RespAuthentication
+import gr.gkortsaridis.gatekeeper.Entities.Network.*
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
@@ -14,7 +12,9 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import java.security.cert.CertificateException
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HostnameVerifier
@@ -104,11 +104,21 @@ object GateKeeperAPI {
     val api = retrofit.create(GateKeeperInterface::class.java)
 
     interface GateKeeperInterface {
+
+        //AUTHENTICATION
         @POST("/auth/signIn")
         fun signIn(@Body body: ReqBodyUsernameHash): Observable<RespAuthentication>
 
         @POST("/auth/signUp")
         fun signUp(@Body body: ReqBodySignUp): Observable<RespAuthentication>
+
+        @GET("/alldata/{user_id}")
+        fun getAllData(@Path(value = "user_id", encoded = true) userId: String): Observable<RespAllData>
+
+        //VAULTS
+        @POST("/vaults/")
+        fun createVault(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
+
     }
 
 }

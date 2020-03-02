@@ -5,7 +5,9 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
 import gr.gkortsaridis.gatekeeper.Utils.CryptLib
+import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
 import java.nio.charset.Charset
 import java.security.KeyStore
 import javax.crypto.Cipher
@@ -63,7 +65,7 @@ object SecurityRepository {
             val encrypted = cipher.doFinal(decryptedData.toByteArray(Charset.forName(stringCharset)))
             val ctBase64 = Base64.encodeToString(encrypted, Base64.DEFAULT)
             val ivBase64 = Base64.encodeToString(iv, Base64.DEFAULT)
-            EncryptedData(ctBase64, ivBase64)
+            EncryptedData(encryptedData =  ctBase64,iv = ivBase64)
         }catch(e: java.lang.Exception) {
             null
         }
@@ -92,7 +94,7 @@ object SecurityRepository {
                 val key = CryptLib.SHA256(userPassword, 32) //32 bytes = 256 bit
                 val iv = CryptLib.generateRandomIV(16) //16 bytes = 128 bit
                 val encryption =  cryptLib.encrypt(decryptedData, key, iv)
-                EncryptedData(encryption, iv)
+                EncryptedData(encryptedData = encryption,iv = iv)
             } else {
                 null
             }
@@ -123,12 +125,43 @@ object SecurityRepository {
         return Gson().toJson(encData)
     }
 
+    fun encryptObjectWithUserCreds(obj: Any) : EncryptedData? {
+        val decrypted = Gson().toJson(obj)
+        return encryptWithUserCredentials(decrypted)
+    }
+
     fun decryptStringToObjectWithUserCredentials(str: String, objType: Class<out Any>): Any? {
         return try {
             val encData = Gson().fromJson(str, EncryptedData::class.java)
             val decryptedString = decryptWithUserCredentials(encData)
             Gson().fromJson(decryptedString, objType)
         } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun decryptEncryptedDataToObjectWithUserCredentials(obj: EncryptedData, objType: Class<out Any>): Any? {
+        return try {
+            val decryptedString = decryptWithUserCredentials(obj)
+            Gson().fromJson(decryptedString, objType)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun createEncryptedDataRequestBody(obj: Any): ReqBodyEncryptedData? {
+        val enc = SecurityRepository.encryptObjectWithUserCreds(obj)
+        val loadedCredentials = AuthRepository.loadCredentials()
+
+        return if (enc != null && loadedCredentials != null) {
+            val hash = pbkdf2_lib.createHash(loadedCredentials.password, loadedCredentials.email)
+            ReqBodyEncryptedData(
+                userId = AuthRepository.getUserID(),
+                encryptedData = enc.encryptedData,
+                iv = enc.iv,
+                username = loadedCredentials.email,
+                hash = hash)
+        }else {
             null
         }
     }

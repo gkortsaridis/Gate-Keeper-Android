@@ -1,7 +1,11 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
+import android.database.Observable
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
+import gr.gkortsaridis.gatekeeper.Entities.Network.RespEncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
@@ -9,6 +13,7 @@ import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 
 object VaultRepository {
 

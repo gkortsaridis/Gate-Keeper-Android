@@ -1,6 +1,8 @@
 package gr.gkortsaridis.gatekeeper
 
 import android.app.Application
+import android.os.Bundle
+import android.util.Log
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
@@ -10,9 +12,16 @@ import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.soloader.SoLoader
 import com.google.android.gms.ads.MobileAds
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseUser
 import gr.gkortsaridis.gatekeeper.Entities.*
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
+import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class GateKeeperApplication : Application() {
 
@@ -34,6 +43,26 @@ class GateKeeperApplication : Application() {
 
             client.start()
         }
+
+        /*val vault = Vault(account_id = AuthRepository.getUserID(), name = "Personal", color = VaultColor.Blue)
+        val disposable = GateKeeperAPI.api.createVault(SecurityRepository.createEncryptedDataRequestBody(vault))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    val a = it
+
+                    if (it.errorCode == -1) {
+                        Log.i("SUCCESS", a.toString())
+                    } else {
+                        Log.i("ERROR", a.toString())
+                    }
+                },
+                {
+                    val a = it
+                    Log.i("ERROR", a.toString())
+                }
+            )*/
     }
 
     companion object {
