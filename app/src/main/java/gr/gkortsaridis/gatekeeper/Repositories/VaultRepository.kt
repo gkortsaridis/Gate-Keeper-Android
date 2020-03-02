@@ -3,6 +3,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
@@ -11,37 +12,41 @@ import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
 
 object VaultRepository {
 
+    val allVaults =  Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White)
+
     fun setupVaultsForNewUser(user: FirebaseUser, listener: VaultSetupListener) {
+        val personalVault = Vault(id = "", name = "Personal", account_id = AuthRepository.getUserID(), color = VaultColor.White)
         retrieveVaultsByAccountID(user.uid, object: VaultRetrieveListener {
             override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
                 if (vaults.size > 0) {
                     listener.onVaultSetupComplete()
                 }else{
-                    createVault("Personal", object : VaultCreateListener {
-                        override fun onVaultCreated() { listener.onVaultSetupComplete() }
+                    createVault(personalVault, object : VaultCreateListener {
+                        override fun onVaultCreated(vault: Vault) { listener.onVaultSetupComplete() }
                         override fun onVaultCreateError() { listener.onVaultSetupError() }
                     })
                 }
             }
 
             override fun onVaultsRetrieveError(e: Exception) {
-                createVault("Personal", object : VaultCreateListener {
-                    override fun onVaultCreated() { listener.onVaultSetupComplete() }
+                createVault(personalVault, object : VaultCreateListener {
+                    override fun onVaultCreated(vault: Vault) { listener.onVaultSetupComplete() }
                     override fun onVaultCreateError() { listener.onVaultSetupError() }
                 })
             }
         })
     }
 
-    fun createVault(vaultName: String, listener: VaultCreateListener) {
+    fun createVault(vault: Vault, listener: VaultCreateListener) {
         val db = FirebaseFirestore.getInstance()
-
-        val vault = Vault("", AuthRepository.getUserID(), vaultName)
 
         db.collection("vaults")
             .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "vault" to SecurityRepository.encryptObjectWithUserCredentials(vault) ))
             .addOnCompleteListener {
-                if (it.isSuccessful) { listener.onVaultCreated() }
+                if (it.isSuccessful) {
+                    vault.id = it.result!!.id
+                    listener.onVaultCreated(vault)
+                }
                 else { listener.onVaultCreateError() }
             }
     }
@@ -69,7 +74,7 @@ object VaultRepository {
     }
 
     fun getVaultByID(id: String): Vault? {
-        if (id == "-1") { return Vault("-1", AuthRepository.getUserID(), "All Vaults") }
+        if (id == "-1") { return Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White) }
 
         for (vault in GateKeeperApplication.vaults) {
             if (vault.id == id) {
@@ -99,12 +104,13 @@ object VaultRepository {
         return vaultToReturn
     }
 
-    fun renameVault(newName: String, vault: Vault, listener: VaultEditListener) {
+    fun editVault(newName: String, color: VaultColor, vault: Vault, listener: VaultEditListener) {
 
         vault.name = newName
+        vault.color = color
 
         val vaulthash = hashMapOf(
-            "name" to SecurityRepository.encryptObjectWithUserCredentials(vault.name),
+            "vault" to SecurityRepository.encryptObjectWithUserCredentials(vault),
             "account_id" to AuthRepository.getUserID()
         )
 
@@ -113,7 +119,7 @@ object VaultRepository {
             .document(vault.id)
             .set(vaulthash)
             .addOnCompleteListener {
-                listener.onVaultRenamed()
+                listener.onVaultEdited(vault)
             }
 
     }

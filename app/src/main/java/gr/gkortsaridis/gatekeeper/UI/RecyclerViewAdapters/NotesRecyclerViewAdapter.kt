@@ -11,8 +11,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.NoteColor
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import java.text.SimpleDateFormat
 
@@ -63,7 +65,27 @@ class NotesRecyclerViewAdapter(
             val formatter = SimpleDateFormat(GateKeeperConstants.simpleDateFormat)
             val formattedDate = formatter.format(modifiedDate)
             noteModified?.text = formattedDate
-            view?.setBackgroundColor(Color.parseColor(note.color?.value  ?: NoteColor.White.value))
+
+            val vault = VaultRepository.getVaultByID(note.vaultId)
+            when (vault?.color) {
+                VaultColor.Red -> {
+                    view?.setBackgroundResource(R.drawable.vault_color_red)
+                }
+                VaultColor.Green -> {
+                    view?.setBackgroundResource(R.drawable.vault_color_green)
+                }
+                VaultColor.Blue -> {
+                    view?.setBackgroundResource(R.drawable.vault_color_blue)
+                }
+                VaultColor.Yellow -> {
+                    view?.setBackgroundResource(R.drawable.vault_color_yellow)
+                }
+                VaultColor.White -> {
+                    view?.setBackgroundResource(R.drawable.vault_color_white)
+                }
+            }
+
+            //view?.setBackgroundColor(Color.parseColor(note.color?.value  ?: NoteColor.White.value))
             view?.setOnClickListener { listener.onNoteClicked(note) }
             pinnedNote?.visibility = if (note.isPinned) View.VISIBLE else View.GONE
         }

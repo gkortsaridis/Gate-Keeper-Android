@@ -12,32 +12,50 @@ import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
+import gr.gkortsaridis.gatekeeper.R
 
 object CreditCardRepository {
 
     fun filterCardsByVault(vault: Vault) : ArrayList<CreditCard> {
-        if (vault.id == "-1") { return GateKeeperApplication.cards }
+        val vaultIds = arrayListOf<String>()
+        GateKeeperApplication.vaults.forEach { vaultIds.add(it.id) }
+        val parentedCards = ArrayList(GateKeeperApplication.cards.filter { vaultIds.contains(it.vaultId) })
 
-        val filtered = GateKeeperApplication.cards.filter { it.vaultId == vault.id }
+        if (vault.id == "-1") { return parentedCards }
+
+        val filtered = parentedCards.filter { it.vaultId == vault.id }
         return ArrayList(filtered)
     }
 
     fun getCreditCardType(cardNumber: String): CardType {
-        if (cardNumber.isNotEmpty()) {
-            if (cardNumber.length > 1) {
-                if (cardNumber.substring(0,2) == "37") { return CardType.Amex }
-                else if (cardNumber.substring(0,2) == "38") { return CardType.DinersClub }
-            }
 
-            return when {
-                cardNumber[0] == '4' -> CardType.Visa
-                cardNumber[0] == '5' -> CardType.Mastercard
-                cardNumber[0] == '6' -> CardType.DiscoverCard
-                else -> CardType.Unknown
-            }
+        val VISA_PREFIX = "4"
+        val MASTERCARD_PREFIX = "51,52,53,54,55,"
+        val DISCOVER_PREFIX = "6011"
+        val AMEX_PREFIX = "34,37,"
 
-        }else { return CardType.Unknown }
+        return if (cardNumber.isNotEmpty() && cardNumber.substring(0, 1) == VISA_PREFIX) {
+            CardType.Visa
+        } else if (cardNumber.length >= 2 && MASTERCARD_PREFIX.contains(cardNumber.substring(0, 2) + ",")) {
+            CardType.Mastercard
+        } else if (cardNumber.length >= 2 && AMEX_PREFIX.contains(cardNumber.substring(0, 2) + ",")) {
+            CardType.Amex
+        } else if (cardNumber.length >= 4 && cardNumber.substring(0, 4) == DISCOVER_PREFIX) {
+            CardType.DiscoverCard
+        } else {
+            CardType.Unknown
+        }
+    }
 
+    fun getCreditCardTypeImage(card: CreditCard): Int? {
+        return when (card.type) {
+            CardType.Unknown -> null
+            CardType.DiscoverCard -> R.drawable.discover
+            CardType.Amex -> R.drawable.amex
+            CardType.Mastercard -> R.drawable.mastercard
+            CardType.Visa -> R.drawable.visa
+            CardType.DinersClub -> R.drawable.discover
+        }
     }
 
     fun deleteCreditCard(card: CreditCard, listener: CreditCardDeleteListener) {

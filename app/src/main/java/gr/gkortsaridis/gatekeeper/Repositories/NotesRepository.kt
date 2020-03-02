@@ -13,8 +13,13 @@ object NotesRepository {
 
     fun filterNotesByVault(vault: Vault): ArrayList<Note> {
         val notes = GateKeeperApplication.notes
-        if (vault.id == "-1") { return GateKeeperApplication.notes }
-        val filtered = GateKeeperApplication.notes.filter { it.vaultId == vault.id }
+
+        val vaultIds = arrayListOf<String>()
+        GateKeeperApplication.vaults.forEach { vaultIds.add(it.id) }
+        val parentedNotes = ArrayList(notes.filter { vaultIds.contains(it.vaultId) })
+
+        if (vault.id == "-1") { return parentedNotes }
+        val filtered = parentedNotes.filter { it.vaultId == vault.id }
         return ArrayList(filtered)
     }
 
@@ -29,6 +34,7 @@ object NotesRepository {
         db.collection("notes")
             .add(notehash)
             .addOnCompleteListener {
+                note.id = it.result?.id ?: ""
                 listener?.onNoteCreated(note)
             }
     }

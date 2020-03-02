@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Device
@@ -39,12 +40,14 @@ class DevicesRecyclerViewAdapter(
         private var deviceIcon: ImageView? = null
         private var deviceName: TextView? = null
         private var entryDate: TextView? = null
+        private var container: LinearLayout? = null
         private var view: View = v
 
         init {
             deviceIcon = view.findViewById(R.id.deviceIcon)
             deviceName = view.findViewById(R.id.deviceName)
             entryDate = view.findViewById(R.id.entryDate)
+            container = view.findViewById(R.id.device_container)
         }
 
         fun bindDevice(device: Device, listener: DeviceClickListener?){
@@ -54,7 +57,7 @@ class DevicesRecyclerViewAdapter(
                 this.deviceName?.text = device.nickname
             }
             this.entryDate?.text = device.formattedDate()
-            view.setOnClickListener { listener?.onDeviceClicked(device) }
+            container?.setOnClickListener { listener?.onDeviceClicked(device) }
 
             if (device.isTablet) {
                 this.deviceIcon?.setImageResource(R.drawable.tablet)

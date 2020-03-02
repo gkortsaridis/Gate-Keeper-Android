@@ -6,18 +6,22 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import com.github.florent37.shapeofview.shapes.ArcView
 import com.google.firebase.Timestamp
-import gr.gkortsaridis.gatekeeper.Entities.*
+import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
@@ -26,6 +30,10 @@ import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_APP_REQUEST_CODE
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 
 
 class CreateLoginActivity : AppCompatActivity() {
@@ -40,11 +48,15 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var notes: EditText
     private lateinit var applicationView: ImageButton
     private lateinit var vaultView: LinearLayout
-    private lateinit var saveUpdateButton: Button
+    private lateinit var saveUpdateButton: RelativeLayout
     private lateinit var vaultName: TextView
     private lateinit var copyUsername: ImageButton
     private lateinit var copyPassword: ImageButton
+    private lateinit var deleteLogin: ImageButton
+    private lateinit var title: TextView
     private lateinit var url: EditText
+    private lateinit var saveUpdateArc: ArcView
+    private lateinit var loginInfo: LinearLayout
 
     private var vaultToAdd: Vault? = null
     private var login: Login? = null
@@ -72,9 +84,14 @@ class CreateLoginActivity : AppCompatActivity() {
         vaultName = findViewById(R.id.vault_name)
         copyPassword = findViewById(R.id.copy_password)
         copyUsername = findViewById(R.id.copy_username)
+        deleteLogin = findViewById(R.id.delete_login_btn)
+        title = findViewById(R.id.title)
+        saveUpdateArc = findViewById(R.id.save_arc)
+        loginInfo = findViewById(R.id.login_info)
 
         copyUsername.setOnClickListener { copy(username.text.toString(), "Username") }
         copyPassword.setOnClickListener { copy(password.text.toString(), "Password") }
+        deleteLogin.setOnClickListener { showDeleteLoginDialog() }
 
         vaultView.setOnClickListener {
             val intent = Intent(this, SelectVaultActivity::class.java)
@@ -87,14 +104,23 @@ class CreateLoginActivity : AppCompatActivity() {
 
         val loginId = intent.getStringExtra("login_id")
         if (loginId == null) {
-            supportActionBar?.title = "Create new login"
+            title.text = "Create new Password"
             vaultToAdd = VaultRepository.getLastActiveRealVault()
             saveUpdateButton.setOnClickListener { createLogin() }
         } else {
             login = LoginsRepository.getLoginById(loginId)
-            supportActionBar?.title = "Edit Login"
+            title.text = "Edit Password"
             vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
             saveUpdateButton.setOnClickListener { updateLogin() }
+        }
+
+        KeyboardVisibilityEvent.setEventListener(activity) { isOpen ->
+            Tween
+                .to(saveUpdateArc, Alpha.VIEW, 0.3F)
+                .target( if (isOpen) 0.0f else 1.0f)
+                .start(ViewTweenManager.get(saveUpdateArc))
+
+            saveUpdateButton.visibility = if (isOpen) View.GONE else View.VISIBLE
         }
 
         updateUI()
@@ -118,6 +144,15 @@ class CreateLoginActivity : AppCompatActivity() {
         notes.setText(login?.notes)
         url.setText(login?.url)
         vaultName.text = vaultToAdd?.name
+        deleteLogin.visibility = if (login != null) View.VISIBLE else View.GONE
+
+        when (vaultToAdd?.color) {
+            VaultColor.Red -> { loginInfo.setBackgroundResource(R.drawable.vault_color_red) }
+            VaultColor.Green -> { loginInfo.setBackgroundResource(R.drawable.vault_color_green) }
+            VaultColor.Blue -> { loginInfo.setBackgroundResource(R.drawable.vault_color_blue) }
+            VaultColor.Yellow -> { loginInfo.setBackgroundResource(R.drawable.vault_color_yellow) }
+            VaultColor.White -> { loginInfo.setBackgroundResource(R.drawable.vault_color_white) }
+        }
     }
 
     private fun updateLogin() {
@@ -127,6 +162,7 @@ class CreateLoginActivity : AppCompatActivity() {
         login?.notes = notes.text.toString()
         login?.url = url.text.toString()
         login?.vault_id = vaultToAdd!!.id
+        login?.date_modified = Timestamp.now()
 
         LoginsRepository.encryptAndUpdateLogin(this, login!!, object : LoginCreateListener{
             override fun onLoginCreated() {
@@ -193,16 +229,17 @@ class CreateLoginActivity : AppCompatActivity() {
         })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (login != null) {
-            menuInflater.inflate(R.menu.delete_item_menu, menu)
+    private fun showDeleteLoginDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Delete Password")
+        builder.setMessage("Are you sure you want to delete this Password item?")
+        builder.setPositiveButton("YES"){dialog, _ ->
+            dialog.cancel()
+            deleteLogin()
         }
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_delete) { deleteLogin() }
-        return true
+        builder.setNegativeButton("No"){dialog, _ -> dialog.cancel() }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

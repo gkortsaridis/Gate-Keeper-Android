@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
+import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RelativeLayout
@@ -16,32 +17,30 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
-import gr.gkortsaridis.gatekeeper.Interfaces.VaultClickListener
-import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
-import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
-import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
+import gr.gkortsaridis.gatekeeper.Interfaces.*
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
-import gr.gkortsaridis.gatekeeper.Repositories.DeviceRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.VaultSelectRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 
 
-class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditListener {
+class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditListener, VaultInfoDismissListener {
 
     private lateinit var vaultsRecyclerView: RecyclerView
     private lateinit var toolbar: Toolbar
     private lateinit var addVaultFab: FloatingActionButton
     private var vaultId: String? = null
     private val viewDialog = ViewDialog(this)
+    private var action: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_vault)
-
+        action = intent.getStringExtra("action")
         vaultId = intent.getStringExtra("vault_id")
 
         addVaultFab = findViewById(R.id.add_vault)
@@ -56,6 +55,8 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
         vaultsRecyclerView = findViewById(R.id.vault_recycler_view)
         vaultsRecyclerView.layoutManager = LinearLayoutManager(this)
         updateVaultsRecyclerView()
+
+        addVaultFab.visibility = if(action == GateKeeperConstants.ACTION_CHANGE_VAULT) View.GONE else View.VISIBLE
 
         addVaultFab.setOnClickListener { createVault() }
     }
@@ -74,52 +75,9 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
 
     }
 
-    override fun onVaultEditClicked(vault: Vault) {
-        val builder = AlertDialog.Builder(this)
-        val parent = RelativeLayout(this)
-        parent.layoutParams = ViewGroup.LayoutParams(
-            RelativeLayout.LayoutParams.MATCH_PARENT,
-            RelativeLayout.LayoutParams.WRAP_CONTENT)
-        parent.setPadding(50,50,50,50)
-        val input = EditText(this)
-        input.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT)
-        input.inputType = InputType.TYPE_CLASS_TEXT
-        input.setText(vault.name)
-        parent.addView(input)
-
-        builder.setTitle("Rename Vault")
-        builder.setMessage("Set a new name for this vault")
-        builder.setView(parent)
-
-        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
-        builder.setPositiveButton("OK") { _, _ ->
-            viewDialog.showDialog()
-            VaultRepository.renameVault(input.text.toString(), vault, this)
-        }
-
-        builder.show()
-    }
-
-    override fun onVaultDeleteClicked(vault: Vault) {
-        if (GateKeeperApplication.vaults.size > 1) {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Delete Vault")
-            builder.setMessage("Are you sure you wish to delete this vault and its content?")
-
-            builder.setNegativeButton("No") { dialog, _ -> dialog.cancel() }
-            builder.setPositiveButton("Yes") { _, _ ->
-                viewDialog.showDialog()
-                VaultRepository.deleteVault(vault, this)
-            }
-
-            builder.show()
-        }else {
-            Toast.makeText(this,"You cannot delete your only Vault", Toast.LENGTH_SHORT).show()
-        }
-
-
+    override fun onVaultEdited(vault: Vault) {
+        viewDialog.hideDialog()
+        updateVaultsRecyclerView()
     }
 
     override fun onVaultDeleted() {
@@ -127,57 +85,31 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
         updateVaultsRecyclerView()
     }
 
-    override fun onVaultRenamed() {
-        viewDialog.hideDialog()
-        updateVaultsRecyclerView()
+    override fun onVaultOptionsClicker(vault: Vault) {
+        val vaultInfoFragment = VaultInfoFragment(vault, this)
+        vaultInfoFragment.show(supportFragmentManager,null)
     }
 
     private fun updateVaultsRecyclerView() {
-        val action = intent.getStringExtra("action")
         val sortedVaults = ArrayList(GateKeeperApplication.vaults.sortedWith(compareBy {it.name}))
-        if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT && sortedVaults.size > 1) { sortedVaults.add(0, Vault("-1", AuthRepository.getUserID(), "All Vaults") )}
-        vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(this, sortedVaults, vaultId, this)
+        if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT && sortedVaults.size > 1) {
+            sortedVaults.add(0, VaultRepository.allVaults )
+        }
+        vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(
+            this,
+            sortedVaults,
+            vaultId,
+            action == GateKeeperConstants.ACTION_CHANGE_VAULT,
+            this)
     }
 
     private fun createVault() {
-        val viewDialog = ViewDialog(this)
-        val builder = AlertDialog.Builder(this)
-        val parent = RelativeLayout(this)
-        parent.layoutParams = ViewGroup.LayoutParams(
-            RelativeLayout.LayoutParams.MATCH_PARENT,
-            RelativeLayout.LayoutParams.WRAP_CONTENT)
-        parent.setPadding(50,50,50,50)
-        val input = EditText(this)
-        input.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT)
-        input.inputType = InputType.TYPE_CLASS_TEXT
-        parent.addView(input)
+        val newVault = Vault(id = "-1", account_id = AuthRepository.getUserID(), name = "", color = VaultColor.White)
+        val vaultInfoFragment = VaultInfoFragment(newVault, this)
+        vaultInfoFragment.show(supportFragmentManager,null)
+    }
 
-        builder.setTitle("Create Vault")
-        builder.setMessage("Set a name for your new vault")
-        builder.setView(parent)
-
-        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
-        builder.setPositiveButton("OK") { _, _ ->
-            viewDialog.showDialog()
-            VaultRepository.createVault(input.text.toString(),object : VaultCreateListener{
-                override fun onVaultCreated() {
-                    VaultRepository.retrieveVaultsByAccountID(AuthRepository.getUserID(),object: VaultRetrieveListener{
-                        override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
-                            GateKeeperApplication.vaults = vaults
-                            viewDialog.hideDialog()
-                            updateVaultsRecyclerView()
-                        }
-
-                        override fun onVaultsRetrieveError(e: Exception) { viewDialog.hideDialog() }
-                    })
-                }
-
-                override fun onVaultCreateError() {}
-            })
-        }
-
-        builder.show()
+    override fun onVaultInfoFragmentDismissed() {
+        updateVaultsRecyclerView()
     }
 }

@@ -6,23 +6,22 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.firebase.auth.FirebaseUser
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.github.florent37.shapeofview.shapes.RoundRectView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -32,32 +31,58 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.Timeline
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import io.noties.tumbleweed.android.types.Translation
+import io.noties.tumbleweed.equations.Cubic
 import kotlinx.android.synthetic.main.fragment_my_account.*
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 
-class MyAccountFragment(private val activity: Activity) : Fragment() {
+class MyAccountFragment : Fragment() {
 
     private val user = GateKeeperApplication.user
     private lateinit var sendConfirmation : TextView
     private lateinit var emailConfirmed : LinearLayout
     private lateinit var profileImage : ImageView
+    private lateinit var accountImageContainer: LinearLayout
+    private lateinit var accountInfoContainer: RoundRectView
+    private lateinit var updatePictureBtn: Button
+    private lateinit var imageLoading: ProgressBar
+    private lateinit var adsContainer: RoundRectView
+    private lateinit var goToStatus: RelativeLayout
+    private lateinit var adView: AdView
 
-    private val PICK_PHOTO_FOR_AVATAR = 1
-    private val viewDialog = ViewDialog(activity)
+    private lateinit var viewDialog: ViewDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_my_account, container, false)
 
+        viewDialog = ViewDialog(activity!!)
+
         emailConfirmed = view.findViewById(R.id.verified_email_link)
         sendConfirmation = view.findViewById(R.id.verify_email_here)
         profileImage = view.findViewById(R.id.profileImage)
+        accountImageContainer = view.findViewById(R.id.account_image_container)
+        accountInfoContainer = view.findViewById(R.id.account_info_container)
+        updatePictureBtn = view.findViewById(R.id.update_profile_image)
+        imageLoading = view.findViewById(R.id.image_loading)
+        adsContainer = view.findViewById(R.id.adview_container)
+        adView = view.findViewById(R.id.adview)
+        goToStatus = view.findViewById(R.id.go_to_status)
 
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
+
+        goToStatus.setOnClickListener { goToStatus() }
         sendConfirmation.setOnClickListener { sendEmailConfirmation() }
-        profileImage.setOnClickListener { pickImage() }
+        updatePictureBtn.setOnClickListener { pickImage() }
         emailConfirmed.visibility = if (user?.isEmailVerified!!) View.GONE else View.VISIBLE
         displayUserImg()
+        animateContainersIn()
         return view
     }
 
@@ -70,6 +95,10 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
         user_uid.text = "Your personal ID is: ${user?.uid}"
 
         update_account_btn.setOnClickListener { updateProfile(name = full_name_et.text.toString()) }
+    }
+
+    private fun goToStatus() {
+        context?.startActivity(Intent(activity, AccountStatusActivity::class.java))
     }
 
     private fun sendEmailConfirmation(){
@@ -92,39 +121,38 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
     }
 
     private fun pickImage() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "image/*"
-        startActivityForResult(intent, PICK_PHOTO_FOR_AVATAR)
+        ImagePicker.with(this)
+            .compress(1024)
+            .maxResultSize(1080, 1080)
+            .start { resultCode, data ->
+                if (resultCode == Activity.RESULT_OK) {
+                    val fileUri = data?.data
+                    val inputStream = fileUri?.let { activity!!.contentResolver.openInputStream(it) }
+                    val imgData = inputStream?.let { createByteArrayToUpload(it) }
+                    if (imgData != null) { uploadImageToFirebase(imgData) }
+                }
+            }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == PICK_PHOTO_FOR_AVATAR && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                //Retrieve selected Image
-                val inputStream = data.data?.let { activity.contentResolver.openInputStream(it) }
-                val imgData = inputStream?.let { createByteArrayToUpload(it) }
-                if (imgData != null) {
-                    getUserImageReference().putBytes(imgData).addOnCompleteListener {
-                        run {
-                            if (it.isSuccessful) {
-                                displayUserImg()
-                            } else {
-                                Toast.makeText(activity, "ERROR", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
+    private fun uploadImageToFirebase(bytes: ByteArray) {
+        imageLoading.visibility = View.VISIBLE
+        getUserImageReference().putBytes(bytes).addOnCompleteListener {
+            run {
+                imageLoading.visibility = View.GONE
+                if (it.isSuccessful) {
+                    displayUserImg()
+                } else {
+                    Toast.makeText(activity, "ERROR", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
     }
 
     private fun getUserImageReference(): StorageReference {
         val storageRef = FirebaseStorage.getInstance().reference
         val imagesRef = storageRef.child("userImages")
-        return imagesRef.child(AuthRepository.getUserID()+".jpg")
+        val a = imagesRef.child(AuthRepository.getUserID()+".jpg")
+        return a
     }
 
     private fun createByteArrayToUpload(inputStream: InputStream): ByteArray {
@@ -135,25 +163,55 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
     }
 
     private fun displayUserImg() {
+        imageLoading.visibility = View.VISIBLE
         GlideApp
-            .with(activity)
+            .with(activity!!)
             .load(getUserImageReference())
             .placeholder(R.drawable.camera)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
             .listener(object: RequestListener<Drawable>{
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    profileImage.setPadding(50.dp,50.dp,50.dp,50.dp)
-                    profileImage.setImageResource(R.drawable.camera)
+                    activity!!.runOnUiThread {
+                        imageLoading.visibility = View.GONE
+                        profileImage.setPadding(150.dp,150.dp,150.dp,150.dp)
+                    }
                     return false
                 }
 
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    profileImage.setPadding(0,0,0,0)
+                    activity!!.runOnUiThread {
+                        imageLoading.visibility = View.GONE
+                        profileImage.setPadding(0,0,0,0)
+                        profileImage.setImageDrawable(resource)
+                    }
                     return false
                 }
-            })
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(true)
-            .into(profileImage)
+            }).submit()
+
+
+    }
+
+    private fun animateContainersIn() {
+        Timeline.createParallel()
+            .push(
+                Timeline.createParallel()
+                    .push(Tween.to(accountImageContainer, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(accountImageContainer, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .push(
+                Timeline.createParallel()
+                    .pushPause(0.3f)
+                    .push(Tween.to(accountInfoContainer, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(accountInfoContainer, Translation.XY).target(370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .push(
+                Timeline.createParallel()
+                    .pushPause(0.5f)
+                    .push(Tween.to(adsContainer, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(adsContainer, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .start(ViewTweenManager.get(accountImageContainer))
 
     }
 }

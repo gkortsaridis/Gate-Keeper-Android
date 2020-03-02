@@ -5,7 +5,7 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 
 object DataRepository {
 
-    private const val PREFS_FILENAME = "gatekeeper.prefs"
+    const val PREFS_FILENAME = "gatekeeper.prefs"
     private const val CREDENTIALS_EMAIL = "user_credentials_email"
     private const val CREDENTIALS_PASSWORD = "user_credentials_password"
     private const val SAVED_LOGINS = "saved_logins"
@@ -52,7 +52,7 @@ object DataRepository {
         set(value) = prefs.edit().putString(PIN_LOCK, value).apply()
 
     var loginClickAction : Int
-        get() = prefs.getInt(LOGIN_CLICK_ACTION, LoginsRepository.LOGIN_CLICK_ACTION_COPY)
+        get() = prefs.getInt(LOGIN_CLICK_ACTION, LoginsRepository.LOGIN_CLICK_ACTION_OPEN)
         set(value) = prefs.edit().putInt(LOGIN_CLICK_ACTION, value).apply()
 
     var loginSortType : Int

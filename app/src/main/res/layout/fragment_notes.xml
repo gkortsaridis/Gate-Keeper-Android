@@ -6,71 +6,74 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".UI.Notes.NotesFragment">
 
-    <View
+    <com.github.florent37.shapeofview.shapes.RoundRectView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/colorPrimaryDark"/>
+        android:layout_height="86dp"
+        android:elevation="4dp"
+        android:id="@+id/height"
+        android:layout_marginTop="-4dp"
+        android:layout_marginRight="-4dp"
+        android:layout_marginLeft="-4dp"
+        android:layout_marginBottom="4dp"
+        app:shape_roundRect_bottomLeftRadius="40dp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="90dp"
-        android:id="@+id/notes_recycler_view"/>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:cardElevation="5dp"
-        app:cardCornerRadius="3dp">
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:id="@+id/vault_view"
-            android:foreground="?attr/selectableItemBackground"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:background="@color/colorPrimary">
-
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Vault"
-                    android:textColor="@android:color/white"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
+                    android:layout_marginLeft="32dp"
+                    android:textColor="#FDCED0"
+                    android:layout_alignTop="@+id/vault_view"/>
 
-            <RelativeLayout
-                android:layout_height="50dp"
-                android:layout_width="match_parent">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/vault"
-                    android:alpha="0.3"
-                    android:scaleType="centerInside"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Personal"
-                    android:id="@+id/vault_name"
-                    android:textColor="@color/mate_black"
-                    android:layout_centerInParent="true"/>
+                    android:id="@+id/vault_view"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:paddingTop="16dp"
+                    android:paddingLeft="32dp"
+                    android:paddingBottom="16dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_height="30dp"
+                        android:src="@drawable/vault_white"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Personal"
+                        android:id="@+id/vault_name"
+                        android:textSize="19sp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@android:color/white"
+                        android:layout_marginLeft="8dp"/>
+                </LinearLayout>
+            </LinearLayout>
 
-            </RelativeLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
 
-
-    </androidx.cardview.widget.CardView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        android:clipToPadding="false"
+        android:paddingBottom="90dp"
+        android:paddingTop="30dp"
+        android:id="@+id/notes_recycler_view"/>
 
     <LinearLayout
         android:layout_width="200dp"
@@ -115,11 +118,31 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:alpha="0.0"
         android:background="@color/colorPrimary"
         android:layout_alignParentBottom="true"
         android:src="@drawable/plus"
         android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="-56dp"
         android:id="@+id/add_note"/>
+
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:id="@+id/adview_container"
+        android:layout_marginBottom="-90dp"
+        android:alpha="0.0"
+        android:layout_alignParentBottom="true"
+        app:shape_roundRect_topLeftRadius="80dp">
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id"/>
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
 
 </RelativeLayout>

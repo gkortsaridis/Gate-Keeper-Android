@@ -5,11 +5,12 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultClickListener
 import gr.gkortsaridis.gatekeeper.R
 
@@ -17,6 +18,7 @@ class VaultSelectRecyclerViewAdapter(
     private val context: Context,
     private val vaults: ArrayList<Vault>,
     private val active_vault: String?,
+    private val hideExtras: Boolean,
     private val listener: VaultClickListener): RecyclerView.Adapter<VaultSelectRecyclerViewAdapter.VaultViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VaultViewHolder {
@@ -30,36 +32,48 @@ class VaultSelectRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: VaultViewHolder, position: Int) {
         val vaultItem = vaults[position]
-        holder.bindVault(vaultItem, active_vault, listener)
+        holder.bindVault(context, vaultItem, active_vault, hideExtras, listener)
     }
 
     class VaultViewHolder(v: View): RecyclerView.ViewHolder(v) {
 
         private var vaultName: TextView? = null
-        private var editView: RelativeLayout? = null
-        private var deleteView: RelativeLayout? = null
+        private var dots: ImageButton? = null
         private var view: LinearLayout? = null
+        private var vaultInitialContainer: View? = null
 
         init {
             view = v.findViewById(R.id.vault_main_container)
-            editView = v.findViewById(R.id.vault_edit_container)
-            deleteView = v.findViewById(R.id.vault_delete_container)
+            dots = v.findViewById(R.id.dots)
             vaultName = v.findViewById(R.id.vault_name)
+            vaultInitialContainer = v.findViewById(R.id.background_color)
         }
 
-        fun bindVault(vault: Vault, activeVault: String?, listener: VaultClickListener){
-            if (vault.id == "-1") {
-                editView?.visibility = View.GONE
-                deleteView?.visibility = View.GONE
+        fun bindVault(context: Context, vault: Vault, activeVault: String?, hideExtras: Boolean, listener: VaultClickListener){
+
+            when (vault.color) {
+                VaultColor.Red -> {
+                    vaultInitialContainer?.setBackgroundResource(R.drawable.vault_color_red)
+                }
+                VaultColor.Green -> {
+                    vaultInitialContainer?.setBackgroundResource(R.drawable.vault_color_green)
+
+                }
+                VaultColor.Blue -> {
+                    vaultInitialContainer?.setBackgroundResource(R.drawable.vault_color_blue)
+                }
+                VaultColor.Yellow -> {
+                    vaultInitialContainer?.setBackgroundResource(R.drawable.vault_color_yellow)
+                }
             }
 
+
             view?.setOnClickListener{ listener.onVaultClicked(vault) }
-            editView?.setOnClickListener { listener.onVaultEditClicked(vault) }
-            deleteView?.setOnClickListener { listener.onVaultDeleteClicked(vault) }
             this.vaultName?.text = vault.name
-            if (vault.id == activeVault) {
-                this.vaultName?.typeface = Typeface.DEFAULT_BOLD
-            }
+            if (vault.id == activeVault) { this.vaultName?.typeface = Typeface.DEFAULT_BOLD }
+
+            dots?.visibility = if (hideExtras || vault.id == "-1") View.GONE else View.VISIBLE
+            dots?.setOnClickListener { listener.onVaultOptionsClicker(vault) }
         }
 
     }
