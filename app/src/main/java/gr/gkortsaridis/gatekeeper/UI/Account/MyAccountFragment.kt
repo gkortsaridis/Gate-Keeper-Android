@@ -44,7 +44,6 @@ import java.io.InputStream
 
 class MyAccountFragment : Fragment() {
 
-    private val user = GateKeeperApplication.user
     private lateinit var sendConfirmation : TextView
     private lateinit var emailConfirmed : LinearLayout
     private lateinit var profileImage : ImageView
@@ -80,7 +79,7 @@ class MyAccountFragment : Fragment() {
         goToStatus.setOnClickListener { goToStatus() }
         sendConfirmation.setOnClickListener { sendEmailConfirmation() }
         updatePictureBtn.setOnClickListener { pickImage() }
-        emailConfirmed.visibility = if (user?.isEmailVerified!!) View.GONE else View.VISIBLE
+        emailConfirmed.visibility = View.GONE
         displayUserImg()
         animateContainersIn()
         return view
@@ -89,10 +88,10 @@ class MyAccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        full_name_et.setText(user?.displayName ?: "")
-        email_et.setText(user?.email ?: "")
-        verified_email_link.visibility = if (user?.isEmailVerified == true) { View.GONE } else { View.VISIBLE }
-        user_uid.text = "Your personal ID is: ${user?.uid}"
+        //full_name_et.setText(user?.displayName ?: "")
+        //email_et.setText(user?.email ?: "")
+        verified_email_link.visibility = View.GONE
+        //user_uid.text = "Your personal ID is: ${user?.uid}"
 
         update_account_btn.setOnClickListener { updateProfile(name = full_name_et.text.toString()) }
     }
@@ -102,22 +101,22 @@ class MyAccountFragment : Fragment() {
     }
 
     private fun sendEmailConfirmation(){
-        user?.sendEmailVerification()
+        //user?.sendEmailVerification()
         Toast.makeText(activity, "Verification email sent", Toast.LENGTH_SHORT).show()
     }
 
     private fun updateProfile(name: String?) {
-        viewDialog.showDialog()
+        //viewDialog.showDialog()
+        Toast.makeText(activity, "Not supported", Toast.LENGTH_SHORT).show()
 
         //Display Name & Photo URL
-        val profileUpdates = UserProfileChangeRequest.Builder()
-        if (name != null) { profileUpdates.setDisplayName(full_name_et.text.toString()) }
-        val profile = profileUpdates.build()
+        //val profileUpdates = UserProfileChangeRequest.Builder()
+        //if (name != null) { profileUpdates.setDisplayName(full_name_et.text.toString()) }
+        //val profile = profileUpdates.build()
 
-        user?.updateProfile(profile)?.addOnCompleteListener {
+        /*user?.updateProfile(profile)?.addOnCompleteListener {
             viewDialog.hideDialog()
-            Toast.makeText(activity, "Profile Update Completed successfully", Toast.LENGTH_SHORT).show()
-        }
+        }*/
     }
 
     private fun pickImage() {

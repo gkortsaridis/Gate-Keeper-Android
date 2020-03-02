@@ -62,39 +62,38 @@ class LoginActivity : AppCompatActivity(), SignInListener {
         AuthRepository.googleSignIn(this)
     }
 
-    override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
-        if (success) {
-            val biometricManager = BiometricManager.from(this)
+    override fun onSignInComplete(userId: String) {
+        val biometricManager = BiometricManager.from(this)
 
-            if (AuthRepository.getPreferredAuthType() == AuthRepository.SIGN_IN_NOT_SET
-                && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
-                AlertDialog.Builder(this)
-                    .setTitle("Biometric Sign In")
-                    .setMessage("Would you like to use our biometric authentication feature?\nYour credentials are going to be safely stored on the device.")
-                    .setPositiveButton("Yes") { _, _ ->
-                        DataRepository.preferredAuthType = AuthRepository.BIO_SIN_IN
-                        saveCredentials.isChecked = true
-                        proceedLogin(user)
-                    }
-                    .setNegativeButton("No") { _, _ ->
-                        DataRepository.preferredAuthType = AuthRepository.PASSWORD_SIGN_IN
-                        proceedLogin(user)
-                    }
-                    .show()
-            } else {
-                proceedLogin(user)
-            }
-
+        if (AuthRepository.getPreferredAuthType() == AuthRepository.SIGN_IN_NOT_SET
+            && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
+            AlertDialog.Builder(this)
+                .setTitle("Biometric Sign In")
+                .setMessage("Would you like to use our biometric authentication feature?\nYour credentials are going to be safely stored on the device.")
+                .setPositiveButton("Yes") { _, _ ->
+                    DataRepository.preferredAuthType = AuthRepository.BIO_SIN_IN
+                    saveCredentials.isChecked = true
+                    proceedLogin(user = userId)
+                }
+                .setNegativeButton("No") { _, _ ->
+                    DataRepository.preferredAuthType = AuthRepository.PASSWORD_SIGN_IN
+                    proceedLogin(user = userId)
+                }
+                .show()
         } else {
-            Toast.makeText(this, "Wrong Credentials", Toast.LENGTH_SHORT).show()
+            proceedLogin(user = userId)
         }
     }
 
-    private fun proceedLogin(user: FirebaseSignInResult) {
+    override fun onSignInError(errorCode: Int, errorMsg: String) {
+        Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun proceedLogin(user: String) {
         //Save credentials locally for decryption
         AuthRepository.saveCredentials(email = email.text.toString(), password = password.text.toString())
 
-        AuthRepository.setApplicationUser(user.authResult!!.user!!)
+        AuthRepository.setApplicationUser(user)
         AuthRepository.proceedLoggedIn(this)
     }
 

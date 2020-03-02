@@ -215,8 +215,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(profileImage)
 
-        val userName = GateKeeperApplication.user?.displayName ?: GateKeeperApplication.user?.email ?: ""
-        navName.text = userName
+        //TODO: Add displayName to custom DB and retrieve it
+        //val userName = GateKeeperApplication.user?.displayName ?: GateKeeperApplication.user?.email ?: ""
+        //navName.text = userName
         switchFragment("Passwords")
     }
 

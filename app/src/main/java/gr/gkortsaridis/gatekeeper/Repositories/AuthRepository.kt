@@ -8,7 +8,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
@@ -50,9 +49,9 @@ object AuthRepository {
                     val bundle = Bundle()
                     bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
                     FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
-                    listener.onSignInComplete(true, it.data.userId)
+                    listener.onSignInComplete(it.data.userId)
                 } else {
-                    listener.onSignInComplete(false, it.errorCode, it.errorMsg)
+                    listener.onSignInError(it.errorCode, it.errorMsg)
                 }
             }
 
@@ -101,7 +100,7 @@ object AuthRepository {
     }
 
     fun setApplicationUser(userId: String) {
-        GateKeeperApplication.user = userId
+        GateKeeperApplication.user_id = userId
         DataRepository.savedUser = userId
     }
 
@@ -152,14 +151,7 @@ object AuthRepository {
     }
 
     fun getUserID (): String {
-        var userId = ""
-
-        if (GateKeeperApplication.user != null) { userId = GateKeeperApplication.user!!.uid }
-        else if (GateKeeperApplication.user_id != null && GateKeeperApplication.user_id != "") {
-            userId = GateKeeperApplication.user_id!!
-        }
-
-        return userId
+        return GateKeeperApplication.user_id ?: ""
     }
 
     fun getPreferredAuthType(): Int{

@@ -62,7 +62,7 @@ class PinAuthenticationActivity : AppCompatActivity() {
 
                     if (pin == DataRepository.pinLock) {
                         AuthRepository.signIn(activity, savedCredentials!!.email, savedCredentials!!.password, true, object: SignInListener{
-                            override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
+                            override fun onSignInError(success: Boolean, user: FirebaseSignInResult) {
                                 if (success) {
                                     AuthRepository.setApplicationUser(user.authResult!!.user!!)
                                     AuthRepository.proceedLoggedIn(activity)

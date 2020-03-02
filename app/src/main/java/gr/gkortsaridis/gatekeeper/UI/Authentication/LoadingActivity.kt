@@ -43,8 +43,8 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
         NotesRepository.retrieveNotesByAccountID(AuthRepository.getUserID(), this)
 
         welcomeMessage = findViewById(R.id.welcome_message)
-        val name = GateKeeperApplication.user?.displayName ?: ""
-        welcomeMessage.text = "Welcome back\n$name"
+        //val name = GateKeeperApplication.user?.displayName ?: ""
+        welcomeMessage.text = "Welcome back"
 
         Handler().postDelayed({
             timerOk = true
