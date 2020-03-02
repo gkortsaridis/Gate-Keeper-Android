@@ -1,11 +1,8 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
-import android.database.Observable
-import com.google.firebase.auth.FirebaseUser
+import android.annotation.SuppressLint
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
-import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
-import gr.gkortsaridis.gatekeeper.Entities.Network.RespEncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
@@ -14,32 +11,26 @@ import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
+@SuppressLint("CheckResult")
 object VaultRepository {
 
     val allVaults =  Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White)
 
     fun setupVaultsForNewUser(userId: String, listener: VaultSetupListener) {
         val personalVault = Vault(id = "", name = "Personal", account_id = AuthRepository.getUserID(), color = VaultColor.White)
-        retrieveVaultsByAccountID(userId, object: VaultRetrieveListener {
-            override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
-                if (vaults.size > 0) {
-                    listener.onVaultSetupComplete()
-                }else{
-                    createVault(personalVault, object : VaultCreateListener {
-                        override fun onVaultCreated(vault: Vault) { listener.onVaultSetupComplete() }
-                        override fun onVaultCreateError() { listener.onVaultSetupError() }
-                    })
-                }
-            }
-
-            override fun onVaultsRetrieveError(e: Exception) {
-                createVault(personalVault, object : VaultCreateListener {
-                    override fun onVaultCreated(vault: Vault) { listener.onVaultSetupComplete() }
-                    override fun onVaultCreateError() { listener.onVaultSetupError() }
-                })
-            }
-        })
+        GateKeeperAPI.api.createVault(SecurityRepository.createEncryptedDataRequestBody(personalVault))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(Schedulers.newThread())
+            .subscribe (
+                {
+                    if (it.errorCode == -1) { listener.onVaultSetupComplete() }
+                    else { listener.onVaultSetupError(it.errorCode, it.errorMsg) }
+                },
+                { listener.onVaultSetupError(it.hashCode(), it.localizedMessage ?: "") }
+            )
     }
 
     fun createVault(vault: Vault, listener: VaultCreateListener) {

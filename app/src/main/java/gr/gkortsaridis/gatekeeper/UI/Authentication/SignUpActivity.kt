@@ -15,7 +15,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 
-class SignUpActivity : AppCompatActivity(), SignUpListener {
+class SignUpActivity : AppCompatActivity() {
 
     private val TAG = "_Sign_Up_"
 
@@ -55,27 +55,23 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
     }
 
     private fun signUp(email: String, password: String) {
-        AuthRepository.signUp(this, email,password, this)
-    }
-
-    override fun onSignUpComplete(user: String) {
-        AuthRepository.setApplicationUser(user)
-        VaultRepository.setupVaultsForNewUser(user, object: VaultSetupListener {
-            override fun onVaultSetupComplete() {
-                finalizeSetup()
+        AuthRepository.signUp(this, email,password, object : SignUpListener{
+            override fun onSignUpComplete(user: String) {
+                AuthRepository.saveCredentials(email = email, password = password)
+                AuthRepository.setApplicationUser(user)
+                VaultRepository.setupVaultsForNewUser(user, object: VaultSetupListener {
+                    override fun onVaultSetupComplete() { finalizeSetup() }
+                    override fun onVaultSetupError(errorCode: Int, errorMsg: String) { showSetupError(errorMsg) }
+                })
             }
-            override fun onVaultSetupError() { showSetupError() }
+            override fun onSignUpError(errorCode: Int, errorMsg: String) { showSetupError(errorMsg) }
         })
-    }
-
-    override fun onSignUpError(errorCode: Int, errorMsg: String) {
-        Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show()
     }
 
     fun finalizeSetup() { AuthRepository.proceedLoggedIn(this) }
 
-    fun showSetupError() {
-
+    fun showSetupError(errorMsg: String) {
+        Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
     }
 
 

@@ -97,10 +97,6 @@ class LoginActivity : AppCompatActivity(), SignInListener {
         AuthRepository.proceedLoggedIn(this)
     }
 
-    override fun onRegistrationNeeded(email: String) {
-        startActivity(Intent(this, CreatePasswordActivity::class.java))
-    }
-
     //Pretty much onGoogleSignInComplete
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

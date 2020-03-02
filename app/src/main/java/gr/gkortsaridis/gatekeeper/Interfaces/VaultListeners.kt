@@ -9,7 +9,7 @@ interface VaultCreateListener {
 
 interface VaultSetupListener {
     fun onVaultSetupComplete()
-    fun onVaultSetupError()
+    fun onVaultSetupError(errorCode: Int, errorMsg: String)
 }
 
 interface VaultRetrieveListener {
