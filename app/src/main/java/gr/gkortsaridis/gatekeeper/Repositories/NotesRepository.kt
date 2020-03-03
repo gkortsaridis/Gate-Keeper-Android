@@ -39,13 +39,13 @@ object NotesRepository {
             }
     }
 
-    fun deleteNote(note: Note, listener: NoteDeleteListener) {
+    fun deleteNote(note: Note, listener: NoteDeleteListener?) {
         val db = FirebaseFirestore.getInstance()
         db.collection("notes")
             .document(note.id)
             .delete()
             .addOnCompleteListener {
-                listener.onNoteDeleted()
+                listener?.onNoteDeleted()
             }
     }
 

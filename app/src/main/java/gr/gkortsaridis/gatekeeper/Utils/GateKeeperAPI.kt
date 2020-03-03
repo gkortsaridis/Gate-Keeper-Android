@@ -116,6 +116,12 @@ object GateKeeperAPI {
         @POST("/vaults/")
         fun createVault(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
+        @PUT("/vaults/")
+        fun updateVault(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
+
+        @HTTP(method = "DELETE", path = "/vaults/{vault_id}", hasBody = true)
+        fun deleteVault(@Path(value = "vault_id", encoded = true) vaultId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
+
         //LOGINS
         @POST("/logins/")
         fun createLogin(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>

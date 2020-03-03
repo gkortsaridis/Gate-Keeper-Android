@@ -18,6 +18,7 @@ import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.schedulers.Schedulers
+import kotlin.math.log
 
 @SuppressLint("CheckResult")
 object LoginsRepository {
@@ -58,7 +59,7 @@ object LoginsRepository {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
-        GateKeeperAPI.api.updateLogin(SecurityRepository.createEncryptedDataRequestBody(login))
+        GateKeeperAPI.api.updateLogin(SecurityRepository.createEncryptedDataRequestBody(login, login.id))
             .subscribeOn(Schedulers.newThread())
             .observeOn(Schedulers.newThread())
             .subscribe (

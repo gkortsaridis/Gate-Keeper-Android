@@ -58,13 +58,13 @@ object CreditCardRepository {
         }
     }
 
-    fun deleteCreditCard(card: CreditCard, listener: CreditCardDeleteListener) {
+    fun deleteCreditCard(card: CreditCard, listener: CreditCardDeleteListener?) {
         val db = FirebaseFirestore.getInstance()
         db.collection("cards")
             .document(card.id)
             .delete()
             .addOnCompleteListener {
-                listener.onCardDeleted()
+                listener?.onCardDeleted()
             }
     }
 

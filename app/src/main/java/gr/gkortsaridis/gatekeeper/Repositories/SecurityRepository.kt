@@ -3,6 +3,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import android.util.Log
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
@@ -161,13 +162,14 @@ object SecurityRepository {
         }
     }
 
-    fun createEncryptedDataRequestBody(obj: Any): ReqBodyEncryptedData? {
-        val enc = SecurityRepository.encryptObjectWithUserCreds(obj)
+    fun createEncryptedDataRequestBody(obj: Any, id: String? = null): ReqBodyEncryptedData? {
+        val enc = encryptObjectWithUserCreds(obj)
         val loadedCredentials = AuthRepository.loadCredentials()
 
         return if (enc != null && loadedCredentials != null) {
             val hash = pbkdf2_lib.createHash(loadedCredentials.password, loadedCredentials.email)
             ReqBodyEncryptedData(
+                id = id?.toLong(),
                 userId = AuthRepository.getUserID(),
                 encryptedData = enc.encryptedData,
                 iv = enc.iv,
