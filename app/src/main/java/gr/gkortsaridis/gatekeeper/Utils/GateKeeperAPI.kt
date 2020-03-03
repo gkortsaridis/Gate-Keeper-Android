@@ -131,6 +131,16 @@ object GateKeeperAPI {
 
         @HTTP(method = "DELETE", path = "/logins/{login_id}", hasBody = true)
         fun deleteLogin(@Path(value = "login_id", encoded = true) loginId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
+
+        //CARDS
+        @POST("/cards/")
+        fun createCard(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
+
+        @PUT("/cards/")
+        fun updateCard(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
+
+        @HTTP(method = "DELETE", path = "/cards/{card_id}", hasBody = true)
+        fun deleteCard(@Path(value = "card_id", encoded = true) cardId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
     }
 
 }

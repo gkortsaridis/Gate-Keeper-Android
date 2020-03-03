@@ -1,5 +1,6 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
@@ -13,7 +14,11 @@ import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
+@SuppressLint("CheckResult")
 object CreditCardRepository {
 
     fun filterCardsByVault(vault: Vault) : ArrayList<CreditCard> {
@@ -59,82 +64,60 @@ object CreditCardRepository {
     }
 
     fun deleteCreditCard(card: CreditCard, listener: CreditCardDeleteListener?) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("cards")
-            .document(card.id)
-            .delete()
-            .addOnCompleteListener {
-                listener?.onCardDeleted()
-            }
+        GateKeeperAPI.api.deleteCard(cardId = card.id, body = SecurityRepository.createUsernameHashRequestBody())
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    if (it.errorCode == -1 && card.id.toLong() == it.deletedItemID) { listener?.onCardDeleted() }
+                    else { listener?.onCardDeleteError(it.errorCode, it.errorMsg) }
+                },
+                { listener?.onCardDeleteError(it.hashCode(), it.localizedMessage ?: "") }
+            )
     }
 
     fun updateCreditCard(card: CreditCard, listener: CreditCardUpdateListener) {
-        val cardhash = hashMapOf(
-            "card" to SecurityRepository.encryptObjectWithUserCredentials(card),
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("cards")
-            .document(card.id)
-            .set(cardhash)
-            .addOnCompleteListener {
-                listener.onCardUpdated(card)
-            }
+        GateKeeperAPI.api.updateCard(SecurityRepository.createEncryptedDataRequestBody(card, card.id))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    val card = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard
+                    if (card != null) {
+                        if (it.errorCode == -1) { listener.onCardUpdated(card) }
+                        else { listener.onCardUpdateError(it.errorCode, it.errorMsg) }
+                    } else {
+                        listener.onCardUpdateError(-1, "Decryption Error")
+                    }
+                },
+                { listener.onCardUpdateError(it.hashCode(), it.localizedMessage ?: "") }
+            )
     }
 
     fun encryptAndStoreCard(activity: Activity, card: CreditCard, listener: CreditCardCreateListener) {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
-        val encryptedCard = SecurityRepository.encryptObjectWithUserCredentials(card)
-
-        val cardhash = hashMapOf(
-            "card" to encryptedCard,
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("cards")
-            .add(cardhash)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
+        GateKeeperAPI.api.createCard(SecurityRepository.createEncryptedDataRequestBody(card))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
                     viewDialog.hideDialog()
-                    card.id = it.result?.id ?: ""
-                    listener.onCreditCardCreated(card)
-                }
-                else {
-                    viewDialog.hideDialog()
-                    listener.onCreditCardCreateError()
-                }
-            }
-    }
-
-    fun retrieveCardsByAccountID(accountID: String, retrieveListener: CreditCardRetrieveListener) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("cards")
-            .whereEqualTo("account_id",accountID)
-            .get().addOnSuccessListener { result ->
-                val cardsResult = ArrayList<CreditCard>()
-
-                val encryptedCardsToSaveLocally = ArrayList<String>()
-
-                for (document in result) {
-                    val encryptedCard = document["card"] as String
-                    encryptedCardsToSaveLocally.add(encryptedCard)
-                    val decryptedCard = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedCard, CreditCard::class.java) as CreditCard?
-                    if (decryptedCard != null){
-                        decryptedCard.id = document.id
-                        cardsResult.add(decryptedCard)
+                    val card = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard?
+                    if (card != null) {
+                        card.id = it.data.id.toString()
+                        if (it.errorCode == -1) { listener.onCreditCardCreated(card) }
+                        else { listener.onCreditCardCreateError(it.errorCode, it.errorMsg) }
+                    } else {
+                        listener.onCreditCardCreateError(-1, "Decryption Error")
                     }
+                },
+                {
+                    viewDialog.hideDialog()
+                    listener.onCreditCardCreateError(it.hashCode(), it.localizedMessage ?: "")
                 }
-
-                //Save cards locally
-                DataRepository.savedCards = Gson().toJson(encryptedCardsToSaveLocally)
-
-                retrieveListener.onCreditCardsReceived(cardsResult)
-            }
-            .addOnFailureListener { exception -> retrieveListener.onCreditCardsReceiveError(exception) }
+            )
     }
 
     fun getCreditCardById(cardId: String): CreditCard? {
