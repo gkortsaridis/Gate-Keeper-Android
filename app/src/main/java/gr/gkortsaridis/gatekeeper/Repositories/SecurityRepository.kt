@@ -6,6 +6,7 @@ import android.util.Base64
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
 import gr.gkortsaridis.gatekeeper.Utils.CryptLib
 import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
 import java.nio.charset.Charset
@@ -145,6 +146,17 @@ object SecurityRepository {
             val decryptedString = decryptWithUserCredentials(obj)
             Gson().fromJson(decryptedString, objType)
         } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun createUsernameHashRequestBody(): ReqBodyUsernameHash? {
+        val loadedCredentials = AuthRepository.loadCredentials()
+
+        return if (loadedCredentials != null) {
+            val hash = pbkdf2_lib.createHash(loadedCredentials.password, loadedCredentials.email)
+            ReqBodyUsernameHash(username = loadedCredentials.email, hash = hash)
+        } else {
             null
         }
     }

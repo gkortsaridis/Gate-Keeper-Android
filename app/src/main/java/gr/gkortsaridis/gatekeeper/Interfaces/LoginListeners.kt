@@ -15,4 +15,5 @@ interface LoginCreateListener {
 
 interface LoginDeleteListener {
     fun onLoginDeleted()
+    fun onLoginDeleteError(errorCode: Int, errorMsg: String)
 }

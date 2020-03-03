@@ -11,10 +11,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 import java.security.cert.CertificateException
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HostnameVerifier
@@ -96,7 +93,7 @@ object GateKeeperAPI {
 
     private val retrofit = Retrofit.Builder()
         .client(jet2Client)
-        .baseUrl("http://10.202.73.36:8080")
+        .baseUrl("http://10.202.73.32:8080")
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -123,6 +120,11 @@ object GateKeeperAPI {
         @POST("/logins/")
         fun createLogin(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
+        @PUT("/logins/")
+        fun updateLogin(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
+
+        @HTTP(method = "DELETE", path = "/logins/{login_id}", hasBody = true)
+        fun deleteLogin(@Path(value = "login_id", encoded = true) loginId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
     }
 
 }

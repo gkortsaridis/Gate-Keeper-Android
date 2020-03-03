@@ -199,22 +199,22 @@ class CreateLoginActivity : AppCompatActivity() {
         )
 
         LoginsRepository.encryptAndStoreLogin(this, loginObj, object : LoginCreateListener{
-                override fun onLoginCreated() {
-                    viewDialog.hideDialog()
-                    GateKeeperApplication.logins.add(loginObj)
-                    val data = Intent()
-                    setResult(LoginsRepository.createLoginSuccess, data)
-                    finish()
-                }
+            override fun onLoginCreated() {
+                viewDialog.hideDialog()
+                GateKeeperApplication.logins.add(loginObj)
+                val data = Intent()
+                setResult(LoginsRepository.createLoginSuccess, data)
+                finish()
+            }
 
-                override fun onLoginCreateError(errorCode: Int, errorMsg: String) {
-                    viewDialog.hideDialog()
-                    Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
-                    val data = Intent()
-                    setResult(LoginsRepository.createLoginError, data)
-                    finish()
-                }
-            })
+            override fun onLoginCreateError(errorCode: Int, errorMsg: String) {
+                viewDialog.hideDialog()
+                Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
+                val data = Intent()
+                setResult(LoginsRepository.createLoginError, data)
+                finish()
+            }
+        })
 
     }
 
@@ -228,6 +228,14 @@ class CreateLoginActivity : AppCompatActivity() {
                 viewDialog.hideDialog()
                 val data = Intent()
                 setResult(LoginsRepository.deleteLoginSuccess, data)
+                finish()
+            }
+
+            override fun onLoginDeleteError(errorCode: Int, errorMsg: String) {
+                viewDialog.hideDialog()
+                val data = Intent()
+                setResult(LoginsRepository.deleteLoginError, data)
+                Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
                 finish()
             }
         })

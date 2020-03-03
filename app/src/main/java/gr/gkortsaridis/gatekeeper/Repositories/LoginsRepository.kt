@@ -9,6 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
@@ -31,6 +32,7 @@ object LoginsRepository {
     val createLoginSuccess = 2
     val createLoginError = 3
     val deleteLoginSuccess = 4
+    val deleteLoginError = 5
 
     fun encryptAndStoreLogin(activity: Activity, login: Login, listener: LoginCreateListener) {
         val viewDialog = ViewDialog(activity)
@@ -56,54 +58,20 @@ object LoginsRepository {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
-        val encryptedLogin = SecurityRepository.encryptObjectWithUserCredentials(login)
-
-        val loginhash = hashMapOf(
-            "login" to encryptedLogin,
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.document("logins/"+login.id)
-            .update(loginhash as Map<String, Any>)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
+        GateKeeperAPI.api.updateLogin(SecurityRepository.createEncryptedDataRequestBody(login))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(Schedulers.newThread())
+            .subscribe (
+                {
                     viewDialog.hideDialog()
-                    listener.onLoginCreated()
-                }
-                else {
+                    if (it.errorCode == -1) { listener.onLoginCreated() }
+                    else { listener.onLoginCreateError(it.errorCode, it.errorMsg) }
+                },
+                {
                     viewDialog.hideDialog()
-                    listener.onLoginCreateError(1, "")
+                    listener.onLoginCreateError(it.hashCode(), it.localizedMessage ?: "")
                 }
-            }
-    }
-
-    fun retrieveLoginsByAccountID(accountID: String, retrieveListener: LoginRetrieveListener) {
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("logins")
-            .whereEqualTo("account_id",accountID)
-            .get().addOnSuccessListener { result ->
-                val loginsResult = ArrayList<Login>()
-
-                val encryptedLoginsToSaveLocally = ArrayList<String>()
-
-                for (document in result) {
-                    val encryptedLogin = document["login"] as String
-                    encryptedLoginsToSaveLocally.add(encryptedLogin)
-                    val decryptedLogin = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedLogin, Login::class.java) as Login?
-                    if (decryptedLogin != null){
-                        decryptedLogin.id = document.id
-                        loginsResult.add(decryptedLogin)
-                    }
-                }
-
-                //Save logins locally
-                DataRepository.savedLogins = Gson().toJson(encryptedLoginsToSaveLocally)
-
-                retrieveListener.onLoginsRetrieveSuccess(loginsResult)
-            }
-            .addOnFailureListener { exception -> retrieveListener.onLoginsRetrieveError(exception) }
+            )
     }
 
     fun filterLoginsByVault(logins: ArrayList<Login>, vault: Vault): ArrayList<Login> {
@@ -164,14 +132,18 @@ object LoginsRepository {
     }
 
     fun deleteLogin(login: Login, listener: LoginDeleteListener?) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("logins")
-            .document(login.id)
-            .delete()
-            .addOnCompleteListener {
-                listener?.onLoginDeleted()
-            }
-
+        GateKeeperAPI.api.deleteLogin(loginId = login.id, body = SecurityRepository.createUsernameHashRequestBody())
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(Schedulers.newThread())
+            .subscribe (
+                {
+                    if (it.errorCode == -1 && login.id.toLong() == it.deletedItemID) { listener?.onLoginDeleted() }
+                    else { listener?.onLoginDeleteError(it.errorCode, it.errorMsg) }
+                },
+                {
+                    listener?.onLoginDeleteError(it.hashCode(), it.localizedMessage ?: "")
+                }
+            )
     }
 
 }
