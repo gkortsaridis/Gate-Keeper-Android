@@ -38,12 +38,14 @@ object AuthRepository {
         viewDialog.showDialog()
 
         val hash = pbkdf2_lib.createHash(password, email)
-        val device = SecurityRepository.encryptObjectWithUserCreds(DeviceRepository.getCurrentDevice(GateKeeperApplication.instance))
+        val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
+        val encDevice = SecurityRepository.encryptObjectWithUserCreds(device)
         val body = ReqBodyUsernameHash(
             username = email,
             hash = hash,
-            deviceEncryptedData = device!!.encryptedData,
-            deviceIv = device.iv)
+            deviceEncryptedData = encDevice!!.encryptedData,
+            deviceIv = encDevice.iv,
+            deviceUid = device.UID)
 
         GateKeeperAPI.api.signIn(body)
             .subscribeOn(Schedulers.newThread())

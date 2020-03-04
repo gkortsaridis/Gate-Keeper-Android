@@ -112,8 +112,6 @@ class LoadingActivity : AppCompatActivity(), LoginRetrieveListener, VaultRetriev
     }
 
     private fun openMainApplication() {
-        DeviceRepository.logCurrentLogin(this)
-
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
