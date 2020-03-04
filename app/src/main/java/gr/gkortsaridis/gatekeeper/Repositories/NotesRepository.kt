@@ -65,7 +65,7 @@ object NotesRepository {
     }
 
     fun updateNote(note: Note, listener: NoteUpdateListener) {
-        GateKeeperAPI.api.updateNote(SecurityRepository.createEncryptedDataRequestBody(note))
+        GateKeeperAPI.api.updateNote(SecurityRepository.createEncryptedDataRequestBody(note, note.id))
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe (
@@ -79,7 +79,10 @@ object NotesRepository {
                         listener.onNoteUpdateError(-1, "Decryption Error")
                     }
                 },
-                { listener.onNoteUpdateError(it.hashCode(), it.localizedMessage ?: "") }
+                {
+                    val i = it
+                    listener.onNoteUpdateError(it.hashCode(), it.localizedMessage ?: "")
+                }
             )
     }
 
