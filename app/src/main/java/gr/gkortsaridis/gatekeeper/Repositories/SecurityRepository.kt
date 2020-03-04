@@ -10,7 +10,9 @@ import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyExtraDataUpdate
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
+import gr.gkortsaridis.gatekeeper.Entities.UserExtraData
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Utils.CryptLib
 import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
@@ -194,6 +196,36 @@ object SecurityRepository {
         }else {
             null
         }
+    }
+
+    fun createExtraDataUpdateRequestBody(fullName: String? = null, imgUrl: String? = null): ReqBodyExtraDataUpdate? {
+        var extraData = GateKeeperApplication.extraData
+        if (fullName != null) extraData.userFullName = fullName
+        if (imgUrl != null) extraData.userImgUrl = imgUrl
+
+        val enc = encryptObjectWithUserCreds(extraData)
+        val loadedCredentials = AuthRepository.loadCredentials()
+        return if (enc != null && loadedCredentials != null) {
+            val hash = pbkdf2_lib.createHash(loadedCredentials.password, loadedCredentials.email)
+            val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
+            val encDevice = encryptObjectWithUserCreds(device)
+            ReqBodyExtraDataUpdate(
+                username = loadedCredentials.email,
+                hash = hash,
+                extrasEncryptedData = enc.encryptedData,
+                extrasIv = enc.iv,
+                deviceEncryptedData = encDevice!!.encryptedData,
+                deviceIv = encDevice.iv,
+                deviceUid = device.UID
+            )
+        }else {
+            null
+        }
+    }
+
+    fun getUserExtraData(email: String, data: String, iv: String): UserExtraData {
+        val userData = decryptEncryptedDataToObjectWithUserCredentials(EncryptedData(encryptedData = data, iv = iv), UserExtraData::class.java) as UserExtraData?
+        return userData ?: UserExtraData(userEmail = email, userFullName = null, userImgUrl = null)
     }
 
 }

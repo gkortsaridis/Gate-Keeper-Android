@@ -117,34 +117,6 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:id="@+id/verified_email_link"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="16dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Your email is not verified, Click "
-                            android:textColor="#d32f2f"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="here"
-                            android:id="@+id/verify_email_here"
-                            android:textColor="@color/colorPrimary"/>
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text=" to verify"
-                            android:textColor="#d32f2f"/>
-                    </LinearLayout>
-
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

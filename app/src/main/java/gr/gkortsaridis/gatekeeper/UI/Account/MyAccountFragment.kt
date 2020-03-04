@@ -21,14 +21,14 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import gr.gkortsaridis.gatekeeper.Utils.dp
 import io.noties.tumbleweed.Timeline
@@ -37,6 +37,8 @@ import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
 import io.noties.tumbleweed.android.types.Translation
 import io.noties.tumbleweed.equations.Cubic
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_my_account.*
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -44,8 +46,6 @@ import java.io.InputStream
 
 class MyAccountFragment : Fragment() {
 
-    private lateinit var sendConfirmation : TextView
-    private lateinit var emailConfirmed : LinearLayout
     private lateinit var profileImage : ImageView
     private lateinit var accountImageContainer: LinearLayout
     private lateinit var accountInfoContainer: RoundRectView
@@ -61,9 +61,6 @@ class MyAccountFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_my_account, container, false)
 
         viewDialog = ViewDialog(activity!!)
-
-        emailConfirmed = view.findViewById(R.id.verified_email_link)
-        sendConfirmation = view.findViewById(R.id.verify_email_here)
         profileImage = view.findViewById(R.id.profileImage)
         accountImageContainer = view.findViewById(R.id.account_image_container)
         accountInfoContainer = view.findViewById(R.id.account_info_container)
@@ -77,9 +74,7 @@ class MyAccountFragment : Fragment() {
         adView.loadAd(adRequest)
 
         goToStatus.setOnClickListener { goToStatus() }
-        sendConfirmation.setOnClickListener { sendEmailConfirmation() }
         updatePictureBtn.setOnClickListener { pickImage() }
-        emailConfirmed.visibility = View.GONE
         displayUserImg()
         animateContainersIn()
         return view
@@ -88,35 +83,37 @@ class MyAccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //full_name_et.setText(user?.displayName ?: "")
-        //email_et.setText(user?.email ?: "")
-        verified_email_link.visibility = View.GONE
-        //user_uid.text = "Your personal ID is: ${user?.uid}"
+        full_name_et.setText(GateKeeperApplication.extraData.userFullName ?: "")
+        email_et.setText(GateKeeperApplication.extraData.userEmail)
+        user_uid.text = "Your personal ID is: ${GateKeeperApplication.user_id ?: ""}"
 
-        update_account_btn.setOnClickListener { updateProfile(name = full_name_et.text.toString()) }
+        update_account_btn.setOnClickListener { updateProfileName(name = full_name_et.text.toString()) }
     }
 
     private fun goToStatus() {
         context?.startActivity(Intent(activity, AccountStatusActivity::class.java))
     }
 
-    private fun sendEmailConfirmation(){
-        //user?.sendEmailVerification()
-        Toast.makeText(activity, "Verification email sent", Toast.LENGTH_SHORT).show()
-    }
+    private fun updateProfileName(name: String?) {
+        viewDialog.showDialog()
 
-    private fun updateProfile(name: String?) {
-        //viewDialog.showDialog()
-        Toast.makeText(activity, "Not supported", Toast.LENGTH_SHORT).show()
-
-        //Display Name & Photo URL
-        //val profileUpdates = UserProfileChangeRequest.Builder()
-        //if (name != null) { profileUpdates.setDisplayName(full_name_et.text.toString()) }
-        //val profile = profileUpdates.build()
-
-        /*user?.updateProfile(profile)?.addOnCompleteListener {
-            viewDialog.hideDialog()
-        }*/
+        val disposable = GateKeeperAPI.api.updateExtraData(SecurityRepository.createExtraDataUpdateRequestBody(fullName = name))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    viewDialog.hideDialog()
+                    if (it.errorCode == -1) {
+                        GateKeeperApplication.extraData =  SecurityRepository.getUserExtraData(
+                            GateKeeperApplication.extraData.userEmail,
+                            it.data.extraDataEncryptedData,
+                            it.data.extraDataIv)
+                        Toast.makeText(activity, "Data successfully updated", Toast.LENGTH_SHORT).show()
+                    }
+                    else { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }
+                },
+                { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }
+            )
     }
 
     private fun pickImage() {

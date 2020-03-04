@@ -107,7 +107,10 @@ object GateKeeperAPI {
         fun signIn(@Body body: ReqBodyUsernameHash?): Observable<RespAuthentication>
 
         @POST("/auth/signUp")
-        fun signUp(@Body body: ReqBodySignUp): Observable<RespAuthentication>
+        fun signUp(@Body body: ReqBodyUsernameHash): Observable<RespAuthentication>
+
+        @PUT("/auth/extraData")
+        fun updateExtraData(@Body body: ReqBodyExtraDataUpdate?): Observable<RespUserDataUpdate>
 
         @GET("/alldata/{user_id}")
         fun getAllData(@Path(value = "user_id", encoded = true) userId: String): Observable<RespAllData>

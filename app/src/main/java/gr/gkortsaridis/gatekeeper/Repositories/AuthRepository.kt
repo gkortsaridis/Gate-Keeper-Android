@@ -55,6 +55,10 @@ object AuthRepository {
                     viewDialog.hideDialog()
 
                     if (it.errorCode == -1) {
+                        GateKeeperApplication.extraData = SecurityRepository.getUserExtraData(
+                            email = body.username,
+                            data = it.data.extraDataEncryptedData,
+                            iv = it.data.extraDataIv)
                         val bundle = Bundle()
                         bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
                         FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
@@ -75,8 +79,15 @@ object AuthRepository {
         viewDialog.showDialog()
 
         val hash = pbkdf2_lib.createHash(password = password, username = email)
-        val reqBodyUsernameHash = ReqBodySignUp(username = email, hash = hash, name = "")
-        GateKeeperAPI.api.signUp(reqBodyUsernameHash)
+        val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
+        val encDevice = SecurityRepository.encryptObjectWithUserCreds(device)
+        val body = ReqBodyUsernameHash(
+            username = email,
+            hash = hash,
+            deviceEncryptedData = encDevice!!.encryptedData,
+            deviceIv = encDevice.iv,
+            deviceUid = device.UID)
+        GateKeeperAPI.api.signUp(body)
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe (
