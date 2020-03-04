@@ -2,17 +2,13 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
-import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository.RC_SIGN_IN
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -57,10 +53,6 @@ class LoginActivity : AppCompatActivity(), SignInListener {
         AuthRepository.signIn(this, email, password, this)
     }
 
-    private fun googleSignIn() {
-        AuthRepository.googleSignIn(this)
-    }
-
     override fun onSignInComplete(userId: String) {
         val biometricManager = BiometricManager.from(this)
 
@@ -94,24 +86,5 @@ class LoginActivity : AppCompatActivity(), SignInListener {
 
         AuthRepository.setApplicationUser(user)
         AuthRepository.proceedLoggedIn(this)
-    }
-
-    //Pretty much onGoogleSignInComplete
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                if (account?.email != null) {
-                    signIn(account.email!!, account.id!!, true)
-                }
-            } catch (e: ApiException) {
-                Log.w("LOGIN ACTIVITY", "Google sign in failed", e)
-                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }

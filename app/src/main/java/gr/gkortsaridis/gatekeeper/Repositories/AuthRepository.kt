@@ -32,7 +32,6 @@ object AuthRepository {
     const val PIN_SIGN_IN = 3
 
     private val TAG = "_Auth_Repository_"
-    val RC_SIGN_IN : Int = 1
 
     fun signIn(activity: Activity, email: String, password: String, listener: SignInListener) {
         val viewDialog = ViewDialog(activity)
@@ -67,18 +66,6 @@ object AuthRepository {
                     listener.onSignInError(it.hashCode(), it.localizedMessage ?: "")
                 }
             )
-    }
-
-    fun googleSignIn(activity: Activity) {
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(activity.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        val googleSignInClient = GoogleSignIn.getClient(activity, gso)
-
-        val signInIntent = googleSignInClient.signInIntent
-        activity.startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
     fun signUp(activity: Activity, email: String, password: String, listener: SignUpListener) {
@@ -116,11 +103,6 @@ object AuthRepository {
 
     fun proceedLoggedIn(activity: Activity) {
         activity.startActivity(Intent(activity, LoadingActivity::class.java))
-    }
-
-    fun clearCredentials() {
-        DataRepository.userEmail = null
-        DataRepository.userPassword = null
     }
 
     fun saveCredentials(email: String, password: String): Boolean {
