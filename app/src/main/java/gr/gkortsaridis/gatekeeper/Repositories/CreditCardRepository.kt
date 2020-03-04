@@ -85,6 +85,7 @@ object CreditCardRepository {
                 {
                     val decryptedCard = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard?
                     if (decryptedCard != null) {
+                        decryptedCard.id = it.data.id.toString()
                         if (it.errorCode == -1) { listener.onCardUpdated(decryptedCard) }
                         else { listener.onCardUpdateError(it.errorCode, it.errorMsg) }
                     } else {

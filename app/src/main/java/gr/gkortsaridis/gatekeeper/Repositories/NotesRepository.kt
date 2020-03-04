@@ -72,6 +72,7 @@ object NotesRepository {
                 {
                     val decryptedNote = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Note::class.java) as Note?
                     if (decryptedNote != null) {
+                        decryptedNote.id = it.data.id.toString()
                         if (it.errorCode == -1) { listener.onNoteUpdated(decryptedNote) }
                         else { listener.onNoteUpdateError(it.errorCode, it.errorMsg) }
                     } else {
