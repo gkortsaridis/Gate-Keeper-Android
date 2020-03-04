@@ -22,6 +22,7 @@ import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
+import gr.gkortsaridis.gatekeeper.Interfaces.LoginUpdateListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
@@ -164,18 +165,18 @@ class CreateLoginActivity : AppCompatActivity() {
         login?.vault_id = vaultToAdd!!.id
         login?.date_modified = Timestamp.now()
 
-        LoginsRepository.encryptAndUpdateLogin(this, login!!, object : LoginCreateListener{
-            override fun onLoginCreated() {
+        LoginsRepository.encryptAndUpdateLogin(this, login!!, object : LoginUpdateListener{
+            override fun onLoginUpdated(login: Login) {
                 val viewDialog = ViewDialog(activity)
                 viewDialog.showDialog()
-                GateKeeperApplication.logins.replaceAll { if (it.id == login?.id) login!! else it }
+                GateKeeperApplication.logins.replaceAll { if (it.id == login.id) login else it }
                 viewDialog.hideDialog()
                 val data = Intent()
                 setResult(LoginsRepository.createLoginSuccess, data)
                 finish()
             }
 
-            override fun onLoginCreateError(errorCode: Int, errorMsg: String) {
+            override fun onLoginUpdateError(errorCode: Int, errorMsg: String) {
                 val data = Intent()
                 setResult(LoginsRepository.createLoginError, data)
                 finish()
@@ -199,9 +200,9 @@ class CreateLoginActivity : AppCompatActivity() {
         )
 
         LoginsRepository.encryptAndStoreLogin(this, loginObj, object : LoginCreateListener{
-            override fun onLoginCreated() {
+            override fun onLoginCreated(login: Login) {
                 viewDialog.hideDialog()
-                GateKeeperApplication.logins.add(loginObj)
+                GateKeeperApplication.logins.add(login)
                 val data = Intent()
                 setResult(LoginsRepository.createLoginSuccess, data)
                 finish()

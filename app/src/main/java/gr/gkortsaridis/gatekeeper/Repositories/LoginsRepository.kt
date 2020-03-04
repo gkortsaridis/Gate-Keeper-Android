@@ -8,6 +8,7 @@ import android.content.pm.ResolveInfo
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -16,6 +17,7 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
+import gr.gkortsaridis.gatekeeper.Interfaces.LoginUpdateListener
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.schedulers.Schedulers
 import kotlin.math.log
@@ -45,8 +47,14 @@ object LoginsRepository {
             .subscribe (
                 {
                     viewDialog.hideDialog()
-                    if (it.errorCode == -1) { listener.onLoginCreated() }
-                    else { listener.onLoginCreateError(it.errorCode, it.errorMsg) }
+                    val decryptedLogin = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Login::class.java) as Login?
+                    if (decryptedLogin != null) {
+                        decryptedLogin.id = it.data.id.toString()
+                        if (it.errorCode == -1) { listener.onLoginCreated(decryptedLogin) }
+                        else { listener.onLoginCreateError(it.errorCode, it.errorMsg) }   
+                    } else {
+                        listener.onLoginCreateError(-1, "Decryption error")
+                    }
                 },
                 {
                     viewDialog.hideDialog()
@@ -55,7 +63,7 @@ object LoginsRepository {
             )
     }
 
-    fun encryptAndUpdateLogin(activity: Activity, login: Login, listener: LoginCreateListener) {
+    fun encryptAndUpdateLogin(activity: Activity, login: Login, listener: LoginUpdateListener) {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
@@ -65,12 +73,18 @@ object LoginsRepository {
             .subscribe (
                 {
                     viewDialog.hideDialog()
-                    if (it.errorCode == -1) { listener.onLoginCreated() }
-                    else { listener.onLoginCreateError(it.errorCode, it.errorMsg) }
+                    val decryptedLogin = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Login::class.java) as Login?
+                    if (decryptedLogin != null) {
+                        decryptedLogin.id = it.data.id.toString()
+                        if (it.errorCode == -1) { listener.onLoginUpdated(decryptedLogin) }
+                        else { listener.onLoginUpdateError(it.errorCode, it.errorMsg) }   
+                    } else {
+                        listener.onLoginUpdateError(-1, "Decryption Error")
+                    }
                 },
                 {
                     viewDialog.hideDialog()
-                    listener.onLoginCreateError(it.hashCode(), it.localizedMessage ?: "")
+                    listener.onLoginUpdateError(it.hashCode(), it.localizedMessage ?: "")
                 }
             )
     }

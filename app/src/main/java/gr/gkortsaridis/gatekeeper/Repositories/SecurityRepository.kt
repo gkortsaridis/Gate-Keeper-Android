@@ -179,13 +179,18 @@ object SecurityRepository {
 
         return if (enc != null && loadedCredentials != null) {
             val hash = pbkdf2_lib.createHash(loadedCredentials.password, loadedCredentials.email)
+            val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
+            val encDevice = encryptObjectWithUserCreds(device)
             ReqBodyEncryptedData(
                 id = id?.toLong(),
                 userId = AuthRepository.getUserID(),
                 encryptedData = enc.encryptedData,
                 iv = enc.iv,
                 username = loadedCredentials.email,
-                hash = hash)
+                hash = hash,
+                deviceEncryptedData = encDevice!!.encryptedData,
+                deviceIv = encDevice.iv,
+                deviceUid = device.UID)
         }else {
             null
         }
