@@ -93,7 +93,7 @@ object DeviceRepository {
         listener.onDeviceDeleted()
     }
 
-    private fun getCurrentDevice(context: Context): Device {
+    fun getCurrentDevice(context: Context): Device {
 
         val UID = FirebaseInstanceId.getInstance().id
         val OS = "Android"

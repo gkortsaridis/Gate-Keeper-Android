@@ -1,13 +1,16 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
+import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Log
 import com.google.gson.Gson
+import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Utils.CryptLib
 import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
 import java.nio.charset.Charset
@@ -156,7 +159,12 @@ object SecurityRepository {
 
         return if (loadedCredentials != null) {
             val hash = pbkdf2_lib.createHash(loadedCredentials.password, loadedCredentials.email)
-            ReqBodyUsernameHash(username = loadedCredentials.email, hash = hash)
+            val device = SecurityRepository.encryptObjectWithUserCreds(DeviceRepository.getCurrentDevice(GateKeeperApplication.instance))
+            ReqBodyUsernameHash(
+                username = loadedCredentials.email,
+                hash = hash,
+                deviceEncryptedData = device!!.encryptedData,
+                deviceIv = device.iv)
         } else {
             null
         }

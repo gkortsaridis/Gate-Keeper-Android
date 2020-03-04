@@ -3,7 +3,6 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -11,7 +10,6 @@ import android.widget.Toast
 import com.andrognito.pinlockview.IndicatorDots
 import com.andrognito.pinlockview.PinLockListener
 import com.andrognito.pinlockview.PinLockView
-import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
@@ -61,16 +59,20 @@ class PinAuthenticationActivity : AppCompatActivity() {
                     //Not in setup mode. Sign In
 
                     if (pin == DataRepository.pinLock) {
-                        AuthRepository.signIn(activity, savedCredentials!!.email, savedCredentials.password, true, object: SignInListener{
-                            override fun onSignInComplete(userId: String) {
-                                AuthRepository.setApplicationUser(userId)
-                                AuthRepository.proceedLoggedIn(activity)
-                            }
+                        AuthRepository.signIn(
+                            activity,
+                            savedCredentials!!.email,
+                            savedCredentials.password,
+                            object: SignInListener{
+                                override fun onSignInComplete(userId: String) {
+                                    AuthRepository.setApplicationUser(userId)
+                                    AuthRepository.proceedLoggedIn(activity)
+                                }
 
-                            override fun onSignInError(errorCode: Int, errorMsg: String) {
-                                Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
-                            }
-                        })
+                                override fun onSignInError(errorCode: Int, errorMsg: String) {
+                                    Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
+                                }
+                            })
                     } else {
                         Toast.makeText(activity, "Wrong PIN entered", Toast.LENGTH_SHORT).show()
                         lockView.resetPinLockView()

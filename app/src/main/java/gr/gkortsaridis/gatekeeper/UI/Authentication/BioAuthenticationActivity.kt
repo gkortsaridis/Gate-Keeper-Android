@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.Entities.UserCredentials
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
@@ -50,7 +49,7 @@ class BioAuthenticationActivity : AppCompatActivity() {
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    AuthRepository.signIn(activity, credentials.email, credentials.password, false, object: SignInListener{
+                    AuthRepository.signIn(activity, credentials.email, credentials.password, object: SignInListener{
                         override fun onSignInComplete(userId: String) {
                             AuthRepository.setApplicationUser(userId)
                             AuthRepository.proceedLoggedIn(activity)
@@ -59,8 +58,6 @@ class BioAuthenticationActivity : AppCompatActivity() {
                         override fun onSignInError(errorCode: Int, errorMsg: String) {
                             Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
                         }
-
-                        override fun onRegistrationNeeded(email: String) { }
                     })
                 }
 

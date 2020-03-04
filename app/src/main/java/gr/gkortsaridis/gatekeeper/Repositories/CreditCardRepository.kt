@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.CardType
@@ -82,9 +83,9 @@ object CreditCardRepository {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe (
                 {
-                    val card = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard
-                    if (card != null) {
-                        if (it.errorCode == -1) { listener.onCardUpdated(card) }
+                    val decryptedCard = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard?
+                    if (decryptedCard != null) {
+                        if (it.errorCode == -1) { listener.onCardUpdated(decryptedCard) }
                         else { listener.onCardUpdateError(it.errorCode, it.errorMsg) }
                     } else {
                         listener.onCardUpdateError(-1, "Decryption Error")
@@ -104,10 +105,10 @@ object CreditCardRepository {
             .subscribe (
                 {
                     viewDialog.hideDialog()
-                    val card = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard?
-                    if (card != null) {
-                        card.id = it.data.id.toString()
-                        if (it.errorCode == -1) { listener.onCreditCardCreated(card) }
+                    val decryptedCard = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard?
+                    if (decryptedCard != null) {
+                        decryptedCard.id = it.data.id.toString()
+                        if (it.errorCode == -1) { listener.onCreditCardCreated(decryptedCard) }
                         else { listener.onCreditCardCreateError(it.errorCode, it.errorMsg) }
                     } else {
                         listener.onCreditCardCreateError(-1, "Decryption Error")

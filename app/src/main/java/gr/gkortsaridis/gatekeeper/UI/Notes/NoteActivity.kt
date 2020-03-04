@@ -167,6 +167,11 @@ class NoteActivity : AppCompatActivity() {
                 viewDialog.hideDialog()
                 finishWithResult()
             }
+
+            override fun onNoteDeleteError(errorCode: Int, errorMsg: String) {
+                GateKeeperApplication.notes.remove(note)
+                viewDialog.hideDialog()
+            }
         })
     }
 
@@ -185,6 +190,11 @@ class NoteActivity : AppCompatActivity() {
                         viewDialog.hideDialog()
                         finishWithResult()
                     }
+
+                    override fun onNoteUpdateError(errorCode: Int, errorMsg: String) {
+                        viewDialog.hideDialog()
+                        finishWithResult()
+                    }
                 })
             } else {
               finishWithResult()
@@ -198,6 +208,12 @@ class NoteActivity : AppCompatActivity() {
                 viewDialog.showDialog()
                 NotesRepository.createNote(note, object : NoteCreateListener{
                     override fun onNoteCreated(note: Note) {
+                        GateKeeperApplication.notes.add(note)
+                        viewDialog.hideDialog()
+                        finishWithResult()
+                    }
+
+                    override fun onNoteCreateError(errorCode: Int, errorMsg: String) {
                         GateKeeperApplication.notes.add(note)
                         viewDialog.hideDialog()
                         finishWithResult()

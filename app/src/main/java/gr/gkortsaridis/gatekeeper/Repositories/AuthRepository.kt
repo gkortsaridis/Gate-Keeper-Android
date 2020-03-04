@@ -7,7 +7,6 @@ import android.os.Bundle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.*
@@ -33,22 +32,27 @@ object AuthRepository {
     const val PIN_SIGN_IN = 3
 
     private val TAG = "_Auth_Repository_"
-
-    val auth = FirebaseAuth.getInstance()
     val RC_SIGN_IN : Int = 1
 
-    fun signIn(activity:Activity, email: String, password: String, check: Boolean, listener: SignInListener) {
-        val hash = pbkdf2_lib.createHash(password = password, username = email)
-        val reqBodyUsernameHash = ReqBodyUsernameHash(username = email, hash = hash)
-
+    fun signIn(activity: Activity, email: String, password: String, listener: SignInListener) {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
-        GateKeeperAPI.api.signIn(reqBodyUsernameHash)
+        val hash = pbkdf2_lib.createHash(password, email)
+        val device = SecurityRepository.encryptObjectWithUserCreds(DeviceRepository.getCurrentDevice(GateKeeperApplication.instance))
+        val body = ReqBodyUsernameHash(
+            username = email,
+            hash = hash,
+            deviceEncryptedData = device!!.encryptedData,
+            deviceIv = device.iv)
+
+        GateKeeperAPI.api.signIn(body)
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe (
                 {
+                    viewDialog.hideDialog()
+
                     if (it.errorCode == -1) {
                         val bundle = Bundle()
                         bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
@@ -100,7 +104,7 @@ object AuthRepository {
                 },
                 {
                     viewDialog.hideDialog()
-                    listener.onSignUpError(it.hashCode(), it.localizedMessage)
+                    listener.onSignUpError(it.hashCode(), it.localizedMessage ?: "")
                 }
             )
     }

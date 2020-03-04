@@ -43,26 +43,6 @@ class GateKeeperApplication : Application() {
 
             client.start()
         }
-
-        /*val vault = Vault(account_id = AuthRepository.getUserID(), name = "Personal", color = VaultColor.Blue)
-        val disposable = GateKeeperAPI.api.createVault(SecurityRepository.createEncryptedDataRequestBody(vault))
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe (
-                {
-                    val a = it
-
-                    if (it.errorCode == -1) {
-                        Log.i("SUCCESS", a.toString())
-                    } else {
-                        Log.i("ERROR", a.toString())
-                    }
-                },
-                {
-                    val a = it
-                    Log.i("ERROR", a.toString())
-                }
-            )*/
     }
 
     companion object {

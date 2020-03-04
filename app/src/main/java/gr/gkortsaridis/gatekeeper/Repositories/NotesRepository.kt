@@ -1,14 +1,21 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
+import android.annotation.SuppressLint
 import com.google.firebase.firestore.FirebaseFirestore
+import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteUpdateListener
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
+@SuppressLint("CheckResult")
 object NotesRepository {
 
     fun filterNotesByVault(vault: Vault): ArrayList<Note> {
@@ -24,44 +31,55 @@ object NotesRepository {
     }
 
     fun createNote(note: Note, listener: NoteCreateListener?) {
-        val db = FirebaseFirestore.getInstance()
-
-        val notehash = hashMapOf(
-            "note" to SecurityRepository.encryptObjectWithUserCredentials(note),
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        db.collection("notes")
-            .add(notehash)
-            .addOnCompleteListener {
-                note.id = it.result?.id ?: ""
-                listener?.onNoteCreated(note)
-            }
+        GateKeeperAPI.api.createNote(SecurityRepository.createEncryptedDataRequestBody(note))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    val decryptedNote = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Note::class.java) as Note?
+                    if (decryptedNote != null) {
+                        decryptedNote.id = it.data.id.toString()
+                        if (it.errorCode == -1) { listener?.onNoteCreated(decryptedNote) }
+                        else { listener?.onNoteCreateError(it.errorCode, it.errorMsg) }
+                    } else {
+                        listener?.onNoteCreateError(-1, "Decryption Error")
+                    }
+                },
+                {
+                    listener?.onNoteCreateError(it.hashCode(), it.localizedMessage ?: "")
+                }
+            )
     }
 
     fun deleteNote(note: Note, listener: NoteDeleteListener?) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("notes")
-            .document(note.id)
-            .delete()
-            .addOnCompleteListener {
-                listener?.onNoteDeleted()
-            }
+        GateKeeperAPI.api.deleteNote(noteId = note.id, body = SecurityRepository.createUsernameHashRequestBody())
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    if (it.errorCode == -1 && note.id.toLong() == it.deletedItemID) { listener?.onNoteDeleted() }
+                    else { listener?.onNoteDeleteError(it.errorCode, it.errorMsg) }
+                },
+                { listener?.onNoteDeleteError(it.hashCode(), it.localizedMessage ?: "") }
+            )
     }
 
     fun updateNote(note: Note, listener: NoteUpdateListener) {
-        val notehash = hashMapOf(
-            "note" to SecurityRepository.encryptObjectWithUserCredentials(note),
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("notes")
-            .document(note.id)
-            .set(notehash)
-            .addOnCompleteListener {
-                listener.onNoteUpdated(note)
-            }
+        GateKeeperAPI.api.updateNote(SecurityRepository.createEncryptedDataRequestBody(note))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    val decryptedNote = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Note::class.java) as Note?
+                    if (decryptedNote != null) {
+                        if (it.errorCode == -1) { listener.onNoteUpdated(decryptedNote) }
+                        else { listener.onNoteUpdateError(it.errorCode, it.errorMsg) }
+                    } else {
+                        listener.onNoteUpdateError(-1, "Decryption Error")
+                    }
+                },
+                { listener.onNoteUpdateError(it.hashCode(), it.localizedMessage ?: "") }
+            )
     }
 
     fun getNoteById(noteId: String): Note? {
@@ -72,29 +90,6 @@ object NotesRepository {
         }
 
         return null
-    }
-
-    fun retrieveNotesByAccountID(accountID: String, retrieveListener: NoteRetrieveListener) {
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("notes")
-            .whereEqualTo("account_id",accountID)
-            .get().addOnSuccessListener { result ->
-                val notesResult = ArrayList<Note>()
-
-                for (document in result) {
-                    val encryptedNote = (document["note"] ?: "")as String
-                    val decryptedNote = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedNote, Note::class.java) as Note?
-                    if (decryptedNote != null) {
-                        decryptedNote.id = document.id
-                        notesResult.add(decryptedNote)
-                    }
-                }
-
-                retrieveListener.onNotesRetrieved(notesResult)
-            }
-            .addOnFailureListener { exception -> retrieveListener.onNotesRetrievedError(exception) }
-
     }
 
 }

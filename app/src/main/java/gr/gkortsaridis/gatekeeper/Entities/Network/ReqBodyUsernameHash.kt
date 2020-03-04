@@ -1,3 +1,3 @@
 package gr.gkortsaridis.gatekeeper.Entities.Network
 
-data class ReqBodyUsernameHash(val username: String, val hash: String)
+data class ReqBodyUsernameHash(val username: String, val hash: String, val deviceEncryptedData: String, val deviceIv: String)

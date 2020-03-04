@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
-import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
@@ -55,7 +54,7 @@ class LoginActivity : AppCompatActivity(), SignInListener {
     }
 
     private fun signIn(email: String, password: String, check: Boolean) {
-        AuthRepository.signIn(this, email, password, check,this)
+        AuthRepository.signIn(this, email, password, this)
     }
 
     private fun googleSignIn() {

@@ -93,7 +93,7 @@ object GateKeeperAPI {
 
     private val retrofit = Retrofit.Builder()
         .client(jet2Client)
-        .baseUrl("http://10.202.73.32:8080")
+        .baseUrl("http://10.202.73.33:8080")
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -104,7 +104,7 @@ object GateKeeperAPI {
 
         //AUTHENTICATION
         @POST("/auth/signIn")
-        fun signIn(@Body body: ReqBodyUsernameHash): Observable<RespAuthentication>
+        fun signIn(@Body body: ReqBodyUsernameHash?): Observable<RespAuthentication>
 
         @POST("/auth/signUp")
         fun signUp(@Body body: ReqBodySignUp): Observable<RespAuthentication>
@@ -141,6 +141,16 @@ object GateKeeperAPI {
 
         @HTTP(method = "DELETE", path = "/cards/{card_id}", hasBody = true)
         fun deleteCard(@Path(value = "card_id", encoded = true) cardId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
+
+        //NOTES
+        @POST("/notes/")
+        fun createNote(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
+
+        @PUT("/notes/")
+        fun updateNote(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
+
+        @HTTP(method = "DELETE", path = "/notes/{note_id}", hasBody = true)
+        fun deleteNote(@Path(value = "note_id", encoded = true) noteId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
     }
 
 }
