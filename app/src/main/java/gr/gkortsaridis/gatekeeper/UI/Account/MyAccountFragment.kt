@@ -47,51 +47,29 @@ import java.io.InputStream
 
 class MyAccountFragment : Fragment() {
 
-    private lateinit var profileImage : ImageView
-    private lateinit var accountImageContainer: LinearLayout
-    private lateinit var accountInfoContainer: RoundRectView
-    private lateinit var updatePictureBtn: Button
-    private lateinit var imageLoading: ProgressBar
-    private lateinit var adsContainer: RoundRectView
-    private lateinit var goToStatus: RelativeLayout
-    private lateinit var adView: AdView
-
     private lateinit var viewDialog: ViewDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_my_account, container, false)
-
-        viewDialog = ViewDialog(activity!!)
-        profileImage = view.findViewById(R.id.profileImage)
-        accountImageContainer = view.findViewById(R.id.account_image_container)
-        accountInfoContainer = view.findViewById(R.id.account_info_container)
-        updatePictureBtn = view.findViewById(R.id.update_profile_image)
-        imageLoading = view.findViewById(R.id.image_loading)
-        adsContainer = view.findViewById(R.id.adview_container)
-        adView = view.findViewById(R.id.adview)
-        goToStatus = view.findViewById(R.id.go_to_status)
-
-        val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
-
-        goToStatus.setOnClickListener { goToStatus() }
-        updatePictureBtn.setOnClickListener { pickImage() }
-        displayUserImg()
-        animateContainersIn()
-
-
-
-        return view
+        return inflater.inflate(R.layout.fragment_my_account, container, false)
     }
 
-    //So we can use ids instead of custom objects (Should do the same with every class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewDialog = ViewDialog(activity!!)
 
         full_name_et.setText(GateKeeperApplication.extraData.userFullName ?: "")
         email_et.setText(GateKeeperApplication.extraData.userEmail)
         user_uid.text = "Your personal ID is: ${GateKeeperApplication.user_id ?: ""}"
         update_account_btn.setOnClickListener { updateProfileName(name = full_name_et.text.toString()) }
+
+        update_profile_image.setOnClickListener { pickImage() }
+        go_to_status.setOnClickListener { goToStatus() }
+
+        val adRequest = AdRequest.Builder().build()
+        adview.loadAd(adRequest)
+
+        displayUserImg()
+        animateContainersIn()
     }
 
     private fun goToStatus() {
@@ -167,7 +145,7 @@ class MyAccountFragment : Fragment() {
     }
 
     private fun displayUserImg() {
-        imageLoading.visibility = View.VISIBLE
+        image_loading.visibility = View.VISIBLE
         GlideApp
             .with(activity!!)
             .load(GateKeeperApplication.extraData.getUserImgBmp())
@@ -177,17 +155,17 @@ class MyAccountFragment : Fragment() {
             .listener(object: RequestListener<Drawable>{
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                     activity!!.runOnUiThread {
-                        imageLoading.visibility = View.GONE
-                        profileImage.setPadding(150.dp,150.dp,150.dp,150.dp)
+                        image_loading.visibility = View.GONE
+                        profile_image.setPadding(150.dp,150.dp,150.dp,150.dp)
                     }
                     return false
                 }
 
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                     activity!!.runOnUiThread {
-                        imageLoading.visibility = View.GONE
-                        profileImage.setPadding(0,0,0,0)
-                        profileImage.setImageDrawable(resource)
+                        image_loading.visibility = View.GONE
+                        profile_image.setPadding(0,0,0,0)
+                        profile_image.setImageDrawable(resource)
                     }
                     return false
                 }
@@ -200,22 +178,22 @@ class MyAccountFragment : Fragment() {
         Timeline.createParallel()
             .push(
                 Timeline.createParallel()
-                    .push(Tween.to(accountImageContainer, Alpha.VIEW, 1.0f).target(1.0f))
-                    .push(Tween.to(accountImageContainer, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+                    .push(Tween.to(account_image_container, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(account_image_container, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
             )
             .push(
                 Timeline.createParallel()
                     .pushPause(0.3f)
-                    .push(Tween.to(accountInfoContainer, Alpha.VIEW, 1.0f).target(1.0f))
-                    .push(Tween.to(accountInfoContainer, Translation.XY).target(370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+                    .push(Tween.to(account_info_container, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(account_info_container, Translation.XY).target(370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
             )
             .push(
                 Timeline.createParallel()
                     .pushPause(0.5f)
-                    .push(Tween.to(adsContainer, Alpha.VIEW, 1.0f).target(1.0f))
-                    .push(Tween.to(adsContainer, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+                    .push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(adview_container, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
             )
-            .start(ViewTweenManager.get(accountImageContainer))
+            .start(ViewTweenManager.get(account_image_container))
 
     }
 }

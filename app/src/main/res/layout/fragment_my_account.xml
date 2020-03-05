@@ -39,11 +39,9 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/profileImage"
+                            android:id="@+id/profile_image"
                             android:src="@drawable/camera"
                             android:padding="150dp"
-                            android:foreground="?android:attr/selectableItemBackground"
-                            android:clickable="true"
                             android:scaleType="centerCrop"
                             android:background="@color/busy_grey"/>
 
