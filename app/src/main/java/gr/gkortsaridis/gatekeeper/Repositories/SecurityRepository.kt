@@ -1,13 +1,9 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
-import android.content.Context
-import android.provider.Settings
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import android.util.Log
 import com.google.gson.Gson
-import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyExtraDataUpdate
@@ -201,7 +197,7 @@ object SecurityRepository {
     fun createExtraDataUpdateRequestBody(fullName: String? = null, imgUrl: String? = null): ReqBodyExtraDataUpdate? {
         var extraData = GateKeeperApplication.extraData
         if (fullName != null) extraData.userFullName = fullName
-        if (imgUrl != null) extraData.userImgUrl = imgUrl
+        if (imgUrl != null) extraData.userImg = imgUrl
 
         val enc = encryptObjectWithUserCreds(extraData)
         val loadedCredentials = AuthRepository.loadCredentials()
@@ -225,7 +221,7 @@ object SecurityRepository {
 
     fun getUserExtraData(email: String, data: String, iv: String): UserExtraData {
         val userData = decryptEncryptedDataToObjectWithUserCredentials(EncryptedData(encryptedData = data, iv = iv), UserExtraData::class.java) as UserExtraData?
-        return userData ?: UserExtraData(userEmail = email, userFullName = null, userImgUrl = null)
+        return userData ?: UserExtraData(userEmail = email, userFullName = null, userImg = null)
     }
 
 }

@@ -94,6 +94,10 @@ object AuthRepository {
                 {
                     viewDialog.hideDialog()
                     if (it.errorCode == -1) {
+                        GateKeeperApplication.extraData = SecurityRepository.getUserExtraData(
+                            email = body.username,
+                            data = it.data.extraDataEncryptedData,
+                            iv = it.data.extraDataIv)
                         val bundle = Bundle()
                         bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
                         FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)

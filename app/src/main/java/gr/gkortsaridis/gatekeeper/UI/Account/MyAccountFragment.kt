@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,16 +78,19 @@ class MyAccountFragment : Fragment() {
         updatePictureBtn.setOnClickListener { pickImage() }
         displayUserImg()
         animateContainersIn()
+
+
+
         return view
     }
 
+    //So we can use ids instead of custom objects (Should do the same with every class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         full_name_et.setText(GateKeeperApplication.extraData.userFullName ?: "")
         email_et.setText(GateKeeperApplication.extraData.userEmail)
         user_uid.text = "Your personal ID is: ${GateKeeperApplication.user_id ?: ""}"
-
         update_account_btn.setOnClickListener { updateProfileName(name = full_name_et.text.toString()) }
     }
 
@@ -116,6 +120,31 @@ class MyAccountFragment : Fragment() {
             )
     }
 
+    private fun updateProfileImg(img: String) {
+        viewDialog.showDialog()
+
+        val disposable = GateKeeperAPI.api.updateExtraData(SecurityRepository.createExtraDataUpdateRequestBody(imgUrl = img))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    viewDialog.hideDialog()
+                    if (it.errorCode == -1) {
+                        GateKeeperApplication.extraData =  SecurityRepository.getUserExtraData(
+                            GateKeeperApplication.extraData.userEmail,
+                            it.data.extraDataEncryptedData,
+                            it.data.extraDataIv)
+
+                        displayUserImg()
+                        //profileImage.setImageBitmap(GateKeeperApplication.extraData.getUserImgBmp())
+                        Toast.makeText(activity, "Img successfully updated", Toast.LENGTH_SHORT).show()
+                    }
+                    else { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }
+                },
+                { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }
+            )
+    }
+
     private fun pickImage() {
         ImagePicker.with(this)
             .compress(1024)
@@ -125,30 +154,9 @@ class MyAccountFragment : Fragment() {
                     val fileUri = data?.data
                     val inputStream = fileUri?.let { activity!!.contentResolver.openInputStream(it) }
                     val imgData = inputStream?.let { createByteArrayToUpload(it) }
-                    if (imgData != null) { uploadImageToFirebase(imgData) }
+                    if (imgData != null) { updateProfileImg( Base64.encodeToString(imgData, Base64.DEFAULT) ) }
                 }
             }
-    }
-
-    private fun uploadImageToFirebase(bytes: ByteArray) {
-        imageLoading.visibility = View.VISIBLE
-        getUserImageReference().putBytes(bytes).addOnCompleteListener {
-            run {
-                imageLoading.visibility = View.GONE
-                if (it.isSuccessful) {
-                    displayUserImg()
-                } else {
-                    Toast.makeText(activity, "ERROR", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
-    private fun getUserImageReference(): StorageReference {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val imagesRef = storageRef.child("userImages")
-        val a = imagesRef.child(AuthRepository.getUserID()+".jpg")
-        return a
     }
 
     private fun createByteArrayToUpload(inputStream: InputStream): ByteArray {
@@ -162,7 +170,7 @@ class MyAccountFragment : Fragment() {
         imageLoading.visibility = View.VISIBLE
         GlideApp
             .with(activity!!)
-            .load(getUserImageReference())
+            .load(GateKeeperApplication.extraData.getUserImgBmp())
             .placeholder(R.drawable.camera)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
