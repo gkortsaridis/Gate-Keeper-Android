@@ -11,7 +11,7 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -19,15 +19,10 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
@@ -43,7 +38,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_my_account.*
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
-
 
 class MyAccountFragment : Fragment() {
 
