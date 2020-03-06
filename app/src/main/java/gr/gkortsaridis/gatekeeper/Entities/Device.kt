@@ -14,7 +14,8 @@ data class Device(val OS : String,
                   var locale: String,
                   val firstAdded: Timestamp,
                   var lastEntry: Timestamp,
-                  val isTablet: Boolean){
+                  val isTablet: Boolean,
+                  var id: String? = null){
 
     fun formattedDate(): String {
         val lastEntryDate = lastEntry.toDate()

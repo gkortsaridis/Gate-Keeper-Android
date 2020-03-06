@@ -42,6 +42,14 @@ android {
             resValue 'string', 'banner_ad_unit_id', '"ca-app-pub-3940256099942544/6300978111"'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
 }
 
 dependencies {
@@ -124,6 +132,16 @@ dependencies {
     debugImplementation 'com.facebook.flipper:flipper:0.31.2'
     debugImplementation 'com.facebook.soloader:soloader:0.8.2'
     debugImplementation 'com.facebook.flipper:flipper-network-plugin:0.31.2'
+
+    //Retrofit, RXJava, RXKotlin
+    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.0.1'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.12'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

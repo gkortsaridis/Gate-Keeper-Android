@@ -1,0 +1,2 @@
+package gr.gkortsaridis.gatekeeper.Entities
+data class AllData(val logins: ArrayList<EncryptedData>, val cards: ArrayList<EncryptedData>, val notes: ArrayList<EncryptedData>, val vaults: ArrayList<EncryptedData>, val devices: ArrayList<EncryptedData>)

@@ -15,9 +15,9 @@ object pbkdf2_lib {
     private val PBKDF2_ITERATIONS = 1000
 
     @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
-    fun createHash(password: String, username: String): ByteArray {
+    fun createHash(password: String, username: String): String {
         val salt = username.toByteArray()
-        return pbkdf2(password.toCharArray(), salt, PBKDF2_ITERATIONS, HASH_BYTES)
+        return toHex(pbkdf2(password.toCharArray(), salt, PBKDF2_ITERATIONS, HASH_BYTES))
     }
 
     @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)

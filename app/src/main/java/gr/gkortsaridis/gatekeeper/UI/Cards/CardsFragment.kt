@@ -90,8 +90,10 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         val layoutManager = CarouselLayoutManager(CarouselLayoutManager.VERTICAL)
         layoutManager.setPostLayoutListener(CarouselZoomPostLayoutListener())
         layoutManager.addOnItemSelectionListener {
-            activeCard = filtered[it]
-            activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
+            if (filtered.size > 0) {
+                activeCard = filtered[it]
+                activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
+            }
             updateUI(updateCards = false)
         }
         cardsRecyclerView.layoutManager = layoutManager

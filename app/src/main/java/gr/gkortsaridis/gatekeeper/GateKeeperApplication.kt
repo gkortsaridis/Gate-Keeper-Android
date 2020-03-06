@@ -1,6 +1,8 @@
 package gr.gkortsaridis.gatekeeper
 
 import android.app.Application
+import android.os.Bundle
+import android.util.Log
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
@@ -10,12 +12,18 @@ import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.soloader.SoLoader
 import com.google.android.gms.ads.MobileAds
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseUser
 import gr.gkortsaridis.gatekeeper.Entities.*
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
+import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class GateKeeperApplication : Application() {
-
 
     override fun onCreate() {
         super.onCreate()
@@ -23,19 +31,23 @@ class GateKeeperApplication : Application() {
         user_id = DataRepository.savedUser
         MobileAds.initialize(this, admobAppID)
 
+        networkFlipperPlugin = NetworkFlipperPlugin()
+
         SoLoader.init(this, false)
         if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
             val client = AndroidFlipperClient.getInstance(this)
             client.addPlugin(InspectorFlipperPlugin(this, DescriptorMapping.withDefaults()))
             client.addPlugin(SharedPreferencesFlipperPlugin(this))
             client.addPlugin(NavigationFlipperPlugin.getInstance())
-            client.addPlugin(NetworkFlipperPlugin())
+            client.addPlugin(networkFlipperPlugin)
 
             client.start()
         }
     }
 
     companion object {
+
+        lateinit var networkFlipperPlugin: NetworkFlipperPlugin
         lateinit var instance: GateKeeperApplication private set
         var user: FirebaseUser? = null
         var user_id: String? = null
@@ -45,6 +57,7 @@ class GateKeeperApplication : Application() {
         lateinit var vaults: ArrayList<Vault>
         lateinit var cards: ArrayList<CreditCard>
         lateinit var notes: ArrayList<Note>
+        lateinit var extraData: UserExtraData
         var devices: ArrayList<Device>? = null
     }
 

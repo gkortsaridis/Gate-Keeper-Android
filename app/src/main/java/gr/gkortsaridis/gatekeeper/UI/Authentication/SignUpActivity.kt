@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
@@ -16,7 +15,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 
-class SignUpActivity : AppCompatActivity(), SignUpListener {
+class SignUpActivity : AppCompatActivity() {
 
     private val TAG = "_Sign_Up_"
 
@@ -56,37 +55,23 @@ class SignUpActivity : AppCompatActivity(), SignUpListener {
     }
 
     private fun signUp(email: String, password: String) {
-        AuthRepository.signUp(this, email,password, this)
-    }
-
-    override fun onSignUpComplete(success: Boolean, user: FirebaseSignInResult) {
-        if (success) {
-            AuthRepository.setApplicationUser(user.authResult!!.user!!)
-            VaultRepository.setupVaultsForNewUser(GateKeeperApplication.user!!, object: VaultSetupListener {
-                override fun onVaultSetupComplete() {
-                    finalizeSetup()
-                }
-                override fun onVaultSetupError() { showSetupError() }
-            })
-        }else{
-            when (user.exception) {
-                is com.google.firebase.auth.FirebaseAuthUserCollisionException -> {
-                    Toast.makeText(this, "User with this email already exists", Toast.LENGTH_SHORT).show()
-                }
-                is com.google.firebase.auth.FirebaseAuthWeakPasswordException -> {
-                    Toast.makeText(this, "Weak password! Should be at least 6 characters", Toast.LENGTH_SHORT).show()
-                }
-                else -> {
-                    Log.i(TAG, "EXCETION${user.exception}")
-                }
+        AuthRepository.signUp(this, email,password, object : SignUpListener{
+            override fun onSignUpComplete(user: String) {
+                AuthRepository.saveCredentials(email = email, password = password)
+                AuthRepository.setApplicationUser(user)
+                VaultRepository.setupVaultsForNewUser(user, object: VaultSetupListener {
+                    override fun onVaultSetupComplete() { finalizeSetup() }
+                    override fun onVaultSetupError(errorCode: Int, errorMsg: String) { showSetupError(errorMsg) }
+                })
             }
-        }
+            override fun onSignUpError(errorCode: Int, errorMsg: String) { showSetupError(errorMsg) }
+        })
     }
 
     fun finalizeSetup() { AuthRepository.proceedLoggedIn(this) }
 
-    fun showSetupError() {
-
+    fun showSetupError(errorMsg: String) {
+        Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
     }
 
 

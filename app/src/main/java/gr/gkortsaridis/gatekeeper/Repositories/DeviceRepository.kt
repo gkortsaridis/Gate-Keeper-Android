@@ -2,6 +2,8 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.content.Context
 import android.os.Build
+import android.provider.Settings
+import android.provider.Settings.*
 import android.telephony.TelephonyManager
 import android.util.Log
 import com.google.firebase.Timestamp
@@ -42,25 +44,6 @@ object DeviceRepository {
             .addOnFailureListener { exception -> retrieveListener.onDeviceRetrieveError(exception) }
     }
 
-    fun logCurrentLogin(context: Context) {
-        val encryptedDevice = SecurityRepository.encryptObjectWithUserCredentials(getCurrentDevice(context))
-
-        val currentDevice = getCurrentDevice(context)
-        currentDevice.lastEntry = Timestamp.now()
-        currentDevice.locale = getDetectedCountry(context, "??")
-
-        val devicehash = hashMapOf(
-            "device" to encryptedDevice,
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("devices")
-            .document(currentDevice.UID)
-            .set(devicehash)
-            .addOnCompleteListener { Log.i(TAG, "Login was logged") }
-    }
-
     fun renameDevice(device: Device, newName: String, listener: DeviceModifyListener) {
 
         device.nickname = newName
@@ -93,9 +76,9 @@ object DeviceRepository {
         listener.onDeviceDeleted()
     }
 
-    private fun getCurrentDevice(context: Context): Device {
+    fun getCurrentDevice(context: Context): Device {
 
-        val UID = FirebaseInstanceId.getInstance().id
+        val UID = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
         val OS = "Android"
         val version = Build.VERSION.CODENAME
         val versionNum = Build.VERSION.SDK_INT

@@ -199,7 +199,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         GlideApp
             .with(this)
-            .load(getUserImageReference())
+            .load(GateKeeperApplication.extraData.getUserImgBmp())
             .placeholder(R.mipmap.ic_launcher_round)
             .listener(object: RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
@@ -215,15 +215,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(profileImage)
 
-        val userName = GateKeeperApplication.user?.displayName ?: GateKeeperApplication.user?.email ?: ""
+        val userName = GateKeeperApplication.extraData.userFullName ?: GateKeeperApplication.extraData.userEmail
         navName.text = userName
         switchFragment("Passwords")
-    }
-
-    private fun getUserImageReference(): StorageReference {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val imagesRef = storageRef.child("userImages")
-        return imagesRef.child(AuthRepository.getUserID()+".jpg")
     }
 
     private fun displayFragment(fragment: Fragment?){

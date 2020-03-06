@@ -1,5 +1,6 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -7,14 +8,21 @@ import android.content.pm.ResolveInfo
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
+import gr.gkortsaridis.gatekeeper.Interfaces.LoginUpdateListener
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
+import io.reactivex.schedulers.Schedulers
+import kotlin.math.log
 
+@SuppressLint("CheckResult")
 object LoginsRepository {
 
     const val LOGIN_CLICK_ACTION_COPY = 1
@@ -27,85 +35,58 @@ object LoginsRepository {
     val createLoginSuccess = 2
     val createLoginError = 3
     val deleteLoginSuccess = 4
+    val deleteLoginError = 5
 
     fun encryptAndStoreLogin(activity: Activity, login: Login, listener: LoginCreateListener) {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
-        val encryptedLogin = SecurityRepository.encryptObjectWithUserCredentials(login)
-
-        val loginhash = hashMapOf(
-            "login" to encryptedLogin,
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("logins")
-            .add(loginhash)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
+        GateKeeperAPI.api.createLogin(SecurityRepository.createEncryptedDataRequestBody(login))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(Schedulers.newThread())
+            .subscribe (
+                {
                     viewDialog.hideDialog()
-                    listener.onLoginCreated()
-                }
-                else {
+                    val decryptedLogin = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Login::class.java) as Login?
+                    if (decryptedLogin != null) {
+                        decryptedLogin.id = it.data.id.toString()
+                        if (it.errorCode == -1) { listener.onLoginCreated(decryptedLogin) }
+                        else { listener.onLoginCreateError(it.errorCode, it.errorMsg) }   
+                    } else {
+                        listener.onLoginCreateError(-1, "Decryption error")
+                    }
+                },
+                {
                     viewDialog.hideDialog()
-                    listener.onLoginCreateError()
+                    listener.onLoginCreateError(it.hashCode(), it.localizedMessage ?: "")
                 }
-            }
+            )
     }
 
-    fun encryptAndUpdateLogin(activity: Activity, login: Login, listener: LoginCreateListener) {
+    fun encryptAndUpdateLogin(activity: Activity, login: Login, listener: LoginUpdateListener) {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
 
-        val encryptedLogin = SecurityRepository.encryptObjectWithUserCredentials(login)
-
-        val loginhash = hashMapOf(
-            "login" to encryptedLogin,
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.document("logins/"+login.id)
-            .update(loginhash as Map<String, Any>)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
+        GateKeeperAPI.api.updateLogin(SecurityRepository.createEncryptedDataRequestBody(login, login.id))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(Schedulers.newThread())
+            .subscribe (
+                {
                     viewDialog.hideDialog()
-                    listener.onLoginCreated()
-                }
-                else {
-                    viewDialog.hideDialog()
-                    listener.onLoginCreateError()
-                }
-            }
-    }
-
-    fun retrieveLoginsByAccountID(accountID: String, retrieveListener: LoginRetrieveListener) {
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("logins")
-            .whereEqualTo("account_id",accountID)
-            .get().addOnSuccessListener { result ->
-                val loginsResult = ArrayList<Login>()
-
-                val encryptedLoginsToSaveLocally = ArrayList<String>()
-
-                for (document in result) {
-                    val encryptedLogin = document["login"] as String
-                    encryptedLoginsToSaveLocally.add(encryptedLogin)
-                    val decryptedLogin = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedLogin, Login::class.java) as Login?
-                    if (decryptedLogin != null){
-                        decryptedLogin.id = document.id
-                        loginsResult.add(decryptedLogin)
+                    val decryptedLogin = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Login::class.java) as Login?
+                    if (decryptedLogin != null) {
+                        decryptedLogin.id = it.data.id.toString()
+                        if (it.errorCode == -1) { listener.onLoginUpdated(decryptedLogin) }
+                        else { listener.onLoginUpdateError(it.errorCode, it.errorMsg) }   
+                    } else {
+                        listener.onLoginUpdateError(-1, "Decryption Error")
                     }
+                },
+                {
+                    viewDialog.hideDialog()
+                    listener.onLoginUpdateError(it.hashCode(), it.localizedMessage ?: "")
                 }
-
-                //Save logins locally
-                DataRepository.savedLogins = Gson().toJson(encryptedLoginsToSaveLocally)
-
-                retrieveListener.onLoginsRetrieveSuccess(loginsResult)
-            }
-            .addOnFailureListener { exception -> retrieveListener.onLoginsRetrieveError(exception) }
+            )
     }
 
     fun filterLoginsByVault(logins: ArrayList<Login>, vault: Vault): ArrayList<Login> {
@@ -166,14 +147,18 @@ object LoginsRepository {
     }
 
     fun deleteLogin(login: Login, listener: LoginDeleteListener?) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("logins")
-            .document(login.id)
-            .delete()
-            .addOnCompleteListener {
-                listener?.onLoginDeleted()
-            }
-
+        GateKeeperAPI.api.deleteLogin(loginId = login.id, body = SecurityRepository.createUsernameHashRequestBody())
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(Schedulers.newThread())
+            .subscribe (
+                {
+                    if (it.errorCode == -1 && login.id.toLong() == it.deletedItemID) { listener?.onLoginDeleted() }
+                    else { listener?.onLoginDeleteError(it.errorCode, it.errorMsg) }
+                },
+                {
+                    listener?.onLoginDeleteError(it.hashCode(), it.localizedMessage ?: "")
+                }
+            )
     }
 
 }

@@ -5,6 +5,7 @@ import java.lang.Exception
 
 interface NoteCreateListener {
     fun onNoteCreated(note: Note)
+    fun onNoteCreateError(errorCode: Int, errorMsg: String)
 }
 
 interface NoteRetrieveListener {
@@ -18,8 +19,10 @@ interface NoteClickListener {
 
 interface NoteUpdateListener {
     fun onNoteUpdated(note: Note)
+    fun onNoteUpdateError(errorCode: Int, errorMsg: String)
 }
 
 interface NoteDeleteListener {
     fun onNoteDeleted()
+    fun onNoteDeleteError(errorCode: Int, errorMsg: String)
 }

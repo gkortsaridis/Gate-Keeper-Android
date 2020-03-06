@@ -4,12 +4,12 @@ import gr.gkortsaridis.gatekeeper.Entities.Vault
 
 interface VaultCreateListener {
     fun onVaultCreated(vault: Vault)
-    fun onVaultCreateError(){}
+    fun onVaultCreateError(errorCode: Int, errorMsg: String){}
 }
 
 interface VaultSetupListener {
     fun onVaultSetupComplete()
-    fun onVaultSetupError()
+    fun onVaultSetupError(errorCode: Int, errorMsg: String)
 }
 
 interface VaultRetrieveListener {
@@ -26,7 +26,9 @@ interface VaultClickListener {
 
 interface VaultEditListener {
     fun onVaultEdited(vault: Vault){}
+    fun onVaultEditError(errorCode: Int, errorMsg: String){}
     fun onVaultDeleted(){}
+    fun onVaultDeleteError(errorCode: Int, errorMsg: String){}
 }
 
 interface VaultInfoDismissListener {

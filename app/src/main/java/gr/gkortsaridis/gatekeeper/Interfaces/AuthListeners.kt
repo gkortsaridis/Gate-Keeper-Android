@@ -1,12 +1,11 @@
 package gr.gkortsaridis.gatekeeper.Interfaces
 
-import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
-
 interface SignInListener {
-    fun onSignInComplete (success: Boolean, user: FirebaseSignInResult)
-    fun onRegistrationNeeded (email: String)
+    fun onSignInComplete (userId: String)
+    fun onSignInError (errorCode: Int, errorMsg: String)
 }
 
 interface SignUpListener {
-    fun onSignUpComplete (success: Boolean, user: FirebaseSignInResult)
+    fun onSignUpComplete (user: String)
+    fun onSignUpError (errorCode: Int, errorMsg: String)
 }

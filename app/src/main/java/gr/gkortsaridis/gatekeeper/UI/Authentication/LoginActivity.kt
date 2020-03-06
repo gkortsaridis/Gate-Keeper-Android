@@ -2,18 +2,13 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
-import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
-import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository.RC_SIGN_IN
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -55,69 +50,41 @@ class LoginActivity : AppCompatActivity(), SignInListener {
     }
 
     private fun signIn(email: String, password: String, check: Boolean) {
-        AuthRepository.signIn(this, email, password, check,this)
+        AuthRepository.signIn(this, email, password, this)
     }
 
-    private fun googleSignIn() {
-        AuthRepository.googleSignIn(this)
-    }
+    override fun onSignInComplete(userId: String) {
+        val biometricManager = BiometricManager.from(this)
 
-    override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
-        if (success) {
-            val biometricManager = BiometricManager.from(this)
-
-            if (AuthRepository.getPreferredAuthType() == AuthRepository.SIGN_IN_NOT_SET
-                && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
-                AlertDialog.Builder(this)
-                    .setTitle("Biometric Sign In")
-                    .setMessage("Would you like to use our biometric authentication feature?\nYour credentials are going to be safely stored on the device.")
-                    .setPositiveButton("Yes") { _, _ ->
-                        DataRepository.preferredAuthType = AuthRepository.BIO_SIN_IN
-                        saveCredentials.isChecked = true
-                        proceedLogin(user)
-                    }
-                    .setNegativeButton("No") { _, _ ->
-                        DataRepository.preferredAuthType = AuthRepository.PASSWORD_SIGN_IN
-                        proceedLogin(user)
-                    }
-                    .show()
-            } else {
-                proceedLogin(user)
-            }
-
+        if (AuthRepository.getPreferredAuthType() == AuthRepository.SIGN_IN_NOT_SET
+            && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
+            AlertDialog.Builder(this)
+                .setTitle("Biometric Sign In")
+                .setMessage("Would you like to use our biometric authentication feature?\nYour credentials are going to be safely stored on the device.")
+                .setPositiveButton("Yes") { _, _ ->
+                    DataRepository.preferredAuthType = AuthRepository.BIO_SIN_IN
+                    saveCredentials.isChecked = true
+                    proceedLogin(user = userId)
+                }
+                .setNegativeButton("No") { _, _ ->
+                    DataRepository.preferredAuthType = AuthRepository.PASSWORD_SIGN_IN
+                    proceedLogin(user = userId)
+                }
+                .show()
         } else {
-            Toast.makeText(this, "Wrong Credentials", Toast.LENGTH_SHORT).show()
+            proceedLogin(user = userId)
         }
     }
 
-    private fun proceedLogin(user: FirebaseSignInResult) {
+    override fun onSignInError(errorCode: Int, errorMsg: String) {
+        Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun proceedLogin(user: String) {
         //Save credentials locally for decryption
         AuthRepository.saveCredentials(email = email.text.toString(), password = password.text.toString())
 
-        AuthRepository.setApplicationUser(user.authResult!!.user!!)
+        AuthRepository.setApplicationUser(user)
         AuthRepository.proceedLoggedIn(this)
-    }
-
-    override fun onRegistrationNeeded(email: String) {
-        startActivity(Intent(this, CreatePasswordActivity::class.java))
-    }
-
-    //Pretty much onGoogleSignInComplete
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                if (account?.email != null) {
-                    signIn(account.email!!, account.id!!, true)
-                }
-            } catch (e: ApiException) {
-                Log.w("LOGIN ACTIVITY", "Google sign in failed", e)
-                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }
