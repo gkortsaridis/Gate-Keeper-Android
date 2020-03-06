@@ -142,6 +142,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.2.12'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
 
+    //Expandable View
+    implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

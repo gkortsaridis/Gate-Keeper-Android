@@ -53,4 +53,7 @@
     <string name="monthly_plan_description">Sync your data across your devices\n\nEnjoy Ad-free experience\n\nSave unlimited passwords, cards &amp; notes to your account\n\n</string>
     <string name="yearly_plan_description">Charged XX yearly\n\nSync your data across your devices\n\nEnjoy Ad-free experience\n\nSave unlimited passwords, cards &amp; notes to your account\n\n</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

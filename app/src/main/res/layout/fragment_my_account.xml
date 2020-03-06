@@ -133,19 +133,69 @@
                 android:layout_width="370dp"
                 android:layout_height="wrap_content"
                 android:elevation="5dp"
-                android:visibility="gone"
+                android:visibility="visible"
+                android:layout_marginRight="-370dp"
                 android:id="@+id/status_container"
                 android:layout_marginTop="16dp"
                 android:layout_gravity="right"
                 app:shape_roundRect_topLeftRadius="150dp"
                 app:shape_roundRect_bottomLeftRadius="150dp">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
-                    android:id="@+id/go_to_status"
-                    android:background="@color/colorPrimaryDark">
-                </RelativeLayout>
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:background="@color/white">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:id="@+id/account_history_container"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/account_grey"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="16dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Account History"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="8dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:id="@+id/account_billing_container"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/account_grey"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="16dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Billing Status"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="8dp"/>
+                    </LinearLayout>
+                </LinearLayout>
 
             </com.github.florent37.shapeofview.shapes.RoundRectView>
 
@@ -153,13 +203,12 @@
                 android:layout_width="370dp"
                 android:layout_height="wrap_content"
                 android:elevation="5dp"
-                android:layout_marginRight="-370dp"
+                android:layout_marginLeft="-370dp"
                 android:alpha="0.0"
                 android:id="@+id/adview_container"
                 android:layout_marginTop="16dp"
-                android:layout_gravity="right"
-                app:shape_roundRect_topLeftRadius="150dp"
-                app:shape_roundRect_bottomLeftRadius="150dp">
+                app:shape_roundRect_topRightRadius="150dp"
+                app:shape_roundRect_bottomRightRadius="150dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"

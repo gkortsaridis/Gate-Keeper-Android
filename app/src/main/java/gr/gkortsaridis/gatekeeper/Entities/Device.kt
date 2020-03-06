@@ -5,16 +5,16 @@ import com.google.firebase.Timestamp
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
-data class Device(val OS : String,
-                  val version : String,
-                  val versionNum: Int,
-                  val UID : String,
-                  val vendor: String,
-                  var nickname: String,
-                  var locale: String,
-                  val firstAdded: Timestamp,
-                  var lastEntry: Timestamp,
-                  val isTablet: Boolean,
+data class Device(val OS : String = "",
+                  val version : String = "",
+                  val versionNum: Int = -1,
+                  val UID : String = "",
+                  val vendor: String = "",
+                  var nickname: String = "",
+                  var locale: String = "",
+                  val firstAdded: Timestamp = Timestamp.now(),
+                  var lastEntry: Timestamp = Timestamp.now(),
+                  val isTablet: Boolean = false,
                   var id: String? = null){
 
     fun formattedDate(): String {

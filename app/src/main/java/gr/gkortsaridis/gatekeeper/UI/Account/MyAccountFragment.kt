@@ -57,7 +57,8 @@ class MyAccountFragment : Fragment() {
         update_account_btn.setOnClickListener { updateProfileName(name = full_name_et.text.toString()) }
 
         update_profile_image.setOnClickListener { pickImage() }
-        go_to_status.setOnClickListener { goToStatus() }
+        account_billing_container.setOnClickListener { goToBilling() }
+        account_history_container.setOnClickListener { goToHistory() }
 
         val adRequest = AdRequest.Builder().build()
         adview.loadAd(adRequest)
@@ -66,7 +67,11 @@ class MyAccountFragment : Fragment() {
         animateContainersIn()
     }
 
-    private fun goToStatus() {
+    private fun goToHistory() {
+        startActivity(Intent(activity, AccountHistoryActivity::class.java))
+    }
+
+    private fun goToBilling() {
         context?.startActivity(Intent(activity, AccountStatusActivity::class.java))
     }
 
@@ -184,8 +189,14 @@ class MyAccountFragment : Fragment() {
             .push(
                 Timeline.createParallel()
                     .pushPause(0.5f)
+                    .push(Tween.to(status_container, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(status_container, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .push(
+                Timeline.createParallel()
+                    .pushPause(0.7f)
                     .push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
-                    .push(Tween.to(adview_container, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+                    .push(Tween.to(adview_container, Translation.XY).target(370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
             )
             .start(ViewTweenManager.get(account_image_container))
 

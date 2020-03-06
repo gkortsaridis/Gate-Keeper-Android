@@ -23,6 +23,10 @@ object DeviceRepository {
 
     private const val TAG = "_DEVICE_REPOSITORY_"
 
+    fun getDeviceById(id: String): Device? {
+        return GateKeeperApplication.devices?.find { it.id == id }
+    }
+
     fun retrieveDevicesByAccountID(accountID: String, retrieveListener: DevicesRetrieveListener) {
 
         val db = FirebaseFirestore.getInstance()

@@ -93,7 +93,7 @@ object GateKeeperAPI {
 
     private val retrofit = Retrofit.Builder()
         .client(jet2Client)
-        .baseUrl("http://10.202.73.33:8080")
+        .baseUrl("http://10.202.73.29:8080")
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -154,6 +154,10 @@ object GateKeeperAPI {
 
         @HTTP(method = "DELETE", path = "/notes/{note_id}", hasBody = true)
         fun deleteNote(@Path(value = "note_id", encoded = true) noteId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
+
+        //LOGS
+        @GET("/log/{user_id}")
+        fun getUserLogs(@Path(value = "user_id", encoded = true) userId: String): Observable<RespLogs>
     }
 
 }
