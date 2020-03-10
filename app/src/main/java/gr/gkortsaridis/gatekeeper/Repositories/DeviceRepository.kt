@@ -76,9 +76,13 @@ object DeviceRepository {
 
     fun getCurrentDevice(context: Context): Device {
 
+        val fields = Build.VERSION_CODES::class.java.fields
+        var codeName = "UNKNOWN"
+        fields.filter { it.getInt(Build.VERSION_CODES::class) == Build.VERSION.SDK_INT }.forEach { codeName = it.name }
+
         val UID = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
         val OS = "Android"
-        val version = Build.VERSION.CODENAME
+        val version = codeName
         val versionNum = Build.VERSION.SDK_INT
         val vendor = Build.MANUFACTURER + " " +Build.MODEL
         val nickname = ""

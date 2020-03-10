@@ -196,10 +196,10 @@ object SecurityRepository {
 
     fun createExtraDataUpdateRequestBody(fullName: String? = null, imgUrl: String? = null): ReqBodyExtraDataUpdate? {
         var extraData = GateKeeperApplication.extraData
-        if (fullName != null) extraData.userFullName = fullName
-        if (imgUrl != null) extraData.userImg = imgUrl
+        if (fullName != null) extraData?.userFullName = fullName
+        if (imgUrl != null) extraData?.userImg = imgUrl
 
-        val enc = encryptObjToEncDataWithUserCredentials(extraData)
+        val enc = encryptObjToEncDataWithUserCredentials(extraData!!)
         val loadedCredentials = AuthRepository.loadCredentials()
         return if (enc != null && loadedCredentials != null) {
             val hash = pbkdf2_lib.createHash(loadedCredentials.password, loadedCredentials.email)

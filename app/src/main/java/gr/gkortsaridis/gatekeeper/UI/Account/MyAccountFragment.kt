@@ -51,8 +51,8 @@ class MyAccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewDialog = ViewDialog(activity!!)
 
-        full_name_et.setText(GateKeeperApplication.extraData.userFullName ?: "")
-        email_et.setText(GateKeeperApplication.extraData.userEmail)
+        full_name_et.setText(GateKeeperApplication.extraData?.userFullName ?: "")
+        email_et.setText(GateKeeperApplication.extraData?.userEmail)
         user_uid.text = "Your personal ID is: ${GateKeeperApplication.user_id ?: ""}"
         update_account_btn.setOnClickListener { updateProfileName(name = full_name_et.text.toString()) }
 
@@ -86,7 +86,7 @@ class MyAccountFragment : Fragment() {
                     viewDialog.hideDialog()
                     if (it.errorCode == -1) {
                         GateKeeperApplication.extraData =  SecurityRepository.getUserExtraData(
-                            GateKeeperApplication.extraData.userEmail,
+                            GateKeeperApplication.extraData?.userEmail ?: "",
                             it.data.extraDataEncryptedData,
                             it.data.extraDataIv)
                         Toast.makeText(activity, "Data successfully updated", Toast.LENGTH_SHORT).show()
@@ -108,7 +108,7 @@ class MyAccountFragment : Fragment() {
                     viewDialog.hideDialog()
                     if (it.errorCode == -1) {
                         GateKeeperApplication.extraData =  SecurityRepository.getUserExtraData(
-                            GateKeeperApplication.extraData.userEmail,
+                            GateKeeperApplication.extraData?.userEmail ?: "",
                             it.data.extraDataEncryptedData,
                             it.data.extraDataIv)
 
@@ -146,13 +146,13 @@ class MyAccountFragment : Fragment() {
         image_loading.visibility = View.VISIBLE
         GlideApp
             .with(activity!!)
-            .load(GateKeeperApplication.extraData.getUserImgBmp())
+            .load(GateKeeperApplication.extraData?.getUserImgBmp())
             .placeholder(R.drawable.camera)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
             .listener(object: RequestListener<Drawable>{
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    activity!!.runOnUiThread {
+                    activity?.runOnUiThread {
                         image_loading.visibility = View.GONE
                         profile_image.setPadding(150.dp,150.dp,150.dp,150.dp)
                         update_profile_image.text = "Set profile image"
@@ -161,7 +161,7 @@ class MyAccountFragment : Fragment() {
                 }
 
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    activity!!.runOnUiThread {
+                    activity?.runOnUiThread {
                         image_loading.visibility = View.GONE
                         profile_image.setPadding(0,0,0,0)
                         profile_image.setImageDrawable(resource)

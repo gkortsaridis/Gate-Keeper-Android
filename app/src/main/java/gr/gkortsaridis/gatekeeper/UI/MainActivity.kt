@@ -199,7 +199,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         GlideApp
             .with(this)
-            .load(GateKeeperApplication.extraData.getUserImgBmp())
+            .load(GateKeeperApplication.extraData?.getUserImgBmp())
             .placeholder(R.mipmap.ic_launcher_round)
             .listener(object: RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
@@ -215,7 +215,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(profileImage)
 
-        val userName = GateKeeperApplication.extraData.userFullName ?: GateKeeperApplication.extraData.userEmail
+        val userName = GateKeeperApplication.extraData?.userFullName ?: GateKeeperApplication.extraData?.userEmail
         navName.text = userName
         switchFragment("Passwords")
     }

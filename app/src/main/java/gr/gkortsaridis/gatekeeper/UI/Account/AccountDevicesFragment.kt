@@ -26,8 +26,6 @@ class AccountDevicesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val devices = GateKeeperApplication.devices ?: ArrayList()
-        devices.add(0, Device())
-        devices.add(Device())
         devices_recycler_view.layoutManager = LinearLayoutManager(context)
         devices_recycler_view.addItemDecoration(DividerItemDecoration(context, 0))
         devices_recycler_view.adapter = DeviceHistoryRecyclerViewAdapter(context!!, devices)
