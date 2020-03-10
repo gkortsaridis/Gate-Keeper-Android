@@ -230,36 +230,6 @@
                         android:text="Password Generator"/>
                 </RelativeLayout>
             </com.github.florent37.shapeofview.shapes.RoundRectView>
-
-            <com.github.florent37.shapeofview.shapes.RoundRectView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginLeft="8dp"
-                android:id="@+id/devices_rectview"
-                app:shape_roundRect_bottomLeftRadius="25dp"
-                app:shape_roundRect_bottomRightRadius="25dp"
-                app:shape_roundRect_topLeftRadius="25dp"
-                app:shape_roundRect_topRightRadius="25dp">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:foreground="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:background="@color/colorPrimary"
-                    android:id="@+id/nav_container_devices"
-                    android:layout_height="50dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="16dp"
-                        android:id="@+id/nav_text_devices"
-                        android:textColor="@android:color/white"
-                        android:textSize="18sp"
-                        android:text="Device History"/>
-                </RelativeLayout>
-            </com.github.florent37.shapeofview.shapes.RoundRectView>
-
         </LinearLayout>
         <View
             android:layout_width="match_parent"
