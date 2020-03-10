@@ -3,9 +3,9 @@
 
     <gradient
         android:angle="0"
-        android:centerColor="@color/vault_green_1"
-        android:endColor="@color/vault_green_2"
-        android:startColor="@color/vault_green_1"
+        android:centerColor="@color/vault_green_2"
+        android:endColor="@color/vault_green_1"
+        android:startColor="@color/white"
         android:type="linear" />
 
     <corners

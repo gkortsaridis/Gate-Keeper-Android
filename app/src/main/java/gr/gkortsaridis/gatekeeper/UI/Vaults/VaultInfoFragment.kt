@@ -62,7 +62,7 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
         whiteColorContainer = view.findViewById(R.id.white_color_container)
         whiteColor = view.findViewById(R.id.white_color)
         saveVault = view.findViewById(R.id.save_vault)
-        vaultBackground = view.findViewById(R.id.vault_background)
+        vaultBackground = view.findViewById(R.id.vault_main_container)
         deleteVault = view.findViewById(R.id.delete_vault)
         vaultNameInCard = view.findViewById(R.id.vault_name)
 
@@ -102,7 +102,15 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
             updateColors()
         }
         vaultName.addTextChangedListener(object: TextWatcher{
-            override fun afterTextChanged(s: Editable?) { vaultNameInCard.text = s.toString() }
+            override fun afterTextChanged(s: Editable?) {
+                if (s.toString() == "") {
+                    vaultNameInCard.setTextColor(resources.getColor(R.color.greyish))
+                    vaultNameInCard.text = vaultNameInCard.hint.toString()
+                }else {
+                    vaultNameInCard.setTextColor(resources.getColor(R.color.mate_black))
+                    vaultNameInCard.text = s.toString()
+                }
+            }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 

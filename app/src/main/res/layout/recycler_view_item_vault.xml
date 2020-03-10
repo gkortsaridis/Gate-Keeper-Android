@@ -20,8 +20,9 @@
             android:orientation="horizontal">
 
             <View
-                android:layout_width="match_parent"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
                 android:id="@+id/background_color"/>
 
             <LinearLayout
