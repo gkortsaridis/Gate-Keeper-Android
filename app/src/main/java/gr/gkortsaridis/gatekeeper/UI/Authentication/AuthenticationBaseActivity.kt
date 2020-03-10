@@ -22,7 +22,7 @@ class AuthenticationBaseActivity : AppCompatActivity() {
         } else if (preferredAuthType == AuthRepository.PIN_SIGN_IN && !DataRepository.pinLock.isNullOrEmpty()) {
             Intent(this, PinAuthenticationActivity::class.java)
         } else {
-            Intent(this, LoginActivity::class.java)
+            Intent(this, SignInActivity::class.java)
         }
 
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION

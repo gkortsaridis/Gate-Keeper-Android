@@ -10,10 +10,10 @@ import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_sign_in.*
 
 
-class LoginActivity : AppCompatActivity(), SignInListener {
+class SignInActivity : AppCompatActivity(), SignInListener {
 
     private val TAG = "_Login_Activity_"
 
@@ -25,7 +25,7 @@ class LoginActivity : AppCompatActivity(), SignInListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_sign_in)
         signIn = findViewById(R.id.sign_in)
         signUpLink = findViewById(R.id.sign_up_link)
         email = findViewById(R.id.emailET)

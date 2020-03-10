@@ -2,21 +2,15 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.content.Context
 import android.os.Build
-import android.provider.Settings
-import android.provider.Settings.*
+import android.provider.Settings.Secure
 import android.telephony.TelephonyManager
 import android.util.Log
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.DeviceModifyListener
 import gr.gkortsaridis.gatekeeper.Interfaces.DevicesRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 object DeviceRepository {
@@ -53,7 +47,7 @@ object DeviceRepository {
         device.nickname = newName
 
         val devicehash = hashMapOf(
-            "device" to SecurityRepository.encryptObjectWithUserCredentials(device),
+            "device" to SecurityRepository.encryptObjToStrWithUserCredentials(device),
             "account_id" to AuthRepository.getUserID()
         )
 
@@ -93,7 +87,7 @@ object DeviceRepository {
         val devices = GateKeeperApplication.devices
         for (device in devices ?: ArrayList()) { if (device.UID == UID) { return device } }
 
-        return Device(OS= OS, version = version, versionNum = versionNum, UID = UID, vendor = vendor, nickname = nickname, locale = locale, firstAdded = Timestamp.now(), lastEntry = Timestamp.now(), isTablet = context.resources.getBoolean(
+        return Device(OS= OS, version = version, versionNum = versionNum, UID = UID, vendor = vendor, nickname = nickname, locale = locale, isTablet = context.resources.getBoolean(
             R.bool.isTablet))
     }
 

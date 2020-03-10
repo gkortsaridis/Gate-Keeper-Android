@@ -4,18 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.*
-import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodySignUp
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
-import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.Authentication.LoadingActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
@@ -39,12 +34,12 @@ object AuthRepository {
 
         val hash = pbkdf2_lib.createHash(password, email)
         val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
-        val encDevice = SecurityRepository.encryptObjectWithUserCreds(device)
+        val encDevice = SecurityRepository.encryptObjToEncDataWithUserCredentials(device)
         val body = ReqBodyUsernameHash(
             username = email,
             hash = hash,
-            deviceEncryptedData = encDevice!!.encryptedData,
-            deviceIv = encDevice.iv,
+            deviceEncryptedData = encDevice?.encryptedData ?: "",
+            deviceIv = encDevice?.iv ?: "",
             deviceUid = device.UID)
 
         GateKeeperAPI.api.signIn(body)
@@ -80,7 +75,7 @@ object AuthRepository {
 
         val hash = pbkdf2_lib.createHash(password = password, username = email)
         val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
-        val encDevice = SecurityRepository.encryptObjectWithUserCreds(device)
+        val encDevice = SecurityRepository.encryptObjToEncDataWithUserCredentials(device)
         val body = ReqBodyUsernameHash(
             username = email,
             hash = hash,

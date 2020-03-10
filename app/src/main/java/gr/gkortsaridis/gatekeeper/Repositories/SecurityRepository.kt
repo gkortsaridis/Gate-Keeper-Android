@@ -89,7 +89,7 @@ object SecurityRepository {
     }
 
     //Encryption / Decryption operations on User Credentials secret key
-    fun encryptWithUserCredentials(decryptedData: String): EncryptedData? {
+    private fun encryptWithUserCredentials(decryptedData: String): EncryptedData? {
         return try {
             val cryptLib = CryptLib()
             val credentials = AuthRepository.loadCredentials()
@@ -107,7 +107,7 @@ object SecurityRepository {
         }
     }
 
-    fun decryptWithUserCredentials(encryptedData: EncryptedData):String? {
+    private fun decryptWithUserCredentials(encryptedData: EncryptedData):String? {
         return try {
             val cryptLib = CryptLib()
             val credentials = AuthRepository.loadCredentials()
@@ -123,13 +123,13 @@ object SecurityRepository {
         }
     }
 
-    fun encryptObjectWithUserCredentials(obj: Any) : String? {
+    fun encryptObjToStrWithUserCredentials(obj: Any) : String? {
         val decrypted = Gson().toJson(obj)
         val encData = encryptWithUserCredentials(decrypted)
         return Gson().toJson(encData)
     }
 
-    fun encryptObjectWithUserCreds(obj: Any) : EncryptedData? {
+    fun encryptObjToEncDataWithUserCredentials(obj: Any) : EncryptedData? {
         val decrypted = Gson().toJson(obj)
         return encryptWithUserCredentials(decrypted)
     }
@@ -159,7 +159,7 @@ object SecurityRepository {
         return if (loadedCredentials != null) {
             val hash = pbkdf2_lib.createHash(loadedCredentials.password, loadedCredentials.email)
             val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
-            val encDevice = encryptObjectWithUserCreds(device)
+            val encDevice = encryptObjToEncDataWithUserCredentials(device)
             ReqBodyUsernameHash(
                 username = loadedCredentials.email,
                 hash = hash,
@@ -172,13 +172,13 @@ object SecurityRepository {
     }
 
     fun createEncryptedDataRequestBody(obj: Any, id: String? = null): ReqBodyEncryptedData? {
-        val enc = encryptObjectWithUserCreds(obj)
+        val enc = encryptObjToEncDataWithUserCredentials(obj)
         val loadedCredentials = AuthRepository.loadCredentials()
 
         return if (enc != null && loadedCredentials != null) {
             val hash = pbkdf2_lib.createHash(loadedCredentials.password, loadedCredentials.email)
             val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
-            val encDevice = encryptObjectWithUserCreds(device)
+            val encDevice = encryptObjToEncDataWithUserCredentials(device)
             ReqBodyEncryptedData(
                 id = id?.toLong(),
                 userId = AuthRepository.getUserID(),
@@ -199,12 +199,12 @@ object SecurityRepository {
         if (fullName != null) extraData.userFullName = fullName
         if (imgUrl != null) extraData.userImg = imgUrl
 
-        val enc = encryptObjectWithUserCreds(extraData)
+        val enc = encryptObjToEncDataWithUserCredentials(extraData)
         val loadedCredentials = AuthRepository.loadCredentials()
         return if (enc != null && loadedCredentials != null) {
             val hash = pbkdf2_lib.createHash(loadedCredentials.password, loadedCredentials.email)
             val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
-            val encDevice = encryptObjectWithUserCreds(device)
+            val encDevice = encryptObjToEncDataWithUserCredentials(device)
             ReqBodyExtraDataUpdate(
                 username = loadedCredentials.email,
                 hash = hash,
