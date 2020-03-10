@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper.UI.Account
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import gr.gkortsaridis.gatekeeper.R
 import kotlinx.android.synthetic.main.activity_account_history.*
@@ -22,5 +23,12 @@ class AccountHistoryActivity : AppCompatActivity() {
         viewPager.offscreenPageLimit = 3
         viewPager.adapter = adapter
         tabs.setupWithViewPager(viewPager)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> true
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

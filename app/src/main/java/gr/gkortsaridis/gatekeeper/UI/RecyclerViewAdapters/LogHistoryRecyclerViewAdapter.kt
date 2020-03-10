@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.UserLog
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.DeviceRepository
+import gr.gkortsaridis.gatekeeper.Utils.LogHistory
 import java.text.DateFormat
 
 
@@ -16,25 +17,8 @@ class LogHistoryRecyclerViewAdapter(
     private val context: Context,
     private var logs: ArrayList<UserLog>): RecyclerView.Adapter<LogHistoryRecyclerViewAdapter.LogHistoryViewHolder>() {
 
-    private val HEADER = 0
-    private val DATA = 1
-    private val FOOTER = 2
-
-    override fun getItemViewType(position: Int): Int {
-        if (position == 0) return HEADER
-        else if (position == logs.size - 1) return FOOTER
-        return DATA
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogHistoryViewHolder {
-        val inflatedView =
-            when(viewType) {
-                HEADER -> LayoutInflater.from(context).inflate(R.layout.recycler_view_item_history_header, parent, false)
-                DATA -> LayoutInflater.from(context).inflate(R.layout.recycler_view_item_history_data, parent, false)
-                FOOTER -> LayoutInflater.from(context).inflate(R.layout.recycler_view_item_history_footer, parent, false)
-                else -> LayoutInflater.from(context).inflate(R.layout.recycler_view_item_history_data, parent, false)
-            }
-
+        val inflatedView = LayoutInflater.from(context).inflate(R.layout.recycler_view_item_history_data, parent, false)
         return LogHistoryViewHolder(inflatedView)
     }
 
@@ -66,9 +50,9 @@ class LogHistoryRecyclerViewAdapter(
         }
 
         fun bindLogin(log: UserLog, position: Int, context: Context){
-            logAction?.text = log.action
+            logAction?.text = LogHistory.getFormattedLog(log.action)
 
-            logTimestamp?.text = DateFormat.getDateInstance(DateFormat.FULL).format(log.timestamp)
+            logTimestamp?.text = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(log.timestamp)
 
             val device = DeviceRepository.getDeviceById(log.deviceId.toString())
             val deviceName = when {

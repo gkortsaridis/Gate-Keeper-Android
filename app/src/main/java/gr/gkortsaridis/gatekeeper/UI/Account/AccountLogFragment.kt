@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import gr.gkortsaridis.gatekeeper.Entities.CompactUserLog
 import gr.gkortsaridis.gatekeeper.Entities.UserLog
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
@@ -56,7 +57,6 @@ class AccountLogFragment : Fragment() {
                     }
                 },
                 {
-                    val a = it
                     viewDialog.hideDialog()
                     updateLogs(ArrayList())
                 }
@@ -65,9 +65,26 @@ class AccountLogFragment : Fragment() {
     }
 
     private fun updateLogs(logs: ArrayList<UserLog>) {
-        logs.add(0, UserLog(id = -1)) //Add RV Header
-        logs.add(UserLog(id = -2)) //Add RV Footer
-        logAdapter.updateLogHistory(logs)
+        logs.sortBy { it.timestamp }
+        val sortedAndReversed = ArrayList(logs.reversed())
+
+        val compactUserLogs = ArrayList<CompactUserLog>()
+        var addToCompactList = false
+        sortedAndReversed.forEachIndexed { index, userLog ->
+            if (!addToCompactList) {
+                val item = ArrayList<UserLog>()
+                item.add(userLog)
+                val compactUserLog = CompactUserLog(item)
+                compactUserLogs.add(compactUserLog)
+            } else {
+                val topList = compactUserLogs[compactUserLogs.size-1]
+                topList.sameLogs.add(userLog)
+            }
+            if (index < logs.size - 1) {
+                addToCompactList = userLog.action == logs[index+1].action
+            } else { addToCompactList = false }
+        }
+        logAdapter.updateLogHistory(sortedAndReversed)
     }
 
 }
