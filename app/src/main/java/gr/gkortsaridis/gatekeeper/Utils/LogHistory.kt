@@ -16,6 +16,8 @@ object LogHistory {
             "NOTE_UPDATE" -> "Note Update"
             "NOTE_DELETE" -> "Note Delete"
             "USER_DATA_UPDATE" -> "User Data Update"
+            "DEVICE_RENAME" -> "Device Rename"
+            "DEVICE_DELETE" -> "Device Delete"
             else -> log
         }
     }

@@ -116,6 +116,9 @@ object GateKeeperAPI {
         @GET("/alldata/{user_id}")
         fun getAllData(@Path(value = "user_id", encoded = true) userId: String): Observable<RespAllData>
 
+        @PUT("/alldata/device/")
+        fun updateDevice(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
+
         //VAULTS
         @POST("/vaults/")
         fun createVault(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
@@ -155,6 +158,9 @@ object GateKeeperAPI {
 
         @HTTP(method = "DELETE", path = "/notes/{note_id}", hasBody = true)
         fun deleteNote(@Path(value = "note_id", encoded = true) noteId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
+
+        //DEVICES
+
 
         //LOGS
         @GET("/log/{user_id}")

@@ -13,6 +13,6 @@ interface DeviceClickListener {
 }
 
 interface DeviceModifyListener {
-    fun onDeviceDeleted()
-    fun onDeviceRenamed()
+    fun onDeviceDeleteRequest(device: Device)
+    fun onDeviceRenameRequest(device: Device)
 }

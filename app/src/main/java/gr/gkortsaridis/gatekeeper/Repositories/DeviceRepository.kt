@@ -56,7 +56,6 @@ object DeviceRepository {
             .document(device.UID)
             .set(devicehash)
             .addOnCompleteListener {
-                listener.onDeviceRenamed()
                 Log.i(TAG, "Device was renamed")
             }
 
@@ -68,10 +67,8 @@ object DeviceRepository {
             .document(device.UID)
             .delete()
             .addOnCompleteListener {
-                listener.onDeviceDeleted()
             }
 
-        listener.onDeviceDeleted()
     }
 
     fun getCurrentDevice(context: Context): Device {

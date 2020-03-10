@@ -43,13 +43,24 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginLeft="16dp"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Android 10.1"
+                android:textSize="15sp"
+                android:id="@+id/device_os_info"
+                android:textColor="@color/greyish"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="16dp"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="4dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="8dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -68,16 +79,7 @@
                     android:id="@+id/expand_device_info"/>
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Android 10.1"
-                android:textSize="15sp"
-                android:id="@+id/device_os_info"
-                android:textColor="@color/greyish"
-                android:layout_marginTop="4dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginBottom="8dp"/>
+
 
 
             <net.cachapa.expandablelayout.ExpandableLayout
@@ -102,10 +104,12 @@
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
+                            android:id="@+id/device_new_name"
                             android:hint="Set a device nickname"/>
                         <ImageButton
                             android:layout_width="20dp"
                             android:layout_height="20dp"
+                            android:id="@+id/rename_request"
                             android:background="@drawable/edit_black"
                             android:layout_gravity="center_vertical"/>
                     </LinearLayout>
@@ -116,6 +120,7 @@
                         android:layout_height="wrap_content"
                         android:text="Delete"
                         android:layout_gravity="end"
+                        android:id="@+id/delete_request"
                         android:background="@android:color/transparent"
                         android:textColor="@color/error_red"/>
 

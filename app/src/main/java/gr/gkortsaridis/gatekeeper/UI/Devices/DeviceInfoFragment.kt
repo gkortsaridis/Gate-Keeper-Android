@@ -116,14 +116,10 @@ class DeviceInfoFragment : BottomSheetDialogFragment(), DeviceModifyListener {
         })
     }
 
-    override fun onDeviceDeleted() {
-        reloadDevices()
-        dismiss()
+    override fun onDeviceDeleteRequest(device: Device) {
     }
 
-    override fun onDeviceRenamed() {
-        reloadDevices()
-        updateDeviceUI()
+    override fun onDeviceRenameRequest(device: Device) {
     }
 
 }
