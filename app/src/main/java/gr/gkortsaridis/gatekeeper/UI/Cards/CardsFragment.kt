@@ -137,14 +137,16 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         if (filtered.isNotEmpty()) {
             filtered.forEachIndexed { index, creditCard ->
                 if (creditCard.id == activeCard?.id) {
+                    bottomArc.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
                     if (bottomArc.alpha == 0.0f) { animateArcIn() }
                     //bottomArc.visibility = View.VISIBLE
                     cardNickname.text = "${index + 1}/${filtered.size} ${activeCard?.cardName}"
                 }
             }
         } else {
-            if (bottomArc.alpha == 1.0f) { animateArcOut() }
+            //if (bottomArc.alpha == 1.0f) { animateArcOut() }
             //bottomArc.visibility = View.GONE
+            bottomArc.setBackgroundColor(resources.getColor(android.R.color.transparent))
             cardNickname.text = ""
         }
 
