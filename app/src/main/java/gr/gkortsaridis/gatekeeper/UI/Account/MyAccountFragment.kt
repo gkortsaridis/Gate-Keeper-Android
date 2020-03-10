@@ -113,7 +113,6 @@ class MyAccountFragment : Fragment() {
                             it.data.extraDataIv)
 
                         displayUserImg()
-                        //profileImage.setImageBitmap(GateKeeperApplication.extraData.getUserImgBmp())
                         Toast.makeText(activity, "Img successfully updated", Toast.LENGTH_SHORT).show()
                     }
                     else { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }
@@ -156,6 +155,7 @@ class MyAccountFragment : Fragment() {
                     activity!!.runOnUiThread {
                         image_loading.visibility = View.GONE
                         profile_image.setPadding(150.dp,150.dp,150.dp,150.dp)
+                        update_profile_image.text = "Set profile image"
                     }
                     return false
                 }
@@ -165,6 +165,7 @@ class MyAccountFragment : Fragment() {
                         image_loading.visibility = View.GONE
                         profile_image.setPadding(0,0,0,0)
                         profile_image.setImageDrawable(resource)
+                        update_profile_image.text = "Set profile image"
                     }
                     return false
                 }
