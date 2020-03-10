@@ -168,140 +168,150 @@
                 app:shape_roundRect_bottomLeftRadius="40dp"
                 app:shape_roundRect_topLeftRadius="40dp">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:id="@+id/login_info"
-                    android:background="@android:color/white"
-                    android:orientation="vertical">
-
-                    <EditText
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:clipChildren="true">
+                    <View
+                        android:layout_width="30dp"
+                        android:layout_height="370dp"
+                        android:layout_alignParentRight="true"
+                        android:id="@+id/login_info"
+                        android:background="@drawable/vault_color_yellow"/>
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Note Title"
-                        android:hint="Title"
-                        android:textSize="21sp"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="16dp"
-                        android:inputType="text"
-                        android:id="@+id/nameET"
-                        android:background="@null"
-                        android:cursorVisible="true"
-                        android:textStyle="bold"/>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp">
-
-                            <EditText
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="Username"
-                                android:paddingRight="32dp"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:id="@+id/usernameET"/>
-
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <ImageButton
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:layout_alignParentRight="true"
-                            android:background="@drawable/copy"
-                            android:id="@+id/copy_username"
-                            android:layout_marginTop="24dp"
-                            android:layout_marginRight="16dp"/>
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:passwordToggleEnabled="true"
-                            android:layout_marginTop="8dp">
-
-                            <EditText
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="Password"
-                                android:paddingRight="40dp"
-                                android:inputType="textPassword"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:id="@+id/passwordET"/>
-
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <ImageButton
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:layout_alignParentRight="true"
-                            android:background="@drawable/copy"
-                            android:id="@+id/copy_password"
-                            android:layout_marginTop="24dp"
-                            android:layout_marginRight="16dp"/>
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp">
-
-                            <EditText
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="URL"
-                                android:paddingRight="32dp"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:id="@+id/urlET"/>
-
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <ImageButton
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginTop="24dp"
-                            android:background="@drawable/order"
-                            android:id="@+id/select_application"
-                            android:layout_marginRight="16dp"/>
-                    </RelativeLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="16dp">
+                        android:layout_height="match_parent"
+                        android:padding="16dp"
+                        android:orientation="vertical">
 
                         <EditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Notes"
+                            tools:text="Note Title"
+                            android:hint="Title"
+                            android:textSize="21sp"
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
-                            android:id="@+id/notesET"/>
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:inputType="text"
+                            android:id="@+id/nameET"
+                            android:background="@null"
+                            android:cursorVisible="true"
+                            android:textStyle="bold"/>
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                </LinearLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp">
+
+                                <EditText
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Username"
+                                    android:paddingRight="32dp"
+                                    android:layout_marginLeft="16dp"
+                                    android:layout_marginRight="16dp"
+                                    android:id="@+id/usernameET"/>
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <ImageButton
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_alignParentRight="true"
+                                android:background="@drawable/copy"
+                                android:id="@+id/copy_username"
+                                android:layout_marginTop="24dp"
+                                android:layout_marginRight="16dp"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:passwordToggleEnabled="true"
+                                android:layout_marginTop="8dp">
+
+                                <EditText
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Password"
+                                    android:paddingRight="40dp"
+                                    android:inputType="textPassword"
+                                    android:layout_marginLeft="16dp"
+                                    android:layout_marginRight="16dp"
+                                    android:id="@+id/passwordET"/>
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <ImageButton
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_alignParentRight="true"
+                                android:background="@drawable/copy"
+                                android:id="@+id/copy_password"
+                                android:layout_marginTop="24dp"
+                                android:layout_marginRight="16dp"/>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp">
+
+                                <EditText
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="URL"
+                                    android:paddingRight="32dp"
+                                    android:layout_marginLeft="16dp"
+                                    android:layout_marginRight="16dp"
+                                    android:id="@+id/urlET"/>
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <ImageButton
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginTop="24dp"
+                                android:background="@drawable/order"
+                                android:id="@+id/select_application"
+                                android:layout_marginRight="16dp"/>
+                        </RelativeLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="16dp">
+
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Notes"
+                                android:layout_marginLeft="16dp"
+                                android:layout_marginRight="16dp"
+                                android:id="@+id/notesET"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+                </RelativeLayout>
 
             </com.github.florent37.shapeofview.shapes.RoundRectView>
 

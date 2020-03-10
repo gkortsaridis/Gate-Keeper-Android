@@ -3,8 +3,8 @@
 
     <gradient
         android:angle="0"
-        android:centerColor="@color/vault_yellow_1"
-        android:endColor="@color/vault_yellow_2"
+        android:centerColor="@color/vault_yellow_2"
+        android:endColor="@color/vault_yellow_1"
         android:startColor="@color/white"
         android:type="linear" />
 

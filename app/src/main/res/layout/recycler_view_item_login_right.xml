@@ -42,7 +42,7 @@
                         android:layout_width="30dp"
                         android:layout_height="match_parent"
                         android:id="@+id/login_img_container_2"
-                        android:background="@color/colorPrimaryDark"/>
+                        android:background="@color/vault_red_1"/>
 
                     <com.github.florent37.shapeofview.shapes.DiagonalView
                         android:layout_width="80dp"
@@ -52,7 +52,8 @@
                         <RelativeLayout
                             android:layout_width="80dp"
                             android:layout_height="match_parent"
-                            android:background="@color/colorPrimaryDark"
+                            android:background="@drawable/vault_color_red"
+                            android:rotation="180"
                             android:id="@+id/login_img_container"/>
                     </com.github.florent37.shapeofview.shapes.DiagonalView>
 

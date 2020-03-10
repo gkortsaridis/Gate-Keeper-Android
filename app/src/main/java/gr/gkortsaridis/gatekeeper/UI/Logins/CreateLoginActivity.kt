@@ -57,7 +57,7 @@ class CreateLoginActivity : AppCompatActivity() {
     private lateinit var title: TextView
     private lateinit var url: EditText
     private lateinit var saveUpdateArc: ArcView
-    private lateinit var loginInfo: LinearLayout
+    private lateinit var loginInfo: View
 
     private var vaultToAdd: Vault? = null
     private var login: Login? = null
