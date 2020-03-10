@@ -93,7 +93,7 @@ object GateKeeperAPI {
 
     private val retrofit = Retrofit.Builder()
         .client(jet2Client)
-        .baseUrl("http://10.202.73.29:8080")
+        .baseUrl("http://gate-keeper.herokuapp.com/")
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
