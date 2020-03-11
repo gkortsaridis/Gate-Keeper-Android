@@ -13,16 +13,13 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SnapHelper
 import com.azoft.carousellayoutmanager.CarouselLayoutManager
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
 import com.azoft.carousellayoutmanager.CenterScrollListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.littlemango.stacklayoutmanager.StackLayoutManager
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
@@ -84,9 +81,6 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         cardsRecyclerView.adapter = cardsAdapter
         cardsRecyclerView.addOnScrollListener(CenterScrollListener())
 
-        //cardsRecyclerView.layoutManager = stackLayoutManager
-        //cardsRecyclerView.setHasFixedSize(true)
-
         val layoutManager = CarouselLayoutManager(CarouselLayoutManager.VERTICAL)
         layoutManager.setPostLayoutListener(CarouselZoomPostLayoutListener())
         layoutManager.addOnItemSelectionListener {
@@ -132,6 +126,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
 
         if (!cardsRecyclerView.isComputingLayout && updateCards) {
             cardsAdapter.updateCards(filtered)
+            cardsRecyclerView.scrollToPosition(0)
         }
 
         if (filtered.isNotEmpty()) {
@@ -139,13 +134,10 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
                 if (creditCard.id == activeCard?.id) {
                     bottomArc.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
                     if (bottomArc.alpha == 0.0f) { animateArcIn() }
-                    //bottomArc.visibility = View.VISIBLE
                     cardNickname.text = "${index + 1}/${filtered.size} ${activeCard?.cardName}"
                 }
             }
         } else {
-            //if (bottomArc.alpha == 1.0f) { animateArcOut() }
-            //bottomArc.visibility = View.GONE
             bottomArc.setBackgroundColor(resources.getColor(android.R.color.transparent))
             cardNickname.text = ""
         }

@@ -50,7 +50,7 @@ class CreditCardsRecyclerViewAdapter(
         private var cardholderName: TextView? = null
         private var cardExpiryDate: TextView? = null
         private var view: View = v
-        private var cardContainer: LinearLayout? = null
+        private var cardContainer: View? = null
         private var cardContainerBack: LinearLayout? = null
         private var context: Context = context
         private var flipCard: LinearLayout? = null
@@ -96,24 +96,24 @@ class CreditCardsRecyclerViewAdapter(
             val vault = VaultRepository.getVaultByID(card.vaultId)
             when (vault?.color) {
                 VaultColor.Red -> {
-                    cardContainer?.setBackgroundResource(R.drawable.vault_color_red)
-                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_red)
+                    cardContainer?.setBackgroundResource(R.color.vault_red_1)
+                    cardContainerBack?.setBackgroundResource(R.color.vault_red_1)
                 }
                 VaultColor.Green -> {
-                    cardContainer?.setBackgroundResource(R.drawable.vault_color_green)
-                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_green)
+                    cardContainer?.setBackgroundResource(R.color.vault_green_1)
+                    cardContainerBack?.setBackgroundResource(R.color.vault_green_1)
                 }
                 VaultColor.Blue -> {
-                    cardContainer?.setBackgroundResource(R.drawable.vault_color_blue)
-                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_blue)
+                    cardContainer?.setBackgroundResource(R.color.vault_blue_1)
+                    cardContainerBack?.setBackgroundResource(R.color.vault_blue_1)
                 }
                 VaultColor.Yellow -> {
-                    cardContainer?.setBackgroundResource(R.drawable.vault_color_yellow)
-                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_yellow)
+                    cardContainer?.setBackgroundResource(R.color.vault_yellow_1)
+                    cardContainerBack?.setBackgroundResource(R.color.vault_yellow_1)
                 }
                 VaultColor.White -> {
-                    cardContainer?.setBackgroundResource(R.drawable.vault_color_white)
-                    cardContainerBack?.setBackgroundResource(R.drawable.vault_color_white)
+                    cardContainer?.setBackgroundResource(R.color.vault_white_1)
+                    cardContainerBack?.setBackgroundResource(R.color.vault_white_1)
                 }
             }
 
