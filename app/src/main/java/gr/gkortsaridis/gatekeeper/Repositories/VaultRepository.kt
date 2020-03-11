@@ -21,7 +21,7 @@ object VaultRepository {
     val allVaults =  Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White)
 
     fun setupVaultsForNewUser(userId: String, listener: VaultSetupListener) {
-        val personalVault = Vault(id = "", name = "Personal", account_id = AuthRepository.getUserID(), color = VaultColor.White)
+        val personalVault = Vault(id = "", name = "Personal", account_id = AuthRepository.getUserID(), color = VaultColor.Blue)
         GateKeeperAPI.api.createVault(SecurityRepository.createEncryptedDataRequestBody(personalVault))
             .subscribeOn(Schedulers.newThread())
             .observeOn(Schedulers.newThread())

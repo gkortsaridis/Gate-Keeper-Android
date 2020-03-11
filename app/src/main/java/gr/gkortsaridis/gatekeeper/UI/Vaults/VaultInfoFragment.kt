@@ -105,7 +105,7 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString() == "") {
                     vaultNameInCard.setTextColor(resources.getColor(R.color.greyish))
-                    vaultNameInCard.text = vaultNameInCard.hint.toString()
+                    vaultNameInCard.text = "Vault Name"
                 }else {
                     vaultNameInCard.setTextColor(resources.getColor(R.color.mate_black))
                     vaultNameInCard.text = s.toString()

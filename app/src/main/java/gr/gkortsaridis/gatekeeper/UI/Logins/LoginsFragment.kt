@@ -45,51 +45,29 @@ import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
 import io.noties.tumbleweed.android.types.Translation
 import io.noties.tumbleweed.equations.Cubic
+import kotlinx.android.synthetic.main.fragment_logins.*
 
 
 class LoginsFragment() : Fragment(), LoginSelectListener {
+
     private val TAG = "_LOGINS_FRAGMENT_"
-
-    private lateinit var loginsRV: RecyclerView
-    private lateinit var fab: FloatingActionButton
-    private lateinit var vaultName: TextView
-    private lateinit var vaultView: LinearLayout
-    private lateinit var addLoginButton: Button
-    private lateinit var noLoginsMessage: LinearLayout
-    private lateinit var loginsCounterContainer: LinearLayout
-    private lateinit var loginCount: TextView
-    private lateinit var loginsSortType: TextView
-    private lateinit var loginsSortBtn: ImageButton
-    private lateinit var mAdView: AdView
-    private lateinit var adViewContainer: RoundRectView
-
     private var autofillManager: AutofillManager? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_logins, container, false)
+        return inflater.inflate(R.layout.fragment_logins, container, false)
+    }
 
-        loginsRV = view.findViewById(R.id.logins_recycler_view) as RecyclerView
-        loginsRV.layoutManager = VegaLayoutManager()
-        noLoginsMessage = view.findViewById(R.id.no_items_view)
-        addLoginButton = view.findViewById(R.id.add_login_btn)
-        fab = view.findViewById(R.id.fab)
-        vaultView = view.findViewById(R.id.vault_view)
-        vaultName = view.findViewById(R.id.vault_name)
-        loginsCounterContainer = view.findViewById(R.id.logins_counter_container)
-        loginCount = view.findViewById(R.id.login_cnt)
-        loginsSortType = view.findViewById(R.id.logins_sort_type)
-        loginsSortBtn = view.findViewById(R.id.sort_logins)
-        adViewContainer = view.findViewById(R.id.adview_container)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        mAdView = view.findViewById(R.id.adview)
         val adRequest = AdRequest.Builder().build()
-        mAdView.loadAd(adRequest)
+        adview.loadAd(adRequest)
 
+        logins_recycler_view.layoutManager = VegaLayoutManager()
 
-        addLoginButton.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
+        add_login_btn.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
-        vaultView.setOnClickListener{
+        vault_view.setOnClickListener{
             val intent = Intent(activity, SelectVaultActivity::class.java)
             intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
             intent.putExtra("vault_id",VaultRepository.getLastActiveVault().id)
@@ -97,7 +75,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         }
 
         val sortTypes = arrayOf("Alias", "Modified date")
-        loginsSortBtn.setOnClickListener {
+        sort_logins.setOnClickListener {
             val builder = AlertDialog.Builder(activity)
             builder.setTitle("Sort by")
             builder.setSingleChoiceItems(sortTypes, DataRepository.loginSortType) { dialog, which ->
@@ -110,7 +88,6 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         }
 
         animateItemsIn()
-        return view
     }
 
     override fun onResume() {
@@ -123,15 +100,16 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         val sortType = DataRepository.loginSortType
         if (sortType == LOGIN_SORT_TYPE_NAME) {
             logins.sortBy { it.name.toLowerCase() }
-            loginsSortType.text = "passwords, sort by alias"
+            logins_sort_type.text = "passwords, sort by alias"
         }
         else {
             logins.sortBy { it.date_modified }
             logins.reverse()
-            loginsSortType.text = "passwords, sort by modified date"
+            logins_sort_type.text = "passwords, sort by modified date"
         }
 
-        loginsRV.adapter =
+
+        logins_recycler_view.adapter =
             LoginsRecyclerViewAdapter(
                 activity!!.baseContext,
                 logins,
@@ -139,12 +117,17 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
                 this
             )
 
-        loginCount.text = logins.size.toString()
+        login_cnt.text = logins.size.toString()
 
-        vaultName.text = VaultRepository.getLastActiveVault().name
-        noLoginsMessage.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
+        val vault = VaultRepository.getLastActiveVault()
+        vault_name.text = vault.name
+        vault_view.setBackgroundColor(resources.getColor(vault.getVaultColorResource()))
+        vault_name.setTextColor(resources.getColor(vault.getVaultColorAccent()))
+        vault_icon.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
+
+        no_items_view.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
         fab.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
-        loginsCounterContainer.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
+        logins_counter_container.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
     }
 
     private fun checkForAutofill() {
@@ -195,7 +178,6 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     }
 
     private fun openLogin(login: Login) {
-        Log.i("Clicked", login.name)
         val intent = Intent(activity, CreateLoginActivity::class.java)
         intent.putExtra("login_id",login.id)
         startActivity(intent)
@@ -216,8 +198,8 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         Timeline.createParallel()
             .push(Tween.to(fab, Alpha.VIEW, 1.0f).target(1.0f))
             .push(Tween.to(fab, Translation.XY).target(0f,-162.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            .push(Tween.to(adViewContainer, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(adViewContainer, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(fab))
     }
 }

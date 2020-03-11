@@ -6,70 +6,74 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".UI.Notes.NotesFragment">
 
-    <com.github.florent37.shapeofview.shapes.RoundRectView
+    <com.github.florent37.shapeofview.shapes.CutCornerView
         android:layout_width="match_parent"
-        android:layout_height="86dp"
+        android:layout_height="60dp"
         android:elevation="4dp"
-        android:id="@+id/height"
-        android:layout_marginTop="-4dp"
-        android:layout_marginRight="-4dp"
-        android:layout_marginLeft="-4dp"
-        android:layout_marginBottom="4dp"
-        app:shape_roundRect_bottomLeftRadius="40dp">
+        app:shape_cutCorner_bottomRightSize="10dp"
+        app:shape_cutCorner_bottomLeftSize="10dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="59.5dp"
             android:background="@color/colorPrimaryDark">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vault"
+                android:textSize="17sp"
+                android:textColor="@color/white"
+                android:layout_marginLeft="48dp"/>
+        </RelativeLayout>
 
-            <LinearLayout
+    </com.github.florent37.shapeofview.shapes.CutCornerView>
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:shape_roundRect_topRightRadius="28dp"
+        app:shape_roundRect_topLeftRadius="28dp"
+        app:shape_roundRect_bottomRightRadius="28dp"
+        app:shape_roundRect_bottomLeftRadius="28dp"
+        android:elevation="5dp"
+        android:id="@+id/vault_container"
+        android:layout_marginTop="32dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/vault_view"
+            android:background="@color/vault_red_1"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:paddingTop="8dp"
+            android:paddingLeft="32dp"
+            android:paddingBottom="8dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_height="30dp"
+                android:src="@drawable/vault_white"/>
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Vault"
-                    android:layout_marginLeft="32dp"
-                    android:textColor="#FDCED0"
-                    android:layout_alignTop="@+id/vault_view"/>
+                android:text="Personal"
+                android:id="@+id/vault_name"
+                android:textSize="19sp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:maxLines="1"/>
+        </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/vault_view"
-                    android:foreground="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:paddingTop="16dp"
-                    android:paddingLeft="32dp"
-                    android:paddingBottom="16dp"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_height="30dp"
-                        android:src="@drawable/vault_white"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Personal"
-                        android:id="@+id/vault_name"
-                        android:textSize="19sp"
-                        android:layout_gravity="center_vertical"
-                        android:textColor="@android:color/white"
-                        android:layout_marginLeft="8dp"/>
-                </LinearLayout>
-            </LinearLayout>
-
-
-        </RelativeLayout>
     </com.github.florent37.shapeofview.shapes.RoundRectView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
+        android:layout_below="@+id/vault_container"
         android:clipToPadding="false"
         android:paddingBottom="90dp"
         android:paddingTop="30dp"
