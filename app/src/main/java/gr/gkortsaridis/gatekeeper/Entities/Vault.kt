@@ -20,7 +20,7 @@ data class Vault( var id: String = "-1",
 
     fun getVaultColorAccent(): Int {
         return when(color) {
-            VaultColor.White -> R.color.colorPrimaryDark
+            VaultColor.White -> R.color.mate_black
             VaultColor.Yellow -> R.color.mate_black
             VaultColor.Red -> R.color.white
             VaultColor.Green -> R.color.white

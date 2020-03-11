@@ -104,23 +104,7 @@ class NoteActivity : AppCompatActivity() {
 
     private fun updateUI() {
         vaultName.text = vaultToAdd.name
-        when (vaultToAdd.color) {
-            VaultColor.Red -> {
-                bottomView.setBackgroundResource(R.drawable.vault_color_red)
-            }
-            VaultColor.Green -> {
-                bottomView.setBackgroundResource(R.drawable.vault_color_green)
-            }
-            VaultColor.Blue -> {
-                bottomView.setBackgroundResource(R.drawable.vault_color_blue)
-            }
-            VaultColor.Yellow -> {
-                bottomView.setBackgroundResource(R.drawable.vault_color_yellow)
-            }
-            VaultColor.White -> {
-                bottomView.setBackgroundResource(R.drawable.vault_color_white)
-            }
-        }
+        bottomView.setBackgroundResource(vaultToAdd.getVaultColorResource())
     }
 
     private fun changeVault() {
