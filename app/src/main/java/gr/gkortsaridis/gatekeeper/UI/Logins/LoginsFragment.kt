@@ -52,6 +52,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
 
     private val TAG = "_LOGINS_FRAGMENT_"
     private var autofillManager: AutofillManager? = null
+    private lateinit var loginsAdapter: LoginsRecyclerViewAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_logins, container, false)
@@ -87,6 +88,15 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
             dialog.show()
         }
 
+        loginsAdapter =
+            LoginsRecyclerViewAdapter(
+                activity!!.baseContext,
+                arrayListOf(), //empty for now
+                activity!!.packageManager,
+                this
+            )
+        logins_recycler_view.adapter = loginsAdapter
+
         animateItemsIn()
     }
 
@@ -108,14 +118,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
             logins_sort_type.text = "passwords, sort by modified date"
         }
 
-
-        logins_recycler_view.adapter =
-            LoginsRecyclerViewAdapter(
-                activity!!.baseContext,
-                logins,
-                activity!!.packageManager,
-                this
-            )
+        loginsAdapter.updateLogins(logins)
 
         login_cnt.text = logins.size.toString()
 

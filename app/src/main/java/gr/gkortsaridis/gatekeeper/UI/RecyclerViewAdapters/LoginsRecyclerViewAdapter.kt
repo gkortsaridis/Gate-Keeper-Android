@@ -34,22 +34,12 @@ import gr.gkortsaridis.gatekeeper.Utils.dp
 
 class LoginsRecyclerViewAdapter(
     private val context: Context,
-    private val logins: ArrayList<Login>,
+    private var logins: ArrayList<Login>,
     private val packageManager: PackageManager,
     private val listener: LoginSelectListener): RecyclerView.Adapter<LoginsRecyclerViewAdapter.LoginViewHolder>() {
 
-    private val RIGHT_SIDE = 0
-    private val LEFT_SIDE = 1
-
-    override fun getItemViewType(position: Int): Int {
-        return RIGHT_SIDE
-        //return if (position % 2 == 0) RIGHT_SIDE else LEFT_SIDE
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LoginViewHolder {
-        val inflatedView =
-            if (viewType == LEFT_SIDE) LayoutInflater.from(context).inflate(R.layout.recycler_view_item_login_left, parent, false)
-            else LayoutInflater.from(context).inflate(R.layout.recycler_view_item_login_right, parent, false)
+        val inflatedView = LayoutInflater.from(context).inflate(R.layout.recycler_view_item_login_right, parent, false)
         return LoginViewHolder(inflatedView)
     }
 
@@ -60,6 +50,11 @@ class LoginsRecyclerViewAdapter(
     override fun onBindViewHolder(holder: LoginViewHolder, position: Int) {
         val loginItem = logins[position]
         holder.bindLogin(loginItem, position, context, packageManager, listener)
+    }
+
+    fun updateLogins(logins: ArrayList<Login>) {
+        this.logins = logins
+        notifyDataSetChanged()
     }
 
     class LoginViewHolder(v: View): RecyclerView.ViewHolder(v) {
@@ -90,38 +85,16 @@ class LoginsRecyclerViewAdapter(
             this.loginUsername?.text = login.username
 
             val vault = VaultRepository.getVaultByID(login.vault_id)
+            loginImgContainer2?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+            loginImgContainer?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+
             var color = ""
             when (vault?.color) {
-                VaultColor.Red -> {
-                    color = "e53935"
-                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_red)
-                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_red_1))
-                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_red)
-                }
-                VaultColor.Green -> {
-                    color = "4caf50"
-                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_green)
-                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_green_1))
-                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_green)
-                }
-                VaultColor.Blue -> {
-                    color = "1e88e5"
-                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_blue)
-                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_blue_1))
-                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_blue)
-                }
-                VaultColor.Yellow -> {
-                    color = "fdd835"
-                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_yellow)
-                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_yellow_1))
-                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_yellow)
-                }
-                VaultColor.White -> {
-                    color = "eeeeee"
-                    //loginBackground?.setBackgroundResource(R.drawable.vault_color_yellow)
-                    loginImgContainer2?.setBackgroundColor(context.resources.getColor(R.color.vault_white_1))
-                    loginImgContainer?.setBackgroundResource(R.drawable.vault_color_white)
-                }
+                VaultColor.Red -> { color = "e53935" }
+                VaultColor.Green -> { color = "4caf50" }
+                VaultColor.Blue -> { color = "1e88e5" }
+                VaultColor.Yellow -> { color = "fdd835" }
+                VaultColor.White -> { color = "ffffff" }
             }
 
             val app = LoginsRepository.getApplicationInfoByPackageName(login.url, packageManager)
@@ -131,14 +104,11 @@ class LoginsRecyclerViewAdapter(
                 this.loginInitial?.visibility = View.GONE
                 this.loginImage?.visibility = View.VISIBLE
                 this.loginImage?.setImageDrawable(appIcon)
-                val bitmapDrawable = this.loginImage?.drawable
-                val bitmap = bitmapDrawable?.toBitmap()!!
-                //colorImageBackground(context, bitmap)
             } else {
                 this.loginImage?.visibility = View.VISIBLE
                 GlideApp.with(context)
                     .load("https://besticon-demo.herokuapp.com/icon?url="+login.url+"&size=30..100..150&fallback_icon_color="+color)
-                    .placeholder(R.drawable.camera)
+                    .placeholder(R.drawable.padlock)
                     .listener(object: RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean { return false }
 
@@ -159,7 +129,10 @@ class LoginsRecyclerViewAdapter(
             this.loginAction?.setOnClickListener { listener.onLoginActionClicked(login) }
         }
 
-        private fun colorImageBackground(context: Context, bitmap: Bitmap) {
+        //Get Dominant Color from ImageView
+        private fun colorImageBackground(context: Context, imageView: ImageView) {
+            val bitmapDrawable = imageView.drawable
+            val bitmap = bitmapDrawable?.toBitmap()!!
             Palette.from(bitmap).generate {
                 loginImgContainer?.setBackgroundColor(it?.getDominantColor( context.resources.getColor(R.color.colorAccent))!!)
                 loginImgContainer2?.setBackgroundColor(it?.getDominantColor( context.resources.getColor(R.color.colorAccent))!!)
