@@ -113,13 +113,11 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         if (filtered.isNotEmpty()) {
             filtered.forEachIndexed { index, creditCard ->
                 if (creditCard.id == activeCard?.id) {
-                    bottom_arc.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
                     if (bottom_arc.alpha == 0.0f) { animateArcIn() }
-                    card_nickname_tv.text = "${index + 1}/${filtered.size} ${activeCard?.cardName}"
+                    card_nickname_tv.text = "${activeCard?.cardName}"
                 }
             }
         } else {
-            bottom_arc.setBackgroundColor(resources.getColor(android.R.color.transparent))
             card_nickname_tv.text = ""
         }
 
