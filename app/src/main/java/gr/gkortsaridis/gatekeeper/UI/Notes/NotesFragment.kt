@@ -1,26 +1,16 @@
 package gr.gkortsaridis.gatekeeper.UI.Notes
 
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.Vault
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
@@ -35,48 +25,34 @@ import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
 import io.noties.tumbleweed.android.types.Translation
 import io.noties.tumbleweed.equations.Cubic
+import kotlinx.android.synthetic.main.fragment_notes.*
 
 class NotesFragment : Fragment(), NoteClickListener {
 
-    private lateinit var addNoteFab : FloatingActionButton
-    private lateinit var notesRecyclerView : RecyclerView
-    private lateinit var notesAdapter: NotesRecyclerViewAdapter
-    private lateinit var vaultView: LinearLayout
-    private lateinit var vaultName: TextView
-    private lateinit var noNotesMessage: LinearLayout
-    private lateinit var addNoteBtn: Button
-    private lateinit var adContainer: RoundRectView
-    private lateinit var adView: AdView
-
     private lateinit var currentVault: Vault
+    private lateinit var notesAdapter: NotesRecyclerViewAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_notes, container, false)
+        return inflater.inflate(R.layout.fragment_notes, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         currentVault = VaultRepository.getLastActiveVault()
-
-        addNoteFab = view.findViewById(R.id.add_note)
-        notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
-        vaultView = view.findViewById(R.id.vault_view)
-        vaultName = view.findViewById(R.id.vault_name)
-        noNotesMessage = view.findViewById(R.id.no_items_view)
-        addNoteBtn = view.findViewById(R.id.add_note_btn)
-        adContainer = view.findViewById(R.id.adview_container)
-        adView = view.findViewById(R.id.adview)
-
         val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
+        adview.loadAd(adRequest)
 
-        notesRecyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        notes_recycler_view.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         notesAdapter = NotesRecyclerViewAdapter(activity!!, getOrderedNotes(currentVault), this)
-        notesRecyclerView.adapter = notesAdapter
+        notes_recycler_view.adapter = notesAdapter
 
-        addNoteBtn.setOnClickListener { addNote() }
-        addNoteFab.setOnClickListener { addNote() }
-        vaultView.setOnClickListener { changeVault() }
+        add_note_btn.setOnClickListener { addNote() }
+        add_note.setOnClickListener { addNote() }
+        vault_view.setOnClickListener { changeVault() }
 
         animateItemsIn()
-        return view
+
     }
 
     private fun changeVault() {
@@ -85,7 +61,6 @@ class NotesFragment : Fragment(), NoteClickListener {
         intent.putExtra("vault_id",currentVault.id)
         startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
     }
-
 
     private fun addNote() {
         val intent = Intent(activity, NoteActivity::class.java)
@@ -96,9 +71,14 @@ class NotesFragment : Fragment(), NoteClickListener {
     private fun updateUI() {
         val notes = getOrderedNotes(currentVault)
         notesAdapter.setNotes(notes)
-        vaultName.text = currentVault.name
-        noNotesMessage.visibility = if (notes.size > 0) View.GONE else View.VISIBLE
-        addNoteFab.visibility = if (notes.size > 0) View.VISIBLE else View.GONE
+
+        vault_name.text = currentVault.name
+        vault_view.setBackgroundColor(resources.getColor(currentVault.getVaultColorResource()))
+        vault_name.setTextColor(resources.getColor(currentVault.getVaultColorAccent()))
+        vault_icon.setColorFilter(resources.getColor(currentVault.getVaultColorAccent()))
+
+        no_items_view.visibility = if (notes.size > 0) View.GONE else View.VISIBLE
+        add_note.visibility = if (notes.size > 0) View.VISIBLE else View.GONE
     }
 
     private fun getOrderedNotes(vault: Vault): ArrayList<Note> {
@@ -132,11 +112,11 @@ class NotesFragment : Fragment(), NoteClickListener {
 
     private fun animateItemsIn() {
         Timeline.createParallel()
-            .push(Tween.to(addNoteFab, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(addNoteFab, Translation.XY).target(0f,-162.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            .push(Tween.to(adContainer, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(adContainer, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            .start(ViewTweenManager.get(addNoteFab))
+            .push(Tween.to(add_note, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(add_note, Translation.XY).target(0f,-162.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .start(ViewTweenManager.get(add_note))
     }
 
 }

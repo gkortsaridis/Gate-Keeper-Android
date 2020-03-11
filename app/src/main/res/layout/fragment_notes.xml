@@ -54,6 +54,7 @@
                 android:layout_width="30dp"
                 android:layout_gravity="center_vertical"
                 android:layout_height="30dp"
+                android:id="@+id/vault_icon"
                 android:src="@drawable/vault_white"/>
             <TextView
                 android:layout_width="match_parent"
