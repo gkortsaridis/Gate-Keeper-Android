@@ -35,6 +35,10 @@ import io.noties.tumbleweed.Tween
 import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
 import kotlinx.android.synthetic.main.activity_create_login.*
+import kotlinx.android.synthetic.main.activity_create_login.vault_icon
+import kotlinx.android.synthetic.main.activity_create_login.vault_name
+import kotlinx.android.synthetic.main.activity_create_login.vault_view
+import kotlinx.android.synthetic.main.fragment_logins.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 
 
@@ -110,8 +114,12 @@ class CreateLoginActivity : AppCompatActivity() {
         passwordET.setText(login?.password)
         notesET.setText(login?.notes)
         urlET.setText(login?.url)
-        vault_name.text = vaultToAdd?.name
         delete_login_btn.visibility = if (login != null) View.VISIBLE else View.GONE
+
+        vault_name.text = vaultToAdd?.name
+        vault_view.setBackgroundColor(resources.getColor(vaultToAdd?.getVaultColorResource() ?: R.color.colorPrimaryDark))
+        vault_name.setTextColor(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
+        vault_icon.setColorFilter(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
     }
 
     private fun updateLogin() {
