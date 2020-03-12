@@ -17,6 +17,7 @@ import io.noties.tumbleweed.Tween
 import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Rotation
 import net.cachapa.expandablelayout.ExpandableLayout
+import java.text.DateFormat
 
 class DeviceHistoryRecyclerViewAdapter(
     private val context: Context,
@@ -78,6 +79,8 @@ class DeviceHistoryRecyclerViewAdapter(
             deviceVendor?.visibility = if (device.nickname.isNotBlank()) View.VISIBLE else View.GONE
             deviceOS?.text = device.OS + " " +device.version + " ("+device.versionNum+")"
             deviceNameET?.setText(if(device.nickname.isNotBlank())  device.nickname else "")
+            val lastUsed = DeviceRepository.getLastUsedDatetime(device)
+            deviceLastUsed?.text = "Last used: "+ if(lastUsed == null) "UNKNOWN" else DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(lastUsed)
 
             deviceRenameBtn?.setOnClickListener {
                 device.nickname = deviceNameET?.text.toString()

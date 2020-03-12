@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import gr.gkortsaridis.gatekeeper.Entities.CompactUserLog
 import gr.gkortsaridis.gatekeeper.Entities.UserLog
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LogHistoryRecyclerViewAdapter
@@ -37,34 +38,14 @@ class AccountLogFragment : Fragment() {
         log_recycler_view.addItemDecoration(DividerItemDecoration(context, 0))
         log_recycler_view.adapter = logAdapter
 
-        swipe_refresh.setOnRefreshListener { retrieveLogs() }
-        retrieveLogs()
+        swipe_refresh.setOnRefreshListener {
+            val act = activity as AccountHistoryActivity
+            act.retrieveLogs()
+        }
     }
 
-    private fun retrieveLogs() {
-        viewDialog.showDialog()
-        val disposable = GateKeeperAPI.api.getUserLogs(AuthRepository.getUserID())
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe (
-                {
-                    viewDialog.hideDialog()
-                    swipe_refresh.isRefreshing = false
-                    if (it.data != null) {
-                        updateLogs(it.data)
-                    } else {
-                        updateLogs(ArrayList())
-                    }
-                },
-                {
-                    viewDialog.hideDialog()
-                    updateLogs(ArrayList())
-                }
-            )
-
-    }
-
-    private fun updateLogs(logs: ArrayList<UserLog>) {
+    fun updateLogs() {
+        val logs = GateKeeperApplication.userLog
         logs.sortBy { it.timestamp }
         val sortedAndReversed = ArrayList(logs.reversed())
 

@@ -59,6 +59,7 @@ class GateKeeperApplication : Application() {
         lateinit var notes: ArrayList<Note>
         var extraData: UserExtraData? = null
         var devices: ArrayList<Device>? = null
+        var userLog: ArrayList<UserLog> = arrayListOf()
     }
 
 }

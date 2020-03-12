@@ -20,6 +20,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.DeviceHistoryRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_account_devices.*
 import kotlinx.android.synthetic.main.fragment_account_log.*
@@ -44,6 +45,10 @@ class AccountDevicesFragment : Fragment(), DeviceModifyListener {
         devices_recycler_view.adapter = adapter
     }
 
+    fun updateLogs() {
+        adapter.notifyDataSetChanged()
+    }
+
     override fun onDeviceDeleteRequest(device: Device) {
 
     }
@@ -60,7 +65,6 @@ class AccountDevicesFragment : Fragment(), DeviceModifyListener {
                     if (decryptedDevice != null) {
                         decryptedDevice.id = it.data.id.toString()
                         if (it.errorCode == -1) {
-                            Log.i("SUCCESS", decryptedDevice.toString())
                             GateKeeperApplication.devices?.replaceAll { dev -> if (dev.id == decryptedDevice.id) decryptedDevice else dev }
                             Toast.makeText(activity, "Device successfully renamed", Toast.LENGTH_SHORT).show()
                             adapter.updateDevices(GateKeeperApplication.devices ?: ArrayList())

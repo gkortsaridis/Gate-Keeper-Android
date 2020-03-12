@@ -11,6 +11,7 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.DeviceModifyListener
 import gr.gkortsaridis.gatekeeper.Interfaces.DevicesRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
+import java.sql.Timestamp
 
 
 object DeviceRepository {
@@ -21,54 +22,10 @@ object DeviceRepository {
         return GateKeeperApplication.devices?.find { it.id == id }
     }
 
-    fun retrieveDevicesByAccountID(accountID: String, retrieveListener: DevicesRetrieveListener) {
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("devices")
-            .whereEqualTo("account_id",accountID)
-            .get().addOnSuccessListener { result ->
-                val devicesResult = ArrayList<Device>()
-
-                for (document in result) {
-                    val encryptedDevice = (document["device"] ?: "")as String
-                    val decryptedDevice = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedDevice, Device::class.java) as Device?
-                    if (decryptedDevice != null){
-                        devicesResult.add(decryptedDevice)
-                    }
-                }
-
-                retrieveListener.onDevicesRetrieved(devicesResult)
-            }
-            .addOnFailureListener { exception -> retrieveListener.onDeviceRetrieveError(exception) }
-    }
-
-    fun renameDevice(device: Device, newName: String, listener: DeviceModifyListener) {
-
-        device.nickname = newName
-
-        val devicehash = hashMapOf(
-            "device" to SecurityRepository.encryptObjToStrWithUserCredentials(device),
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("devices")
-            .document(device.UID)
-            .set(devicehash)
-            .addOnCompleteListener {
-                Log.i(TAG, "Device was renamed")
-            }
-
-    }
-
-    fun deleteDevice(device: Device, listener: DeviceModifyListener) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("devices")
-            .document(device.UID)
-            .delete()
-            .addOnCompleteListener {
-            }
-
+    fun getLastUsedDatetime(device: Device): Timestamp? {
+        val og = GateKeeperApplication.userLog
+        val userLog = GateKeeperApplication.userLog.filter { it.deviceId == device.id?.toLong() }
+        return if (userLog.isNotEmpty()) userLog[userLog.size-1].timestamp else null
     }
 
     fun getCurrentDevice(context: Context): Device {
