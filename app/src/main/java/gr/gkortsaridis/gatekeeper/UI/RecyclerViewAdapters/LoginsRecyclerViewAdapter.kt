@@ -107,7 +107,6 @@ class LoginsRecyclerViewAdapter(
                 this.loginImage?.setImageDrawable(appIcon)
             } else {
                 this.loginImage?.visibility = View.VISIBLE
-                //30..100.150
                 GlideApp.with(context)
                     .load(FavIconDownloader.buildUrl(login.url, color))
                     .placeholder(R.drawable.padlock)

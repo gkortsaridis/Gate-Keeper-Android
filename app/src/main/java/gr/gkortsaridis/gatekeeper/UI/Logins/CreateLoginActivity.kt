@@ -34,30 +34,13 @@ import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_VAULT_REQUEST
 import io.noties.tumbleweed.Tween
 import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
+import kotlinx.android.synthetic.main.activity_create_login.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 
 
 class CreateLoginActivity : AppCompatActivity() {
 
     private val TAG = "_Create_Login_Activity_"
-
-    private lateinit var toolbar: Toolbar
-
-    private lateinit var name: EditText
-    private lateinit var username: EditText
-    private lateinit var password: EditText
-    private lateinit var notes: EditText
-    private lateinit var applicationView: ImageButton
-    private lateinit var vaultView: LinearLayout
-    private lateinit var saveUpdateButton: RelativeLayout
-    private lateinit var vaultName: TextView
-    private lateinit var copyUsername: ImageButton
-    private lateinit var copyPassword: ImageButton
-    private lateinit var deleteLogin: ImageButton
-    private lateinit var title: TextView
-    private lateinit var url: EditText
-    private lateinit var saveUpdateArc: ArcView
-    private lateinit var loginInfo: View
 
     private var vaultToAdd: Vault? = null
     private var login: Login? = null
@@ -68,60 +51,43 @@ class CreateLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_login)
 
-        toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        name = findViewById(R.id.nameET)
-        username = findViewById(R.id.usernameET)
-        password = findViewById(R.id.passwordET)
-        url = findViewById(R.id.urlET)
-        notes = findViewById(R.id.notesET)
-        applicationView = findViewById(R.id.select_application)
-        saveUpdateButton = findViewById(R.id.save_update_button)
-        vaultView = findViewById(R.id.vault_view)
-        vaultName = findViewById(R.id.vault_name)
-        copyPassword = findViewById(R.id.copy_password)
-        copyUsername = findViewById(R.id.copy_username)
-        deleteLogin = findViewById(R.id.delete_login_btn)
-        title = findViewById(R.id.title)
-        saveUpdateArc = findViewById(R.id.save_arc)
-        loginInfo = findViewById(R.id.login_info)
+        copy_username.setOnClickListener { copy(usernameET.text.toString(), "Username") }
+        copy_password.setOnClickListener { copy(passwordET.text.toString(), "Password") }
+        delete_login_btn.setOnClickListener { showDeleteLoginDialog() }
 
-        copyUsername.setOnClickListener { copy(username.text.toString(), "Username") }
-        copyPassword.setOnClickListener { copy(password.text.toString(), "Password") }
-        deleteLogin.setOnClickListener { showDeleteLoginDialog() }
-
-        vaultView.setOnClickListener {
+        vault_view.setOnClickListener {
             val intent = Intent(this, SelectVaultActivity::class.java)
             intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_VAULT)
             intent.putExtra("vault_id",vaultToAdd?.id)
             startActivityForResult(intent, CHANGE_VAULT_REQUEST_CODE)
         }
-        applicationView.setOnClickListener { startActivityForResult(Intent(this, ApplicationSelector::class.java), CHANGE_APP_REQUEST_CODE) }
+        select_application.setOnClickListener { startActivityForResult(Intent(this, ApplicationSelector::class.java), CHANGE_APP_REQUEST_CODE) }
         this.activity = this
 
         val loginId = intent.getStringExtra("login_id")
         if (loginId == null) {
-            title.text = "Create new Password"
+            activity_title.text = "Create new Password"
             vaultToAdd = VaultRepository.getLastActiveRealVault()
-            saveUpdateButton.setOnClickListener { createLogin() }
+            save_update_button.setOnClickListener { createLogin() }
         } else {
             login = LoginsRepository.getLoginById(loginId)
-            title.text = "Edit Password"
+            activity_title.text = "Edit Password"
             vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
-            saveUpdateButton.setOnClickListener { updateLogin() }
+            save_update_button.setOnClickListener { updateLogin() }
         }
 
         KeyboardVisibilityEvent.setEventListener(activity) { isOpen ->
             Tween
-                .to(saveUpdateArc, Alpha.VIEW, 0.3F)
+                .to(save_arc, Alpha.VIEW, 0.3F)
                 .target( if (isOpen) 0.0f else 1.0f)
-                .start(ViewTweenManager.get(saveUpdateArc))
+                .start(ViewTweenManager.get(save_arc))
 
-            saveUpdateButton.visibility = if (isOpen) View.GONE else View.VISIBLE
+            save_update_button.visibility = if (isOpen) View.GONE else View.VISIBLE
         }
 
         updateUI()
@@ -139,29 +105,21 @@ class CreateLoginActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        name.setText(login?.name)
-        username.setText(login?.username)
-        password.setText(login?.password)
-        notes.setText(login?.notes)
-        url.setText(login?.url)
-        vaultName.text = vaultToAdd?.name
-        deleteLogin.visibility = if (login != null) View.VISIBLE else View.GONE
-
-        when (vaultToAdd?.color) {
-            VaultColor.Red -> { loginInfo.setBackgroundResource(R.drawable.vault_color_red) }
-            VaultColor.Green -> { loginInfo.setBackgroundResource(R.drawable.vault_color_green) }
-            VaultColor.Blue -> { loginInfo.setBackgroundResource(R.drawable.vault_color_blue) }
-            VaultColor.Yellow -> { loginInfo.setBackgroundResource(R.drawable.vault_color_yellow) }
-            VaultColor.White -> { loginInfo.setBackgroundResource(R.drawable.vault_color_white) }
-        }
+        nameET.setText(login?.name)
+        usernameET.setText(login?.username)
+        passwordET.setText(login?.password)
+        notesET.setText(login?.notes)
+        urlET.setText(login?.url)
+        vault_name.text = vaultToAdd?.name
+        delete_login_btn.visibility = if (login != null) View.VISIBLE else View.GONE
     }
 
     private fun updateLogin() {
-        login?.username = username.text.toString()
-        login?.name = name.text.toString()
-        login?.password = password.text.toString()
-        login?.notes = notes.text.toString()
-        login?.url = url.text.toString()
+        login?.username = usernameET.text.toString()
+        login?.name = nameET.text.toString()
+        login?.password = passwordET.text.toString()
+        login?.notes = notesET.text.toString()
+        login?.url = urlET.text.toString()
         login?.vault_id = vaultToAdd!!.id
         login?.date_modified = Timestamp.now()
 
@@ -190,11 +148,11 @@ class CreateLoginActivity : AppCompatActivity() {
 
         val loginObj = Login(account_id = AuthRepository.getUserID(),
             vault_id = vaultToAdd!!.id,
-            name = name.text.toString(),
-            password = password.text.toString(),
-            username = username.text.toString(),
-            url = url.text.toString(),
-            notes = notes.text.toString(),
+            name = nameET.text.toString(),
+            password = passwordET.text.toString(),
+            username = usernameET.text.toString(),
+            url = urlET.text.toString(),
+            notes = notesET.text.toString(),
             date_created = Timestamp.now(),
             date_modified = Timestamp.now()
         )
@@ -260,7 +218,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
         if (requestCode == CHANGE_APP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val app = data!!.getParcelableExtra<ResolveInfo>("app")
-            this.url.setText(app?.activityInfo?.packageName)
+            this.urlET.setText(app?.activityInfo?.packageName)
         }else if (requestCode == CHANGE_VAULT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val vaultId = data!!.data.toString()
             vaultToAdd = VaultRepository.getVaultByID(vaultId)
