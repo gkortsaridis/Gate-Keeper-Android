@@ -106,11 +106,14 @@ class LoginsRecyclerViewAdapter(
                 this.loginImage?.setImageDrawable(appIcon)
             } else {
                 this.loginImage?.visibility = View.VISIBLE
+                //30..100.150
                 GlideApp.with(context)
-                    .load("https://besticon-demo.herokuapp.com/icon?url="+login.url+"&size=30..100..150&fallback_icon_color="+color)
+                    .load("https://i.olsh.me/icon?size=30..120..200&url="+login.url+"&fallback_icon_color="+color)
                     .placeholder(R.drawable.padlock)
                     .listener(object: RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean { return false }
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                            return false
+                        }
 
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                             val bitmap = resource?.toBitmap(8.dp, 8.dp)!!
