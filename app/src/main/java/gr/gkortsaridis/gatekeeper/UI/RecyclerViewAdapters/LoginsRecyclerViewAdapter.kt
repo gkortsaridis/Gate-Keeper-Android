@@ -28,6 +28,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
+import gr.gkortsaridis.gatekeeper.Utils.FavIconDownloader
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import gr.gkortsaridis.gatekeeper.Utils.dp
 
@@ -108,7 +109,7 @@ class LoginsRecyclerViewAdapter(
                 this.loginImage?.visibility = View.VISIBLE
                 //30..100.150
                 GlideApp.with(context)
-                    .load("https://i.olsh.me/icon?size=30..120..200&url="+login.url+"&fallback_icon_color="+color)
+                    .load(FavIconDownloader.buildUrl(login.url, color))
                     .placeholder(R.drawable.padlock)
                     .listener(object: RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
