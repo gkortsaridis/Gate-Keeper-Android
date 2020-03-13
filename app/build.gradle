@@ -42,6 +42,23 @@ android {
             resValue 'string', 'banner_ad_unit_id', '"ca-app-pub-3940256099942544/6300978111"'
         }
     }
+
+    flavorDimensions "server"
+    productFlavors {
+        local {
+            dimension "server"
+            buildConfigField "String", "BASE_SERVER_URL", "\"http://10.202.73.24:8080\""
+        }
+        heroku {
+            dimension "server"
+            buildConfigField "String", "BASE_SERVER_URL", "\"http://gate-keeper.herokuapp.com/\""
+        }
+        production {
+            dimension "server"
+            buildConfigField "String", "BASE_SERVER_URL", "\"http://gate-keeper.herokuapp.com/\""
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

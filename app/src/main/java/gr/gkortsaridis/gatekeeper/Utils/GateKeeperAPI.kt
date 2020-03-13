@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
+import gr.gkortsaridis.gatekeeper.BuildConfig.BASE_SERVER_URL
 import gr.gkortsaridis.gatekeeper.Entities.Network.*
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import io.reactivex.Observable
@@ -93,8 +94,7 @@ object GateKeeperAPI {
 
     private val retrofit = Retrofit.Builder()
         .client(jet2Client)
-        //.baseUrl("http://gate-keeper.herokuapp.com/")
-        .baseUrl("http://10.202.73.40:8080")
+        .baseUrl(BASE_SERVER_URL)
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
