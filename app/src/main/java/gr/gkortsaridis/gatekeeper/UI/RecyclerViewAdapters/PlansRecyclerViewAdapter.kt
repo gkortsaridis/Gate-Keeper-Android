@@ -7,19 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.billingclient.api.SkuDetails
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
+import gr.gkortsaridis.gatekeeper.Interfaces.InAppPurchasesListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultClickListener
 import gr.gkortsaridis.gatekeeper.R
 
 class PlansRecyclerViewAdapter(
     private val context: Context,
     private var skus: ArrayList<SkuDetails>,
-    private val listener: VaultClickListener?): RecyclerView.Adapter<PlansRecyclerViewAdapter.VaultViewHolder>() {
+    private val listener: InAppPurchasesListener?): RecyclerView.Adapter<PlansRecyclerViewAdapter.VaultViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VaultViewHolder {
         val inflatedView = LayoutInflater.from(context).inflate(R.layout.recycler_view_item_plan, parent, false)
@@ -47,6 +49,7 @@ class PlansRecyclerViewAdapter(
         private var description: TextView? = null
         private var price: TextView? = null
         private var currency: TextView? = null
+        private var buyNow: RelativeLayout? = null
 
         init {
             mainContainer = v.findViewById(R.id.background_color)
@@ -54,9 +57,10 @@ class PlansRecyclerViewAdapter(
             price = v.findViewById(R.id.price_number)
             currency = v.findViewById(R.id.price_currency)
             title = v.findViewById(R.id.plan_title)
+            buyNow = v.findViewById(R.id.buy_now)
         }
 
-        fun bindSku(context: Context, sku: SkuDetails, listener: VaultClickListener?){
+        fun bindSku(context: Context, sku: SkuDetails, listener: InAppPurchasesListener?){
             when {
                 sku.price == "Free" -> {
                     title?.text = sku.title
@@ -91,6 +95,8 @@ class PlansRecyclerViewAdapter(
                     title?.text = sku.title
                 }
             }
+
+            buyNow?.setOnClickListener { listener?.onSubscriptionBuyTouched(sku) }
         }
 
     }

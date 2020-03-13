@@ -71,17 +71,17 @@
             </LinearLayout>
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/perks"
+                android:layout_width="match_parent"
+                android:layout_height="209dp"
                 android:layout_gravity="center_horizontal"
-                android:paddingRight="16dp"
+                android:layout_marginTop="50dp"
+                android:gravity="center_horizontal"
                 android:paddingLeft="16dp"
+                android:paddingRight="16dp"
                 android:text="Keep your data secure\n\nSync your data across multiple devices\n\nHave up to 20 passwords stored\n\nHave up to 1 credit card stored\n\n Have up to 5 notes stored"
                 android:textColor="#81CDE9"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="50dp"
-                android:textSize="18sp"/>
+                android:textSize="18sp" />
         </LinearLayout>
     </com.github.florent37.shapeofview.shapes.RoundRectView>
 
@@ -99,6 +99,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/buy_now"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:background="@color/white">
 
             <TextView
