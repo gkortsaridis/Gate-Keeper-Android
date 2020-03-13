@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Gate Keeper</string>
     <string name="navigation_drawer_open">drawer_open</string>
     <string name="navigation_drawer_close">drawer_close</string>
 

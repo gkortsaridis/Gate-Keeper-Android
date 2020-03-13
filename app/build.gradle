@@ -48,14 +48,21 @@ android {
         local {
             dimension "server"
             buildConfigField "String", "BASE_SERVER_URL", "\"http://10.202.73.24:8080\""
+            resValue "string", "app_name", "Gate Keeper - Local"
+            /*manifestPlaceholders = [
+                    appIcon  : "@mipmap/ic_launcher_test_i",
+                    roundIcon: "@mipmap/ic_launcher_test_i_round",
+            ]*/
         }
         heroku {
             dimension "server"
             buildConfigField "String", "BASE_SERVER_URL", "\"http://gate-keeper.herokuapp.com/\""
+            resValue "string", "app_name", "Gate Keeper - Heroku"
         }
         production {
             dimension "server"
             buildConfigField "String", "BASE_SERVER_URL", "\"http://gate-keeper.herokuapp.com/\""
+            resValue "string", "app_name", "Gate Keeper"
         }
     }
 
