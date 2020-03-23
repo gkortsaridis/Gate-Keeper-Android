@@ -47,7 +47,7 @@ android {
     productFlavors {
         local {
             dimension "server"
-            buildConfigField "String", "BASE_SERVER_URL", "\"http://10.202.73.24:8080\""
+            buildConfigField "String", "BASE_SERVER_URL", "\"http://192.168.1.150:8080\""
             resValue "string", "app_name", "Gate Keeper - Local"
             /*manifestPlaceholders = [
                     appIcon  : "@mipmap/ic_launcher_test_i",

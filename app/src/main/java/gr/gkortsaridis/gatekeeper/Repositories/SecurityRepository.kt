@@ -90,7 +90,7 @@ object SecurityRepository {
 
     //Encryption / Decryption operations on User Credentials secret key
     private fun encryptWithUserCredentials(decryptedData: String): EncryptedData? {
-        return try {
+        /*return try {
             val cryptLib = CryptLib()
             val credentials = AuthRepository.loadCredentials()
             if (credentials != null) {
@@ -104,11 +104,12 @@ object SecurityRepository {
             }
         } catch (e: Exception) {
             null
-        }
+        }*/
+        return null
     }
 
     private fun decryptWithUserCredentials(encryptedData: EncryptedData):String? {
-        return try {
+        /*return try {
             val cryptLib = CryptLib()
             val credentials = AuthRepository.loadCredentials()
             if (credentials != null) {
@@ -120,7 +121,8 @@ object SecurityRepository {
             }
         } catch (e: Exception) {
             null
-        }
+        }*/
+        return null
     }
 
     fun encryptObjToStrWithUserCredentials(obj: Any) : String? {
