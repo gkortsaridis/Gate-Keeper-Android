@@ -50,10 +50,12 @@ class GateKeeperApplication : Application() {
 
         val cryptLib = CryptLib()
 
-        val cipherText = cryptLib.encryptPlainTextWithRandomIV(plainText, key)
-        println("cipherText $cipherText")
+        val encrypted = "nH/d9h44j0QjSmYFK/tpjqPMM0WQYl2cigEQgNxp3vDTliNe1fHSlP5zzC9QuZCp"
 
-        val decryptedString = cryptLib.decryptCipherTextWithRandomIV(cipherText, key)
+        //val cipherText = cryptLib.encryptPlainTextWithRandomIV(plainText, key)
+        //println("cipherText $cipherText")
+
+        val decryptedString = cryptLib.decryptCipherTextWithRandomIV(encrypted, key)
         println("decryptedString $decryptedString")
     }
 
