@@ -103,6 +103,7 @@ object SecurityRepository {
         } catch (e: Exception) {
             null
         }
+        return null
     }
 
     private fun decryptWithUserCredentials(encryptedData: EncryptedData):String? {
