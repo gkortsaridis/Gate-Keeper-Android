@@ -1,14 +1,13 @@
 package gr.gkortsaridis.gatekeeper.UI.Authentication
 
 import android.os.Bundle
+import android.os.Handler
 import android.text.TextUtils
-import android.util.Log
 import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
 import gr.gkortsaridis.gatekeeper.R
@@ -71,7 +70,9 @@ class SignUpActivity : AppCompatActivity() {
     fun finalizeSetup() { AuthRepository.proceedLoggedIn(this) }
 
     fun showSetupError(errorMsg: String) {
-        Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
+        Handler().post(Runnable {
+            Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
+        })
     }
 
 
