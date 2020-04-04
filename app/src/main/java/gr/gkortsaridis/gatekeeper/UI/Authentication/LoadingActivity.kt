@@ -19,6 +19,7 @@ import gr.gkortsaridis.gatekeeper.UI.MainActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlin.math.ceil
 
 
 class LoadingActivity : AppCompatActivity() {
@@ -58,6 +59,8 @@ class LoadingActivity : AppCompatActivity() {
                             val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(vault, Vault::class.java) as Vault?
                             if (decrypted != null) {
                                 decrypted.id = vault.id.toString()
+                                decrypted.dateCreated = vault.dateCreated
+                                decrypted.dateModified = vault.dateModified
                                 vaults.add(decrypted)
                             }
                         }

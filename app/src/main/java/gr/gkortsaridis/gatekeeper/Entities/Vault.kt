@@ -1,11 +1,14 @@
 package gr.gkortsaridis.gatekeeper.Entities
 
 import gr.gkortsaridis.gatekeeper.R
+import java.sql.Timestamp
 
 data class Vault( var id: String = "-1",
                   var account_id : String,
                   var name : String,
-                  var color: VaultColor?) {
+                  var color: VaultColor?,
+                  var dateCreated: Timestamp? = null,
+                  var dateModified: Timestamp? = null) {
 
     fun getVaultColorResource(): Int {
         return when(color) {
