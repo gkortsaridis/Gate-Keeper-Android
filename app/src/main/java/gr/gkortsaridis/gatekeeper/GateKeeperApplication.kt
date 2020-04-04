@@ -45,18 +45,7 @@ class GateKeeperApplication : Application() {
             client.start()
         }
 
-        val plainText = "this is my plain text"
-        val key = "your key"
 
-        val cryptLib = CryptLib()
-
-        val encrypted = "nH/d9h44j0QjSmYFK/tpjqPMM0WQYl2cigEQgNxp3vDTliNe1fHSlP5zzC9QuZCp"
-
-        //val cipherText = cryptLib.encryptPlainTextWithRandomIV(plainText, key)
-        //println("cipherText $cipherText")
-
-        val decryptedString = cryptLib.decryptCipherTextWithRandomIV(encrypted, key)
-        println("decryptedString $decryptedString")
     }
 
     companion object {

@@ -96,13 +96,14 @@ object SecurityRepository {
             if (credentials != null) {
                 val userPassword = AuthRepository.getUserID()
                 val cipherText = cryptLib.encryptPlainTextWithRandomIV(decryptedData, userPassword)
-                EncryptedData(encryptedData = cipherText, iv = "")
+                EncryptedData(encryptedData = cipherText, iv = "empty")
             } else {
                 null
             }
         } catch (e: Exception) {
             null
         }
+        return null
     }
 
     private fun decryptWithUserCredentials(encryptedData: EncryptedData):String? {
