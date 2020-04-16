@@ -1,7 +1,7 @@
 package gr.gkortsaridis.gatekeeper.Entities
 
-import com.google.firebase.Timestamp
 import java.io.Serializable
+import java.sql.Timestamp
 
 data class CreditCard( var id: String = "-1",
                        var cardName: String,
@@ -12,4 +12,6 @@ data class CreditCard( var id: String = "-1",
                        var cardholderName: String,
                        var vaultId: String,
                        var accountId: String,
-                       var modifiedDate: Timestamp): Serializable
+                       var modifiedDate: Timestamp? = null,
+                       var createdDate: Timestamp? = null
+): Serializable

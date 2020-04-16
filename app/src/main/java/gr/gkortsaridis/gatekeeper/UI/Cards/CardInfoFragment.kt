@@ -76,7 +76,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
                 cardholderName = "",
                 vaultId = VaultRepository.getLastActiveRealVault().id,
                 accountId = AuthRepository.getUserID(),
-                modifiedDate = Timestamp.now()
+                modifiedDate = null
             )
             cardVault = VaultRepository.getLastActiveRealVault()
         } else {
@@ -217,7 +217,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         card?.vaultId = cardVault.id
         card?.cvv = cvvET.text.toString()
         card?.type = CreditCardRepository.getCreditCardType(card?.number ?: "")
-        card?.modifiedDate = Timestamp.now()
+        card?.modifiedDate = null
 
         val viewDialog = ViewDialog(activity!!)
         if (isCreate) {

@@ -61,7 +61,7 @@ class NotesRecyclerViewAdapter(
             noteTitle?.text = note.title
             noteTitle?.setTextColor(context.resources.getColor(R.color.mate_black))
             noteBody?.text = note.body
-            val modifiedDate = note.modifiedDate.toDate()
+            val modifiedDate = note.modifiedDate
             val formatter = SimpleDateFormat(GateKeeperConstants.simpleDateFormat)
             val formattedDate = formatter.format(modifiedDate)
             noteModified?.text = formattedDate
