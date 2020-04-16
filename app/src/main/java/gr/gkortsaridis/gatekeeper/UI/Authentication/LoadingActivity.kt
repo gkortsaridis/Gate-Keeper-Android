@@ -19,6 +19,7 @@ import gr.gkortsaridis.gatekeeper.UI.MainActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlin.math.ceil
 
 
 class LoadingActivity : AppCompatActivity() {
@@ -58,6 +59,8 @@ class LoadingActivity : AppCompatActivity() {
                             val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(vault, Vault::class.java) as Vault?
                             if (decrypted != null) {
                                 decrypted.id = vault.id.toString()
+                                decrypted.dateCreated = vault.dateCreated
+                                decrypted.dateModified = vault.dateModified
                                 vaults.add(decrypted)
                             }
                         }
@@ -66,6 +69,8 @@ class LoadingActivity : AppCompatActivity() {
                             val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(login, Login::class.java) as Login?
                             if (decrypted != null) {
                                 decrypted.id = login.id.toString()
+                                decrypted.date_created = login.dateCreated
+                                decrypted.date_modified = login.dateModified
                                 logins.add(decrypted)
                             }
                         }
@@ -74,6 +79,8 @@ class LoadingActivity : AppCompatActivity() {
                             val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(card, CreditCard::class.java) as CreditCard?
                             if (decrypted != null) {
                                 decrypted.id = card.id.toString()
+                                decrypted.modifiedDate = card.dateModified
+                                decrypted.createdDate = card.dateCreated
                                 cards.add(decrypted)
                             }
                         }
@@ -82,6 +89,8 @@ class LoadingActivity : AppCompatActivity() {
                             val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(note, Note::class.java) as Note?
                             if (decrypted != null) {
                                 decrypted.id = note.id.toString()
+                                decrypted.createDate = note.dateCreated
+                                decrypted.modifiedDate = note.dateModified
                                 notes.add(decrypted)
                             }
                         }

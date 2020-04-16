@@ -19,6 +19,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
+import gr.gkortsaridis.gatekeeper.Utils.CryptLib
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -43,6 +44,8 @@ class GateKeeperApplication : Application() {
 
             client.start()
         }
+
+
     }
 
     companion object {

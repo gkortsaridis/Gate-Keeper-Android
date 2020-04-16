@@ -2,19 +2,20 @@ package gr.gkortsaridis.gatekeeper.UI.Notes
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
-import android.widget.*
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.firebase.Timestamp
-import gr.gkortsaridis.gatekeeper.Entities.*
+import gr.gkortsaridis.gatekeeper.Entities.Note
+import gr.gkortsaridis.gatekeeper.Entities.NoteColor
+import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteDeleteListener
@@ -25,7 +26,9 @@ import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import java.sql.Timestamp
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 
 
 class NoteActivity : AppCompatActivity() {
@@ -74,8 +77,8 @@ class NoteActivity : AppCompatActivity() {
             note = Note(
                 title= "",
                 body = "",
-                modifiedDate = Timestamp.now(),
-                createDate = Timestamp.now(),
+                modifiedDate = null,
+                createDate = null,
                 id= "",
                 accountId = AuthRepository.getUserID(),
                 isPinned = false,
@@ -95,7 +98,7 @@ class NoteActivity : AppCompatActivity() {
         vaultView.setOnClickListener { changeVault() }
 
         val formatter = SimpleDateFormat(GateKeeperConstants.dateOnlyFormat)
-        val formattedDate = formatter.format(note.modifiedDate.toDate())
+        val formattedDate = formatter.format(note.modifiedDate)
         noteModified.text = "Edited at $formattedDate"
         noteBody.setText(note.body)
 
@@ -186,7 +189,7 @@ class NoteActivity : AppCompatActivity() {
 
         }else {
             if (noteTitle.text.toString().trim() != "" || noteBody.text.toString().trim() != "") {
-                note.createDate = Timestamp.now()
+                note.createDate = null
                 bringNoteObjUpToDate()
 
                 viewDialog.showDialog()
@@ -221,7 +224,7 @@ class NoteActivity : AppCompatActivity() {
     private fun bringNoteObjUpToDate() {
         note.title = noteTitle.text.toString()
         note.body = noteBody.text.toString()
-        note.modifiedDate = Timestamp.now()
+        note.modifiedDate = null
         note.color = noteColor
         note.isPinned = this.isPinned
         note.vaultId = vaultToAdd.id

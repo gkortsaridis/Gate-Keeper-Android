@@ -95,16 +95,15 @@ object SecurityRepository {
             val credentials = AuthRepository.loadCredentials()
             if (credentials != null) {
                 val userPassword = AuthRepository.getUserID()
-                val key = CryptLib.SHA256(userPassword, 32) //32 bytes = 256 bit
-                val iv = CryptLib.generateRandomIV(16) //16 bytes = 128 bit
-                val encryption =  cryptLib.encrypt(decryptedData, key, iv)
-                EncryptedData(encryptedData = encryption,iv = iv)
+                val cipherText = cryptLib.encryptPlainTextWithRandomIV(decryptedData, userPassword)
+                EncryptedData(encryptedData = cipherText, iv = "empty")
             } else {
                 null
             }
         } catch (e: Exception) {
             null
         }
+        return null
     }
 
     private fun decryptWithUserCredentials(encryptedData: EncryptedData):String? {
@@ -113,8 +112,7 @@ object SecurityRepository {
             val credentials = AuthRepository.loadCredentials()
             if (credentials != null) {
                 val userPassword = AuthRepository.getUserID()
-                val key = CryptLib.SHA256(userPassword, 32) //32 bytes = 256 bit
-                cryptLib.decrypt(encryptedData.encryptedData, key, encryptedData.iv)
+                cryptLib.decryptCipherTextWithRandomIV(encryptedData.encryptedData, userPassword)
             } else {
                 null
             }
