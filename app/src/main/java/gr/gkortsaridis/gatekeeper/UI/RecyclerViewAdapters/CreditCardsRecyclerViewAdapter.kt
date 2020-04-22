@@ -14,6 +14,7 @@ import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CARD_STATE_DONE
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CARD_STATE_EDITED
@@ -83,6 +84,8 @@ class CreditCardsRecyclerViewAdapter(
             this.cardNickname?.text = card.cardName
             this.cardVault?.text = VaultRepository.getVaultByID(card.vaultId)!!.name
             this.cardCVV?.text = "CVV: ${card.cvv}"
+
+            card.type = CreditCardRepository.getCreditCardType(card.number)
 
             when (card.type) {
                 CardType.Visa -> { cardType?.setImageResource(R.drawable.visa) }

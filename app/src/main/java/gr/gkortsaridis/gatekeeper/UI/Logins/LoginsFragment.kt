@@ -16,6 +16,8 @@ import android.view.autofill.AutofillManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
 import com.stone.vega.library.VegaLayoutManager
 import gr.gkortsaridis.gatekeeper.Entities.Login
@@ -195,8 +197,8 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         Timeline.createParallel()
             .push(Tween.to(fab, Alpha.VIEW, 1.0f).target(1.0f))
             .push(Tween.to(fab, Translation.XY).target(0f,-162.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            .push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            //.push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
+            //.push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(fab))
     }
 }

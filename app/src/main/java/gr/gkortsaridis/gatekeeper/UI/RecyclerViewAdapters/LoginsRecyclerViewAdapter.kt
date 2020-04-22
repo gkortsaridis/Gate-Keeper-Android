@@ -50,7 +50,7 @@ class LoginsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: LoginViewHolder, position: Int) {
         val loginItem = logins[position]
-        holder.bindLogin(loginItem, position, context, packageManager, listener)
+        holder.bindLogin(loginItem, position, logins.size, context, packageManager, listener)
     }
 
     fun updateLogins(logins: ArrayList<Login>) {
@@ -81,7 +81,7 @@ class LoginsRecyclerViewAdapter(
             loginBackground = view.findViewById(R.id.login_background)
         }
 
-        fun bindLogin(login: Login, position: Int, context: Context, packageManager: PackageManager, listener: LoginSelectListener){
+        fun bindLogin(login: Login, position: Int, listSize: Int, context: Context, packageManager: PackageManager, listener: LoginSelectListener){
             this.loginName?.text = login.name
             this.loginUsername?.text = login.username
 
@@ -130,6 +130,10 @@ class LoginsRecyclerViewAdapter(
 
             this.view.setOnClickListener { listener.onLoginClicked(login) }
             this.loginAction?.setOnClickListener { listener.onLoginActionClicked(login) }
+
+            //if (position == listSize - 1) {
+            //    view.setPadding(0,0,0,80.dp)
+            //}
         }
 
         //Get Dominant Color from ImageView

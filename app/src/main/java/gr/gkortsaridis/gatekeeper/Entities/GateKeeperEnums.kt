@@ -1,12 +1,12 @@
 package gr.gkortsaridis.gatekeeper.Entities
 
-enum class CardType {
-    Mastercard,
-    Visa,
-    Amex,
-    DiscoverCard,
-    DinersClub,
-    Unknown
+enum class CardType(val value: String) {
+    Mastercard("MASTERCARD"),
+    Visa("VISA"),
+    Amex("AMEX"),
+    DiscoverCard("DISCOVER"),
+    DinersClub("DINERS"),
+    Unknown("")
 }
 
 enum class Bank {

@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:elevation="4dp"
+        android:id="@+id/top_container"
         app:shape_cutCorner_bottomRightSize="10dp"
         app:shape_cutCorner_bottomLeftSize="10dp">
 
@@ -92,7 +93,6 @@
         android:layout_below="@+id/vault_container"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginTop="8dp"
         android:id="@+id/logins_counter_container">
 
@@ -132,7 +132,8 @@
         android:layout_height="match_parent"
         android:id="@+id/logins_recycler_view"
         android:layout_below="@+id/logins_counter_container"
-        android:background="@android:color/transparent"/>
+        tools:listitem="@layout/recycler_view_item_login_right"
+        android:layout_marginBottom="90dp"/>
 
     <LinearLayout
         android:layout_width="200dp"
@@ -177,11 +178,12 @@
     <com.github.florent37.shapeofview.shapes.RoundRectView
         android:layout_width="match_parent"
         android:layout_height="90dp"
-        android:layout_marginBottom="-90dp"
-        android:alpha="0.0"
         android:id="@+id/adview_container"
         android:layout_alignParentBottom="true"
-        app:shape_roundRect_topLeftRadius="80dp">
+        app:shape_roundRect_topLeftRadius="10dp"
+        app:shape_roundRect_topRightRadius="10dp"
+        tools:alpha="1"
+        tools:layout_marginBottom="0dp">
         <com.google.android.gms.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/res-auto"
             android:id="@+id/adview"
