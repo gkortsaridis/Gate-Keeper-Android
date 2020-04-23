@@ -173,7 +173,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
     private fun animateFabIn() {
         Timeline.createParallel()
             .push(Tween.to(add_credit_card, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(add_credit_card, Translation.XY).target(0f,-158.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(add_credit_card, Translation.XY).target(0f,-100.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(add_credit_card))
     }
 
