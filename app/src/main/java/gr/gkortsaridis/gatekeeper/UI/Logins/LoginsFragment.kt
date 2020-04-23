@@ -94,6 +94,8 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         logins_recycler_view.adapter = loginsAdapter
 
         animateItemsIn()
+
+        adview_container.visibility = View.GONE
     }
 
     override fun onResume() {
@@ -196,7 +198,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     private fun animateItemsIn() {
         Timeline.createParallel()
             .push(Tween.to(fab, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(fab, Translation.XY).target(0f,-162.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(fab, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             //.push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
             //.push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(fab))

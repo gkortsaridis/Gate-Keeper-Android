@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters
 
 import android.content.Context
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -104,6 +105,12 @@ class CreditCardsRecyclerViewAdapter(
             flipBackCard?.setOnClickListener { flipView?.flipTheView() }
             cardContainer?.setOnClickListener{ listener.onCreditCardClicked(card) }
             cardContainerBack?.setOnClickListener { listener.onCreditCardClicked(card) }
+
+            if (vault?.color == VaultColor.White || vault?.color == VaultColor.Yellow) {
+                cardType?.setColorFilter(context.getColor(R.color.mate_black), PorterDuff.Mode.SRC_ATOP)
+            } else {
+                cardType?.setColorFilter(context.getColor(R.color.vault_white_1), PorterDuff.Mode.SRC_ATOP)
+            }
         }
 
     }

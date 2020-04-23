@@ -75,7 +75,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         add_credit_card.setOnClickListener { createCard() }
         vault_view.setOnClickListener { changeVault() }
         animateFabIn()
-        animateArcIn()
+        //animateArcIn()
     }
 
     private fun createCard() {
@@ -113,7 +113,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         if (filtered.isNotEmpty()) {
             filtered.forEachIndexed { index, creditCard ->
                 if (creditCard.id == activeCard?.id) {
-                    if (bottom_arc.alpha == 0.0f) { animateArcIn() }
+                    //if (bottom_arc.alpha == 0.0f) { animateArcIn() }
                     card_nickname_tv.text = "${activeCard?.cardName}"
                 }
             }
