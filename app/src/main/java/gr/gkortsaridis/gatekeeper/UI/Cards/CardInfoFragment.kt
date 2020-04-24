@@ -342,8 +342,9 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
     }
 
     private fun cardDataAreValid(): Boolean {
-        return (cardNumberET.text.toString().replace(" ","").length == 16
-                && (if (card?.type == CardType.Amex) cvvET.text.toString().length == 4 else cvvET.text.toString().length == 3) //CVV : 4 lenght for AMEX, 3 for rest
+        return (
+                CreditCardRepository.validateCreditCardNumber(card?.number ?: "")
+                        && (if (card?.type == CardType.Amex) cvvET.text.toString().length == 4 else cvvET.text.toString().length == 3) //CVV : 4 lenght for AMEX, 3 for rest
                 )
     }
 

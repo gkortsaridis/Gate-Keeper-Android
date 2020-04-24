@@ -140,7 +140,7 @@
                         android:id="@+id/nav_text_cards"
                         android:textColor="@android:color/white"
                         android:textSize="18sp"
-                        android:text="Cards"/>
+                        android:text="Digital Wallet"/>
                 </RelativeLayout>
             </com.github.florent37.shapeofview.shapes.RoundRectView>
 

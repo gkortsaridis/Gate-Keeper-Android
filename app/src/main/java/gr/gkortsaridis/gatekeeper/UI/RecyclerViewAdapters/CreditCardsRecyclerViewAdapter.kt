@@ -20,6 +20,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CARD_STATE_DONE
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CARD_STATE_EDITED
 import org.w3c.dom.Text
+import java.lang.StringBuilder
 
 class CreditCardsRecyclerViewAdapter(
     private val context: Context,
@@ -78,15 +79,48 @@ class CreditCardsRecyclerViewAdapter(
         }
 
         fun bindCard(card: CreditCard, position: Int, listener: CreditCardClickListener){
+            card.type = CreditCardRepository.getCreditCardType(card.number)
 
-            this.cardNumber?.text = card.number
+            val cardNumber = card.number.replace(" ","")
+            val stringBuilder = StringBuilder(cardNumber)
+            when(card.type) {
+                CardType.Visa -> {
+                    stringBuilder.insert(4 ," ")
+                    stringBuilder.insert(9 ," ")
+                    stringBuilder.insert(14 ," ")
+                }
+                CardType.Mastercard -> {
+                    stringBuilder.insert(4 ," ")
+                    stringBuilder.insert(9 ," ")
+                    stringBuilder.insert(14 ," ")
+                }
+                CardType.Amex -> {
+                    stringBuilder.insert(4 ," ")
+                    stringBuilder.insert(11 ," ")
+                }
+                CardType.DiscoverCard -> {
+                    stringBuilder.insert(4 ," ")
+                    stringBuilder.insert(9 ," ")
+                    stringBuilder.insert(14 ," ")
+                }
+                CardType.JCB -> {
+                    stringBuilder.insert(4 ," ")
+                    stringBuilder.insert(9 ," ")
+                    stringBuilder.insert(14 ," ")
+                }
+                CardType.DinersClub -> {
+                    stringBuilder.insert(4 ," ")
+                    stringBuilder.insert(11 ," ")
+                }
+            }
+
+            this.cardNumber?.text = stringBuilder.toString()
             this.cardExpiryDate?.text = card.expirationDate
             this.cardholderName?.text = card.cardholderName.toUpperCase()
             this.cardNickname?.text = card.cardName
             this.cardVault?.text = VaultRepository.getVaultByID(card.vaultId)!!.name
             this.cardCVV?.text = "CVV: ${card.cvv}"
 
-            card.type = CreditCardRepository.getCreditCardType(card.number)
 
             val cardTypeImg = CreditCardRepository.getCreditCardTypeImage(card)
             if (cardTypeImg != null) {
