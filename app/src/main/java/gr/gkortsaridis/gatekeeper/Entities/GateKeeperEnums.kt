@@ -6,6 +6,7 @@ enum class CardType(val value: String) {
     Amex("AMEX"),
     DiscoverCard("DISCOVER"),
     DinersClub("DINERS"),
+    JCB("JCB"),
     Unknown("")
 }
 

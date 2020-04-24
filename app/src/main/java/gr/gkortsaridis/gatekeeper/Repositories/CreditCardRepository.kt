@@ -2,9 +2,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.gson.Gson
+import android.util.Log
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -12,7 +10,6 @@ import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardDeleteListener
-import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
@@ -34,22 +31,21 @@ object CreditCardRepository {
     }
 
     fun getCreditCardType(cardNumber: String): CardType {
+        val ptVisa = "^4[0-9]{6,}$".toRegex()
+        val ptMasterCard = "^5[1-5][0-9]{5,}$".toRegex()
+        val ptAmeExp = "^3[47][0-9]{5,}$".toRegex()
+        val ptDinClb = "^3(?:0[0-5]|[68][0-9])[0-9]{4,}$".toRegex()
+        val ptDiscover = "^6(?:011|5[0-9]{2})[0-9]{3,}$".toRegex()
+        val ptJcb = "^(?:2131|1800|35[0-9]{3})[0-9]{3,}$".toRegex()
 
-        val VISA_PREFIX = "4"
-        val MASTERCARD_PREFIX = "51,52,53,54,55,"
-        val DISCOVER_PREFIX = "6011"
-        val AMEX_PREFIX = "34,37,"
-
-        return if (cardNumber.isNotEmpty() && cardNumber.substring(0, 1) == VISA_PREFIX) {
-            CardType.Visa
-        } else if (cardNumber.length >= 2 && MASTERCARD_PREFIX.contains(cardNumber.substring(0, 2) + ",")) {
-            CardType.Mastercard
-        } else if (cardNumber.length >= 2 && AMEX_PREFIX.contains(cardNumber.substring(0, 2) + ",")) {
-            CardType.Amex
-        } else if (cardNumber.length >= 4 && cardNumber.substring(0, 4) == DISCOVER_PREFIX) {
-            CardType.DiscoverCard
-        } else {
-            CardType.Unknown
+        return when {
+            cardNumber.replace(" ","").matches(ptVisa) -> { CardType.Visa }
+            cardNumber.replace(" ","").matches(ptMasterCard) -> { CardType.Mastercard }
+            cardNumber.replace(" ","").matches(ptAmeExp) -> { CardType.Amex }
+            cardNumber.replace(" ","").matches(ptDinClb) -> { CardType.DinersClub }
+            cardNumber.replace(" ","").matches(ptDiscover) -> { CardType.DiscoverCard }
+            cardNumber.replace(" ","").matches(ptJcb) -> { CardType.JCB }
+            else -> { CardType.Unknown }
         }
     }
 
@@ -60,7 +56,8 @@ object CreditCardRepository {
             CardType.Amex -> R.drawable.amex
             CardType.Mastercard -> R.drawable.mastercard
             CardType.Visa -> R.drawable.visa
-            CardType.DinersClub -> R.drawable.discover
+            CardType.DinersClub -> R.drawable.diners
+            CardType.JCB -> R.drawable.visa
         }
     }
 

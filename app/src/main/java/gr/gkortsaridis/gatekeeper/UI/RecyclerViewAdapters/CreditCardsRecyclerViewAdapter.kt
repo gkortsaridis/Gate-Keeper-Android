@@ -88,13 +88,11 @@ class CreditCardsRecyclerViewAdapter(
 
             card.type = CreditCardRepository.getCreditCardType(card.number)
 
-            when (card.type) {
-                CardType.Visa -> { cardType?.setImageResource(R.drawable.visa) }
-                CardType.Amex -> { cardType?.setImageResource(R.drawable.amex) }
-                CardType.DinersClub -> { cardType?.setImageResource(R.drawable.discover) } //TODO: change
-                CardType.DiscoverCard -> { cardType?.setImageResource(R.drawable.discover) }
-                CardType.Mastercard -> { cardType?.setImageResource(R.drawable.mastercard) }
-                CardType.Unknown -> {cardType?.visibility = View.INVISIBLE}
+            val cardTypeImg = CreditCardRepository.getCreditCardTypeImage(card)
+            if (cardTypeImg != null) {
+                cardType?.setImageResource(cardTypeImg!!)
+            } else {
+                cardType?.visibility = View.GONE
             }
 
             val vault = VaultRepository.getVaultByID(card.vaultId)
