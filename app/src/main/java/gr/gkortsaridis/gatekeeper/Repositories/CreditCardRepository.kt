@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -14,6 +15,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.lang.Integer.parseInt
 
 @SuppressLint("CheckResult")
 object CreditCardRepository {
@@ -48,21 +50,27 @@ object CreditCardRepository {
         }
     }
 
-    fun validateCreditCardNumber(str: String): Boolean {
-        val newStr = str.replace(" ","")
-        val ints = IntArray(newStr.length)
-        for (i in str.indices) { ints[i] = newStr.substring(i, i + 1).toInt() }
-        var i = ints.size - 2
-        while (i >= 0) {
-            var j = ints[i]
-            j *= 2
-            if (j > 9) { j = j % 10 + 1 }
-            ints[i] = j
-            i -= 2
+    fun validateCreditCardNumber(value: String): Boolean {
+        // remove all non digit characters
+        var value = value.replace(" ", "");
+        var sum = 0;
+        var shouldDouble = false;
+        // loop through values starting at the rightmost side
+        for (i in value.length -1 downTo 0) {
+            var digit = parseInt(value[i].toString());
+
+            if (shouldDouble) {
+                digit *= 2
+                if (digit > 9) digit -= 9;
+            }
+
+            sum += digit;
+            shouldDouble = !shouldDouble;
         }
-        var sum = 0
-        for (ind in ints.indices) { sum += ints[ind] }
-        return (sum % 10 == 0)
+
+        Log.i("VALIDATOR",value+" "+( (sum % 10) == 0) )
+
+        return (sum % 10) == 0;
     }
 
     fun getCreditCardTypeImage(card: CreditCard): Int? {

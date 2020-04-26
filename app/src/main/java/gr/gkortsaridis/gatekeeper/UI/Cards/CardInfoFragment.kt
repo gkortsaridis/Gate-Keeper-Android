@@ -1,21 +1,23 @@
 package gr.gkortsaridis.gatekeeper.UI.Cards
 
 
+import android.R.color
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.text.trimmedLength
 import androidx.fragment.app.DialogFragment
-import com.google.firebase.Timestamp
+import com.google.android.material.textfield.TextInputLayout
 import com.wajahatkarim3.easyflipview.EasyFlipView
 import com.whiteelephant.monthpicker.MonthPickerDialog
 import gr.gkortsaridis.gatekeeper.Entities.*
@@ -28,9 +30,7 @@ import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
-import gr.gkortsaridis.gatekeeper.Utils.CreditCardFormattingTextWatcher
 import gr.gkortsaridis.gatekeeper.Utils.dp
-import io.noties.tumbleweed.paths.Linear
 import java.util.*
 
 
@@ -57,6 +57,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
     private lateinit var deleteCardBtn: LinearLayout
     private lateinit var cardContainer: LinearLayout
     private lateinit var cardContainerBack: LinearLayout
+    private lateinit var cardNumberLayout: TextInputLayout
 
     private var backCardShown: Boolean = false
 
@@ -102,8 +103,9 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         cardType = view.findViewById(R.id.card_type)
         cardContainer = view.findViewById(R.id.card_container)
         cardContainerBack = view.findViewById(R.id.card_container_back)
+        cardNumberLayout = view.findViewById(R.id.card_number_input_layout)
 
-        cardNumberET.setText(card?.number)
+        cardNumberET.setText(card?.number?.replace(" ",""))
         cardholderNameET.setText(card?.cardholderName)
         cardNickname.setText(card?.cardName)
         cvvET.setText(card?.cvv)
@@ -132,6 +134,11 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
             override fun afterTextChanged(s: Editable?) {
                 card?.type = CreditCardRepository.getCreditCardType(s.toString())
                 updateCardTypeImage()
+                if (!CreditCardRepository.validateCreditCardNumber(s.toString())) {
+                    cardNumberLayout.error = "Card Number is not valid"
+                } else {
+                    cardNumberLayout.error = ""
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -140,7 +147,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         })
 
         //This is to format the card number
-        cardNumberET.addTextChangedListener(CreditCardFormattingTextWatcher(cardNumberET))
+        //cardNumberET.addTextChangedListener(CreditCardFormattingTextWatcher(cardNumberET))
 
         toggleSaveButton()
         updateCardTypeImage()
