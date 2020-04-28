@@ -111,6 +111,8 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         cvvET.setText(card?.cvv)
         expiryDateTV.text = card?.expirationDate
         vaultName.text = cardVault.name
+        cardType.setColorFilter(context!!.getColor(R.color.mate_black), PorterDuff.Mode.SRC_ATOP)
+
 
         flipToBack.setOnClickListener {
             backCardShown = true

@@ -104,66 +104,66 @@ object GateKeeperAPI {
     interface GateKeeperInterface {
 
         //AUTHENTICATION
-        @POST("/auth/signIn")
+        @POST("auth/signIn")
         fun signIn(@Body body: ReqBodyUsernameHash?): Observable<RespAuthentication>
 
-        @POST("/auth/signUp")
+        @POST("auth/signUp")
         fun signUp(@Body body: ReqBodyUsernameHash): Observable<RespAuthentication>
 
-        @PUT("/auth/extraData")
+        @PUT("auth/extraData")
         fun updateExtraData(@Body body: ReqBodyExtraDataUpdate?): Observable<RespUserDataUpdate>
 
-        @GET("/alldata/{user_id}")
+        @GET("alldata/{user_id}")
         fun getAllData(@Path(value = "user_id", encoded = true) userId: String): Observable<RespAllData>
 
-        @PUT("/alldata/device/")
+        @PUT("alldata/device/")
         fun updateDevice(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
         //VAULTS
-        @POST("/vaults/")
+        @POST("vaults/")
         fun createVault(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
-        @PUT("/vaults/")
+        @PUT("vaults/")
         fun updateVault(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
-        @HTTP(method = "DELETE", path = "/vaults/{vault_id}", hasBody = true)
+        @HTTP(method = "DELETE", path = "vaults/{vault_id}", hasBody = true)
         fun deleteVault(@Path(value = "vault_id", encoded = true) vaultId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
 
         //LOGINS
-        @POST("/logins/")
+        @POST("logins/")
         fun createLogin(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
-        @PUT("/logins/")
+        @PUT("logins/")
         fun updateLogin(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
-        @HTTP(method = "DELETE", path = "/logins/{login_id}", hasBody = true)
+        @HTTP(method = "DELETE", path = "logins/{login_id}", hasBody = true)
         fun deleteLogin(@Path(value = "login_id", encoded = true) loginId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
 
         //CARDS
-        @POST("/cards/")
+        @POST("cards/")
         fun createCard(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
-        @PUT("/cards/")
+        @PUT("cards/")
         fun updateCard(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
-        @HTTP(method = "DELETE", path = "/cards/{card_id}", hasBody = true)
+        @HTTP(method = "DELETE", path = "cards/{card_id}", hasBody = true)
         fun deleteCard(@Path(value = "card_id", encoded = true) cardId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
 
         //NOTES
-        @POST("/notes/")
+        @POST("notes/")
         fun createNote(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
-        @PUT("/notes/")
+        @PUT("notes/")
         fun updateNote(@Body body: ReqBodyEncryptedData?): Observable<RespEncryptedData>
 
-        @HTTP(method = "DELETE", path = "/notes/{note_id}", hasBody = true)
+        @HTTP(method = "DELETE", path = "notes/{note_id}", hasBody = true)
         fun deleteNote(@Path(value = "note_id", encoded = true) noteId: String, @Body body: ReqBodyUsernameHash?): Observable<RespDeletetItem>
 
         //DEVICES
 
 
         //LOGS
-        @GET("/log/{user_id}")
+        @GET("log/{user_id}")
         fun getUserLogs(@Path(value = "user_id", encoded = true) userId: String): Observable<RespLogs>
     }
 

@@ -47,21 +47,26 @@ android {
     productFlavors {
         local {
             dimension "server"
-            buildConfigField "String", "BASE_SERVER_URL", "\"http://192.168.1.116:8080\""
+            buildConfigField "String", "BASE_SERVER_URL", "\"http://192.168.1.116:8080/\""
             resValue "string", "app_name", "Gate Keeper - Local"
             /*manifestPlaceholders = [
                     appIcon  : "@mipmap/ic_launcher_test_i",
                     roundIcon: "@mipmap/ic_launcher_test_i_round",
             ]*/
         }
-        heroku {
+        devAchilles {
             dimension "server"
             buildConfigField "String", "BASE_SERVER_URL", '"http://gate-keeper.herokuapp.com/"'
-            resValue "string", "app_name", "Gate Keeper - Heroku"
+            resValue "string", "app_name", "Gate Keeper - Achilles"
+        }
+        betaHaides {
+            dimension "server"
+            buildConfigField "String", "BASE_SERVER_URL", '"http://45.63.100.236:8080/haides/"'
+            resValue "string", "app_name", "Gate Keeper - Haides"
         }
         production {
             dimension "server"
-            buildConfigField "String", "BASE_SERVER_URL", "\"http://gate-keeper.herokuapp.com/\""
+            buildConfigField "String", "BASE_SERVER_URL", '"http://45.63.100.236"'
             resValue "string", "app_name", "Gate Keeper"
         }
     }
