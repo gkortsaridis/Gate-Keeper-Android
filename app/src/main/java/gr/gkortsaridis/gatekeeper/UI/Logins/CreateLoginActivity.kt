@@ -47,7 +47,7 @@ class CreateLoginActivity : AppCompatActivity() {
     private val TAG = "_Create_Login_Activity_"
 
     private var vaultToAdd: Vault? = null
-    private var login: Login? = null
+    private lateinit var login: Login
 
     private lateinit var activity: Activity
 
@@ -65,6 +65,12 @@ class CreateLoginActivity : AppCompatActivity() {
         delete_login_btn.setOnClickListener { showDeleteLoginDialog() }
 
         vault_view.setOnClickListener {
+            login.name = nameET.text.toString()
+            login.password = passwordET.text.toString()
+            login.username = usernameET.text.toString()
+            login.url = urlET.text.toString()
+            login.notes = notesET.text.toString()
+
             val intent = Intent(this, SelectVaultActivity::class.java)
             intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_VAULT)
             intent.putExtra("vault_id",vaultToAdd?.id)
@@ -78,8 +84,19 @@ class CreateLoginActivity : AppCompatActivity() {
             activity_title.text = "Create new Password"
             vaultToAdd = VaultRepository.getLastActiveRealVault()
             save_update_button.setOnClickListener { createLogin() }
+            login = Login(account_id = AuthRepository.getUserID(),
+                vault_id = vaultToAdd!!.id,
+                name = "",
+                password = "",
+                username = "",
+                url = "",
+                notes = "",
+                date_created = null,
+                date_modified = null
+            )
+
         } else {
-            login = LoginsRepository.getLoginById(loginId)
+            login = LoginsRepository.getLoginById(loginId)!!
             activity_title.text = "Edit Password"
             vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
             save_update_button.setOnClickListener { updateLogin() }
