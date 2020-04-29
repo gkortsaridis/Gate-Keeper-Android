@@ -122,8 +122,9 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         }
 
 
-        no_items_view.visibility = if (filtered.size > 0) View.GONE else View.VISIBLE
-        add_credit_card.visibility = if (filtered.size > 0) View.VISIBLE else View.GONE
+        no_items_view.visibility = if (filtered.isNotEmpty()) View.GONE else View.VISIBLE
+        add_credit_card.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
+        card_name_container.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun onCreditCardClicked(card: CreditCard) {

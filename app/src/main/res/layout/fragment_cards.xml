@@ -127,6 +127,7 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="8dp"
         android:elevation="5dp"
+        android:id="@+id/card_name_container"
         app:shape_roundRect_topLeftRadius="5dp"
         app:shape_roundRect_topRightRadius="5dp"
         app:shape_roundRect_bottomRightRadius="5dp"

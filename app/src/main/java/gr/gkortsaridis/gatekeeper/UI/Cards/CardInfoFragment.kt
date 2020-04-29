@@ -17,6 +17,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.DialogFragment
+import com.airbnb.paris.R2.attr.colorControlNormal
+import com.airbnb.paris.extensions.style
 import com.google.android.material.textfield.TextInputLayout
 import com.wajahatkarim3.easyflipview.EasyFlipView
 import com.whiteelephant.monthpicker.MonthPickerDialog
@@ -148,9 +150,6 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        //This is to format the card number
-        //cardNumberET.addTextChangedListener(CreditCardFormattingTextWatcher(cardNumberET))
-
         toggleSaveButton()
         updateCardTypeImage()
         colorCard()
@@ -182,6 +181,8 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
                 cardContainerBack.setBackgroundResource(R.color.vault_white_1)
             }
         }
+
+
     }
 
     private fun updateCardTypeImage() {
@@ -302,7 +303,6 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
 
     private fun toggleSaveButton() {
         if (isCreate) {
-
             if(!backCardShown) {
                 saveBtn.setBackgroundColor(resources.getColor(R.color.colorPrimary))
                 saveBtn.setOnClickListener {
@@ -352,7 +352,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
 
     private fun cardDataAreValid(): Boolean {
         return (
-                CreditCardRepository.validateCreditCardNumber(card?.number ?: "")
+                CreditCardRepository.validateCreditCardNumber(cardNumberET.text.toString())
                         && (if (card?.type == CardType.Amex) cvvET.text.toString().length == 4 else cvvET.text.toString().length == 3) //CVV : 4 lenght for AMEX, 3 for rest
                 )
     }

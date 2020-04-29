@@ -165,7 +165,9 @@ class NoteActivity : AppCompatActivity() {
     private fun updateNoteAndFinish() {
         val viewDialog = ViewDialog(this)
 
-        VaultRepository.setActiveVault(vaultToAdd)
+        if (VaultRepository.getLastActiveVault().id != vaultToAdd.id) {
+            VaultRepository.setActiveVault(VaultRepository.allVaults)
+        }
         if (note.id != "-1") {
             if (isNoteChanged()) {
                 bringNoteObjUpToDate()

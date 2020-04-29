@@ -177,6 +177,9 @@ dependencies {
     //Custom EditText
     implementation 'com.github.maxpilotto:action-edit-text:2.2.0'
 
+    //Paris Styling
+    implementation 'com.airbnb.android:paris:1.4.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
