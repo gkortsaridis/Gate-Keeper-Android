@@ -17,12 +17,13 @@
         android:clickable="true">
 
         <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:src="@drawable/star_on_grey"
-            android:layout_marginTop="8dp"
+            android:id="@+id/note_pinned"
+            android:layout_width="16dp"
+            android:layout_height="17dp"
+            android:tint="@color/mate_black"
             android:layout_marginLeft="8dp"
-            android:id="@+id/note_pinned"/>
+            android:layout_marginTop="8dp"
+            android:src="@drawable/star_on_grey" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -113,9 +113,9 @@ class NotesFragment : Fragment(), NoteClickListener {
     private fun animateItemsIn() {
         Timeline.createParallel()
             .push(Tween.to(add_note, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(add_note, Translation.XY).target(0f,-162.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            .push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(add_note, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            //.push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
+            //.push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(add_note))
     }
 

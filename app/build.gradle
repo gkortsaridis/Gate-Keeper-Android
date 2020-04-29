@@ -174,6 +174,9 @@ dependencies {
     //Expandable View
     implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
 
+    //Custom EditText
+    implementation 'com.github.maxpilotto:action-edit-text:2.2.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

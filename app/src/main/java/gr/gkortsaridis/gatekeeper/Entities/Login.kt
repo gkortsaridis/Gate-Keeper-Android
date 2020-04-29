@@ -3,7 +3,7 @@ package gr.gkortsaridis.gatekeeper.Entities
 import java.io.Serializable
 import java.sql.Timestamp
 
-data class Login(var id : String = "temp_id",
+data class Login(var id : String = "-1",
                  var account_id: String,
                  var name: String,
                  var username: String,

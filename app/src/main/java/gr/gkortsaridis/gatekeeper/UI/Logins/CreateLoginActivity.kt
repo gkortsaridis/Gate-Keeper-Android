@@ -5,7 +5,9 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ResolveInfo
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
@@ -15,6 +17,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.github.florent37.shapeofview.shapes.ArcView
 import com.google.firebase.Timestamp
+import com.maxpilotto.actionedittext.actions.Icon
+import com.maxpilotto.actionedittext.actions.Toggle
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
@@ -60,8 +64,6 @@ class CreateLoginActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        copy_username.setOnClickListener { copy(usernameET.text.toString(), "Username") }
-        copy_password.setOnClickListener { copy(passwordET.text.toString(), "Password") }
         delete_login_btn.setOnClickListener { showDeleteLoginDialog() }
 
         vault_view.setOnClickListener {
@@ -76,7 +78,7 @@ class CreateLoginActivity : AppCompatActivity() {
             intent.putExtra("vault_id",vaultToAdd?.id)
             startActivityForResult(intent, CHANGE_VAULT_REQUEST_CODE)
         }
-        select_application.setOnClickListener { startActivityForResult(Intent(this, ApplicationSelector::class.java), CHANGE_APP_REQUEST_CODE) }
+
         this.activity = this
 
         val loginId = intent.getStringExtra("login_id")
@@ -111,6 +113,50 @@ class CreateLoginActivity : AppCompatActivity() {
             save_update_button.visibility = if (isOpen) View.GONE else View.VISIBLE
         }
 
+        usernameET.apply{    // Kotlin
+            action(Icon(context).apply {
+                icon = R.drawable.copy
+                onClick = {
+                    copy(usernameET.text!!, "Username")
+                }
+            })
+
+            showActions()   // This displays all the actions that are added
+        }
+
+        passwordET.apply{    // Kotlin
+            action(Toggle(context).apply {
+                checkedRes = R.drawable.eye
+                uncheckedRes = R.drawable.edit_black
+                checked = (login.id != "-1")
+                setPassword(checked)
+
+                onToggle = { checked ->
+                    setPassword(checked)
+                }
+            })
+
+            action(Icon(context).apply {
+                icon = R.drawable.copy
+                onClick = {
+                    copy(passwordET.text!!, "Password")
+                }
+            })
+
+            showActions()   // This displays all the actions that are added
+        }
+
+        urlET.apply{    // Kotlin
+            action(Icon(context).apply {
+                icon = R.drawable.order
+                onClick = {
+                    startActivityForResult(Intent(context, ApplicationSelector::class.java), CHANGE_APP_REQUEST_CODE)
+                }
+            })
+
+            showActions()   // This displays all the actions that are added
+        }
+
         updateUI()
     }
 
@@ -126,12 +172,12 @@ class CreateLoginActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        nameET.setText(login?.name)
-        usernameET.setText(login?.username)
-        passwordET.setText(login?.password)
-        notesET.setText(login?.notes)
-        urlET.setText(login?.url)
-        delete_login_btn.visibility = if (login != null) View.VISIBLE else View.GONE
+        nameET.setText(login.name)
+        usernameET.apply { text = login.username }
+        passwordET.apply { text = login.password }
+        urlET.apply { text = login.url }
+        notesET.apply { text = login.notes }
+        delete_login_btn.visibility = if (login.id != "-1") View.VISIBLE else View.GONE
 
         vault_name.text = vaultToAdd?.name
         vault_view.setBackgroundColor(resources.getColor(vaultToAdd?.getVaultColorResource() ?: R.color.colorPrimaryDark))
@@ -140,15 +186,15 @@ class CreateLoginActivity : AppCompatActivity() {
     }
 
     private fun updateLogin() {
-        login?.username = usernameET.text.toString()
-        login?.name = nameET.text.toString()
-        login?.password = passwordET.text.toString()
-        login?.notes = notesET.text.toString()
-        login?.url = urlET.text.toString()
-        login?.vault_id = vaultToAdd!!.id
-        login?.date_modified = null
+        login.username = usernameET.text.toString()
+        login.name = nameET.text.toString()
+        login.password = passwordET.text.toString()
+        login.notes = notesET.text.toString()
+        login.url = urlET.text.toString()
+        login.vault_id = vaultToAdd!!.id
+        login.date_modified = null
 
-        LoginsRepository.encryptAndUpdateLogin(this, login!!, object : LoginUpdateListener{
+        LoginsRepository.encryptAndUpdateLogin(this, login, object : LoginUpdateListener{
             override fun onLoginUpdated(login: Login) {
                 val viewDialog = ViewDialog(activity)
                 viewDialog.showDialog()
@@ -243,7 +289,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
         if (requestCode == CHANGE_APP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val app = data!!.getParcelableExtra<ResolveInfo>("app")
-            this.urlET.setText(app?.activityInfo?.packageName)
+            urlET.apply { text = app?.activityInfo?.packageName }
         }else if (requestCode == CHANGE_VAULT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val vaultId = data!!.data.toString()
             vaultToAdd = VaultRepository.getVaultByID(vaultId)

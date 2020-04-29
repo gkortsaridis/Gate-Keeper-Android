@@ -39,6 +39,8 @@ object NotesRepository {
                     val decryptedNote = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Note::class.java) as Note?
                     if (decryptedNote != null) {
                         decryptedNote.id = it.data.id.toString()
+                        decryptedNote.modifiedDate = it.data.dateModified
+                        decryptedNote.createDate = it.data.dateCreated
                         if (it.errorCode == -1) { listener?.onNoteCreated(decryptedNote) }
                         else { listener?.onNoteCreateError(it.errorCode, it.errorMsg) }
                     } else {
@@ -73,6 +75,8 @@ object NotesRepository {
                     val decryptedNote = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Note::class.java) as Note?
                     if (decryptedNote != null) {
                         decryptedNote.id = it.data.id.toString()
+                        decryptedNote.modifiedDate = it.data.dateModified
+                        decryptedNote.createDate = it.data.dateCreated
                         if (it.errorCode == -1) { listener.onNoteUpdated(decryptedNote) }
                         else { listener.onNoteUpdateError(it.errorCode, it.errorMsg) }
                     } else {

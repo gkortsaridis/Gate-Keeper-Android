@@ -77,9 +77,9 @@ class NoteActivity : AppCompatActivity() {
             note = Note(
                 title= "",
                 body = "",
-                modifiedDate = null,
-                createDate = null,
-                id= "",
+                modifiedDate = Timestamp(System.currentTimeMillis()),
+                createDate = Timestamp(System.currentTimeMillis()),
+                id= "-1",
                 accountId = AuthRepository.getUserID(),
                 isPinned = false,
                 vaultId = vaultToAdd.id,
@@ -166,7 +166,7 @@ class NoteActivity : AppCompatActivity() {
         val viewDialog = ViewDialog(this)
 
         VaultRepository.setActiveVault(vaultToAdd)
-        if (note.id != "") {
+        if (note.id != "-1") {
             if (isNoteChanged()) {
                 bringNoteObjUpToDate()
 

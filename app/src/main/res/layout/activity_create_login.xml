@@ -194,7 +194,48 @@
                             android:cursorVisible="true"
                             android:textStyle="bold"/>
 
-                        <RelativeLayout
+                        <com.maxpilotto.actionedittext.ActionEditText
+                            android:id="@+id/usernameET"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:aed_label="Username"
+                            app:aed_hint="Type your username..."
+                            android:layout_marginTop="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="16dp"/>
+
+                        <com.maxpilotto.actionedittext.ActionEditText
+                            android:id="@+id/passwordET"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:aed_label="Password"
+                            app:aed_hint="Type your password..."
+                            android:layout_marginTop="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="16dp"/>
+
+                        <com.maxpilotto.actionedittext.ActionEditText
+                            android:id="@+id/urlET"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:aed_label="URL"
+                            app:aed_hint="Type your url..."
+                            android:layout_marginTop="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="16dp"/>
+
+                        <com.maxpilotto.actionedittext.ActionEditText
+                            android:id="@+id/notesET"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:aed_label="Notes"
+                            app:aed_hint="Type any notes connected to this password..."
+                            android:layout_marginTop="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="16dp"/>
+
+
+                        <!--<RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
@@ -222,8 +263,9 @@
                                 android:id="@+id/copy_username"
                                 android:layout_marginTop="24dp"
                                 android:layout_marginRight="16dp"/>
-                        </RelativeLayout>
+                        </RelativeLayout> -->
 
+                        <!--
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
@@ -253,7 +295,7 @@
                                 android:background="@drawable/copy"
                                 android:id="@+id/copy_password"
                                 android:layout_marginTop="24dp"
-                                android:layout_marginRight="16dp"/>
+                                android:layout_marginRight="56dp"/>
 
                         </RelativeLayout>
 
@@ -302,6 +344,7 @@
                                 android:id="@+id/notesET"/>
 
                         </com.google.android.material.textfield.TextInputLayout>
+                        -->
 
                     </LinearLayout>
                 </RelativeLayout>
