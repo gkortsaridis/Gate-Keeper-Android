@@ -219,7 +219,7 @@ object SecurityRepository {
 
     fun getUserExtraData(email: String, data: String, iv: String): UserExtraData {
         val userData = decryptEncryptedDataToObjectWithUserCredentials(EncryptedData(encryptedData = data, iv = iv), UserExtraData::class.java) as UserExtraData?
-        return userData ?: UserExtraData(userEmail = email, userFullName = null, userImg = null)
+        return userData ?: UserExtraData(userEmail = email, userFullName = null, userImg = null, gateKeeperSubscriptionStatus = null)
     }
 
 }

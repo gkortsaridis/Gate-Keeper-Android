@@ -22,24 +22,25 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/colorPrimary">
+            android:background="@color/white">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="GateKeeper+"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="30sp"
                 android:textStyle="bold"
+                android:gravity="center_horizontal"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="32dp"
-                android:id="@+id/plan_plus_title"/>
+                android:id="@+id/plan_name"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Monthly Subscription"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="20sp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
@@ -58,15 +59,25 @@
                     android:text="5.99"
                     android:textStyle="bold"
                     android:id="@+id/price_number"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimaryDark"
                     android:textSize="50sp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="£"
                     android:id="@+id/price_currency"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimaryDark"
                     android:textSize="30sp"
+                    android:layout_marginLeft="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="/month"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="30sp"
+                    android:gravity="bottom"
+                    android:id="@+id/per_month"
                     android:layout_marginLeft="8dp"/>
             </LinearLayout>
 
@@ -75,12 +86,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="209dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="32dp"
                 android:gravity="center_horizontal"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="Keep your data secure\n\nSync your data across multiple devices\n\nHave up to 20 passwords stored\n\nHave up to 1 credit card stored\n\n Have up to 5 notes stored"
-                android:textColor="#81CDE9"
+                android:textColor="@color/colorPrimary"
                 android:textSize="18sp" />
         </LinearLayout>
     </com.github.florent37.shapeofview.shapes.RoundRectView>
@@ -102,13 +113,13 @@
             android:id="@+id/buy_now"
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
-            android:background="@color/white">
+            android:background="@color/colorPrimary">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Buy Now"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/vault_white_1"
                 android:textSize="20sp"
                 android:layout_centerInParent="true"
                 android:textStyle="bold"/>

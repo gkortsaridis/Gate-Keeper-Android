@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.UI.Account
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -94,6 +95,13 @@ class AccountStatusActivity : AppCompatActivity(), PurchasesUpdatedListener, InA
 
     override fun onPurchasesUpdated(p0: BillingResult?, p1: MutableList<Purchase>?) {
         Log.i(TAG, p0.toString())
+        //Decline -> p1 null, p0 num:6, desc:""
+        //Accept -> p0: 0,"" , p1 purchaseState: 0
+        if (p1?.get(0)?.purchaseState == Purchase.PurchaseState.PURCHASED) {
+            Log.i("SUCCESS", p1[0].toString())
+        } else {
+            Toast.makeText(this, "There was an error during the transaction :(", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onSubscriptionBuyTouched(skuDetails: SkuDetails) {
@@ -101,6 +109,9 @@ class AccountStatusActivity : AppCompatActivity(), PurchasesUpdatedListener, InA
             .setSkuDetails(skuDetails)
             .build()
         var billingResult = billingClient.launchBillingFlow(this, flowParams)
+
         Log.i("BillingResult", billingResult.toString())
+        Log.i("BillingResult", billingResult.debugMessage ?: "NULL")
+        Log.i("BillingResult", billingResult.responseCode.toString())
     }
 }

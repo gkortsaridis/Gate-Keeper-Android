@@ -50,7 +50,7 @@
     <string name="copy_to_clipboard">Copy to clipboard</string>
     <string name="free_plan_description">Sync your data across your devices\n\nSave up to 20 passwords to your account\n\nSave up to 1 card to your account\n\nSave up to 5 notes to your account</string>
     <string name="monthly_plan_description">Sync your data across your devices\n\nEnjoy Ad-free experience\n\nSave unlimited passwords, cards &amp; notes to your account\n\n</string>
-    <string name="yearly_plan_description">Charged XX yearly\n\nSync your data across your devices\n\nEnjoy Ad-free experience\n\nSave unlimited passwords, cards &amp; notes to your account\n\n</string>
+    <string name="yearly_plan_description">\n\nSync your data across your devices\n\nEnjoy Ad-free experience\n\nSave unlimited passwords, cards &amp; notes to your account\n\n</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

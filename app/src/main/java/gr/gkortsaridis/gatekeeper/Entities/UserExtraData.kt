@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 
 
-data class UserExtraData(val userEmail: String, var userFullName: String?, var userImg: String?) {
+data class UserExtraData(val userEmail: String, var userFullName: String?, var userImg: String?, var gateKeeperSubscriptionStatus: GateKeeperSubscriptionStatus?) {
 
     fun getUserImgBmp() : Bitmap? {
         return try {
