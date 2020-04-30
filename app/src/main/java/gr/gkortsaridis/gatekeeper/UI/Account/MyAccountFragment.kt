@@ -72,7 +72,8 @@ class MyAccountFragment : Fragment() {
     }
 
     private fun goToBilling() {
-        context?.startActivity(Intent(activity, AccountStatusActivity::class.java))
+        Toast.makeText(context, "Everything is free for now :)", Toast.LENGTH_SHORT).show()
+        //context?.startActivity(Intent(activity, AccountStatusActivity::class.java))
     }
 
     private fun updateProfileName(name: String?) {
