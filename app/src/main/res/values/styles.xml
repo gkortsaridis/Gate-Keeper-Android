@@ -25,4 +25,8 @@
         <item name="colorControlHighlight">@color/vault_white_1</item>
     </style>
 
+    <style name="WhiteSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="colorControlActivated">#FFFFFF</item>
+    </style>
+
 </resources>

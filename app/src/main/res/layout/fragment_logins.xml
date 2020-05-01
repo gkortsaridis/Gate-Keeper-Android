@@ -154,20 +154,12 @@
     </com.github.florent37.shapeofview.shapes.RoundRectView> -->
 
 
-    <com.nicolettilu.hiddensearchwithrecyclerview.HiddenSearchWithRecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:filterWhileTyping="true"
-        app:visibleAtInit="true"
-        android:id="@+id/search_view"
-        android:layout_below="@+id/logins_counter_container">
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/logins_recycler_view"
-            tools:listitem="@layout/recycler_view_item_login_right"/>
-    </com.nicolettilu.hiddensearchwithrecyclerview.HiddenSearchWithRecyclerView>
-
+        android:id="@+id/logins_recycler_view"
+        android:layout_below="@+id/logins_counter_container"
+        tools:listitem="@layout/recycler_view_item_login_right"/>
 
     <LinearLayout
         android:layout_width="200dp"

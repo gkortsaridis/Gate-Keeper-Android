@@ -154,6 +154,7 @@ class LoginsRecyclerViewAdapter(
         object : Filter() {
             override fun performFiltering(value: CharSequence?): FilterResults {
                 val results = FilterResults()
+                val temp = logins
                 if (value.isNullOrEmpty()) {
                     results.values = logins
                 } else {
