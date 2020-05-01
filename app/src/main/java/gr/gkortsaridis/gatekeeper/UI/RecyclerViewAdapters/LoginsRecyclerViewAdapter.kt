@@ -9,10 +9,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.drawToBitmap
 import androidx.palette.graphics.Palette
@@ -31,13 +28,17 @@ import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.FavIconDownloader
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import gr.gkortsaridis.gatekeeper.Utils.dp
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class LoginsRecyclerViewAdapter(
     private val context: Context,
     private var logins: ArrayList<Login>,
     private val packageManager: PackageManager,
-    private val listener: LoginSelectListener): RecyclerView.Adapter<LoginsRecyclerViewAdapter.LoginViewHolder>() {
+    private val listener: LoginSelectListener): RecyclerView.Adapter<LoginsRecyclerViewAdapter.LoginViewHolder>(), Filterable {
+
+    private var loginsToDisplay = logins
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LoginViewHolder {
         val inflatedView = LayoutInflater.from(context).inflate(R.layout.recycler_view_item_login_right, parent, false)
@@ -45,16 +46,17 @@ class LoginsRecyclerViewAdapter(
     }
 
     override fun getItemCount(): Int {
-        return logins.size
+        return loginsToDisplay.size
     }
 
     override fun onBindViewHolder(holder: LoginViewHolder, position: Int) {
-        val loginItem = logins[position]
-        holder.bindLogin(loginItem, position, logins.size, context, packageManager, listener)
+        val loginItem = loginsToDisplay[position]
+        holder.bindLogin(loginItem, position, loginsToDisplay.size, context, packageManager, listener)
     }
 
     fun updateLogins(logins: ArrayList<Login>) {
         this.logins = logins
+        this.loginsToDisplay = logins
         notifyDataSetChanged()
     }
 
@@ -147,4 +149,30 @@ class LoginsRecyclerViewAdapter(
         }
 
     }
+
+    override fun getFilter(): Filter =
+        object : Filter() {
+            override fun performFiltering(value: CharSequence?): FilterResults {
+                val results = FilterResults()
+                if (value.isNullOrEmpty()) {
+                    results.values = logins
+                } else {
+                    val filtered = logins.filter {
+                        (it.name.toLowerCase().contains(value.trim())
+                                || it.username.toLowerCase().contains(value.trim())
+                                || it.password.toLowerCase().contains(value.trim()))
+                                || it.notes?.toLowerCase()?.contains(value.trim()) == true
+                                || it.url.toLowerCase().contains(value.trim())
+                    }
+                    results.values = filtered
+                }
+                return results
+            }
+
+            override fun publishResults(value: CharSequence?, results: FilterResults?) {
+                loginsToDisplay = ArrayList((results?.values as? ArrayList<Login>).orEmpty())
+                notifyDataSetChanged()
+            }
+
+        }
 }

@@ -180,6 +180,8 @@ dependencies {
     //Paris Styling
     implementation 'com.airbnb.android:paris:1.4.0'
 
+    implementation 'com.nicolettilu:hiddensearchwithrecyclerview:0.0.5'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
