@@ -241,38 +241,38 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (what) {
             "Passwords" -> {
                 fragmentToReplace = LoginsFragment()
-                supportActionBar?.title = "GateKeeper Passwords"
+                supportActionBar?.title = "Passwords"
                 navTextPasswords.typeface = Typeface.DEFAULT_BOLD
                 navContainerPasswords.setBackgroundColor(resources.getColor(R.color.colorPrimary))
                 //loginsFragment.animateFabIn()
             }
             "Cards" -> {
                 fragmentToReplace = CardsFragment()
-                supportActionBar?.title = "GateKeeper Cards"
+                supportActionBar?.title = "Digital Wallet"
                 navTextCards.typeface = Typeface.DEFAULT_BOLD
                 navContainerCards.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "Notes" -> {
                 fragmentToReplace = NotesFragment()
-                supportActionBar?.title = "GateKeeper Notes"
+                supportActionBar?.title = "Secure Notes"
                 navTextNotes.typeface = Typeface.DEFAULT_BOLD
                 navContainerNotes.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "Account" -> {
                 fragmentToReplace = MyAccountFragment()
-                supportActionBar?.title = "My GateKeeper Account"
+                supportActionBar?.title = "My Account"
                 navTextAccount.typeface = Typeface.DEFAULT_BOLD
                 navContainerAccount.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "PasswordGenerator" -> {
                 fragmentToReplace = PasswordGeneratorFragment()
-                supportActionBar?.title = "GateKeeper Password Generator"
+                supportActionBar?.title = "Password Generator"
                 navTextPassGen.typeface = Typeface.DEFAULT_BOLD
                 navContainerPassGen.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
             "Settings" -> {
                 fragmentToReplace = SettingsFragment()
-                supportActionBar?.title = "GateKeeper Settings"
+                supportActionBar?.title = "Settings"
                 navButtonSettings.setBackgroundColor(resources.getColor(R.color.colorPrimary))
                 navButtonSettings.setImageResource(R.drawable.settings_white)
             }
