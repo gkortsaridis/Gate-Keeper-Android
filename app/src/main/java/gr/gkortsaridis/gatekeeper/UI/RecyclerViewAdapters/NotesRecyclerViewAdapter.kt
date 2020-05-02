@@ -48,6 +48,7 @@ class NotesRecyclerViewAdapter(
         private var noteModified: TextView? = null
         private var view: LinearLayout? = null
         private var pinnedNote: ImageView? = null
+        private var noteVaultColor: View? = null
 
         init {
             noteTitle = v.findViewById(R.id.note_title)
@@ -55,6 +56,7 @@ class NotesRecyclerViewAdapter(
             noteModified = v.findViewById(R.id.note_modified)
             view = v.findViewById(R.id.note_container)
             pinnedNote = v.findViewById(R.id.note_pinned)
+            noteVaultColor = v.findViewById(R.id.note_vault_color)
         }
 
         fun bindView(note: Note, context: Context, listener: NoteClickListener) {
@@ -67,7 +69,7 @@ class NotesRecyclerViewAdapter(
             noteModified?.text = formattedDate
 
             val vault = VaultRepository.getVaultByID(note.vaultId)
-            view?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+            noteVaultColor?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
 
             view?.setOnClickListener { listener.onNoteClicked(note) }
             pinnedNote?.visibility = if (note.isPinned) View.VISIBLE else View.GONE

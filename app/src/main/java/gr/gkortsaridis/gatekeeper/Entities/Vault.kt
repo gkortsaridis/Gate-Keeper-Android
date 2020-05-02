@@ -12,7 +12,7 @@ data class Vault( var id: String = "-1",
 
     fun getVaultColorResource(): Int {
         return when(color) {
-            VaultColor.White -> R.color.vault_white_1
+            VaultColor.White -> R.color.vault_white_2
             VaultColor.Yellow -> R.color.vault_yellow_1
             VaultColor.Red -> R.color.vault_red_1
             VaultColor.Green -> R.color.vault_green_1

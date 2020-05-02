@@ -24,6 +24,11 @@ import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import kotlinx.android.synthetic.main.activity_note.*
+import kotlinx.android.synthetic.main.activity_note.vault_icon
+import kotlinx.android.synthetic.main.activity_note.vault_name
+import kotlinx.android.synthetic.main.activity_note.vault_view
+import kotlinx.android.synthetic.main.fragment_notes.*
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -31,20 +36,11 @@ import java.time.LocalDateTime
 
 class NoteActivity : AppCompatActivity() {
 
-    private lateinit var toolbar: Toolbar
-    private lateinit var noteTitle: EditText
-    private lateinit var noteBody : EditText
-    private lateinit var noteModified: TextView
-    private lateinit var noteBackground: RelativeLayout
-    private lateinit var deleteNote: LinearLayout
-    private lateinit var bottomView: LinearLayout
 
     private lateinit var noteColor: NoteColor
     private lateinit var note : Note
     private var noteMenu : Int? = null
     private var isPinned : Boolean = false
-    private lateinit var vaultView: LinearLayout
-    private lateinit var vaultName: TextView
 
     private lateinit var vaultToAdd: Vault
 
@@ -52,25 +48,15 @@ class NoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
 
-        toolbar = findViewById(R.id.toolbar)
-        deleteNote = findViewById(R.id.delete_note)
-        noteTitle = findViewById(R.id.note_title)
-        noteBackground = findViewById(R.id.note_background)
-        noteBody = findViewById(R.id.note_body)
-        noteModified = findViewById(R.id.note_modified)
-        vaultView = findViewById(R.id.vault_view)
-        vaultName = findViewById(R.id.vault_name)
-        bottomView = findViewById(R.id.bottom_view)
-
         val noteId = intent.getStringExtra("note_id")!!
         if (noteId != "-1") {
-            deleteNote.visibility = View.VISIBLE
+            delete_note_btn.visibility = View.VISIBLE
             note = NotesRepository.getNoteById(noteId)!!
             vaultToAdd = VaultRepository.getVaultByID(note.vaultId)!!
             this.isPinned = note.isPinned
             noteMenu = if (note.isPinned) R.menu.note_actionbar_menu_star_on else R.menu.note_actionbar_menu_star_off
         }else {
-            deleteNote.visibility = View.GONE
+            delete_note_btn.visibility = View.INVISIBLE
             vaultToAdd = VaultRepository.getLastActiveRealVault()
             note = Note(
                 title= "",
@@ -91,21 +77,27 @@ class NoteActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
 
-        noteTitle.setText(note.title)
-        deleteNote.setOnClickListener { deleteNote() }
-        vaultView.setOnClickListener { changeVault() }
+        note_title_et.setText(note.title)
+        delete_note_btn.setOnClickListener { deleteNote() }
+        vault_view.setOnClickListener { changeVault() }
 
         val formatter = SimpleDateFormat(GateKeeperConstants.dateOnlyFormat)
         val formattedDate = formatter.format(note.modifiedDate)
-        noteModified.text = "Edited at $formattedDate"
-        noteBody.setText(note.body)
+        date_modified_tv.text = "Edited at $formattedDate"
+        note_body_et.setText(note.body)
+
+        update_note_btn.setOnClickListener {
+            updateNoteAndFinish()
+        }
 
         updateUI()
     }
 
     private fun updateUI() {
-        vaultName.text = vaultToAdd.name
-        bottomView.setBackgroundResource(vaultToAdd.getVaultColorResource())
+        vault_name.text = vaultToAdd.name
+        vault_view.setBackgroundColor(resources.getColor(vaultToAdd.getVaultColorResource()))
+        vault_name.setTextColor(resources.getColor(vaultToAdd.getVaultColorAccent()))
+        vault_icon.setColorFilter(resources.getColor(vaultToAdd.getVaultColorAccent()))
     }
 
     private fun changeVault() {
@@ -122,7 +114,7 @@ class NoteActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            android.R.id.home -> { updateNoteAndFinish() }
+            android.R.id.home -> { finish() }
             R.id.action_star_off -> {
                 this.isPinned = true
                 noteMenu = R.menu.note_actionbar_menu_star_on
@@ -136,10 +128,6 @@ class NoteActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onBackPressed() {
-        updateNoteAndFinish()
     }
 
     private fun deleteNote() {
@@ -203,7 +191,7 @@ class NoteActivity : AppCompatActivity() {
             }
 
         }else {
-            if (noteTitle.text.toString().trim() != "" || noteBody.text.toString().trim() != "") {
+            if (note_title_et.text.toString().trim() != "" || note_title_et.text.toString().trim() != "") {
                 note.createDate = null
                 bringNoteObjUpToDate()
 
@@ -229,16 +217,16 @@ class NoteActivity : AppCompatActivity() {
     }
 
     private fun isNoteChanged(): Boolean {
-        return (note.title != noteTitle.text.toString()
-                || note.body != noteBody.text.toString()
+        return (note.title != note_title_et.text.toString()
+                || note.body != note_body_et.text.toString()
                 || note.color != noteColor
                 || this.isPinned != note.isPinned
                 || this.vaultToAdd.id != note.vaultId)
     }
 
     private fun bringNoteObjUpToDate() {
-        note.title = noteTitle.text.toString()
-        note.body = noteBody.text.toString()
+        note.title = note_title_et.text.toString()
+        note.body = note_body_et.text.toString()
         note.modifiedDate = null
         note.color = noteColor
         note.isPinned = this.isPinned
