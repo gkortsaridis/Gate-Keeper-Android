@@ -275,13 +275,16 @@ class CreateLoginActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Delete Password")
         builder.setMessage("Are you sure you want to delete this Password item?")
-        builder.setPositiveButton("YES"){dialog, _ ->
+        builder.setPositiveButton("DELETE"){dialog, _ ->
             dialog.cancel()
             deleteLogin()
         }
-        builder.setNegativeButton("No"){dialog, _ -> dialog.cancel() }
+        builder.setNegativeButton("CANCEL"){dialog, _ -> dialog.cancel() }
         val dialog: AlertDialog = builder.create()
         dialog.show()
+
+        val positiveButton: Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        positiveButton.setTextColor(resources.getColor(R.color.error_red))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

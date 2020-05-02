@@ -4,9 +4,10 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.Toast
@@ -256,6 +257,9 @@ class CardEditActivity : AppCompatActivity() {
         builder.setNegativeButton("CANCEL"){dialog, _ -> dialog.cancel() }
         val dialog: AlertDialog = builder.create()
         dialog.show()
+
+        val positiveButton: Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        positiveButton.setTextColor(resources.getColor(R.color.error_red))
     }
 
     private fun updateCard() {

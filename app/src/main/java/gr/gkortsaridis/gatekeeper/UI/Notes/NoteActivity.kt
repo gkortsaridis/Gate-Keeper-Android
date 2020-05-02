@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import gr.gkortsaridis.gatekeeper.Entities.Note
@@ -145,21 +143,36 @@ class NoteActivity : AppCompatActivity() {
     }
 
     private fun deleteNote() {
-        val viewDialog = ViewDialog(this)
-        viewDialog.showDialog()
 
-        NotesRepository.deleteNote(note, object: NoteDeleteListener{
-            override fun onNoteDeleted() {
-                GateKeeperApplication.notes.remove(note)
-                viewDialog.hideDialog()
-                finishWithResult()
-            }
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Delete Note")
+        builder.setMessage("Are you sure you want to delete this Note item?")
+        builder.setPositiveButton("DELETE"){dialog, _ ->
+            dialog.cancel()
 
-            override fun onNoteDeleteError(errorCode: Int, errorMsg: String) {
-                GateKeeperApplication.notes.remove(note)
-                viewDialog.hideDialog()
-            }
-        })
+            val viewDialog = ViewDialog(this)
+            viewDialog.showDialog()
+
+            NotesRepository.deleteNote(note, object: NoteDeleteListener{
+                override fun onNoteDeleted() {
+                    GateKeeperApplication.notes.remove(note)
+                    viewDialog.hideDialog()
+                    finishWithResult()
+                }
+
+                override fun onNoteDeleteError(errorCode: Int, errorMsg: String) {
+                    GateKeeperApplication.notes.remove(note)
+                    viewDialog.hideDialog()
+                }
+            })
+
+        }
+        builder.setNegativeButton("CANCEL"){dialog, _ -> dialog.cancel() }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+
+        val positiveButton: Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        positiveButton.setTextColor(resources.getColor(R.color.error_red))
     }
 
     private fun updateNoteAndFinish() {

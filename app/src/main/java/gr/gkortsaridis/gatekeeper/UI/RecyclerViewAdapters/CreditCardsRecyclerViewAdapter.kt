@@ -87,7 +87,6 @@ class CreditCardsRecyclerViewAdapter(
 
             val cardNumber = card.number.replace(" ","")
             val stringBuilder = StringBuilder(cardNumber)
-            card.type = CreditCardRepository.getCreditCardType(card.number)
             when(card.type) {
                 CardType.Visa -> {
                     stringBuilder.insert(4 ," ")
@@ -129,7 +128,6 @@ class CreditCardsRecyclerViewAdapter(
             this.cardholderName?.text = card.cardholderName.toUpperCase()
             this.cardNickname?.text = card.cardName
             this.cardCVV?.text = card.cvv
-
 
             val cardTypeImg = CreditCardRepository.getCreditCardTypeImage(card)
             if (cardTypeImg != null) {

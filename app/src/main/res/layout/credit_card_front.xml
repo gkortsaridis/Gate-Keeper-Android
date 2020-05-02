@@ -89,12 +89,12 @@
                     android:layout_marginTop="8dp"
                     android:inputType="number"
                     android:textColor="@color/mate_black"
-                    android:textSize="22sp"
+                    android:textSize="19sp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     app:autoSizeTextType="uniform"
                     app:autoSizeMinTextSize="5sp"
-                    app:autoSizeMaxTextSize="100sp"
+                    app:autoSizeMaxTextSize="22sp"
                     app:autoSizeStepGranularity="1sp"/>
 
                 <LinearLayout
