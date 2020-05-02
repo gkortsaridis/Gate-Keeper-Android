@@ -20,13 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="59.5dp"
             android:background="@color/colorPrimaryDark">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Vault"
-                android:textSize="17sp"
-                android:textColor="@color/white"
-                android:layout_marginLeft="48dp"/>
+
         </RelativeLayout>
 
     </com.github.florent37.shapeofview.shapes.CutCornerView>
