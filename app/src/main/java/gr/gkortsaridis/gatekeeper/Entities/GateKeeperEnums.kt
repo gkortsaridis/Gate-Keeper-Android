@@ -36,7 +36,8 @@ enum class VaultColor(val value: String) {
     Pink("#F0A1A6"),
     Red("#F65A34"),
     Yellow("#FEF735"),
-    White("#ffffff")
+    White("#ffffff"),
+    Coral("#47A8BD")
 }
 
 enum class LoginUrlType(val value: String) {

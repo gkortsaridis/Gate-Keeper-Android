@@ -17,6 +17,7 @@ data class Vault( var id: String = "-1",
             VaultColor.Red -> R.color.vault_red_1
             VaultColor.Green -> R.color.vault_green_1
             VaultColor.Blue -> R.color.vault_blue_1
+            VaultColor.Coral -> R.color.vault_coral
             else -> R.color.colorPrimaryDark
         }
     }
@@ -28,6 +29,7 @@ data class Vault( var id: String = "-1",
             VaultColor.Red -> R.color.white
             VaultColor.Green -> R.color.white
             VaultColor.Blue -> R.color.white
+            VaultColor.Coral -> R.color.white
             else -> R.color.colorPrimaryDark
         }
     }

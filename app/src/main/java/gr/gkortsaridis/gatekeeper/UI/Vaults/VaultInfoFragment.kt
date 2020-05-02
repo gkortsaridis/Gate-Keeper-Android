@@ -31,12 +31,12 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
     private lateinit var greenColorContainer: RoundRectView
     private lateinit var blueColorContainer: RoundRectView
     private lateinit var yellowColorContainer: RoundRectView
-    private lateinit var whiteColorContainer: RoundRectView
+    private lateinit var coralColorContainer: RoundRectView
     private lateinit var redColor: View
     private lateinit var greenColor: View
     private lateinit var blueColor: View
     private lateinit var yellowColor: View
-    private lateinit var whiteColor: View
+    private lateinit var coralColor: View
     private lateinit var saveVault: Button
     private lateinit var vaultBackground: View
     private lateinit var deleteVault: Button
@@ -59,8 +59,8 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
         blueColor = view.findViewById(R.id.blue_color)
         yellowColorContainer = view.findViewById(R.id.yellow_color_container)
         yellowColor = view.findViewById(R.id.yellow_color)
-        whiteColorContainer = view.findViewById(R.id.white_color_container)
-        whiteColor = view.findViewById(R.id.white_color)
+        coralColorContainer = view.findViewById(R.id.coral_color_container)
+        coralColor = view.findViewById(R.id.coral_color)
         saveVault = view.findViewById(R.id.save_vault)
         vaultBackground = view.findViewById(R.id.vault_main_container)
         deleteVault = view.findViewById(R.id.delete_vault)
@@ -97,8 +97,8 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
             vaultColor = VaultColor.Yellow
             updateColors()
         }
-        whiteColor.setOnClickListener {
-            vaultColor = VaultColor.White
+        coralColor.setOnClickListener {
+            vaultColor = VaultColor.Coral
             updateColors()
         }
         vaultName.addTextChangedListener(object: TextWatcher{
@@ -129,8 +129,7 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
         greenColorContainer.setBorderColor(resources.getColor(R.color.underline_grey))
         blueColorContainer.setBorderColor(resources.getColor(R.color.underline_grey))
         yellowColorContainer.setBorderColor(resources.getColor(R.color.underline_grey))
-        whiteColorContainer.setBorderColor(resources.getColor(R.color.underline_grey))
-
+        coralColorContainer.setBorderColor(resources.getColor(R.color.underline_grey))
 
         when (vaultColor) {
             VaultColor.Red -> {
@@ -150,8 +149,8 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
                 yellowColorContainer.setBorderColor(resources.getColor(R.color.mate_black))
                 vaultBackground.setBackgroundResource(R.drawable.vault_color_yellow)
             }
-            VaultColor.White -> {
-                whiteColorContainer.setBorderColor(resources.getColor(R.color.mate_black))
+            VaultColor.Coral -> {
+                coralColorContainer.setBorderColor(resources.getColor(R.color.mate_black))
                 vaultBackground.setBackgroundColor(resources.getColor(R.color.white))
             }
         }

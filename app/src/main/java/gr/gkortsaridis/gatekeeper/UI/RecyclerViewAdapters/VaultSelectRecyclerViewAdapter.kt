@@ -83,6 +83,12 @@ class VaultSelectRecyclerViewAdapter(
                     dots?.backgroundTintList = ContextCompat.getColorStateList(context, R.color.mate_black)
                     vaultName?.setTextColor(context.resources.getColor(R.color.mate_black))
                 }
+                VaultColor.Coral -> {
+                    vaultInitialContainer?.setBackgroundResource(R.color.vault_coral)
+                    vaultIcon?.setColorFilter(ContextCompat.getColor(context, R.color.vault_white_2), android.graphics.PorterDuff.Mode.SRC_ATOP)
+                    dots?.backgroundTintList = ContextCompat.getColorStateList(context, R.color.vault_white_2)
+                    vaultName?.setTextColor(context.resources.getColor(R.color.vault_white_2))
+                }
             }
 
 
