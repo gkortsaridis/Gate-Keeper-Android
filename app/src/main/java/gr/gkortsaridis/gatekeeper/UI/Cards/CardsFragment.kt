@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.azoft.carousellayoutmanager.CarouselLayoutManager
@@ -127,20 +128,13 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         card_name_container.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
-    override fun onCreditCardClicked(card: CreditCard) {
-        val cardDialogFragment = CardInfoFragment(card = card, isCreate = false, listeners = this)
-        cardDialogFragment.show(fragmentManager!!, null)
-        fragmentManager!!.registerFragmentLifecycleCallbacks(object: FragmentManager.FragmentLifecycleCallbacks(){
-            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
-                super.onFragmentDestroyed(fm, f)
-                onResume()
+    override fun onCreditCardClicked(card: CreditCard) { }
 
-                fragmentManager!!.unregisterFragmentLifecycleCallbacks(this)
-            }
-        }, false)
+    override fun onCreditCardEditButtonClicked(card: CreditCard, position: Int) {
+        val intent = Intent(activity, CardEditActivity::class.java)
+        intent.putExtra("card_id", card.id)
+        startActivity(intent)
     }
-
-    override fun onCreditCardEditButtonClicked(card: CreditCard, position: Int) {  }
 
     private fun changeVault() {
         val intent = Intent(activity, SelectVaultActivity::class.java)

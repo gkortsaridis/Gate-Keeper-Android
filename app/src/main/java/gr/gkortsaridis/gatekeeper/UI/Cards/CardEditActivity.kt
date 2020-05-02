@@ -1,0 +1,259 @@
+package gr.gkortsaridis.gatekeeper.UI.Cards
+
+import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Intent
+import android.os.Bundle
+import android.text.InputType
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
+import androidx.core.view.get
+import com.maxpilotto.actionedittext.actions.Icon
+import com.whiteelephant.monthpicker.MonthPickerDialog
+import gr.gkortsaridis.gatekeeper.Entities.CardType
+import gr.gkortsaridis.gatekeeper.Entities.CreditCard
+import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
+import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import kotlinx.android.synthetic.main.activity_card_edit.*
+import kotlinx.android.synthetic.main.activity_card_edit.activity_title
+import kotlinx.android.synthetic.main.activity_card_edit.save_arc
+import kotlinx.android.synthetic.main.activity_card_edit.save_update_button
+import kotlinx.android.synthetic.main.activity_card_edit.vault_icon
+import kotlinx.android.synthetic.main.activity_card_edit.vault_name
+import kotlinx.android.synthetic.main.activity_create_login.*
+import kotlinx.android.synthetic.main.activity_create_login.toolbar
+import kotlinx.android.synthetic.main.activity_create_login.vault_view
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import java.util.*
+
+class CardEditActivity : AppCompatActivity() {
+
+    private val TAG = "_Create_Login_Activity_"
+
+    private var vaultToAdd: Vault? = null
+    private lateinit var card: CreditCard
+
+    private lateinit var activity: Activity
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_card_edit)
+
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        delete_card_btn.setOnClickListener { showDeleteCardDialog() }
+
+        vault_view.setOnClickListener {
+            card.cardName = card_name_et.text.toString()
+            card.cardholderName = cardholder_name_et.text.toString()
+            card.number = card_number_et.text.toString()
+            card.expirationDate = expiration_date_tv.text.toString()
+            card.cvv = cvv_et.text.toString()
+
+            val intent = Intent(this, SelectVaultActivity::class.java)
+            intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_VAULT)
+            intent.putExtra("vault_id",vaultToAdd?.id)
+            startActivityForResult(intent, GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE)
+        }
+
+        this.activity = this
+
+        val cardId = intent.getStringExtra("card_id")
+        if (cardId == null) {
+            activity_title.text = "Create new Card"
+            vaultToAdd = VaultRepository.getLastActiveRealVault()
+            save_update_button.setOnClickListener { createCard() }
+            card = CreditCard(
+                id = "-1",
+                cardName = "",
+                type = CardType.Unknown,
+                number = "",
+                expirationDate = "",
+                cvv = "",
+                cardholderName = "",
+                vaultId = vaultToAdd!!.id,
+                accountId = AuthRepository.getUserID(),
+                modifiedDate = null
+            )
+        } else {
+            card = CreditCardRepository.getCreditCardById(cardId)!!
+            activity_title.text = "Edit Card"
+            vaultToAdd = VaultRepository.getVaultByID(card.vaultId)!!
+            save_update_button.setOnClickListener { updateCard() }
+        }
+
+        KeyboardVisibilityEvent.setEventListener(activity) { isOpen ->
+            Tween
+                .to(save_arc, Alpha.VIEW, 0.3F)
+                .target( if (isOpen) 0.0f else 1.0f)
+                .start(ViewTweenManager.get(save_arc))
+
+            save_update_button.visibility = if (isOpen) View.GONE else View.VISIBLE
+        }
+
+        cardholder_name_et.apply{    // Kotlin
+            action(Icon(context).apply {
+                icon = R.drawable.copy
+                onClick = {
+                    copy(cardholder_name_et.text.toString(), "Cardholder name")
+                }
+            })
+
+            showActions()   // This displays all the actions that are added
+        }
+
+        card_number_et.apply{    // Kotlin
+            action(Icon(context).apply {
+                icon = R.drawable.copy
+                onClick = {
+                    copy(card_number_et.text.toString(), "Card number")
+                }
+            })
+
+            showActions()   // This displays all the actions that are added
+        }
+
+
+        //Get the EditText View from the custom View
+        /*val linearLayout = expiration_date_et[0] as LinearLayout
+        val relativeLayout = linearLayout[1] as RelativeLayout
+        val editText = relativeLayout[0] as AppCompatEditText*/
+
+        expiration_date_container.setOnClickListener {
+            showMonthYearPicker()
+        }
+
+        copy_expiry_date.setOnClickListener { copy(expiration_date_tv.text.toString(), "Expiration date") }
+
+        cvv_et.apply{    // Kotlin
+            action(Icon(context).apply {
+                icon = R.drawable.copy
+                onClick = {
+                    copy(cvv_et.text.toString(), "CVV")
+                }
+            })
+
+            showActions()   // This displays all the actions that are added
+        }
+
+        updateUI()
+
+    }
+
+    private fun hideKeyboard(activity: Activity) {
+        val imm: InputMethodManager = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view, so we can grab the correct window token from it.
+        var view = activity.currentFocus
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = View(activity)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun showMonthYearPicker() {
+        val builder = MonthPickerDialog.Builder(activity,
+            MonthPickerDialog.OnDateSetListener { selectedMonth, selectedYear ->
+                //val months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec")
+                expiration_date_tv.text = selectedMonth.toString()+"/"+selectedYear.toString()
+            }, 2020, Calendar.JANUARY)
+
+        val dialog = builder.setActivatedMonth(Calendar.JULY)
+            .setMinYear(2020)
+            .setActivatedYear(2020)
+            .setMaxYear(2030)
+            .setActivatedYear(2020)
+            .setActivatedMonth(4)
+            .setTitle("Select Card Expiration Date")
+            .build()
+
+        dialog.setOnCancelListener {}
+        dialog.setOnDismissListener {}
+        dialog.show()
+    }
+
+    private fun updateUI() {
+        card_name_et.setText(card.cardName)
+        cardholder_name_et.apply {
+            text = card.cardholderName
+        }
+        card_number_et.apply {
+            text = card.number
+        }
+        expiration_date_tv.apply {
+            text = card.expirationDate
+        }
+        cvv_et.apply {
+            text = card.cvv
+        }
+
+        delete_card_btn.visibility = if (card.id != "-1") View.VISIBLE else View.GONE
+
+        vault_name.text = vaultToAdd?.name
+        vault_view.setBackgroundColor(resources.getColor(vaultToAdd?.getVaultColorResource() ?: R.color.colorPrimaryDark))
+        vault_name.setTextColor(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
+        vault_icon.setColorFilter(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
+    }
+
+    private fun copy(txt: String, what: String) {
+        val clipboard = ContextCompat.getSystemService(
+            this,
+            ClipboardManager::class.java
+        ) as ClipboardManager
+        val clip = ClipData.newPlainText("label",txt)
+        clipboard.setPrimaryClip(clip)
+
+        Toast.makeText(this, "$what copied", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showDeleteCardDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Delete Card")
+        builder.setMessage("Are you sure you want to delete this Card item?")
+        builder.setPositiveButton("DELETE"){dialog, _ ->
+            dialog.cancel()
+            //deleteLogin()
+        }
+        builder.setNegativeButton("CANCEL"){dialog, _ -> dialog.cancel() }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    private fun updateCard() {
+
+    }
+
+    private fun createCard() {
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val vaultId = data!!.data.toString()
+            vaultToAdd = VaultRepository.getVaultByID(vaultId)
+            updateUI()
+        }
+
+    }
+}

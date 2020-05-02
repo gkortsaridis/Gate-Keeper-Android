@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".UI.Account.AccountHistoryActivity"></activity>
+        <activity android:name=".UI.Cards.CardEditActivity"></activity>
+        <activity android:name=".UI.Account.AccountHistoryActivity" />
         <activity android:name=".UI.Account.AccountStatusActivity" />
 
         <meta-data

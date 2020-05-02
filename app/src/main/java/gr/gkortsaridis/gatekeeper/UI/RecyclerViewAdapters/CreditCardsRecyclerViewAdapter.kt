@@ -60,8 +60,10 @@ class CreditCardsRecyclerViewAdapter(
         private var flipBackCard: LinearLayout? = null
         private var flipView: EasyFlipView? = null
         private var cardNickname: TextView? = null
-        private var cardVault: TextView? = null
         private var cardCVV: TextView? = null
+        private var cardVaultColor: View? = null
+        private var cardVaultColorBack: View? = null
+        private var cardEditBtn: ImageView? = null
 
         init {
             cardType = view.findViewById(R.id.card_type)
@@ -73,9 +75,11 @@ class CreditCardsRecyclerViewAdapter(
             flipBackCard = view.findViewById(R.id.flip_card_back_btn)
             flipView = view.findViewById(R.id.flip_view)
             cardNickname = view.findViewById(R.id.card_nickname_tv)
-            cardVault = view.findViewById(R.id.vault_name)
-            cardCVV = view.findViewById(R.id.cvv_tv)
+            cardCVV = view.findViewById(R.id.card_cvv)
             cardContainerBack = view.findViewById(R.id.card_container_back)
+            cardVaultColor = view.findViewById(R.id.card_vault_color)
+            cardVaultColorBack = view.findViewById(R.id.card_vault_color_back)
+            cardEditBtn = view.findViewById(R.id.edit_card)
         }
 
         fun bindCard(card: CreditCard, position: Int, listener: CreditCardClickListener){
@@ -118,8 +122,7 @@ class CreditCardsRecyclerViewAdapter(
             this.cardExpiryDate?.text = card.expirationDate
             this.cardholderName?.text = card.cardholderName.toUpperCase()
             this.cardNickname?.text = card.cardName
-            this.cardVault?.text = VaultRepository.getVaultByID(card.vaultId)!!.name
-            this.cardCVV?.text = "CVV: ${card.cvv}"
+            this.cardCVV?.text = card.cvv
 
 
             val cardTypeImg = CreditCardRepository.getCreditCardTypeImage(card)
@@ -130,14 +133,14 @@ class CreditCardsRecyclerViewAdapter(
             }
 
             val vault = VaultRepository.getVaultByID(card.vaultId)
-            cardContainer?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
-            cardContainerBack?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+            cardVaultColor?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+            cardVaultColorBack?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
 
             flipCard?.setOnClickListener { flipView?.flipTheView() }
             flipBackCard?.setOnClickListener { flipView?.flipTheView() }
-            cardContainer?.setOnClickListener{ listener.onCreditCardClicked(card) }
-            cardContainerBack?.setOnClickListener { listener.onCreditCardClicked(card) }
-            cardType?.setColorFilter(context.getColor(R.color.mate_black), PorterDuff.Mode.SRC_ATOP)
+            //cardContainer?.setOnClickListener{ listener.onCreditCardClicked(card) }
+            //cardContainerBack?.setOnClickListener { listener.onCreditCardClicked(card) }
+            cardEditBtn?.setOnClickListener { listener.onCreditCardEditButtonClicked(card, position) }
         }
 
     }
