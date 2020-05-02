@@ -1,9 +1,13 @@
 package gr.gkortsaridis.gatekeeper.UI.PasswordGenerator
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.ads.AdRequest
 import gr.gkortsaridis.gatekeeper.R
@@ -25,7 +29,7 @@ class PasswordGeneratorFragment : Fragment() {
     private var hasSymbols = true
     private var password = ""
     private var length = 8
-    private var passwordVisible = false
+    private var passwordVisible = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_password_generator, container, false)
@@ -94,15 +98,24 @@ class PasswordGeneratorFragment : Fragment() {
             }
         }
 
-        refresh_btn.setOnClickListener { generatePassAndDisplay() }
-        hide_btn.setOnClickListener {
-            passwordVisible = !passwordVisible
-            hide_btn.background = if (passwordVisible) resources.getDrawable(R.drawable.eye) else resources.getDrawable(R.drawable.hide)
-            displayPassword()
+        copy_generated_password.setOnClickListener {
+            copy(result_tv.text.toString(), "Password")
         }
 
+        refresh_btn.setOnClickListener { generatePassAndDisplay() }
         generatePassAndDisplay()
 
+    }
+
+    private fun copy(txt: String, what: String) {
+        val clipboard = ContextCompat.getSystemService(
+            activity!!,
+            ClipboardManager::class.java
+        ) as ClipboardManager
+        val clip = ClipData.newPlainText("label",txt)
+        clipboard.setPrimaryClip(clip)
+
+        Toast.makeText(activity, "$what copied", Toast.LENGTH_SHORT).show()
     }
 
     private fun lockFinalSwitch() {
