@@ -104,7 +104,7 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
     }
 
     private fun createVault() {
-        val newVault = Vault(id = "-1", account_id = AuthRepository.getUserID(), name = "", color = VaultColor.White)
+        val newVault = Vault(id = "-1", account_id = AuthRepository.getUserID(), name = "", color = VaultColor.Blue)
         val vaultInfoFragment = VaultInfoFragment(newVault, this)
         vaultInfoFragment.show(supportFragmentManager,null)
     }

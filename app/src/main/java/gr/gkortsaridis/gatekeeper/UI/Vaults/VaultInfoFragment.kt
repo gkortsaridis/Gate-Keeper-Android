@@ -23,6 +23,7 @@ import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultInfoDismissListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
+import org.w3c.dom.Text
 
 class VaultInfoFragment(private val vault: Vault, private val listener: VaultInfoDismissListener) : DialogFragment() {
 
@@ -38,10 +39,9 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
     private lateinit var yellowColor: View
     private lateinit var coralColor: View
     private lateinit var saveVault: Button
-    private lateinit var vaultBackground: View
     private lateinit var deleteVault: Button
-    private lateinit var vaultNameInCard: TextView
     private lateinit var dialog: ViewDialog
+    private lateinit var actionTitle: TextView
 
     private lateinit var vaultColor: VaultColor
 
@@ -62,9 +62,16 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
         coralColorContainer = view.findViewById(R.id.coral_color_container)
         coralColor = view.findViewById(R.id.coral_color)
         saveVault = view.findViewById(R.id.save_vault)
-        vaultBackground = view.findViewById(R.id.vault_main_container)
         deleteVault = view.findViewById(R.id.delete_vault)
-        vaultNameInCard = view.findViewById(R.id.vault_name)
+        actionTitle = view.findViewById(R.id.action_title)
+
+        if (vault.id == "-1") {
+            actionTitle.text = "Create Vault"
+            deleteVault.visibility = View.GONE
+        } else {
+            actionTitle.text = "Edit Vault"
+            deleteVault.visibility = View.VISIBLE
+        }
 
         saveVault.setOnClickListener {
             if (vault.id == "-1"){
@@ -101,24 +108,8 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
             vaultColor = VaultColor.Coral
             updateColors()
         }
-        vaultName.addTextChangedListener(object: TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-                if (s.toString() == "") {
-                    vaultNameInCard.setTextColor(resources.getColor(R.color.greyish))
-                    vaultNameInCard.text = "Vault Name"
-                }else {
-                    vaultNameInCard.setTextColor(resources.getColor(R.color.mate_black))
-                    vaultNameInCard.text = s.toString()
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-
         vaultName.setText(vault.name)
-        vaultColor = vault.color ?: VaultColor.White
+        vaultColor = vault.color ?: VaultColor.Blue
         updateColors()
 
         return view
@@ -134,24 +125,18 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
         when (vaultColor) {
             VaultColor.Red -> {
                 redColorContainer.setBorderColor(resources.getColor(R.color.mate_black))
-                vaultBackground.setBackgroundResource(R.drawable.vault_color_red)
             }
             VaultColor.Green -> {
                 greenColorContainer.setBorderColor(resources.getColor(R.color.mate_black))
-                vaultBackground.setBackgroundResource(R.drawable.vault_color_green)
-
             }
             VaultColor.Blue -> {
                 blueColorContainer.setBorderColor(resources.getColor(R.color.mate_black))
-                vaultBackground.setBackgroundResource(R.drawable.vault_color_blue)
             }
             VaultColor.Yellow -> {
                 yellowColorContainer.setBorderColor(resources.getColor(R.color.mate_black))
-                vaultBackground.setBackgroundResource(R.drawable.vault_color_yellow)
             }
             VaultColor.Coral -> {
                 coralColorContainer.setBorderColor(resources.getColor(R.color.mate_black))
-                vaultBackground.setBackgroundColor(resources.getColor(R.color.white))
             }
         }
 
@@ -177,8 +162,8 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
             builder.setTitle("Delete Vault")
             builder.setMessage("Are you sure you wish to delete this vault and its content?")
 
-            builder.setNegativeButton("No") { dialog, _ -> dialog.cancel() }
-            builder.setPositiveButton("Yes") { _, _ ->
+            builder.setNegativeButton("CANCEL") { dialog, _ -> dialog.cancel() }
+            builder.setPositiveButton("DELETE") { _, _ ->
                 dialog.showDialog()
                 VaultRepository.deleteVault(vault, object: VaultEditListener{
                     override fun onVaultDeleted() {
@@ -191,7 +176,11 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
                 })
             }
 
-            builder.show()
+            val dialog = builder.create()
+            dialog.show()
+
+            val positiveButton: Button = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setTextColor(resources.getColor(R.color.error_red))
         }else {
             Toast.makeText(context,"You cannot delete your only Vault", Toast.LENGTH_SHORT).show()
         }
