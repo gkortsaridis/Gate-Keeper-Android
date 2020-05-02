@@ -119,7 +119,6 @@ class LoginsRecyclerViewAdapter(
 
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                             val bitmap = resource?.toBitmap(8.dp, 8.dp)!!
-                            //colorImageBackground(context, bitmap)
                             return false
                         }
                     })
