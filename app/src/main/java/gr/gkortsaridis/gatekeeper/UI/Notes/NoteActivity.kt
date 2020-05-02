@@ -69,6 +69,7 @@ class NoteActivity : AppCompatActivity() {
                 vaultId = vaultToAdd.id,
                 color = NoteColor.White)
             noteMenu = R.menu.note_actionbar_menu_star_off
+            note_body_et.requestFocus()
         }
 
         noteColor = note.color ?: NoteColor.White
