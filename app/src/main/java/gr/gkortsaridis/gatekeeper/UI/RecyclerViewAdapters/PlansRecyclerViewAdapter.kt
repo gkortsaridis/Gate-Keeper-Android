@@ -45,7 +45,7 @@ class PlansRecyclerViewAdapter(
 
     class VaultViewHolder(v: View): RecyclerView.ViewHolder(v) {
 
-        private var mainContainer: View? = null
+        //private var mainContainer: View? = null
         private var title: TextView? = null
         private var description: TextView? = null
         private var price: TextView? = null
@@ -55,7 +55,7 @@ class PlansRecyclerViewAdapter(
         private var planName: TextView? = null
 
         init {
-            mainContainer = v.findViewById(R.id.background_color)
+            //mainContainer = v.findViewById(R.id.background_color)
             description = v.findViewById(R.id.perks)
             price = v.findViewById(R.id.price_number)
             currency = v.findViewById(R.id.price_currency)

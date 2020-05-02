@@ -75,7 +75,7 @@
                 <ImageButton
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:background="@drawable/down_arrow"
+                    android:background="@drawable/down_arrow_bold"
                     android:id="@+id/expand_device_info"/>
             </LinearLayout>
 

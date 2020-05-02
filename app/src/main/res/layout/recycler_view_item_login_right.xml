@@ -41,12 +41,12 @@
                     android:orientation="horizontal">
 
                     <View
-                        android:layout_width="25dp"
+                        android:layout_width="16dp"
                         android:layout_height="match_parent"
                         android:id="@+id/login_img_container_2"
                         android:background="@color/vault_red_1"/>
 
-                    <com.github.florent37.shapeofview.shapes.DiagonalView
+                    <!--<com.github.florent37.shapeofview.shapes.DiagonalView
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         app:shape_diagonal_position="right"
@@ -57,7 +57,7 @@
                             android:background="@drawable/vault_color_red"
                             android:rotation="180"
                             android:id="@+id/login_img_container"/>
-                    </com.github.florent37.shapeofview.shapes.DiagonalView>
+                    </com.github.florent37.shapeofview.shapes.DiagonalView> -->
 
                 </LinearLayout>
 
@@ -66,7 +66,7 @@
                     android:layout_height="40dp"
                     android:id="@+id/login_image"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginLeft="32dp"
                     android:src="@drawable/question_mark"/>
 
             </RelativeLayout>
@@ -78,7 +78,8 @@
                 android:layout_toRightOf="@+id/img_container"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="12dp"
-                android:layout_marginRight="60dp">
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="52dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -103,8 +104,8 @@
             </LinearLayout>
 
             <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:id="@+id/login_action"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"

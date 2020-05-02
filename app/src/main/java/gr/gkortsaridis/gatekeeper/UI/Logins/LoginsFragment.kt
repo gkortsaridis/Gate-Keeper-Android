@@ -71,7 +71,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
             startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
         }
 
-        val sortTypes = arrayOf("Alias", "Modified date")
+        val sortTypes = arrayOf("Name", "Modified date")
         sort_logins.setOnClickListener {
             val builder = AlertDialog.Builder(activity)
             builder.setTitle("Sort by")
@@ -108,12 +108,12 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         val sortType = DataRepository.loginSortType
         if (sortType == LOGIN_SORT_TYPE_NAME) {
             logins.sortBy { it.name.toLowerCase() }
-            logins_sort_type.text = "passwords, sort by alias"
+            logins_sort_type.text = "Sort by name"
         }
         else {
             logins.sortBy { it.date_modified }
             logins.reverse()
-            logins_sort_type.text = "passwords, sort by modified date"
+            logins_sort_type.text = "Sort by modified date"
         }
 
         loginsAdapter.updateLogins(logins)

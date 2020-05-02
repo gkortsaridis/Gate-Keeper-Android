@@ -67,7 +67,7 @@ class LoginsRecyclerViewAdapter(
         private var loginImage: ImageView? = null
         private var loginAction: ImageButton? = null
         private var loginInitial: TextView? = null
-        private var loginImgContainer: RelativeLayout? = null
+        //private var loginImgContainer: RelativeLayout? = null
         private var loginImgContainer2: View? = null
         private var loginBackground: View? = null
         private var view: View = v
@@ -78,7 +78,7 @@ class LoginsRecyclerViewAdapter(
             loginImage = view.findViewById(R.id.login_image)
             loginAction = view.findViewById(R.id.login_action)
             loginInitial = view.findViewById(R.id.login_icon_initial)
-            loginImgContainer = view.findViewById(R.id.login_img_container)
+            //loginImgContainer = view.findViewById(R.id.login_img_container)
             loginImgContainer2 = view.findViewById(R.id.login_img_container_2)
             loginBackground = view.findViewById(R.id.login_background)
         }
@@ -89,16 +89,16 @@ class LoginsRecyclerViewAdapter(
 
             val vault = VaultRepository.getVaultByID(login.vault_id)
             loginImgContainer2?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
-            loginImgContainer?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+            //loginImgContainer?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
 
-            var color = ""
-            when (vault?.color) {
+            var color = "ffffff"
+            /*when (vault?.color) {
                 VaultColor.Red -> { color = "e53935" }
                 VaultColor.Green -> { color = "4caf50" }
                 VaultColor.Blue -> { color = "1e88e5" }
                 VaultColor.Yellow -> { color = "fdd835" }
                 VaultColor.White -> { color = "ffffff" }
-            }
+            }*/
 
             val app = LoginsRepository.getApplicationInfoByPackageName(login.url, packageManager)
 
@@ -143,7 +143,7 @@ class LoginsRecyclerViewAdapter(
             val bitmapDrawable = imageView.drawable
             val bitmap = bitmapDrawable?.toBitmap()!!
             Palette.from(bitmap).generate {
-                loginImgContainer?.setBackgroundColor(it?.getDominantColor( context.resources.getColor(R.color.colorAccent))!!)
+                //loginImgContainer?.setBackgroundColor(it?.getDominantColor( context.resources.getColor(R.color.colorAccent))!!)
                 loginImgContainer2?.setBackgroundColor(it?.getDominantColor( context.resources.getColor(R.color.colorAccent))!!)
             }
         }

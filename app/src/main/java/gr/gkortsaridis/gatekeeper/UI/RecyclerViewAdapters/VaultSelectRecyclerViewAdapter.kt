@@ -5,9 +5,8 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
@@ -40,30 +39,49 @@ class VaultSelectRecyclerViewAdapter(
         private var vaultName: TextView? = null
         private var dots: ImageButton? = null
         private var view: LinearLayout? = null
-        private var vaultInitialContainer: View? = null
+        private var vaultIcon: ImageView? = null
+        private var vaultInitialContainer: RelativeLayout? = null
 
         init {
             view = v.findViewById(R.id.vault_main_container)
             dots = v.findViewById(R.id.dots)
             vaultName = v.findViewById(R.id.vault_name)
-            vaultInitialContainer = v.findViewById(R.id.background_color)
+            vaultIcon = v.findViewById(R.id.vault_icon)
+            vaultInitialContainer = v.findViewById(R.id.vault_background)
         }
 
         fun bindVault(context: Context, vault: Vault, activeVault: String?, hideExtras: Boolean, listener: VaultClickListener){
 
             when (vault.color) {
                 VaultColor.Red -> {
-                    vaultInitialContainer?.setBackgroundResource(R.drawable.vault_color_red)
+                    vaultInitialContainer?.setBackgroundResource(R.color.vault_red_1)
+                    vaultIcon?.setColorFilter(ContextCompat.getColor(context, R.color.vault_white_2), android.graphics.PorterDuff.Mode.SRC_ATOP)
+                    dots?.backgroundTintList = ContextCompat.getColorStateList(context, R.color.vault_white_2)
+                    vaultName?.setTextColor(context.resources.getColor(R.color.vault_white_2))
                 }
                 VaultColor.Green -> {
-                    vaultInitialContainer?.setBackgroundResource(R.drawable.vault_color_green)
-
+                    vaultInitialContainer?.setBackgroundResource(R.color.vault_green_1)
+                    vaultIcon?.setColorFilter(ContextCompat.getColor(context, R.color.vault_white_2), android.graphics.PorterDuff.Mode.SRC_ATOP)
+                    dots?.backgroundTintList = ContextCompat.getColorStateList(context, R.color.vault_white_2)
+                    vaultName?.setTextColor(context.resources.getColor(R.color.vault_white_2))
                 }
                 VaultColor.Blue -> {
-                    vaultInitialContainer?.setBackgroundResource(R.drawable.vault_color_blue)
+                    vaultInitialContainer?.setBackgroundResource(R.color.vault_blue_1)
+                    vaultIcon?.setColorFilter(ContextCompat.getColor(context, R.color.vault_white_2), android.graphics.PorterDuff.Mode.SRC_ATOP)
+                    dots?.backgroundTintList = ContextCompat.getColorStateList(context, R.color.vault_white_2)
+                    vaultName?.setTextColor(context.resources.getColor(R.color.vault_white_2))
                 }
                 VaultColor.Yellow -> {
-                    vaultInitialContainer?.setBackgroundResource(R.drawable.vault_color_yellow)
+                    vaultInitialContainer?.setBackgroundResource(R.color.vault_yellow_1)
+                    vaultIcon?.setColorFilter(ContextCompat.getColor(context, R.color.mate_black), android.graphics.PorterDuff.Mode.SRC_ATOP)
+                    dots?.backgroundTintList = ContextCompat.getColorStateList(context, R.color.mate_black)
+                    vaultName?.setTextColor(context.resources.getColor(R.color.mate_black))
+                }
+                VaultColor.White -> {
+                    vaultInitialContainer?.setBackgroundResource(R.color.vault_white_2)
+                    vaultIcon?.setColorFilter(ContextCompat.getColor(context, R.color.mate_black), android.graphics.PorterDuff.Mode.SRC_ATOP)
+                    dots?.backgroundTintList = ContextCompat.getColorStateList(context, R.color.mate_black)
+                    vaultName?.setTextColor(context.resources.getColor(R.color.mate_black))
                 }
             }
 

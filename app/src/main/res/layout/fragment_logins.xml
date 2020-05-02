@@ -93,28 +93,29 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@+id/vault_container"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="16dp"
         android:id="@+id/logins_counter_container">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="108"
+            android:layout_gravity="center_vertical"
             android:id="@+id/login_cnt"
             android:textStyle="bold"
             android:textColor="#232326"
-            android:textSize="22sp"/>
+            android:textSize="15sp"/>
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/logins_sort_type"
-            android:text="passwords, sorted by Name"
+            android:text="items"
+            android:layout_gravity="center_vertical"
             android:textColor="#585858"
-            android:textSize="19sp"
+            android:textSize="15sp"
             android:layout_marginLeft="8dp"/>
 
         <View
@@ -122,11 +123,22 @@
             android:layout_height="1dp"
             android:layout_weight="1"/>
 
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/logins_sort_type"
+            android:text="Sort by name"
+            android:layout_gravity="center_vertical"
+            android:textColor="#585858"
+            android:textSize="15sp"
+            android:layout_marginRight="8dp"/>
+
         <ImageButton
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:id="@+id/sort_logins"
-            android:background="@drawable/sort"/>
+            android:background="@drawable/down_arrow_bold"/>
     </LinearLayout>
 
     <!--
