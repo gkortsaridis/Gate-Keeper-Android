@@ -121,34 +121,6 @@
             android:layout_marginTop="8dp"/>
     </LinearLayout>
 
-    <com.github.florent37.shapeofview.shapes.RoundRectView
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="8dp"
-        android:elevation="5dp"
-        android:id="@+id/card_name_container"
-        app:shape_roundRect_topLeftRadius="5dp"
-        app:shape_roundRect_topRightRadius="5dp"
-        app:shape_roundRect_bottomRightRadius="5dp"
-        app:shape_roundRect_bottomLeftRadius="5dp">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:background="@color/colorPrimaryDark"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/card_nickname_tv"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:text="Personal"
-                android:textColor="@color/vault_white_1"
-                android:gravity="center_horizontal"
-                android:layout_margin="16dp"
-                android:textSize="25sp" />
-        </RelativeLayout>
-    </com.github.florent37.shapeofview.shapes.RoundRectView>
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

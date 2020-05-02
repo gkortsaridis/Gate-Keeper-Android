@@ -87,6 +87,7 @@ class CreditCardsRecyclerViewAdapter(
 
             val cardNumber = card.number.replace(" ","")
             val stringBuilder = StringBuilder(cardNumber)
+            card.type = CreditCardRepository.getCreditCardType(card.number)
             when(card.type) {
                 CardType.Visa -> {
                     stringBuilder.insert(4 ," ")
@@ -115,6 +116,11 @@ class CreditCardsRecyclerViewAdapter(
                 CardType.DinersClub -> {
                     stringBuilder.insert(4 ," ")
                     stringBuilder.insert(11 ," ")
+                }
+                CardType.Unknown -> {
+                    stringBuilder.insert(4 ," ")
+                    stringBuilder.insert(9 ," ")
+                    stringBuilder.insert(14 ," ")
                 }
             }
 

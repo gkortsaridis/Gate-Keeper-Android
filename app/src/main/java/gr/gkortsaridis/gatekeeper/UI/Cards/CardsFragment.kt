@@ -76,21 +76,10 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         add_credit_card.setOnClickListener { createCard() }
         vault_view.setOnClickListener { changeVault() }
         animateFabIn()
-        //animateArcIn()
     }
 
     private fun createCard() {
-        val cardDialogFragment = CardInfoFragment(card = null, isCreate = true, listeners = this)
-        cardDialogFragment.show(fragmentManager!!, null)
-        fragmentManager!!.registerFragmentLifecycleCallbacks(object: FragmentManager.FragmentLifecycleCallbacks(){
-            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
-                super.onFragmentDestroyed(fm, f)
-                onResume()
-
-                fragmentManager!!.unregisterFragmentLifecycleCallbacks(this)
-            }
-        }, false)
-
+        startActivity(Intent(activity, CardEditActivity::class.java))
     }
 
     @SuppressLint("RestrictedApi")
@@ -115,17 +104,14 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
             filtered.forEachIndexed { index, creditCard ->
                 if (creditCard.id == activeCard?.id) {
                     //if (bottom_arc.alpha == 0.0f) { animateArcIn() }
-                    card_nickname_tv.text = "${activeCard?.cardName}"
                 }
             }
         } else {
-            card_nickname_tv.text = ""
         }
 
 
         no_items_view.visibility = if (filtered.isNotEmpty()) View.GONE else View.VISIBLE
         add_credit_card.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
-        card_name_container.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun onCreditCardClicked(card: CreditCard) { }
@@ -168,7 +154,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
     private fun animateFabIn() {
         Timeline.createParallel()
             .push(Tween.to(add_credit_card, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(add_credit_card, Translation.XY).target(0f,-100.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .push(Tween.to(add_credit_card, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(add_credit_card))
     }
 
