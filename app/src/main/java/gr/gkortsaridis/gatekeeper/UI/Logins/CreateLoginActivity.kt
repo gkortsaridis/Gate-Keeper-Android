@@ -117,21 +117,10 @@ class CreateLoginActivity : AppCompatActivity() {
             save_update_button.visibility = if (isOpen) View.GONE else View.VISIBLE
         }
 
-        usernameET.apply{    // Kotlin
-            action(Icon(context).apply {
-                icon = R.drawable.copy
-                onClick = {
-                    copy(usernameET.text!!, "Username")
-                }
-            })
-
-            showActions()   // This displays all the actions that are added
-        }
-
         passwordET.apply{    // Kotlin
             action(Toggle(context).apply {
                 checkedRes = R.drawable.eye
-                uncheckedRes = R.drawable.edit_black
+                uncheckedRes = R.drawable.eye_off
                 checked = (login.id != "-1")
                 setPassword(checked)
 
@@ -139,21 +128,30 @@ class CreateLoginActivity : AppCompatActivity() {
                     setPassword(checked)
                 }
             })
-
-            action(Icon(context).apply {
-                icon = R.drawable.copy
-                onClick = {
-                    copy(passwordET.text!!, "Password")
-                }
-            })
-
-            nameET.addTextChangedListener { toggleSaveButton() }
-            getEditTextFromView(usernameET).addTextChangedListener { toggleSaveButton() }
-            getEditTextFromView(passwordET).addTextChangedListener { toggleSaveButton() }
-            getEditTextFromView(urlET).addTextChangedListener { toggleSaveButton() }
-            getEditTextFromView(notesET).addTextChangedListener { toggleSaveButton() }
+            if (login.id != "-1") {
+                action(Icon(context).apply {
+                    icon = R.drawable.copy
+                    onClick = {
+                        copy(passwordET.text!!, "Password")
+                    }
+                })
+            }
 
             showActions()   // This displays all the actions that are added
+        }
+
+        if (login.id != "-1") {
+            usernameET.apply{    // Kotlin
+                action(Icon(context).apply {
+                    icon = R.drawable.copy
+                    onClick = {
+                        copy(usernameET.text!!, "Username")
+                    }
+                })
+
+                showActions()   // This displays all the actions that are added
+            }
+
         }
 
         urlET.apply{    // Kotlin
@@ -166,6 +164,14 @@ class CreateLoginActivity : AppCompatActivity() {
 
             showActions()   // This displays all the actions that are added
         }
+
+
+        nameET.addTextChangedListener { toggleSaveButton() }
+        getEditTextFromView(usernameET).addTextChangedListener { toggleSaveButton() }
+        getEditTextFromView(passwordET).addTextChangedListener { toggleSaveButton() }
+        getEditTextFromView(urlET).addTextChangedListener { toggleSaveButton() }
+        getEditTextFromView(notesET).addTextChangedListener { toggleSaveButton() }
+
 
         toggleSaveButton()
         updateUI()
