@@ -92,12 +92,17 @@ class CardEditActivity : AppCompatActivity() {
                     createCard()
                 }
             }
+
+            val year = Calendar.getInstance().get(Calendar.YEAR).toString()
+            val month = Calendar.getInstance().get(Calendar.MONTH) + 1
+            val monthStr = (if (month < 10) "0$month" else month.toString())
+
             card = CreditCard(
                 id = "-1",
                 cardName = "",
                 type = CardType.Unknown,
                 number = "",
-                expirationDate = "",
+                expirationDate = monthStr+"/"+year.substring(2,4),
                 cvv = "",
                 cardholderName = "",
                 vaultId = vaultToAdd!!.id,
@@ -187,12 +192,14 @@ class CardEditActivity : AppCompatActivity() {
                 cvv_et.requestFocus()
             }, 2020, Calendar.JANUARY)
 
+        val year = ("20"+expiration_date_tv.text.split("/")[1]).toInt()
+        val month = (expiration_date_tv.text.split("/")[0]).toInt() - 1
+
         val dialog = builder.setActivatedMonth(Calendar.JULY)
-            .setMinYear(2020)
-            .setActivatedYear(2020)
+            .setMinYear(2019)
             .setMaxYear(2030)
-            .setActivatedYear(2020)
-            .setActivatedMonth(4)
+            .setActivatedYear(year)
+            .setActivatedMonth(month)
             .setTitle("Select Card Expiration Date")
             .build()
 
