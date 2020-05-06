@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.addTextChangedListener
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.NoteColor
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -93,7 +94,15 @@ class NoteActivity : AppCompatActivity() {
             updateNoteAndFinish()
         }
 
+        note_title_et.addTextChangedListener { toggleSaveButton() }
+        note_body_et.addTextChangedListener{ toggleSaveButton() }
+
         updateUI()
+        toggleSaveButton()
+    }
+
+    private fun toggleSaveButton() {
+        update_note_btn.visibility = if (isNoteNotEmpty()) View.VISIBLE else View.INVISIBLE
     }
 
     private fun updateUI() {
@@ -218,6 +227,10 @@ class NoteActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun isNoteNotEmpty(): Boolean {
+        return note_title_et.text.toString().isNotEmpty() || note_body_et.text.toString().isNotEmpty()
     }
 
     private fun isNoteChanged(): Boolean {
