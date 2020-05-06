@@ -63,7 +63,7 @@ class CreditCardsRecyclerViewAdapter(
         private var cardCVV: TextView? = null
         private var cardVaultColor: View? = null
         private var cardVaultColorBack: View? = null
-        private var cardEditBtn: ImageView? = null
+        private var cardEditBtn: LinearLayout? = null
 
         init {
             cardType = view.findViewById(R.id.card_type)
