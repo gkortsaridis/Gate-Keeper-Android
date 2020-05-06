@@ -192,7 +192,7 @@ class NoteActivity : AppCompatActivity() {
             }
 
         }else {
-            if (note_title_et.text.toString().trim() != "" || note_title_et.text.toString().trim() != "") {
+            if (note_title_et.text.toString().trim() != "" || note_body_et.text.toString().trim() != "") {
                 note.createDate = null
                 bringNoteObjUpToDate()
 
@@ -211,7 +211,8 @@ class NoteActivity : AppCompatActivity() {
                     }
                 })
             } else {
-              finishWithResult()
+                Toast.makeText(this, "Cannot save empty note", Toast.LENGTH_SHORT).show()
+                finishWithResult()
             }
         }
 
