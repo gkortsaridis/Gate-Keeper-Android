@@ -13,10 +13,14 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
+import androidx.core.widget.addTextChangedListener
 import com.github.florent37.shapeofview.shapes.ArcView
 import com.google.firebase.Timestamp
+import com.maxpilotto.actionedittext.ActionEditText
 import com.maxpilotto.actionedittext.actions.Icon
 import com.maxpilotto.actionedittext.actions.Toggle
 import gr.gkortsaridis.gatekeeper.Entities.Login
@@ -143,6 +147,12 @@ class CreateLoginActivity : AppCompatActivity() {
                 }
             })
 
+            nameET.addTextChangedListener { toggleSaveButton() }
+            getEditTextFromView(usernameET).addTextChangedListener { toggleSaveButton() }
+            getEditTextFromView(passwordET).addTextChangedListener { toggleSaveButton() }
+            getEditTextFromView(urlET).addTextChangedListener { toggleSaveButton() }
+            getEditTextFromView(notesET).addTextChangedListener { toggleSaveButton() }
+
             showActions()   // This displays all the actions that are added
         }
 
@@ -157,7 +167,22 @@ class CreateLoginActivity : AppCompatActivity() {
             showActions()   // This displays all the actions that are added
         }
 
+        toggleSaveButton()
         updateUI()
+    }
+
+    private fun dataNotEmpty(): Boolean {
+        return (nameET.text.isNotBlank() || usernameET.text?.isNotBlank() == true || passwordET.text?.isNotBlank() == true || urlET.text?.isNotBlank() == true || notesET.text?.isNotBlank() == true)
+    }
+
+    private fun toggleSaveButton() {
+        save_update_button.setBackgroundColor(
+            if (dataNotEmpty()) {
+                resources.getColor(R.color.colorPrimaryDark)
+            } else {
+                resources.getColor(R.color.greyish)
+            }
+        )
     }
 
     private fun copy(txt: String, what: String) {
@@ -186,66 +211,74 @@ class CreateLoginActivity : AppCompatActivity() {
     }
 
     private fun updateLogin() {
-        login.username = usernameET.text.toString()
-        login.name = nameET.text.toString()
-        login.password = passwordET.text.toString()
-        login.notes = notesET.text.toString()
-        login.url = urlET.text.toString()
-        login.vault_id = vaultToAdd!!.id
-        login.date_modified = null
+        if (dataNotEmpty()) {
+            login.username = usernameET.text.toString()
+            login.name = nameET.text.toString()
+            login.password = passwordET.text.toString()
+            login.notes = notesET.text.toString()
+            login.url = urlET.text.toString()
+            login.vault_id = vaultToAdd!!.id
+            login.date_modified = null
 
-        LoginsRepository.encryptAndUpdateLogin(this, login, object : LoginUpdateListener{
-            override fun onLoginUpdated(login: Login) {
-                val viewDialog = ViewDialog(activity)
-                viewDialog.showDialog()
-                GateKeeperApplication.logins.replaceAll { if (it.id == login.id) login else it }
-                viewDialog.hideDialog()
-                val data = Intent()
-                setResult(LoginsRepository.createLoginSuccess, data)
-                finish()
-            }
+            LoginsRepository.encryptAndUpdateLogin(this, login, object : LoginUpdateListener{
+                override fun onLoginUpdated(login: Login) {
+                    val viewDialog = ViewDialog(activity)
+                    viewDialog.showDialog()
+                    GateKeeperApplication.logins.replaceAll { if (it.id == login.id) login else it }
+                    viewDialog.hideDialog()
+                    val data = Intent()
+                    setResult(LoginsRepository.createLoginSuccess, data)
+                    finish()
+                }
 
-            override fun onLoginUpdateError(errorCode: Int, errorMsg: String) {
-                val data = Intent()
-                setResult(LoginsRepository.createLoginError, data)
-                finish()
-            }
-        })
+                override fun onLoginUpdateError(errorCode: Int, errorMsg: String) {
+                    val data = Intent()
+                    setResult(LoginsRepository.createLoginError, data)
+                    finish()
+                }
+            })
+        } else {
+            Toast.makeText(this, "Cannot save empty password item. If you do not want this item anymore, please delete it", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun createLogin() {
-        val viewDialog = ViewDialog(activity)
-        viewDialog.showDialog()
+        if (dataNotEmpty()) {
+            val viewDialog = ViewDialog(activity)
+            viewDialog.showDialog()
 
-        val loginObj = Login(account_id = AuthRepository.getUserID(),
-            vault_id = vaultToAdd!!.id,
-            name = nameET.text.toString(),
-            password = passwordET.text.toString(),
-            username = usernameET.text.toString(),
-            url = urlET.text.toString(),
-            notes = notesET.text.toString(),
-            date_created = null,
-            date_modified = null
-        )
+            val loginObj = Login(account_id = AuthRepository.getUserID(),
+                vault_id = vaultToAdd!!.id,
+                name = nameET.text.toString(),
+                password = passwordET.text.toString(),
+                username = usernameET.text.toString(),
+                url = urlET.text.toString(),
+                notes = notesET.text.toString(),
+                date_created = null,
+                date_modified = null
+            )
 
-        LoginsRepository.encryptAndStoreLogin(this, loginObj, object : LoginCreateListener{
-            override fun onLoginCreated(login: Login) {
-                viewDialog.hideDialog()
-                GateKeeperApplication.logins.add(login)
-                val data = Intent()
-                setResult(LoginsRepository.createLoginSuccess, data)
-                finish()
-            }
+            LoginsRepository.encryptAndStoreLogin(this, loginObj, object : LoginCreateListener{
+                override fun onLoginCreated(login: Login) {
+                    viewDialog.hideDialog()
+                    GateKeeperApplication.logins.add(login)
+                    val data = Intent()
+                    setResult(LoginsRepository.createLoginSuccess, data)
+                    finish()
+                }
 
-            override fun onLoginCreateError(errorCode: Int, errorMsg: String) {
-                viewDialog.hideDialog()
-                Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
-                val data = Intent()
-                setResult(LoginsRepository.createLoginError, data)
-                finish()
-            }
-        })
-
+                override fun onLoginCreateError(errorCode: Int, errorMsg: String) {
+                    viewDialog.hideDialog()
+                    Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
+                    val data = Intent()
+                    setResult(LoginsRepository.createLoginError, data)
+                    finish()
+                }
+            })
+        } else {
+            Toast.makeText(this, "Cannot save empty password item", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun deleteLogin() {
@@ -299,5 +332,12 @@ class CreateLoginActivity : AppCompatActivity() {
             updateUI()
         }
 
+    }
+
+    private fun getEditTextFromView(view: ActionEditText): AppCompatEditText {
+        //Get the EditText View from the custom View
+        val linearLayout = view[0] as LinearLayout
+        val relativeLayout = linearLayout[1] as RelativeLayout
+        return relativeLayout[0] as AppCompatEditText
     }
 }
