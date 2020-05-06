@@ -38,8 +38,6 @@
         <activity
             android:name=".UI.Vaults.SelectVaultActivity" />
         <activity
-            android:name=".UI.Authentication.CreatePasswordActivity" />
-        <activity
             android:name=".UI.Authentication.SignUpActivity" />
         <activity
             android:name=".UI.Logins.CreateLoginActivity"
