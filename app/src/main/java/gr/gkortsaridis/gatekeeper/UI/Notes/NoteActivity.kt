@@ -24,6 +24,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import gr.gkortsaridis.gatekeeper.Utils.showKeyboard
 import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.activity_note.vault_icon
 import kotlinx.android.synthetic.main.activity_note.vault_name
@@ -70,6 +71,7 @@ class NoteActivity : AppCompatActivity() {
                 color = NoteColor.White)
             noteMenu = R.menu.note_actionbar_menu_star_off
             note_body_et.requestFocus()
+            note_body_et.showKeyboard()
         }
 
         noteColor = note.color ?: NoteColor.White

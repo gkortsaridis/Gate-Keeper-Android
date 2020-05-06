@@ -184,6 +184,7 @@ class CardEditActivity : AppCompatActivity() {
             MonthPickerDialog.OnDateSetListener { selectedMonth, selectedYear ->
                 val formattedMonth = if (selectedMonth+1 < 10) "0"+(selectedMonth+1) else (selectedMonth+1).toString()
                 expiration_date_tv.text = formattedMonth+"/"+selectedYear.toString().substring(2,4)
+                cvv_et.requestFocus()
             }, 2020, Calendar.JANUARY)
 
         val dialog = builder.setActivatedMonth(Calendar.JULY)
