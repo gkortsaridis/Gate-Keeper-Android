@@ -56,7 +56,7 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
         vaultsRecyclerView.layoutManager = LinearLayoutManager(this)
         updateVaultsRecyclerView()
 
-        addVaultFab.visibility = if(action == GateKeeperConstants.ACTION_CHANGE_VAULT) View.GONE else View.VISIBLE
+        addVaultFab.visibility = if(action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT && VaultRepository.shouldCreateVaults()) View.VISIBLE else View.GONE
 
         addVaultFab.setOnClickListener { createVault() }
     }

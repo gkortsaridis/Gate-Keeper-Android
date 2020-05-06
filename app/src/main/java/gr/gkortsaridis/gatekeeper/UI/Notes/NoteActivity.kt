@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.NoteColor
@@ -27,13 +27,8 @@ import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import gr.gkortsaridis.gatekeeper.Utils.showKeyboard
 import kotlinx.android.synthetic.main.activity_note.*
-import kotlinx.android.synthetic.main.activity_note.vault_icon
-import kotlinx.android.synthetic.main.activity_note.vault_name
-import kotlinx.android.synthetic.main.activity_note.vault_view
-import kotlinx.android.synthetic.main.fragment_notes.*
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 
 
 class NoteActivity : AppCompatActivity() {
