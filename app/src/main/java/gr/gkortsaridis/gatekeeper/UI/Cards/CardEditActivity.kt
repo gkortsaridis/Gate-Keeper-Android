@@ -90,6 +90,8 @@ class CardEditActivity : AppCompatActivity() {
             save_update_button.setOnClickListener {
                 if (cardDataAreValid()) {
                     createCard()
+                } else {
+                    Toast.makeText(this, "All Card fields must be filled", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -116,6 +118,8 @@ class CardEditActivity : AppCompatActivity() {
             save_update_button.setOnClickListener {
                 if (cardDataAreValid()) {
                     updateCard()
+                } else {
+                    Toast.makeText(this, "All Card fields must be filled", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -174,10 +178,20 @@ class CardEditActivity : AppCompatActivity() {
             card_number_et.error = if (isCardNumberCorrect(it.toString())) null else "Incorrect card number"
             card.type = CreditCardRepository.getCreditCardType(card.number)
             setActionButton()
+            toggleSaveButton()
         }
+        getEditTextFromView(card_number_et).addTextChangedListener { toggleSaveButton() }
+        getEditTextFromView(cvv_et).addTextChangedListener { toggleSaveButton() }
 
         updateUI()
         setActionButton()
+        toggleSaveButton()
+    }
+
+    private fun toggleSaveButton() {
+        save_update_button.setBackgroundColor(resources.getColor(
+            if (cardDataAreFilled()) R.color.colorPrimaryDark else R.color.greyish
+        ))
     }
 
     private fun setActionButton() {
@@ -320,8 +334,7 @@ class CardEditActivity : AppCompatActivity() {
         return (card_number_et.text!!.isNotBlank()
                 && cardholder_name_et.text!!.isNotBlank()
                 && expiration_date_tv.text.isNotBlank()
-                && cvv_et.text!!.isNotBlank()
-                && card_name_et.text.isNotBlank())
+                && cvv_et.text!!.isNotBlank())
     }
 
     private fun isCardNumberCorrect(number: String): Boolean {
