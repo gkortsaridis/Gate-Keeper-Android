@@ -26,5 +26,6 @@
     <color name="vault_white_1">#eeeeee</color>
     <color name="vault_white_2">#ffffff</color>
     <color name="vault_coral">#47A8BD</color>
+    <color name="cancel_grey">#757575</color>
 
 </resources>

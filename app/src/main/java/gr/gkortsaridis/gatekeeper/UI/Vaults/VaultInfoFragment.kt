@@ -2,6 +2,8 @@ package gr.gkortsaridis.gatekeeper.UI.Vaults
 
 
 import android.app.AlertDialog
+import android.content.DialogInterface.BUTTON_NEGATIVE
+import android.content.DialogInterface.BUTTON_POSITIVE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -67,10 +69,12 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
 
         if (vault.id == "-1") {
             actionTitle.text = "Create Vault"
-            deleteVault.visibility = View.GONE
+            deleteVault.text = "Cancel"
+            deleteVault.setTextColor(resources.getColor(R.color.cancel_grey))
         } else {
             actionTitle.text = "Edit Vault"
-            deleteVault.visibility = View.VISIBLE
+            deleteVault.text = "Delete"
+            deleteVault.setTextColor(resources.getColor(R.color.error_red))
         }
 
         saveVault.setOnClickListener {
@@ -86,7 +90,13 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
                 }
             }
         }
-        deleteVault.setOnClickListener { displayVaultDeleteDialog(vault) }
+        deleteVault.setOnClickListener {
+            if (vault.id != "-1") {
+                displayVaultDeleteDialog(vault)
+            } else {
+                dismiss()
+            }
+        }
 
         redColor.setOnClickListener {
             vaultColor = VaultColor.Red
@@ -179,8 +189,11 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
             val dialog = builder.create()
             dialog.show()
 
-            val positiveButton: Button = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+            val positiveButton: Button = dialog.getButton(BUTTON_POSITIVE)
             positiveButton.setTextColor(resources.getColor(R.color.error_red))
+
+            val negativeButton: Button = dialog.getButton(BUTTON_NEGATIVE)
+            negativeButton.setTextColor(resources.getColor(R.color.mate_black))
         }else {
             Toast.makeText(context,"You cannot delete your only Vault", Toast.LENGTH_SHORT).show()
         }
