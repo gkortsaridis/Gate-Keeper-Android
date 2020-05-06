@@ -59,7 +59,7 @@ android {
             buildConfigField "String", "BASE_SERVER_URL", '"http://gate-keeper.herokuapp.com/"'
             resValue "string", "app_name", "Gate Keeper - Achilles"
         }
-        betaHaides {
+        betaHades {
             dimension "server"
             buildConfigField "String", "BASE_SERVER_URL", '"http://45.63.100.236:8080/haides/"'
             resValue "string", "app_name", "Gate Keeper - Hades"
