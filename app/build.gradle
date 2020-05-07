@@ -12,7 +12,7 @@ apply plugin: 'io.fabric'
 
 android {
     signingConfigs {
-        prodRelease {
+        release {
             storeFile file("gate_keeper_keystore.keystore")
             storePassword 'gate_keeper'
             keyAlias 'gate_keeper'
@@ -35,7 +35,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            signingConfig signingConfigs.prodRelease
+            signingConfig signingConfigs.release
             resValue 'string', 'banner_ad_unit_id', '"ca-app-pub-4492385836648698/2722588186"'
         }
         debug {
