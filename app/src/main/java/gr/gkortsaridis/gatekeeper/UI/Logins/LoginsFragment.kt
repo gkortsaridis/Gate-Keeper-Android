@@ -51,7 +51,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
 
     private val TAG = "_LOGINS_FRAGMENT_"
     private var autofillManager: AutofillManager? = null
-    private lateinit var loginsAdapter: LoginsRecyclerViewAdapter
+    private var loginsAdapter: LoginsRecyclerViewAdapter? = null
 
     private var activeLogins: ArrayList<Login> = ArrayList()
 
@@ -127,7 +127,17 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
             logins_sort_type.text = "Sort by modified date"
         }
 
-        loginsAdapter.updateLogins(logins)
+        if (loginsAdapter == null) {
+            loginsAdapter =
+                LoginsRecyclerViewAdapter(
+                    activity!!.baseContext,
+                    logins,
+                    activity!!.packageManager,
+                    this
+                )
+        }
+
+        loginsAdapter?.updateLogins(logins)
 
         login_cnt.text = logins.size.toString()
 

@@ -37,11 +37,11 @@ import kotlinx.android.synthetic.main.fragment_cards.no_items_view
 import kotlinx.android.synthetic.main.fragment_cards.vault_name
 import kotlinx.android.synthetic.main.fragment_cards.vault_view
 
-class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListeners {
+class CardsFragment : Fragment(), CreditCardClickListener {
 
     private var allCards: ArrayList<CreditCard> = ArrayList()
     private var filtered: ArrayList<CreditCard> = ArrayList()
-    private lateinit var cardsAdapter : CreditCardsRecyclerViewAdapter
+    private var cardsAdapter : CreditCardsRecyclerViewAdapter? = null
     private lateinit var currentVault: Vault
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -87,8 +87,11 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         vault_name.setTextColor(resources.getColor(vault.getVaultColorAccent()))
         vault_icon.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
 
-        if (!cards_recycler_view.isComputingLayout) {
-            cardsAdapter.updateCards(filtered)
+        if (cardsAdapter == null) {
+            cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, filtered, this)
+        }
+        if (cards_recycler_view?.isComputingLayout == false) {
+            cardsAdapter?.updateCards(filtered)
             cards_recycler_view.scrollToPosition(0)
         }
 
@@ -122,11 +125,6 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         filtered = CreditCardRepository.filterCardsByVault(allCards, currentVault)
         filtered.sortBy { it.modifiedDate }
         filtered.reverse()
-    }
-
-    override fun onDismissed() {
-        super.onDismissed()
-        updateUI()
     }
 
     private fun animateFabIn() {
