@@ -1,22 +1,21 @@
 package gr.gkortsaridis.gatekeeper.UI.Cards
 
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.azoft.carousellayoutmanager.CarouselLayoutManager
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
 import com.azoft.carousellayoutmanager.CenterScrollListener
 import com.google.android.gms.ads.AdRequest
+import gr.gkortsaridis.gatekeeper.Database.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
 import gr.gkortsaridis.gatekeeper.Interfaces.MyDialogFragmentListeners
 import gr.gkortsaridis.gatekeeper.R
@@ -40,9 +39,8 @@ import kotlinx.android.synthetic.main.fragment_cards.vault_view
 
 class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListeners {
 
-    private lateinit var filtered: ArrayList<CreditCard>
-    private var activeCard : CreditCard? = null
-    private var activeCardVault : Vault? = null
+    private var allCards: ArrayList<CreditCard> = ArrayList()
+    private var filtered: ArrayList<CreditCard> = ArrayList()
     private lateinit var cardsAdapter : CreditCardsRecyclerViewAdapter
     private lateinit var currentVault: Vault
 
@@ -53,6 +51,13 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
+        viewModel.appCards.observe(activity!!, Observer {
+            this.allCards = ArrayList(it)
+            updateCards()
+            updateUI()
+        })
+
         val adRequest = AdRequest.Builder().build()
         adview.loadAd(adRequest)
 
@@ -62,13 +67,6 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
 
         val layoutManager = CarouselLayoutManager(CarouselLayoutManager.VERTICAL)
         layoutManager.setPostLayoutListener(CarouselZoomPostLayoutListener())
-        layoutManager.addOnItemSelectionListener {
-            if (filtered.size > 0) {
-                activeCard = filtered[it]
-                activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
-            }
-            updateUI(updateCards = false)
-        }
         cards_recycler_view.layoutManager = layoutManager
         cards_recycler_view.setHasFixedSize(true)
 
@@ -82,33 +80,17 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         startActivity(Intent(activity, CardEditActivity::class.java))
     }
 
-    @SuppressLint("RestrictedApi")
-    private fun updateUI(updateCards: Boolean) {
+    private fun updateUI() {
         val vault = VaultRepository.getLastActiveVault()
         vault_name.text = vault.name
         vault_view.setBackgroundColor(resources.getColor(vault.getVaultColorResource()))
         vault_name.setTextColor(resources.getColor(vault.getVaultColorAccent()))
         vault_icon.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
 
-        if (activeCard == null && filtered.isNotEmpty()) {
-            activeCard = filtered[0]
-            activeCardVault = VaultRepository.getVaultByID(activeCard!!.vaultId)
-        }
-
-        if (!cards_recycler_view.isComputingLayout && updateCards) {
+        if (!cards_recycler_view.isComputingLayout) {
             cardsAdapter.updateCards(filtered)
             cards_recycler_view.scrollToPosition(0)
         }
-
-        if (filtered.isNotEmpty()) {
-            filtered.forEachIndexed { index, creditCard ->
-                if (creditCard.id == activeCard?.id) {
-                    //if (bottom_arc.alpha == 0.0f) { animateArcIn() }
-                }
-            }
-        } else {
-        }
-
 
         no_items_view.visibility = if (filtered.isNotEmpty()) View.GONE else View.VISIBLE
         add_credit_card.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
@@ -132,23 +114,19 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
     override fun onResume() {
         super.onResume()
         updateCards()
-        updateUI(updateCards = true)
+        updateUI()
     }
 
     private fun updateCards() {
         currentVault = VaultRepository.getLastActiveVault()
-        filtered = CreditCardRepository.filterCardsByVault(currentVault)
+        filtered = CreditCardRepository.filterCardsByVault(allCards, currentVault)
         filtered.sortBy { it.modifiedDate }
         filtered.reverse()
-        if (!filtered.contains(activeCard) && filtered.isNotEmpty()) {
-            activeCard = filtered[0]
-            activeCardVault = VaultRepository.getVaultByID(activeCard?.vaultId ?: "")
-        }
     }
 
     override fun onDismissed() {
         super.onDismissed()
-        updateUI(updateCards = true)
+        updateUI()
     }
 
     private fun animateFabIn() {
@@ -158,10 +136,4 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
             .start(ViewTweenManager.get(add_credit_card))
     }
 
-    private fun animateArcIn() {
-        Timeline.createParallel()
-            .push(Tween.to(bottom_arc, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(bottom_arc, Translation.XY).target(0f,-130.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            .start(ViewTweenManager.get(bottom_arc))
-    }
 }

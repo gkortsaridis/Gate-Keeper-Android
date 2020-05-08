@@ -47,7 +47,8 @@
         <activity
             android:name=".UI.Authentication.SignInActivity" />
         <activity
-            android:name=".UI.MainActivity" />
+            android:name=".UI.MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"/>
         <activity
             android:name=".UI.Authentication.AuthenticationBaseActivity">
             <intent-filter>

@@ -65,6 +65,12 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         val adRequest = AdRequest.Builder().build()
         adview.loadAd(adRequest)
 
+        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
+        viewModel.appLogins.observe(activity!!, Observer {
+            this.activeLogins = ArrayList(it)
+            updateUI(this.activeLogins)
+        })
+
         logins_recycler_view.layoutManager = VegaLayoutManager()
 
         add_login_btn.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
@@ -106,12 +112,6 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     override fun onResume() {
         super.onResume()
         updateUI(this.activeLogins)
-
-        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
-        viewModel.appLogins.observe(activity!!, Observer {
-            this.activeLogins = ArrayList(it)
-            updateUI(this.activeLogins)
-        })
     }
 
     private fun updateUI(allLogins: ArrayList<Login>) {

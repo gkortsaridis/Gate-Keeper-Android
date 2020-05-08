@@ -17,6 +17,7 @@ import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.lang.Integer.parseInt
+import java.sql.Timestamp
 
 @SuppressLint("CheckResult")
 object CreditCardRepository {
@@ -33,10 +34,11 @@ object CreditCardRepository {
 
     fun updateLocalCard(card: CreditCard) { db.dao().updateCard(card) }
 
-    fun filterCardsByVault(vault: Vault) : ArrayList<CreditCard> {
+    fun filterCardsByVault(cards: List<CreditCard>, vault: Vault) : ArrayList<CreditCard> {
         val vaultIds = arrayListOf<String>()
         VaultRepository.allVaults.forEach { vaultIds.add(it.id) }
-        val parentedCards = ArrayList(allCards.filter { vaultIds.contains(it.vaultId) })
+
+        val parentedCards = ArrayList(cards.filter { vaultIds.contains(it.vaultId) })
 
         if (vault.id == "-1") { return parentedCards }
 
@@ -120,7 +122,10 @@ object CreditCardRepository {
                     val decryptedCard = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard?
                     if (decryptedCard != null) {
                         decryptedCard.id = it.data.id.toString()
-                        if (it.errorCode == -1) { listener.onCardUpdated(decryptedCard) }
+                        if (it.errorCode == -1) {
+                            decryptedCard.modifiedDate = Timestamp(System.currentTimeMillis())
+                            listener.onCardUpdated(decryptedCard)
+                        }
                         else { listener.onCardUpdateError(it.errorCode, it.errorMsg) }
                     } else {
                         listener.onCardUpdateError(-1, "Decryption Error")
@@ -143,7 +148,11 @@ object CreditCardRepository {
                     val decryptedCard = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard?
                     if (decryptedCard != null) {
                         decryptedCard.id = it.data.id.toString()
-                        if (it.errorCode == -1) { listener.onCreditCardCreated(decryptedCard) }
+                        if (it.errorCode == -1) {
+                            decryptedCard.modifiedDate = Timestamp(System.currentTimeMillis())
+                            decryptedCard.createdDate = Timestamp(System.currentTimeMillis())
+                            listener.onCreditCardCreated(decryptedCard)
+                        }
                         else { listener.onCreditCardCreateError(it.errorCode, it.errorMsg) }
                     } else {
                         listener.onCreditCardCreateError(-1, "Decryption Error")

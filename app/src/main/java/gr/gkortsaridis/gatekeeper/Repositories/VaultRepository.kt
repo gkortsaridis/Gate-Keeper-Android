@@ -164,7 +164,7 @@ object VaultRepository {
                         }
 
                         //Delete all vault's cards
-                        val vaultCards = CreditCardRepository.filterCardsByVault(vault)
+                        val vaultCards = CreditCardRepository.filterCardsByVault(CreditCardRepository.allCards, vault)
                         for (card in vaultCards) {
                             CreditCardRepository.deleteCreditCard(card, null)
                         }
