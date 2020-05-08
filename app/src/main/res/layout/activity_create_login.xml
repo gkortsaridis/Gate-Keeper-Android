@@ -212,7 +212,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:aed_label="URL"
-                            app:aed_hint="Type your url..."
+                            app:aed_hint="Type or select your url..."
                             android:layout_marginTop="8dp"
                             android:layout_marginLeft="8dp"
                             android:layout_marginRight="16dp"/>
