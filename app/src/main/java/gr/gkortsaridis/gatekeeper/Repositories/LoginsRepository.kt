@@ -5,9 +5,12 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import gr.gkortsaridis.gatekeeper.Database.AppExecutors
+import gr.gkortsaridis.gatekeeper.Database.GatekeeperDatabase
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
@@ -36,6 +39,18 @@ object LoginsRepository {
     val createLoginError = 3
     val deleteLoginSuccess = 4
     val deleteLoginError = 5
+
+    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+
+    var allLogins: ArrayList<Login>
+        get() { return ArrayList(db.dao().allLoginsSync) }
+        set(logins) { db.dao().truncateLogins(); for (login in logins) { db.dao().insertLogin(login) } }
+
+    fun addLocalLogin(login: Login) { db.dao().insertLogin(login) }
+
+    fun removeLocalLogin(login: Login) { db.dao().deleteLogin(login) }
+
+    fun updateLocalLogin(login: Login) { db.dao().updateLogin(login) }
 
     fun encryptAndStoreLogin(activity: Activity, login: Login, listener: LoginCreateListener) {
         val viewDialog = ViewDialog(activity)
@@ -91,7 +106,7 @@ object LoginsRepository {
 
     fun filterLoginsByVault(logins: ArrayList<Login>, vault: Vault): ArrayList<Login> {
         val vaultIds = arrayListOf<String>()
-        GateKeeperApplication.vaults.forEach { vaultIds.add(it.id) }
+        VaultRepository.allVaults.forEach { vaultIds.add(it.id) }
         val parentedLogins = ArrayList(logins.filter { vaultIds.contains(it.vault_id) })
 
         if (vault.id == "-1") { return parentedLogins }
@@ -107,12 +122,7 @@ object LoginsRepository {
         return filterLoginsByVault(logins, VaultRepository.getLastActiveVault())
     }
 
-    fun getLoginById(loginId: String): Login? {
-        for (login in GateKeeperApplication.logins) {
-            if (login.id == loginId) return login
-        }
-        return null
-    }
+    fun getLoginById(loginId: String): Login? { return db.dao().loadLoginById(loginId) }
 
     fun getApplicationInfoByPackageName(packageName: String?, packageManager: PackageManager): ResolveInfo? {
         val mainIntent = Intent(Intent.ACTION_MAIN, null)

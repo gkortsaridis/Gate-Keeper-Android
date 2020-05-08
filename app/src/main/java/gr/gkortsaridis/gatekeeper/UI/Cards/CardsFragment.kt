@@ -56,7 +56,7 @@ class CardsFragment : Fragment(), CreditCardClickListener, MyDialogFragmentListe
         val adRequest = AdRequest.Builder().build()
         adview.loadAd(adRequest)
 
-        cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, GateKeeperApplication.cards, this)
+        cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, CreditCardRepository.allCards, this)
         cards_recycler_view.adapter = cardsAdapter
         cards_recycler_view.addOnScrollListener(CenterScrollListener())
 

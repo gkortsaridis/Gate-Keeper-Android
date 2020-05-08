@@ -3,6 +3,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
+import gr.gkortsaridis.gatekeeper.Database.GatekeeperDatabase
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -20,10 +21,22 @@ import java.lang.Integer.parseInt
 @SuppressLint("CheckResult")
 object CreditCardRepository {
 
+    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+
+    var allCards: ArrayList<CreditCard>
+        get() { return ArrayList(db.dao().allCardsSync) }
+        set(cards) { db.dao().truncateCards(); for (card in cards) { db.dao().insertCard(card) } }
+
+    fun addLocalCard(card: CreditCard) { db.dao().insertCard(card) }
+
+    fun removeLocalCard(card: CreditCard) { db.dao().deleteCard(card) }
+
+    fun updateLocalCard(card: CreditCard) { db.dao().updateCard(card) }
+
     fun filterCardsByVault(vault: Vault) : ArrayList<CreditCard> {
         val vaultIds = arrayListOf<String>()
-        GateKeeperApplication.vaults.forEach { vaultIds.add(it.id) }
-        val parentedCards = ArrayList(GateKeeperApplication.cards.filter { vaultIds.contains(it.vaultId) })
+        VaultRepository.allVaults.forEach { vaultIds.add(it.id) }
+        val parentedCards = ArrayList(allCards.filter { vaultIds.contains(it.vaultId) })
 
         if (vault.id == "-1") { return parentedCards }
 
@@ -144,7 +157,7 @@ object CreditCardRepository {
     }
 
     fun getCreditCardById(cardId: String): CreditCard? {
-        for (card in GateKeeperApplication.cards) {
+        for (card in allCards) {
             if (card.id == cardId) {
                 return card
             }

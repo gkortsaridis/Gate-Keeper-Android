@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
+import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
@@ -40,6 +41,8 @@ class GateKeeperApplication : Application() {
             client.addPlugin(InspectorFlipperPlugin(this, DescriptorMapping.withDefaults()))
             client.addPlugin(SharedPreferencesFlipperPlugin(this))
             client.addPlugin(NavigationFlipperPlugin.getInstance())
+            client.addPlugin(DatabasesFlipperPlugin(this));
+
             client.addPlugin(networkFlipperPlugin)
 
             client.start()
@@ -56,10 +59,6 @@ class GateKeeperApplication : Application() {
         var user_id: String? = null
         val admobAppID = "ca-app-pub-4492385836648698~3680446633"
 
-        lateinit var logins: ArrayList<Login>
-        lateinit var vaults: ArrayList<Vault>
-        lateinit var cards: ArrayList<CreditCard>
-        lateinit var notes: ArrayList<Note>
         var extraData: UserExtraData? = null
         var devices: ArrayList<Device>? = null
         var userLog: ArrayList<UserLog> = arrayListOf()

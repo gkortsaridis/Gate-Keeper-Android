@@ -2,7 +2,11 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.google.firebase.firestore.FirebaseFirestore
+import gr.gkortsaridis.gatekeeper.Database.GatekeeperDatabase
+import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
@@ -18,7 +22,31 @@ import io.reactivex.schedulers.Schedulers
 @SuppressLint("CheckResult")
 object VaultRepository {
 
-    val allVaults =  Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White)
+    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+    val allVaultsObj =  Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White)
+
+    var allVaults: ArrayList<Vault>
+        get() {
+            return ArrayList(db.dao().allVaultsSync)
+            //return GateKeeperApplication.vaults ?: ArrayList()
+        }
+        set(vaults) {
+            db.dao().truncateVaults()
+            for (vault in vaults) { db.dao().insertVault(vault) }
+            //GateKeeperApplication.vaults = vaults
+        }
+
+    fun addLocalVault(vault: Vault) {
+        db.dao().insertVault(vault)
+    }
+
+    fun removeLocalVault(vault: Vault) {
+        db.dao().deleteVault(vault)
+    }
+
+    fun updateLocalVault(vault: Vault) {
+        db.dao().updateVault(vault)
+    }
 
     fun setupVaultsForNewUser(userId: String, listener: VaultSetupListener) {
         val personalVault = Vault(id = "", name = "Personal", account_id = AuthRepository.getUserID(), color = VaultColor.Blue)
@@ -62,7 +90,7 @@ object VaultRepository {
     fun getVaultByID(id: String): Vault? {
         if (id == "-1") { return Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White) }
 
-        for (vault in GateKeeperApplication.vaults) {
+        for (vault in allVaults) {
             if (vault.id == id) {
                 return vault
             }
@@ -75,13 +103,13 @@ object VaultRepository {
 
     fun getLastActiveRealVault() : Vault {
         val lastActive = getLastActiveVault()
-        return if (lastActive.id == "-1") { GateKeeperApplication.vaults[0] }
+        return if (lastActive.id == "-1") { allVaults[0] }
         else lastActive
     }
 
     fun getLastActiveVault(): Vault {
         val lastActiveVaultId = DataRepository.lastActiveVaultId ?: ""
-        var vaultToReturn = GateKeeperApplication.vaults[0]
+        var vaultToReturn = allVaults[0]
         if (lastActiveVaultId != "") {
             val savedVault = getVaultByID(lastActiveVaultId)
             if (savedVault != null) { vaultToReturn = savedVault}
@@ -130,7 +158,7 @@ object VaultRepository {
                     if (it.errorCode == -1 && vault.id.toLong() == it.deletedItemID) {
 
                         //Delete all vault's logins
-                        val vaultLogins = LoginsRepository.filterLoginsByVault(GateKeeperApplication.logins, vault)
+                        val vaultLogins = LoginsRepository.filterLoginsByVault(LoginsRepository.allLogins, vault)
                         for (login in vaultLogins) {
                             LoginsRepository.deleteLogin(login, null)
                         }
@@ -156,7 +184,7 @@ object VaultRepository {
     }
 
     fun shouldCreateVaults(): Boolean {
-        return false
+        return true
     }
 
 }

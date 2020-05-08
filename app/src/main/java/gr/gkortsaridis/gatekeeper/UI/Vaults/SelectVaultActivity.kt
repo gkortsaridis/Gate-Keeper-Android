@@ -1,16 +1,10 @@
 package gr.gkortsaridis.gatekeeper.UI.Vaults
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.InputType
 import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.RelativeLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -91,9 +85,9 @@ class SelectVaultActivity : AppCompatActivity(), VaultClickListener, VaultEditLi
     }
 
     private fun updateVaultsRecyclerView() {
-        val sortedVaults = ArrayList(GateKeeperApplication.vaults.sortedWith(compareBy {it.name}))
+        val sortedVaults = ArrayList(VaultRepository.allVaults.sortedWith(compareBy {it.name}))
         if (action == GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT && sortedVaults.size > 1) {
-            sortedVaults.add(0, VaultRepository.allVaults )
+            sortedVaults.add(0, VaultRepository.allVaultsObj )
         }
         vaultsRecyclerView.adapter = VaultSelectRecyclerViewAdapter(
             this,

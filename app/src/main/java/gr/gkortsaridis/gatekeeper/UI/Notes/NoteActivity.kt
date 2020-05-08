@@ -150,13 +150,15 @@ class NoteActivity : AppCompatActivity() {
 
             NotesRepository.deleteNote(note, object: NoteDeleteListener{
                 override fun onNoteDeleted() {
-                    GateKeeperApplication.notes.remove(note)
+                    NotesRepository.removeLocalNote(note)
+                    //GateKeeperApplication.notes.remove(note)
                     viewDialog.hideDialog()
                     finishWithResult()
                 }
 
                 override fun onNoteDeleteError(errorCode: Int, errorMsg: String) {
-                    GateKeeperApplication.notes.remove(note)
+                    NotesRepository.removeLocalNote(note)
+                    //GateKeeperApplication.notes.remove(note)
                     viewDialog.hideDialog()
                 }
             })
@@ -174,7 +176,7 @@ class NoteActivity : AppCompatActivity() {
         val viewDialog = ViewDialog(this)
 
         if (VaultRepository.getLastActiveVault().id != vaultToAdd.id) {
-            VaultRepository.setActiveVault(VaultRepository.allVaults)
+            VaultRepository.setActiveVault(VaultRepository.allVaultsObj)
         }
         if (note.id != "-1") {
             if (isNoteChanged()) {
@@ -183,7 +185,8 @@ class NoteActivity : AppCompatActivity() {
                 viewDialog.showDialog()
                 NotesRepository.updateNote(note, object : NoteUpdateListener{
                     override fun onNoteUpdated(note: Note) {
-                        GateKeeperApplication.notes.replaceAll { if (it.id == note.id) note else it }
+                        NotesRepository.updateLocalNote(note)
+                        //GateKeeperApplication.notes.replaceAll { if (it.id == note.id) note else it }
                         viewDialog.hideDialog()
                         finishWithResult()
                     }
@@ -205,13 +208,15 @@ class NoteActivity : AppCompatActivity() {
                 viewDialog.showDialog()
                 NotesRepository.createNote(note, object : NoteCreateListener{
                     override fun onNoteCreated(note: Note) {
-                        GateKeeperApplication.notes.add(note)
+                        NotesRepository.addLocalNote(note)
+                        //GateKeeperApplication.notes.add(note)
                         viewDialog.hideDialog()
                         finishWithResult()
                     }
 
                     override fun onNoteCreateError(errorCode: Int, errorMsg: String) {
-                        GateKeeperApplication.notes.add(note)
+                        NotesRepository.addLocalNote(note)
+                        //GateKeeperApplication.notes.add(note)
                         viewDialog.hideDialog()
                         finishWithResult()
                     }
@@ -258,7 +263,7 @@ class NoteActivity : AppCompatActivity() {
 
     private fun finishWithResult() {
         if (note.id != VaultRepository.getLastActiveVault().id) {
-            VaultRepository.setActiveVault(VaultRepository.allVaults)
+            VaultRepository.setActiveVault(VaultRepository.allVaultsObj)
         }
 
         val intent = Intent()
