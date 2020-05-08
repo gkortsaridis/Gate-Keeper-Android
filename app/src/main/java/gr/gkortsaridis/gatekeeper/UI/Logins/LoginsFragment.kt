@@ -16,10 +16,13 @@ import android.view.autofill.AutofillManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
 import com.stone.vega.library.VegaLayoutManager
+import gr.gkortsaridis.gatekeeper.Database.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
@@ -48,7 +51,9 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
 
     private val TAG = "_LOGINS_FRAGMENT_"
     private var autofillManager: AutofillManager? = null
-    private lateinit var loginsAdapter: LoginsRecyclerViewAdapter
+    private var loginsAdapter: LoginsRecyclerViewAdapter? = null
+
+    private var activeLogins: ArrayList<Login> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_logins, container, false)
@@ -59,6 +64,12 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
 
         val adRequest = AdRequest.Builder().build()
         adview.loadAd(adRequest)
+
+        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
+        viewModel.appLogins.observe(activity!!, Observer {
+            this.activeLogins = ArrayList(it)
+            updateUI(this.activeLogins)
+        })
 
         logins_recycler_view.layoutManager = VegaLayoutManager()
 
@@ -77,7 +88,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
             builder.setTitle("Sort by")
             builder.setSingleChoiceItems(sortTypes, DataRepository.loginSortType) { dialog, which ->
                 DataRepository.loginSortType = which
-                updateUI()
+                updateUI(this.activeLogins)
                 dialog.dismiss()
             }
             val dialog = builder.create()
@@ -100,11 +111,11 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
 
     override fun onResume() {
         super.onResume()
-        updateUI()
+        updateUI(this.activeLogins)
     }
 
-    private fun updateUI() {
-        val logins = LoginsRepository.filterLoginsByCurrentVault(GateKeeperApplication.logins)
+    private fun updateUI(allLogins: ArrayList<Login>) {
+        val logins = LoginsRepository.filterLoginsByCurrentVault(allLogins)
         val sortType = DataRepository.loginSortType
         if (sortType == LOGIN_SORT_TYPE_NAME) {
             logins.sortBy { it.name.toLowerCase() }
@@ -116,7 +127,17 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
             logins_sort_type.text = "Sort by modified date"
         }
 
-        loginsAdapter.updateLogins(logins)
+        if (loginsAdapter == null) {
+            loginsAdapter =
+                LoginsRecyclerViewAdapter(
+                    activity!!.baseContext,
+                    logins,
+                    activity!!.packageManager,
+                    this
+                )
+        }
+
+        loginsAdapter?.updateLogins(logins)
 
         login_cnt.text = logins.size.toString()
 
@@ -156,10 +177,10 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (requestCode == createLoginRequestCode && resultCode == createLoginSuccess) {
-            updateUI()
+            updateUI(this.activeLogins)
             Toast.makeText(context, "Login successfully created", Toast.LENGTH_SHORT).show()
         } else if (resultCode == deleteLoginSuccess) {
-            updateUI()
+            updateUI(this.activeLogins)
             Toast.makeText(context, "Login successfully deleted", Toast.LENGTH_SHORT).show()
         }
 

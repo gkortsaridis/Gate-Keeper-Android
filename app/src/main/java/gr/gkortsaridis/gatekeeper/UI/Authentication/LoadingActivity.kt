@@ -1,25 +1,22 @@
 package gr.gkortsaridis.gatekeeper.UI.Authentication
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.postDelayed
-import com.google.firebase.analytics.FirebaseAnalytics
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import gr.gkortsaridis.gatekeeper.Database.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
-import gr.gkortsaridis.gatekeeper.Interfaces.*
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.*
 import gr.gkortsaridis.gatekeeper.UI.MainActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlin.math.ceil
+import kotlinx.android.synthetic.main.activity_loading.*
 
 
 class LoadingActivity : AppCompatActivity() {
@@ -29,9 +26,6 @@ class LoadingActivity : AppCompatActivity() {
     private var dataOk  : Boolean = false
     private var timerOk : Boolean = false
     private val timerDelaySeconds = 5
-
-    private lateinit var welcomeMessage : TextView
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,10 +97,10 @@ class LoadingActivity : AppCompatActivity() {
                             }
                         }
 
-                        GateKeeperApplication.vaults = vaults
-                        GateKeeperApplication.logins = logins
-                        GateKeeperApplication.cards = cards
-                        GateKeeperApplication.notes = notes
+                        VaultRepository.allVaults = vaults
+                        LoginsRepository.allLogins = logins
+                        CreditCardRepository.allCards = cards
+                        NotesRepository.allNotes = notes
                         GateKeeperApplication.devices = devices
                         dataOk = true
                         openMainApplication()
@@ -114,13 +108,13 @@ class LoadingActivity : AppCompatActivity() {
                         showLoadingError()
                     }
                 },
-                { showLoadingError() }
+                {
+                    showLoadingError()
+                }
             )
 
-
-        welcomeMessage = findViewById(R.id.welcome_message)
-        //val name = GateKeeperApplication.user?.displayName ?: ""
-        welcomeMessage.text = "Welcome back"
+        val name = GateKeeperApplication.user?.displayName ?: ""
+        welcome_message.text = "Welcome back\n$name"
 
         Handler().postDelayed({
             timerOk = true

@@ -204,7 +204,8 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
             viewDialog.showDialog()
             CreditCardRepository.deleteCreditCard(card!!, object: CreditCardDeleteListener{
                 override fun onCardDeleted() {
-                    GateKeeperApplication.cards.remove(card!!)
+                    CreditCardRepository.removeLocalCard(card!!)
+                    //GateKeeperApplication.cards.remove(card!!)
                     viewDialog.hideDialog()
                     dialog.dismiss()
                     Toast.makeText(context, getString(R.string.card_deleted), Toast.LENGTH_SHORT).show()
@@ -233,7 +234,8 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
         if (isCreate) {
             CreditCardRepository.encryptAndStoreCard(activity!!, card!!, object: CreditCardCreateListener{
                 override fun onCreditCardCreated(card: CreditCard) {
-                    GateKeeperApplication.cards.add(card)
+                    CreditCardRepository.addLocalCard(card)
+                    //GateKeeperApplication.cards.add(card)
                     Toast.makeText(context, getString(R.string.card_created), Toast.LENGTH_SHORT).show()
                     dismiss()
                 }
@@ -243,7 +245,8 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
             CreditCardRepository.updateCreditCard(card!!, object: CreditCardUpdateListener{
                 override fun onCardUpdated(card: CreditCard) {
                     viewDialog.hideDialog()
-                    GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
+                    CreditCardRepository.updateLocalCard(card)
+                    //GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
                     dismiss()
                     Toast.makeText(context, getString(R.string.card_updated), Toast.LENGTH_SHORT).show()
                 }
@@ -259,7 +262,7 @@ class CardInfoFragment(private var card: CreditCard?, private val isCreate: Bool
 
     private fun showVaultSelectorPicker() {
 
-        val vaults = GateKeeperApplication.vaults
+        val vaults = VaultRepository.allVaults
         val vaultNames = arrayOfNulls<String>(vaults.size)
         var selected = -1
         vaults.forEachIndexed { index, vault -> vaultNames[index] = vault.name }

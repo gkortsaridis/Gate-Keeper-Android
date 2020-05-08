@@ -3,6 +3,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
+import gr.gkortsaridis.gatekeeper.Database.GatekeeperDatabase
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -16,14 +17,28 @@ import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.lang.Integer.parseInt
+import java.sql.Timestamp
 
 @SuppressLint("CheckResult")
 object CreditCardRepository {
 
-    fun filterCardsByVault(vault: Vault) : ArrayList<CreditCard> {
+    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+
+    var allCards: ArrayList<CreditCard>
+        get() { return ArrayList(db.dao().allCardsSync) }
+        set(cards) { db.dao().truncateCards(); for (card in cards) { db.dao().insertCard(card) } }
+
+    fun addLocalCard(card: CreditCard) { db.dao().insertCard(card) }
+
+    fun removeLocalCard(card: CreditCard) { db.dao().deleteCard(card) }
+
+    fun updateLocalCard(card: CreditCard) { db.dao().updateCard(card) }
+
+    fun filterCardsByVault(cards: List<CreditCard>, vault: Vault) : ArrayList<CreditCard> {
         val vaultIds = arrayListOf<String>()
-        GateKeeperApplication.vaults.forEach { vaultIds.add(it.id) }
-        val parentedCards = ArrayList(GateKeeperApplication.cards.filter { vaultIds.contains(it.vaultId) })
+        VaultRepository.allVaults.forEach { vaultIds.add(it.id) }
+
+        val parentedCards = ArrayList(cards.filter { vaultIds.contains(it.vaultId) })
 
         if (vault.id == "-1") { return parentedCards }
 
@@ -107,7 +122,10 @@ object CreditCardRepository {
                     val decryptedCard = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard?
                     if (decryptedCard != null) {
                         decryptedCard.id = it.data.id.toString()
-                        if (it.errorCode == -1) { listener.onCardUpdated(decryptedCard) }
+                        if (it.errorCode == -1) {
+                            decryptedCard.modifiedDate = Timestamp(System.currentTimeMillis())
+                            listener.onCardUpdated(decryptedCard)
+                        }
                         else { listener.onCardUpdateError(it.errorCode, it.errorMsg) }
                     } else {
                         listener.onCardUpdateError(-1, "Decryption Error")
@@ -130,7 +148,11 @@ object CreditCardRepository {
                     val decryptedCard = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, CreditCard::class.java) as CreditCard?
                     if (decryptedCard != null) {
                         decryptedCard.id = it.data.id.toString()
-                        if (it.errorCode == -1) { listener.onCreditCardCreated(decryptedCard) }
+                        if (it.errorCode == -1) {
+                            decryptedCard.modifiedDate = Timestamp(System.currentTimeMillis())
+                            decryptedCard.createdDate = Timestamp(System.currentTimeMillis())
+                            listener.onCreditCardCreated(decryptedCard)
+                        }
                         else { listener.onCreditCardCreateError(it.errorCode, it.errorMsg) }
                     } else {
                         listener.onCreditCardCreateError(-1, "Decryption Error")
@@ -144,7 +166,7 @@ object CreditCardRepository {
     }
 
     fun getCreditCardById(cardId: String): CreditCard? {
-        for (card in GateKeeperApplication.cards) {
+        for (card in allCards) {
             if (card.id == cardId) {
                 return card
             }

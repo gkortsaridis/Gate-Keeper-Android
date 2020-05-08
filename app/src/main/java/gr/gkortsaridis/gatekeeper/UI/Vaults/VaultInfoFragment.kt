@@ -83,7 +83,7 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
                 deleteVault.visibility = View.GONE
             } else {
                 saveVault()
-                if (GateKeeperApplication.vaults.size > 1) {
+                if (VaultRepository.allVaults.size > 1) {
                     deleteVault.visibility = View.VISIBLE
                 } else {
                     deleteVault.visibility = View.GONE
@@ -159,7 +159,8 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
         VaultRepository.createVault(vault, object : VaultCreateListener {
             override fun onVaultCreated(vault: Vault) {
                 dialog.hideDialog()
-                GateKeeperApplication.vaults.add(vault)
+                VaultRepository.addLocalVault(vault)
+                //VaultRepository.allVaults.add(vault)
                 listener.onVaultInfoFragmentDismissed()
                 dismiss()
             }
@@ -167,7 +168,7 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
     }
 
     private fun displayVaultDeleteDialog(vault: Vault){
-        if (GateKeeperApplication.vaults.size > 1) {
+        if (VaultRepository.allVaults.size > 1) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Delete Vault")
             builder.setMessage("Are you sure you wish to delete this vault and its content?")
@@ -179,7 +180,8 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
                     override fun onVaultDeleted() {
                         super.onVaultDeleted()
                         dialog.hideDialog()
-                        GateKeeperApplication.vaults.remove(vault)
+                        VaultRepository.removeLocalVault(vault)
+                        //VaultRepository.allVaults.remove(vault)
                         listener.onVaultInfoFragmentDismissed()
                         dismiss()
                     }
@@ -204,7 +206,8 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
         VaultRepository.editVault(vaultName.text.toString(), vaultColor, vault, object: VaultEditListener{
             override fun onVaultEdited(vault: Vault) {
                 dialog.hideDialog()
-                GateKeeperApplication.vaults.replaceAll { if(it.id == vault.id) vault else it }
+                VaultRepository.updateLocalVault(vault)
+                //VaultRepository.allVaults.replaceAll { if(it.id == vault.id) vault else it }
                 listener.onVaultInfoFragmentDismissed()
                 dismiss()
             }

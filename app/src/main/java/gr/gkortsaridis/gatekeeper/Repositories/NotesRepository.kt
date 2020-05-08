@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.annotation.SuppressLint
 import com.google.firebase.firestore.FirebaseFirestore
+import gr.gkortsaridis.gatekeeper.Database.GatekeeperDatabase
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -18,11 +19,23 @@ import io.reactivex.schedulers.Schedulers
 @SuppressLint("CheckResult")
 object NotesRepository {
 
-    fun filterNotesByVault(vault: Vault): ArrayList<Note> {
-        val notes = GateKeeperApplication.notes
+    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+
+    var allNotes: ArrayList<Note>
+        get() { return ArrayList(db.dao().allNotesSync) }
+        set(notes) { db.dao().truncateNotes(); for (note in notes) { db.dao().insertNote(note) } }
+
+    fun addLocalNote(note: Note) { db.dao().insertNote(note) }
+
+    fun removeLocalNote(note: Note) { db.dao().deleteNote(note) }
+
+    fun updateLocalNote(note: Note) { db.dao().updateNote(note) }
+
+    fun filterNotesByVault(allNotes: ArrayList<Note>, vault: Vault): ArrayList<Note> {
+        val notes = allNotes //GateKeeperApplication.notes
 
         val vaultIds = arrayListOf<String>()
-        GateKeeperApplication.vaults.forEach { vaultIds.add(it.id) }
+        VaultRepository.allVaults.forEach { vaultIds.add(it.id) }
         val parentedNotes = ArrayList(notes.filter { vaultIds.contains(it.vaultId) })
 
         if (vault.id == "-1") { return parentedNotes }
@@ -91,7 +104,7 @@ object NotesRepository {
     }
 
     fun getNoteById(noteId: String): Note? {
-        for (note in GateKeeperApplication.notes) {
+        for (note in allNotes) {
             if (noteId == note.id) {
                 return note
             }

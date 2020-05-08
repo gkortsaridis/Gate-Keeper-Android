@@ -1,26 +1,23 @@
 package gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters
 
 import android.content.Context
-import android.graphics.PorterDuff
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.wajahatkarim3.easyflipview.EasyFlipView
 import gr.gkortsaridis.gatekeeper.Entities.CardType
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
-import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CARD_STATE_DONE
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CARD_STATE_EDITED
-import org.w3c.dom.Text
-import java.lang.StringBuilder
+import gr.gkortsaridis.gatekeeper.Utils.dp
+import gr.gkortsaridis.gatekeeper.Utils.px
+
 
 class CreditCardsRecyclerViewAdapter(
     private val context: Context,
@@ -65,6 +62,9 @@ class CreditCardsRecyclerViewAdapter(
         private var cardVaultColorBack: View? = null
         private var cardEditBtn: LinearLayout? = null
 
+        private var cardFront: CardView? = null
+        private var cardBack: CardView? = null
+
         init {
             cardType = view.findViewById(R.id.card_type)
             cardNumber = view.findViewById(R.id.card_number)
@@ -80,6 +80,9 @@ class CreditCardsRecyclerViewAdapter(
             cardVaultColor = view.findViewById(R.id.card_vault_color)
             cardVaultColorBack = view.findViewById(R.id.card_vault_color_back)
             cardEditBtn = view.findViewById(R.id.edit_card)
+
+            cardFront = view.findViewById(R.id.card_front)
+            cardBack = view.findViewById(R.id.card_back)
         }
 
         fun bindCard(card: CreditCard, position: Int, listener: CreditCardClickListener){
@@ -142,9 +145,22 @@ class CreditCardsRecyclerViewAdapter(
 
             flipCard?.setOnClickListener { flipView?.flipTheView() }
             flipBackCard?.setOnClickListener { flipView?.flipTheView() }
-            //cardContainer?.setOnClickListener{ listener.onCreditCardClicked(card) }
-            //cardContainerBack?.setOnClickListener { listener.onCreditCardClicked(card) }
             cardEditBtn?.setOnClickListener { listener.onCreditCardEditButtonClicked(card, position) }
+
+            val width = cardFront?.measuredWidth
+            val displayMetrics = context.resources.displayMetrics
+
+            val screenWidth = displayMetrics.widthPixels
+            val matchParentCardWidth = screenWidth - 32.dp
+            var cardWidth = matchParentCardWidth
+            if (cardWidth.px > 370) { cardWidth = 370.dp }
+            val cardHeight = cardWidth / 1.58 + 8.dp
+
+            val params =  RelativeLayout.LayoutParams(cardWidth, cardHeight.toInt())
+            params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
+            params.bottomMargin = 8.dp
+            cardFront?.layoutParams = params
+            cardBack?.layoutParams = params
         }
 
     }

@@ -11,8 +11,9 @@
 
     <com.github.florent37.shapeofview.shapes.CutCornerView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="30dp"
         android:elevation="4dp"
+        android:id="@+id/topView"
         app:shape_cutCorner_bottomRightSize="10dp"
         app:shape_cutCorner_bottomLeftSize="10dp">
 
@@ -32,7 +33,7 @@
         app:shape_roundRect_bottomLeftRadius="28dp"
         android:elevation="5dp"
         android:id="@+id/vault_container"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="2dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp">
         <LinearLayout
@@ -68,10 +69,10 @@
     </com.github.florent37.shapeofview.shapes.RoundRectView>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@+id/vault_container"
+        android:layout_below="@+id/topView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="64dp"
+        android:layout_marginTop="-10dp"
         android:id="@+id/cards_recycler_view"/>
 
     <LinearLayout

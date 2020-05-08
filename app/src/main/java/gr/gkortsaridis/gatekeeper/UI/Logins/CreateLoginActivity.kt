@@ -23,6 +23,7 @@ import com.google.firebase.Timestamp
 import com.maxpilotto.actionedittext.ActionEditText
 import com.maxpilotto.actionedittext.actions.Icon
 import com.maxpilotto.actionedittext.actions.Toggle
+import gr.gkortsaridis.gatekeeper.Database.AppExecutors
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
@@ -226,18 +227,22 @@ class CreateLoginActivity : AppCompatActivity() {
             login.vault_id = vaultToAdd!!.id
             login.date_modified = null
 
+            val viewDialog = ViewDialog(activity)
+            viewDialog.showDialog()
+
             LoginsRepository.encryptAndUpdateLogin(this, login, object : LoginUpdateListener{
                 override fun onLoginUpdated(login: Login) {
-                    val viewDialog = ViewDialog(activity)
-                    viewDialog.showDialog()
-                    GateKeeperApplication.logins.replaceAll { if (it.id == login.id) login else it }
-                    viewDialog.hideDialog()
-                    val data = Intent()
-                    setResult(LoginsRepository.createLoginSuccess, data)
-                    finish()
+                    AppExecutors.instance.diskIO.execute {
+                        LoginsRepository.updateLocalLogin(login)
+                        viewDialog.hideDialog()
+                        val data = Intent()
+                        setResult(LoginsRepository.createLoginSuccess, data)
+                        finish()
+                    }
                 }
 
                 override fun onLoginUpdateError(errorCode: Int, errorMsg: String) {
+                    viewDialog.hideDialog()
                     val data = Intent()
                     setResult(LoginsRepository.createLoginError, data)
                     finish()
@@ -268,7 +273,8 @@ class CreateLoginActivity : AppCompatActivity() {
             LoginsRepository.encryptAndStoreLogin(this, loginObj, object : LoginCreateListener{
                 override fun onLoginCreated(login: Login) {
                     viewDialog.hideDialog()
-                    GateKeeperApplication.logins.add(login)
+                    LoginsRepository.addLocalLogin(login)
+                    //LoginsRepository.allLogins.add(login)
                     val data = Intent()
                     setResult(LoginsRepository.createLoginSuccess, data)
                     finish()
@@ -293,7 +299,8 @@ class CreateLoginActivity : AppCompatActivity() {
 
         LoginsRepository.deleteLogin(login!!, object: LoginDeleteListener {
             override fun onLoginDeleted() {
-                GateKeeperApplication.logins.remove(login!!)
+                LoginsRepository.removeLocalLogin(login)
+                //LoginsRepository.allLogins.remove(login!!)
                 viewDialog.hideDialog()
                 val data = Intent()
                 setResult(LoginsRepository.deleteLoginSuccess, data)

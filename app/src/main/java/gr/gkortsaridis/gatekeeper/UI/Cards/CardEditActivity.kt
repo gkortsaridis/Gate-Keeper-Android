@@ -267,7 +267,8 @@ class CardEditActivity : AppCompatActivity() {
             viewDialog.showDialog()
             CreditCardRepository.deleteCreditCard(card, object: CreditCardDeleteListener {
                 override fun onCardDeleted() {
-                    GateKeeperApplication.cards.remove(card)
+                    CreditCardRepository.removeLocalCard(card)
+                    //GateKeeperApplication.cards.remove(card)
                     viewDialog.hideDialog()
                     dialog.dismiss()
                     Toast.makeText(activity, getString(R.string.card_deleted), Toast.LENGTH_SHORT).show()
@@ -299,7 +300,8 @@ class CardEditActivity : AppCompatActivity() {
         CreditCardRepository.updateCreditCard(card, object: CreditCardUpdateListener {
             override fun onCardUpdated(card: CreditCard) {
                 viewDialog.hideDialog()
-                GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
+                CreditCardRepository.updateLocalCard(card)
+                //GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
                 activity.finish()
                 Toast.makeText(activity, getString(R.string.card_updated), Toast.LENGTH_SHORT).show()
             }
@@ -323,7 +325,8 @@ class CardEditActivity : AppCompatActivity() {
             CreditCardCreateListener {
             override fun onCreditCardCreated(card: CreditCard) {
                 viewDialog.hideDialog()
-                GateKeeperApplication.cards.add(card)
+                CreditCardRepository.addLocalCard(card)
+                //GateKeeperApplication.cards.add(card)
                 Toast.makeText(activity, getString(R.string.card_created), Toast.LENGTH_SHORT).show()
                 activity.finish()
             }

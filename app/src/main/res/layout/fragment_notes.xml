@@ -8,7 +8,7 @@
 
     <com.github.florent37.shapeofview.shapes.CutCornerView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="30dp"
         android:elevation="4dp"
         android:id="@+id/top_container"
         app:shape_cutCorner_bottomRightSize="10dp"
@@ -30,7 +30,7 @@
         app:shape_roundRect_bottomLeftRadius="28dp"
         android:elevation="5dp"
         android:id="@+id/vault_container"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="2dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp">
         <LinearLayout
