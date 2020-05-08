@@ -184,7 +184,7 @@ object VaultRepository {
     }
 
     fun shouldCreateVaults(): Boolean {
-        return true
+        return false
     }
 
 }
