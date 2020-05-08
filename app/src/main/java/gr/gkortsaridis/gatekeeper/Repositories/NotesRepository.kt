@@ -31,7 +31,7 @@ object NotesRepository {
 
     fun updateLocalNote(note: Note) { db.dao().updateNote(note) }
 
-    fun filterNotesByVault(vault: Vault): ArrayList<Note> {
+    fun filterNotesByVault(allNotes: ArrayList<Note>, vault: Vault): ArrayList<Note> {
         val notes = allNotes //GateKeeperApplication.notes
 
         val vaultIds = arrayListOf<String>()

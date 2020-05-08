@@ -7,8 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.gms.ads.AdRequest
+import gr.gkortsaridis.gatekeeper.Database.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
@@ -29,8 +32,9 @@ import kotlinx.android.synthetic.main.fragment_notes.*
 
 class NotesFragment : Fragment(), NoteClickListener {
 
-    private lateinit var currentVault: Vault
-    private lateinit var notesAdapter: NotesRecyclerViewAdapter
+    private var currentVault: Vault = VaultRepository.getLastActiveRealVault()
+    private var notesAdapter: NotesRecyclerViewAdapter? = null
+    private var allNotes: ArrayList<Note> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_notes, container, false)
@@ -38,6 +42,12 @@ class NotesFragment : Fragment(), NoteClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
+        viewModel.appNotes.observe(activity!!, Observer {
+            this.allNotes = ArrayList(it)
+            updateUI()
+        })
 
         currentVault = VaultRepository.getLastActiveVault()
         val adRequest = AdRequest.Builder().build()
@@ -70,7 +80,10 @@ class NotesFragment : Fragment(), NoteClickListener {
 
     private fun updateUI() {
         val notes = getOrderedNotes(currentVault)
-        notesAdapter.setNotes(notes)
+        if (notesAdapter == null) {
+            notesAdapter = NotesRecyclerViewAdapter(activity!!, notes, this)
+        }
+        notesAdapter?.setNotes(notes)
 
         vault_name.text = currentVault.name
         vault_view.setBackgroundColor(resources.getColor(currentVault.getVaultColorResource()))
@@ -82,7 +95,7 @@ class NotesFragment : Fragment(), NoteClickListener {
     }
 
     private fun getOrderedNotes(vault: Vault): ArrayList<Note> {
-        val filtered = NotesRepository.filterNotesByVault(vault)
+        val filtered = NotesRepository.filterNotesByVault(this.allNotes, vault)
         val pinnedNotes = filtered.filter { it.isPinned }
         val nonPinnedNotes = filtered.filter { !it.isPinned }
 

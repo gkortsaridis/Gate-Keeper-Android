@@ -170,7 +170,7 @@ object VaultRepository {
                         }
 
                         //Delete all vault's notes
-                        val vaultNotes = NotesRepository.filterNotesByVault(vault)
+                        val vaultNotes = NotesRepository.filterNotesByVault(NotesRepository.allNotes, vault)
                         for (note in vaultNotes) {
                             NotesRepository.deleteNote(note, null)
                         }
