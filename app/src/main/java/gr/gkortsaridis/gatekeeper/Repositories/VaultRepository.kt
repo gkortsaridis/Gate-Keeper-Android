@@ -118,6 +118,12 @@ object VaultRepository {
         return vaultToReturn
     }
 
+    fun keepActiveVaultOrChangeToAllVaults(vaultId: String) {
+        if (getLastActiveVault().id != vaultId) {
+            setActiveVault(allVaultsObj)
+        }
+     }
+
     fun editVault(newName: String, color: VaultColor, vault: Vault, listener: VaultEditListener) {
 
         vault.name = newName

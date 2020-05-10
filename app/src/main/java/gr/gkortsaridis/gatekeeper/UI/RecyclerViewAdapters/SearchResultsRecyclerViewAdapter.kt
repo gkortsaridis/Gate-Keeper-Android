@@ -7,11 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.SearchResult
 import gr.gkortsaridis.gatekeeper.Entities.SearchResultType
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
+import gr.gkortsaridis.gatekeeper.Interfaces.SearchResultClickListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 
@@ -19,7 +20,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 class SearchResultsRecyclerViewAdapter(
     private val context: Context,
     private var searchResults: ArrayList<SearchResult>,
-    private val listener: LoginSelectListener?): RecyclerView.Adapter<SearchResultsRecyclerViewAdapter.SearchResultsViewHolder>() {
+    private val listener: SearchResultClickListener): RecyclerView.Adapter<SearchResultsRecyclerViewAdapter.SearchResultsViewHolder>() {
 
     private var searchStr = ""
 
@@ -50,15 +51,17 @@ class SearchResultsRecyclerViewAdapter(
         private var itemType: ImageView? = null
         private var itemName: TextView? = null
         private var itemSubtitle: TextView? = null
+        private var clickContainer: RelativeLayout? = null
 
         init {
             itemVault = view.findViewById(R.id.item_vault)
             itemType = view.findViewById(R.id.item_type)
             itemName = view.findViewById(R.id.item_name)
             itemSubtitle = view.findViewById(R.id.item_subtitle)
+            clickContainer = view.findViewById(R.id.click_container)
         }
 
-        fun bindSearchItem(searchStr: String, searchResult: SearchResult, listener: LoginSelectListener?){
+        fun bindSearchItem(searchStr: String, searchResult: SearchResult, listener: SearchResultClickListener){
             when(searchResult.itemType) {
                 SearchResultType.LOGIN -> {
                     val login = searchResult.login
@@ -69,6 +72,7 @@ class SearchResultsRecyclerViewAdapter(
                     itemSubtitle?.visibility = View.VISIBLE
                     itemSubtitle?.text = buildString(login?.username, searchStr)
                     itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
+                    clickContainer?.setOnClickListener { listener.onLoginClicked(login!!) }
                 }
                 SearchResultType.CARD -> {
                     val card = searchResult.card
@@ -79,6 +83,7 @@ class SearchResultsRecyclerViewAdapter(
                     itemSubtitle?.visibility = View.VISIBLE
                     itemSubtitle?.text = buildString(card?.number, searchStr)
                     itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
+                    clickContainer?.setOnClickListener { listener.onCardClicked(card!!) }
 
                 }
                 SearchResultType.NOTE -> {
@@ -90,6 +95,7 @@ class SearchResultsRecyclerViewAdapter(
                     itemSubtitle?.visibility = View.VISIBLE
                     itemSubtitle?.text = buildString(note?.body, searchStr)
                     itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
+                    clickContainer?.setOnClickListener { listener.onNoteClicked(note!!) }
 
                 }
                 SearchResultType.VAULT -> {
@@ -98,6 +104,7 @@ class SearchResultsRecyclerViewAdapter(
                     itemName?.text = buildString(vault?.name, searchStr)
                     itemSubtitle?.visibility = View.GONE
                     itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
+                    clickContainer?.setOnClickListener { listener.onVaultClicked(vault!!) }
 
                 }
             }

@@ -1,5 +1,7 @@
 package gr.gkortsaridis.gatekeeper.UI.Search
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -10,11 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Database.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.*
+import gr.gkortsaridis.gatekeeper.Interfaces.SearchResultClickListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.SearchResultsRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_search.*
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : AppCompatActivity(), SearchResultClickListener {
 
     private var adapter: SearchResultsRecyclerViewAdapter? = null
 
@@ -27,7 +31,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        adapter = SearchResultsRecyclerViewAdapter(this, ArrayList(), null)
+        adapter = SearchResultsRecyclerViewAdapter(this, ArrayList(), this)
         search_results_rv.layoutManager = LinearLayoutManager(this)
         search_results_rv.adapter = adapter
 
@@ -79,5 +83,38 @@ class SearchActivity : AppCompatActivity() {
             search_results_rv.visibility = View.GONE
             search_counter_container.visibility = View.GONE
         }
+    }
+
+    override fun onVaultClicked(vault: Vault) {
+        //Set Active Vault and finish
+        VaultRepository.setActiveVault(vault)
+        finish()
+    }
+
+    override fun onLoginClicked(login: Login) {
+        //finish, set logins, open login
+        val data = Intent()
+        data.putExtra("ACTION", "LOGINS")
+        data.putExtra("ID", login.id)
+        setResult(RESULT_OK, data);
+        finish();
+    }
+
+    override fun onCardClicked(card: CreditCard) {
+        //finish, set cards, open card
+        val data = Intent()
+        data.putExtra("ACTION", "CARDS")
+        data.putExtra("ID", card.id)
+        setResult(RESULT_OK, data);
+        finish();
+    }
+
+    override fun onNoteClicked(note: Note) {
+        //finish, set notes, open note
+        val data = Intent()
+        data.putExtra("ACTION", "NOTES")
+        data.putExtra("ID", note.id)
+        setResult(RESULT_OK, data);
+        finish();
     }
 }

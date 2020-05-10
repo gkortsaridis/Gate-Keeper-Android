@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -28,11 +29,18 @@ import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.android.material.navigation.NavigationView
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
+import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.About.AboutFragment
 import gr.gkortsaridis.gatekeeper.UI.Account.MyAccountFragment
 import gr.gkortsaridis.gatekeeper.UI.Authentication.AuthenticationBaseActivity
+import gr.gkortsaridis.gatekeeper.UI.Cards.CardEditActivity
 import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
+import gr.gkortsaridis.gatekeeper.UI.Logins.CreateLoginActivity
 import gr.gkortsaridis.gatekeeper.UI.Logins.LoginsFragment
+import gr.gkortsaridis.gatekeeper.UI.Notes.NoteActivity
 import gr.gkortsaridis.gatekeeper.UI.Notes.NotesFragment
 import gr.gkortsaridis.gatekeeper.UI.PasswordGenerator.PasswordGeneratorFragment
 import gr.gkortsaridis.gatekeeper.UI.Search.SearchActivity
@@ -43,6 +51,7 @@ import io.noties.tumbleweed.Tween
 import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
 import io.noties.tumbleweed.android.types.Scale
+import kotlin.math.log
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -306,6 +315,35 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        val id = data?.getStringExtra("ID")
+        val action = data?.getStringExtra("ACTION")
+        when (action) {
+            "LOGINS" -> {
+                switchFragment("Passwords")
+                val intent = Intent(this, CreateLoginActivity::class.java)
+                intent.putExtra("login_id",id)
+                startActivity(intent)
+                val login = LoginsRepository.getLoginById(id ?: "")
+                VaultRepository.keepActiveVaultOrChangeToAllVaults(login?.vault_id ?: "-1")
+            }
+            "CARDS" -> {
+                switchFragment("Cards")
+                val intent = Intent(this, CardEditActivity::class.java)
+                intent.putExtra("card_id", id)
+                startActivity(intent)
+                val card = CreditCardRepository.getCreditCardById(id ?: "")
+                VaultRepository.keepActiveVaultOrChangeToAllVaults(card?.vaultId ?: "-1")
+            }
+            "NOTES" -> {
+                switchFragment("Notes")
+                val intent = Intent(this, NoteActivity::class.java)
+                intent.putExtra("note_id", id)
+                startActivityForResult(intent,0)
+                val notes = NotesRepository.getNoteById(id ?: "")
+                VaultRepository.keepActiveVaultOrChangeToAllVaults(notes?.vaultId ?: "-1")
+            }
+        }
+
         for (fragment in supportFragmentManager.fragments) {
             fragment.onActivityResult(requestCode, resultCode, data)
         }
@@ -356,7 +394,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (toggle.onOptionsItemSelected(item)) {
             return true
         } else if (item?.itemId == R.id.app_bar_search) {
-            startActivity(Intent(this, SearchActivity::class.java))
+            startActivityForResult(Intent(this, SearchActivity::class.java), 10)
         }
         return super.onOptionsItemSelected(item)
     }
