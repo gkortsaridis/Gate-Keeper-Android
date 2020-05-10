@@ -35,6 +35,7 @@ import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
 import gr.gkortsaridis.gatekeeper.UI.Logins.LoginsFragment
 import gr.gkortsaridis.gatekeeper.UI.Notes.NotesFragment
 import gr.gkortsaridis.gatekeeper.UI.PasswordGenerator.PasswordGeneratorFragment
+import gr.gkortsaridis.gatekeeper.UI.Search.SearchActivity
 import gr.gkortsaridis.gatekeeper.UI.Settings.SettingsFragment
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import io.noties.tumbleweed.Timeline
@@ -207,6 +208,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         switchFragment("Passwords")
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.search_menu, menu)
+        return true
+    }
+
     private fun displayFragment(fragment: Fragment?){
         if (fragment != null) {
             supportFragmentManager.beginTransaction().replace(contentFrame.id, fragment, "ContentFragment").commit()
@@ -349,6 +355,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (toggle.onOptionsItemSelected(item)) {
             return true
+        } else if (item?.itemId == R.id.app_bar_search) {
+            startActivity(Intent(this, SearchActivity::class.java))
         }
         return super.onOptionsItemSelected(item)
     }
