@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true">
+
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:elevation="4dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="32dp"
+        app:shape_roundRect_bottomLeftRadius="10dp"
+        app:shape_roundRect_topLeftRadius="10dp"
+        app:shape_roundRect_bottomRightRadius="10dp"
+        app:shape_roundRect_topRightRadius="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:clickable="true"
+            android:id="@+id/click_container"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:id="@+id/img_container"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="16dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/item_vault"
+                        android:background="@color/vault_red_1"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:id="@+id/item_type"
+                    android:tintMode="src_atop"
+                    android:tint="@color/mate_black"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="24dp"
+                    android:padding="4dp"
+                    android:src="@drawable/question_mark"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toRightOf="@+id/img_container"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="12dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/item_name"
+                    android:textColor="@color/mate_black"
+                    android:singleLine="true"
+                    android:text="Name"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/item_subtitle"
+                    android:text="Username"
+                    android:singleLine="true"
+                    android:textColor="#5C5C5C"
+                    android:textSize="17sp"
+                    android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+</RelativeLayout>
+
+

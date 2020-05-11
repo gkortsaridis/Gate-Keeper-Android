@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -28,14 +29,17 @@ import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.android.material.navigation.NavigationView
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.UI.About.AboutFragment
 import gr.gkortsaridis.gatekeeper.UI.Account.MyAccountFragment
 import gr.gkortsaridis.gatekeeper.UI.Authentication.AuthenticationBaseActivity
+import gr.gkortsaridis.gatekeeper.UI.Cards.CardEditActivity
 import gr.gkortsaridis.gatekeeper.UI.Cards.CardsFragment
+import gr.gkortsaridis.gatekeeper.UI.Logins.CreateLoginActivity
 import gr.gkortsaridis.gatekeeper.UI.Logins.LoginsFragment
+import gr.gkortsaridis.gatekeeper.UI.Notes.NoteActivity
 import gr.gkortsaridis.gatekeeper.UI.Notes.NotesFragment
 import gr.gkortsaridis.gatekeeper.UI.PasswordGenerator.PasswordGeneratorFragment
+import gr.gkortsaridis.gatekeeper.UI.Search.SearchActivity
 import gr.gkortsaridis.gatekeeper.UI.Settings.SettingsFragment
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import io.noties.tumbleweed.Timeline
@@ -43,7 +47,6 @@ import io.noties.tumbleweed.Tween
 import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
 import io.noties.tumbleweed.android.types.Scale
-import kotlinx.android.synthetic.main.fancy_side_menu.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -214,6 +217,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         plus_crown.visibility = if(AuthRepository.isPlusUser()) View.VISIBLE else View.GONE
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.search_menu, menu)
+        return true
+    }
+
     private fun displayFragment(fragment: Fragment?){
         if (fragment != null) {
             supportFragmentManager.beginTransaction().replace(contentFrame.id, fragment, "ContentFragment").commit()
@@ -307,6 +315,35 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        val id = data?.getStringExtra("ID")
+        val action = data?.getStringExtra("ACTION")
+        when (action) {
+            "LOGINS" -> {
+                switchFragment("Passwords")
+                val intent = Intent(this, CreateLoginActivity::class.java)
+                intent.putExtra("login_id",id)
+                startActivity(intent)
+                val login = LoginsRepository.getLoginById(id ?: "")
+                VaultRepository.keepActiveVaultOrChangeToAllVaults(login?.vault_id ?: "-1")
+            }
+            "CARDS" -> {
+                switchFragment("Cards")
+                val intent = Intent(this, CardEditActivity::class.java)
+                intent.putExtra("card_id", id)
+                startActivity(intent)
+                val card = CreditCardRepository.getCreditCardById(id ?: "")
+                VaultRepository.keepActiveVaultOrChangeToAllVaults(card?.vaultId ?: "-1")
+            }
+            "NOTES" -> {
+                switchFragment("Notes")
+                val intent = Intent(this, NoteActivity::class.java)
+                intent.putExtra("note_id", id)
+                startActivityForResult(intent,0)
+                val notes = NotesRepository.getNoteById(id ?: "")
+                VaultRepository.keepActiveVaultOrChangeToAllVaults(notes?.vaultId ?: "-1")
+            }
+        }
+
         for (fragment in supportFragmentManager.fragments) {
             fragment.onActivityResult(requestCode, resultCode, data)
         }
@@ -356,6 +393,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (toggle.onOptionsItemSelected(item)) {
             return true
+        } else if (item?.itemId == R.id.app_bar_search) {
+            startActivityForResult(Intent(this, SearchActivity::class.java), 10)
         }
         return super.onOptionsItemSelected(item)
     }
