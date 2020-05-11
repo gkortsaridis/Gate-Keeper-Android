@@ -11,10 +11,13 @@ import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.soloader.SoLoader
 import com.google.android.gms.ads.MobileAds
+import com.mixpanel.android.mpmetrics.MixpanelAPI
+import com.revenuecat.purchases.Purchases
 import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.Entities.UserExtraData
 import gr.gkortsaridis.gatekeeper.Entities.UserLog
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
+
 
 class GateKeeperApplication : Application() {
 
@@ -39,6 +42,22 @@ class GateKeeperApplication : Application() {
             client.start()
         }
 
+        //Setup RevenueCat SDK
+        Purchases.debugLogsEnabled = true
+        Purchases.configure(this, "SxHzqGfKRGokuExLiJOYdElknSsFMtwB")
+
+        /*Purchases.sharedInstance.getOfferingsWith(
+            onError = { error ->
+                Log.i("REVENUECAT ERROR", error.toString())
+                /* Optional error handling */
+            },
+            onSuccess = { offerings ->
+                offerings.current?.availablePackages?.takeUnless { it.isNullOrEmpty() }?.let {
+                    // Display packages for sale
+                    Log.i("REVENUECAT SUCCESS", it.toString())
+                }
+            }
+        )*/
 
     }
 

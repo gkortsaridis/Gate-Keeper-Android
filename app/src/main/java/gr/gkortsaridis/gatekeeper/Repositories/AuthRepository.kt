@@ -4,8 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
+import com.revenuecat.purchases.Purchases
+import com.revenuecat.purchases.identifyWith
 import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
@@ -110,6 +113,11 @@ object AuthRepository {
     fun setApplicationUser(userId: String) {
         GateKeeperApplication.user_id = userId
         DataRepository.savedUser = userId
+
+        Purchases.sharedInstance.identifyWith(userId) { purchaserInfo ->
+            // purchaserInfo updated for my_app_user_id
+            Log.i("REVENUE CAT PURCHASER INFO", purchaserInfo.toString())
+        }
     }
 
     fun proceedLoggedIn(activity: Activity) {
