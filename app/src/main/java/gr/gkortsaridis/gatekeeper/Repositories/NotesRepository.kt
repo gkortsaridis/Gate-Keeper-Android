@@ -1,7 +1,6 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.annotation.SuppressLint
-import com.google.firebase.firestore.FirebaseFirestore
 import gr.gkortsaridis.gatekeeper.Database.GatekeeperDatabase
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Note

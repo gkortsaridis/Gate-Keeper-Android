@@ -1,22 +1,15 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
-import com.google.firebase.firestore.FirebaseFirestore
 import gr.gkortsaridis.gatekeeper.Database.GatekeeperDatabase
-import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
-import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 
 @SuppressLint("CheckResult")

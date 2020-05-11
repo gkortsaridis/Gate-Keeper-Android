@@ -5,25 +5,18 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
-import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import gr.gkortsaridis.gatekeeper.Database.AppExecutors
 import gr.gkortsaridis.gatekeeper.Database.GatekeeperDatabase
-import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Login
-import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginUpdateListener
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import io.reactivex.schedulers.Schedulers
-import kotlin.math.log
 
 @SuppressLint("CheckResult")
 object LoginsRepository {

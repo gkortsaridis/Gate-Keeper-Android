@@ -5,30 +5,25 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ResolveInfo
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.view.WindowManager
-import android.widget.*
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.core.widget.addTextChangedListener
-import com.github.florent37.shapeofview.shapes.ArcView
-import com.google.firebase.Timestamp
 import com.maxpilotto.actionedittext.ActionEditText
 import com.maxpilotto.actionedittext.actions.Icon
 import com.maxpilotto.actionedittext.actions.Toggle
 import gr.gkortsaridis.gatekeeper.Database.AppExecutors
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
-import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginUpdateListener
@@ -44,10 +39,6 @@ import io.noties.tumbleweed.Tween
 import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
 import kotlinx.android.synthetic.main.activity_create_login.*
-import kotlinx.android.synthetic.main.activity_create_login.vault_icon
-import kotlinx.android.synthetic.main.activity_create_login.vault_name
-import kotlinx.android.synthetic.main.activity_create_login.vault_view
-import kotlinx.android.synthetic.main.fragment_logins.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 
 

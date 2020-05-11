@@ -5,11 +5,8 @@ import android.os.Build
 import android.provider.Settings.Secure
 import android.telephony.TelephonyManager
 import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestore
 import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
-import gr.gkortsaridis.gatekeeper.Interfaces.DeviceModifyListener
-import gr.gkortsaridis.gatekeeper.Interfaces.DevicesRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
 import java.sql.Timestamp
 
