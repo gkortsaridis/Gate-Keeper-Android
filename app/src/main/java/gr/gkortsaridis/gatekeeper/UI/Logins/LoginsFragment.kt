@@ -119,12 +119,12 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         val sortType = DataRepository.loginSortType
         if (sortType == LOGIN_SORT_TYPE_NAME) {
             logins.sortBy { it.name.toLowerCase() }
-            logins_sort_type.text = "Sort by name"
+            logins_sort_type?.text = "Sort by name"
         }
         else {
             logins.sortBy { it.date_modified }
             logins.reverse()
-            logins_sort_type.text = "Sort by modified date"
+            logins_sort_type?.text = "Sort by modified date"
         }
 
         if (loginsAdapter == null) {
@@ -139,17 +139,17 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
 
         loginsAdapter?.updateLogins(logins)
 
-        login_cnt.text = logins.size.toString()
+        login_cnt?.text = logins.size.toString()
 
         val vault = VaultRepository.getLastActiveVault()
-        vault_name.text = vault.name
-        vault_view.setBackgroundColor(resources.getColor(vault.getVaultColorResource()))
-        vault_name.setTextColor(resources.getColor(vault.getVaultColorAccent()))
-        vault_icon.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
+        vault_name?.text = vault.name
+        vault_view?.setBackgroundColor(resources.getColor(vault.getVaultColorResource()))
+        vault_name?.setTextColor(resources.getColor(vault.getVaultColorAccent()))
+        vault_icon?.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
 
-        no_items_view.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
-        fab.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
-        logins_counter_container.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
+        no_items_view?.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
+        fab?.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
+        logins_counter_container?.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
     }
 
     private fun checkForAutofill() {

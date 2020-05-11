@@ -26,8 +26,8 @@ android {
         minSdkVersion 24
         multiDexEnabled true
         targetSdkVersion 29
-        versionCode 12
-        versionName "0.12"
+        versionCode 13
+        versionName "0.13"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -37,9 +37,11 @@ android {
 
             signingConfig signingConfigs.release
             resValue 'string', 'banner_ad_unit_id', '"ca-app-pub-4492385836648698/2722588186"'
+            resValue("bool", "FIREBASE_CRASH_ENABLED", "true")
         }
         debug {
             resValue 'string', 'banner_ad_unit_id', '"ca-app-pub-3940256099942544/6300978111"'
+            resValue("bool", "FIREBASE_CRASH_ENABLED", "false")
         }
     }
 
@@ -94,18 +96,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.biometric:biometric:1.0.1'
-    implementation 'com.google.android.gms:play-services-ads:18.3.0'
+    implementation 'com.google.android.gms:play-services-ads:19.1.0'
 
     //Billing
-    implementation 'com.android.billingclient:billing:2.1.0'
-    implementation 'com.android.billingclient:billing-ktx:2.1.0'
+    implementation 'com.android.billingclient:billing:2.2.0'
+    implementation 'com.android.billingclient:billing-ktx:2.2.0'
 
     //Firebase
-    implementation 'com.google.firebase:firebase-analytics:17.2.2'
-    implementation 'com.google.firebase:firebase-auth:19.2.0'
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.google.firebase:firebase-firestore:21.4.0'
-    implementation 'com.google.firebase:firebase-perf:19.0.5'
+    implementation 'com.google.firebase:firebase-analytics:17.4.1'
+    implementation 'com.google.firebase:firebase-perf:19.0.7'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
     implementation 'com.firebaseui:firebase-ui-storage:4.3.2'

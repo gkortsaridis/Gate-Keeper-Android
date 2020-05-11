@@ -113,8 +113,8 @@ class LoadingActivity : AppCompatActivity() {
                 }
             )
 
-        val name = GateKeeperApplication.user?.displayName ?: ""
-        welcome_message.text = "Welcome back\n$name"
+        //val name = GateKeeperApplication.user?.displayName ?: ""
+        //welcome_message.text = "Welcome back\n$name"
 
         Handler().postDelayed({
             timerOk = true
