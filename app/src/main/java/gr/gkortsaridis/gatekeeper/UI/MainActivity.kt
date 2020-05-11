@@ -28,6 +28,7 @@ import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.android.material.navigation.NavigationView
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.UI.About.AboutFragment
 import gr.gkortsaridis.gatekeeper.UI.Account.MyAccountFragment
 import gr.gkortsaridis.gatekeeper.UI.Authentication.AuthenticationBaseActivity
@@ -42,6 +43,7 @@ import io.noties.tumbleweed.Tween
 import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
 import io.noties.tumbleweed.android.types.Scale
+import kotlinx.android.synthetic.main.fancy_side_menu.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -205,6 +207,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val userName = GateKeeperApplication.extraData?.userFullName ?: GateKeeperApplication.extraData?.userEmail
         navName.text = userName
         switchFragment("Passwords")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        plus_crown.visibility = if(AuthRepository.isPlusUser()) View.VISIBLE else View.GONE
     }
 
     private fun displayFragment(fragment: Fragment?){

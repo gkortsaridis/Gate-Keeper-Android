@@ -12,6 +12,7 @@ import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPl
 import com.facebook.soloader.SoLoader
 import com.google.android.gms.ads.MobileAds
 import com.mixpanel.android.mpmetrics.MixpanelAPI
+import com.revenuecat.purchases.PurchaserInfo
 import com.revenuecat.purchases.Purchases
 import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.Entities.UserExtraData
@@ -45,20 +46,6 @@ class GateKeeperApplication : Application() {
         //Setup RevenueCat SDK
         Purchases.debugLogsEnabled = true
         Purchases.configure(this, "SxHzqGfKRGokuExLiJOYdElknSsFMtwB")
-
-        /*Purchases.sharedInstance.getOfferingsWith(
-            onError = { error ->
-                Log.i("REVENUECAT ERROR", error.toString())
-                /* Optional error handling */
-            },
-            onSuccess = { offerings ->
-                offerings.current?.availablePackages?.takeUnless { it.isNullOrEmpty() }?.let {
-                    // Display packages for sale
-                    Log.i("REVENUECAT SUCCESS", it.toString())
-                }
-            }
-        )*/
-
     }
 
     companion object {
@@ -70,6 +57,7 @@ class GateKeeperApplication : Application() {
 
         var extraData: UserExtraData? = null
         var devices: ArrayList<Device>? = null
+        var purchaserInfo: PurchaserInfo? = null
         var userLog: ArrayList<UserLog> = arrayListOf()
     }
 

@@ -11,6 +11,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.billingclient.api.SkuDetails
+import com.revenuecat.purchases.Package
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.VaultColor
@@ -21,7 +22,7 @@ import kotlin.math.roundToInt
 
 class PlansRecyclerViewAdapter(
     private val context: Context,
-    private var skus: ArrayList<SkuDetails>,
+    private var packages: ArrayList<Package>,
     private val listener: InAppPurchasesListener?): RecyclerView.Adapter<PlansRecyclerViewAdapter.VaultViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VaultViewHolder {
@@ -30,16 +31,16 @@ class PlansRecyclerViewAdapter(
     }
 
     override fun getItemCount(): Int {
-        return skus.size
+        return packages.size
     }
 
     override fun onBindViewHolder(holder: VaultViewHolder, position: Int) {
-        val skuItem = skus[position]
-        holder.bindSku(context, skuItem, listener)
+        val packageItem = packages[position]
+        holder.bindSku(context, packageItem, listener)
     }
 
-    fun updateSkus(skus: ArrayList<SkuDetails>) {
-        this.skus = skus
+    fun updatePackages(packages: ArrayList<Package>) {
+        this.packages = packages
         notifyDataSetChanged()
     }
 
@@ -65,9 +66,9 @@ class PlansRecyclerViewAdapter(
             planName = v.findViewById(R.id.plan_name)
         }
 
-        fun bindSku(context: Context, sku: SkuDetails, listener: InAppPurchasesListener?){
+        fun bindSku(context: Context, packageItem: Package, listener: InAppPurchasesListener?){
             when {
-                sku.price == "Free" -> {
+                /*sku.price == "Free" -> {
                     planName?.text = "GateKeeper\nBasic"
                     title?.text = sku.title
                     price?.text = sku.price
@@ -103,10 +104,10 @@ class PlansRecyclerViewAdapter(
                     currency?.text = priceCurrency
                     description?.text = sku.description
                     title?.text = sku.title
-                }
+                }*/
             }
 
-            buyNow?.setOnClickListener { listener?.onSubscriptionBuyTouched(sku) }
+            buyNow?.setOnClickListener { listener?.onSubscriptionBuyTouched(packageItem) }
         }
 
     }

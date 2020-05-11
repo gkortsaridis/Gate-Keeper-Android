@@ -116,12 +116,17 @@ object AuthRepository {
 
         Purchases.sharedInstance.identifyWith(userId) { purchaserInfo ->
             // purchaserInfo updated for my_app_user_id
+            GateKeeperApplication.purchaserInfo = purchaserInfo
             Log.i("REVENUE CAT PURCHASER INFO", purchaserInfo.toString())
         }
     }
 
     fun proceedLoggedIn(activity: Activity) {
         activity.startActivity(Intent(activity, LoadingActivity::class.java))
+    }
+
+    fun isPlusUser(): Boolean {
+        return GateKeeperApplication.purchaserInfo?.entitlements?.get("Plus")?.isActive == true
     }
 
     fun saveCredentials(email: String, password: String): Boolean {

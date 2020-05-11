@@ -32,6 +32,13 @@
 
                 </com.github.florent37.shapeofview.shapes.DiagonalView>
             </RelativeLayout>
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/crowns"
+                android:id="@+id/plus_crown"/>
             <com.github.florent37.shapeofview.shapes.CircleView
                 android:layout_width="100dp"
                 android:layout_height="100dp"

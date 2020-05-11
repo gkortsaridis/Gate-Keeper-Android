@@ -1,7 +1,7 @@
 package gr.gkortsaridis.gatekeeper.Interfaces
 
-import com.android.billingclient.api.SkuDetails
+import com.revenuecat.purchases.Package
 
 interface InAppPurchasesListener {
-    fun onSubscriptionBuyTouched(skuDetails: SkuDetails)
+    fun onSubscriptionBuyTouched(packageItem: Package)
 }
