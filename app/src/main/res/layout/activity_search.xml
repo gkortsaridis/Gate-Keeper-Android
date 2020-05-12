@@ -12,16 +12,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/toolbar"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:contentInsetStartWithNavigation="56dp"
+        app:contentInsetStart="0dp"
         android:background="@color/colorPrimaryDark">
 
-        <EditText
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search"
-            android:id="@+id/search_et"
             android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:textColorHint="@color/white" />
+            app:startIconDrawable="@drawable/search_start_drawable"
+            app:startIconTintMode="src_atop"
+            app:startIconTint="@color/white"
+            android:textColorHint="#c1c2c4"
+            android:theme="@style/WhiteEditText"
+            app:endIconMode="clear_text">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search"
+                android:textColor="@color/white"
+                android:id="@+id/search_et"
+                android:textColorHint="@color/white" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     </androidx.appcompat.widget.Toolbar>
 

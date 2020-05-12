@@ -31,6 +31,11 @@ class SearchActivity : AppCompatActivity(), SearchResultClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
         adapter = SearchResultsRecyclerViewAdapter(this, ArrayList(), this)
         search_results_rv.layoutManager = LinearLayoutManager(this)
         search_results_rv.adapter = adapter
