@@ -188,6 +188,9 @@ dependencies {
 
     //Mixpanel analytics
     implementation 'com.mixpanel.android:mixpanel-android:5.8.3'
+
+    //Bugsnag Crashlytics
+    implementation "com.bugsnag:bugsnag-android:5.0.0"
 }
 
 apply plugin: 'com.google.gms.google-services'

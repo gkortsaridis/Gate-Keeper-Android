@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper
 
 import android.app.Application
+import com.bugsnag.android.Bugsnag
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
@@ -24,6 +25,7 @@ class GateKeeperApplication : Application() {
         user_id = DataRepository.savedUser
         MobileAds.initialize(this, admobAppID)
 
+        Bugsnag.start(this)
         networkFlipperPlugin = NetworkFlipperPlugin()
 
         SoLoader.init(this, false)
