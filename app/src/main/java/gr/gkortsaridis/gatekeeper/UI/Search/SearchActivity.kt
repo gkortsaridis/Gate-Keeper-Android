@@ -48,6 +48,7 @@ class SearchActivity : AppCompatActivity(), SearchResultClickListener {
 
     private fun updateUI(searchStr: String) {
         if (searchStr.isNotBlank()) {
+            no_search_view.visibility = View.GONE
             search_results_rv.visibility = View.VISIBLE
             search_counter_container.visibility = View.VISIBLE
 
@@ -75,11 +76,21 @@ class SearchActivity : AppCompatActivity(), SearchResultClickListener {
             for (login in filteredLogins) { searchResults.add(SearchResult(SearchResultType.LOGIN, login = login)) }
             for (card  in filteredCards)  { searchResults.add(SearchResult(SearchResultType.CARD, card = card))}
             for (note  in filteredNotes)  { searchResults.add(SearchResult(SearchResultType.NOTE, note = note))}
+            if (searchResults.isNotEmpty()) {
+                no_items_view.visibility = View.GONE
+                no_search_view.visibility = View.GONE
+                search_results_cnt.text = searchResults.size.toString()
+                adapter?.updateSearchResults(searchStr, searchResults)
+            } else {
+                no_items_view.visibility = View.VISIBLE
+                no_search_view.visibility = View.GONE
+                search_results_rv.visibility = View.GONE
+                search_counter_container.visibility = View.GONE
+            }
 
-            search_results_cnt.text = searchResults.size.toString()
-
-            adapter?.updateSearchResults(searchStr, searchResults)
         } else {
+            no_search_view.visibility = View.VISIBLE
+            no_items_view.visibility = View.GONE
             search_results_rv.visibility = View.GONE
             search_counter_container.visibility = View.GONE
         }
