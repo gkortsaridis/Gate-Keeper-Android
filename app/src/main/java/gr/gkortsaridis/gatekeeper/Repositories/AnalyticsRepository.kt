@@ -17,11 +17,11 @@ object AnalyticsRepository {
 
     //Content Analytics
     const val LOGINS_LIST = "LOGINS LIST"
-    const val CARDS_LIST = "CARDS_LIST"
-    const val NOTES_LIST = "NOTES_LIST"
-    const val LOGIN_INFO = "LOGIN_INFO"
-    const val CARD_INFO = "CARD_INFO"
-    const val NOTE_INFO = "NOTE_INFO"
+    const val CARDS_LIST = "CARDS LIST"
+    const val NOTES_LIST = "NOTES LIST"
+    const val LOGIN_INFO = "LOGIN INFO"
+    const val CARD_INFO = "CARD INFO"
+    const val NOTE_INFO = "NOTE INFO"
     const val ACCOUNT_PAGE = "ACCOUNT PAGE"
     const val PASSWORD_GENERATOR = "PASSWORD GENERATOR"
     const val SETTINGS_PAGE = "SETTINGS PAGE"
