@@ -8,9 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import org.json.JSONObject
 
 
 class SignInActivity : AppCompatActivity(), SignInListener {
@@ -56,6 +58,10 @@ class SignInActivity : AppCompatActivity(), SignInListener {
     override fun onSignInComplete(userId: String) {
         val biometricManager = BiometricManager.from(this)
 
+        val props = JSONObject()
+        props.put(AnalyticsRepository.SIGN_IN_TYPE, AnalyticsRepository.SIGN_IN_PASS)
+        AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN, props)
+
         if (AuthRepository.getPreferredAuthType() == AuthRepository.SIGN_IN_NOT_SET
             && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
             AlertDialog.Builder(this)
@@ -78,6 +84,8 @@ class SignInActivity : AppCompatActivity(), SignInListener {
 
     override fun onSignInError(errorCode: Int, errorMsg: String) {
         Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show()
+        AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_ERROR)
+
     }
 
     private fun proceedLogin(user: String) {

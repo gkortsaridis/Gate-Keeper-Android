@@ -29,6 +29,7 @@ import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardUpdateListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
@@ -60,6 +61,8 @@ class CardEditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_card_edit)
+
+        AnalyticsRepository.trackEvent(AnalyticsRepository.CARD_INFO)
 
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
@@ -269,9 +272,18 @@ class CardEditActivity : AppCompatActivity() {
                 override fun onCardDeleted() {
                     CreditCardRepository.removeLocalCard(card)
                     //GateKeeperApplication.cards.remove(card)
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.CARD_DELETE)
                     viewDialog.hideDialog()
                     dialog.dismiss()
                     Toast.makeText(activity, getString(R.string.card_deleted), Toast.LENGTH_SHORT).show()
+                    activity.finish()
+                }
+
+                override fun onCardDeleteError(errorCode: Int, errorMsg: String) {
+                    super.onCardDeleteError(errorCode, errorMsg)
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.CARD_DELETE_ERROR)
+                    viewDialog.hideDialog()
+                    dialog.dismiss()
                     activity.finish()
                 }
             })
@@ -301,9 +313,17 @@ class CardEditActivity : AppCompatActivity() {
             override fun onCardUpdated(card: CreditCard) {
                 viewDialog.hideDialog()
                 CreditCardRepository.updateLocalCard(card)
+                AnalyticsRepository.trackEvent(AnalyticsRepository.CARD_UPDATE)
                 //GateKeeperApplication.cards.replaceAll { if (it.id == card.id) card else it }
                 activity.finish()
                 Toast.makeText(activity, getString(R.string.card_updated), Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onCardUpdateError(errorCode: Int, errorMsg: String) {
+                super.onCardUpdateError(errorCode, errorMsg)
+                viewDialog.hideDialog()
+                AnalyticsRepository.trackEvent(AnalyticsRepository.CARD_UPDATE_ERROR)
+                activity.finish()
             }
         })
 
@@ -326,8 +346,16 @@ class CardEditActivity : AppCompatActivity() {
             override fun onCreditCardCreated(card: CreditCard) {
                 viewDialog.hideDialog()
                 CreditCardRepository.addLocalCard(card)
+                AnalyticsRepository.trackEvent(AnalyticsRepository.CARD_CREATE)
                 //GateKeeperApplication.cards.add(card)
                 Toast.makeText(activity, getString(R.string.card_created), Toast.LENGTH_SHORT).show()
+                activity.finish()
+            }
+
+            override fun onCreditCardCreateError(errorCode: Int, errorMsg: String) {
+                super.onCreditCardCreateError(errorCode, errorMsg)
+                viewDialog.hideDialog()
+                AnalyticsRepository.trackEvent(AnalyticsRepository.CARD_CREATE_ERROR)
                 activity.finish()
             }
         })

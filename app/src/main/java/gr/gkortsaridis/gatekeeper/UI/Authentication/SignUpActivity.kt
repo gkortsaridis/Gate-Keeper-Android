@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 
@@ -62,6 +63,7 @@ class SignUpActivity : AppCompatActivity() {
                     override fun onVaultSetupComplete() { finalizeSetup() }
                     override fun onVaultSetupError(errorCode: Int, errorMsg: String) { showSetupError(errorMsg) }
                 })
+                AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_UP)
             }
             override fun onSignUpError(errorCode: Int, errorMsg: String) { showSetupError(errorMsg) }
         })

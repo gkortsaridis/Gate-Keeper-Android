@@ -10,7 +10,9 @@ import androidx.core.content.ContextCompat
 import gr.gkortsaridis.gatekeeper.Entities.UserCredentials
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import org.json.JSONObject
 
 class BioAuthenticationActivity : AppCompatActivity() {
 
@@ -53,10 +55,14 @@ class BioAuthenticationActivity : AppCompatActivity() {
                         override fun onSignInComplete(userId: String) {
                             AuthRepository.setApplicationUser(userId)
                             AuthRepository.proceedLoggedIn(activity)
+                            val props = JSONObject()
+                            props.put(AnalyticsRepository.SIGN_IN_TYPE, AnalyticsRepository.SIGN_IN_BIO)
+                            AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN, props)
                         }
 
                         override fun onSignInError(errorCode: Int, errorMsg: String) {
                             Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
+                            AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_ERROR)
                         }
                     })
                 }

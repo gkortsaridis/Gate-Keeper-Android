@@ -3,6 +3,7 @@
     package="gr.gkortsaridis.gatekeeper">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
@@ -50,6 +51,10 @@
         <activity
             android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
             android:exported="true" />
+
+        <meta-data
+            android:name="com.bugsnag.android.API_KEY"
+            android:value="c7d1652be5f2c276e8d359d44e93842d"/>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

@@ -12,8 +12,10 @@ import com.andrognito.pinlockview.PinLockListener
 import com.andrognito.pinlockview.PinLockView
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
+import org.json.JSONObject
 
 class PinAuthenticationActivity : AppCompatActivity() {
 
@@ -67,10 +69,15 @@ class PinAuthenticationActivity : AppCompatActivity() {
                                 override fun onSignInComplete(userId: String) {
                                     AuthRepository.setApplicationUser(userId)
                                     AuthRepository.proceedLoggedIn(activity)
+                                    val props = JSONObject()
+                                    props.put(AnalyticsRepository.SIGN_IN_TYPE, AnalyticsRepository.SIGN_IN_PIN)
+                                    AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN, props)
+
                                 }
 
                                 override fun onSignInError(errorCode: Int, errorMsg: String) {
                                     Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
+                                    AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_ERROR)
                                 }
                             })
                     } else {

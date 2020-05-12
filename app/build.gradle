@@ -186,9 +186,14 @@ dependencies {
     implementation "net.zetetic:android-database-sqlcipher:4.3.0"
     implementation "androidx.sqlite:sqlite:2.1.0"
 
+    //RevenueCat in-app purchases
     implementation 'com.revenuecat.purchases:purchases:3.1.0'
 
+    //Mixpanel analytics
     implementation 'com.mixpanel.android:mixpanel-android:5.8.3'
+
+    //Bugsnag Crashlytics
+    implementation "com.bugsnag:bugsnag-android:5.0.0"
 }
 
 apply plugin: 'com.google.gms.google-services'

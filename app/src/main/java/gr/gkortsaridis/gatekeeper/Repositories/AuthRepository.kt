@@ -114,6 +114,10 @@ object AuthRepository {
         GateKeeperApplication.user_id = userId
         DataRepository.savedUser = userId
 
+        //Analytics User identity
+        AnalyticsRepository.identifyUser(userId)
+
+        //RevenueCat User identity
         Purchases.sharedInstance.identifyWith(userId) { purchaserInfo ->
             // purchaserInfo updated for my_app_user_id
             GateKeeperApplication.purchaserInfo = purchaserInfo
