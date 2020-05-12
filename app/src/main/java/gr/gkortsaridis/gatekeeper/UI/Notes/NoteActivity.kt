@@ -20,6 +20,7 @@ import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteUpdateListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
@@ -44,6 +45,8 @@ class NoteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
+
+        AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_INFO)
 
         val noteId = intent.getStringExtra("note_id")!!
         if (noteId != "-1") {
@@ -152,12 +155,15 @@ class NoteActivity : AppCompatActivity() {
                 override fun onNoteDeleted() {
                     NotesRepository.removeLocalNote(note)
                     //GateKeeperApplication.notes.remove(note)
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_DELETE)
+
                     viewDialog.hideDialog()
                     finishWithResult()
                 }
 
                 override fun onNoteDeleteError(errorCode: Int, errorMsg: String) {
                     NotesRepository.removeLocalNote(note)
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_DELETE_ERROR)
                     //GateKeeperApplication.notes.remove(note)
                     viewDialog.hideDialog()
                 }
@@ -188,10 +194,13 @@ class NoteActivity : AppCompatActivity() {
                         NotesRepository.updateLocalNote(note)
                         //GateKeeperApplication.notes.replaceAll { if (it.id == note.id) note else it }
                         viewDialog.hideDialog()
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_UPDATE)
+
                         finishWithResult()
                     }
 
                     override fun onNoteUpdateError(errorCode: Int, errorMsg: String) {
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_UPDATE_ERROR)
                         viewDialog.hideDialog()
                         finishWithResult()
                     }
@@ -210,12 +219,14 @@ class NoteActivity : AppCompatActivity() {
                     override fun onNoteCreated(note: Note) {
                         NotesRepository.addLocalNote(note)
                         //GateKeeperApplication.notes.add(note)
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_CREATE)
                         viewDialog.hideDialog()
                         finishWithResult()
                     }
 
                     override fun onNoteCreateError(errorCode: Int, errorMsg: String) {
                         NotesRepository.addLocalNote(note)
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_CREATE_ERROR)
                         //GateKeeperApplication.notes.add(note)
                         viewDialog.hideDialog()
                         finishWithResult()

@@ -186,6 +186,8 @@ dependencies {
     implementation "net.zetetic:android-database-sqlcipher:4.3.0"
     implementation "androidx.sqlite:sqlite:2.1.0"
 
+    //Mixpanel analytics
+    implementation 'com.mixpanel.android:mixpanel-android:5.8.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

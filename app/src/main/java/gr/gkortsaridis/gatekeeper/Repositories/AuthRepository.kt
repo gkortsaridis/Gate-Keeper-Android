@@ -110,6 +110,7 @@ object AuthRepository {
     fun setApplicationUser(userId: String) {
         GateKeeperApplication.user_id = userId
         DataRepository.savedUser = userId
+        AnalyticsRepository.identifyUser(userId)
     }
 
     fun proceedLoggedIn(activity: Activity) {

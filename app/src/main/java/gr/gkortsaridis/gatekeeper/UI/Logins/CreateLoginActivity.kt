@@ -28,6 +28,7 @@ import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginUpdateListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
@@ -54,6 +55,8 @@ class CreateLoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_login)
+
+        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_INFO)
 
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
@@ -226,6 +229,7 @@ class CreateLoginActivity : AppCompatActivity() {
                     AppExecutors.instance.diskIO.execute {
                         LoginsRepository.updateLocalLogin(login)
                         viewDialog.hideDialog()
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_UPDATE)
                         val data = Intent()
                         setResult(LoginsRepository.createLoginSuccess, data)
                         finish()
@@ -236,6 +240,7 @@ class CreateLoginActivity : AppCompatActivity() {
                     viewDialog.hideDialog()
                     val data = Intent()
                     setResult(LoginsRepository.createLoginError, data)
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_UPDATE_ERROR)
                     finish()
                 }
             })
@@ -266,6 +271,7 @@ class CreateLoginActivity : AppCompatActivity() {
                     viewDialog.hideDialog()
                     LoginsRepository.addLocalLogin(login)
                     //LoginsRepository.allLogins.add(login)
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_CREATE)
                     val data = Intent()
                     setResult(LoginsRepository.createLoginSuccess, data)
                     finish()
@@ -273,6 +279,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
                 override fun onLoginCreateError(errorCode: Int, errorMsg: String) {
                     viewDialog.hideDialog()
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_CREATE_ERROR)
                     Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
                     val data = Intent()
                     setResult(LoginsRepository.createLoginError, data)
@@ -291,6 +298,8 @@ class CreateLoginActivity : AppCompatActivity() {
         LoginsRepository.deleteLogin(login!!, object: LoginDeleteListener {
             override fun onLoginDeleted() {
                 LoginsRepository.removeLocalLogin(login)
+                AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_DELETE)
+
                 //LoginsRepository.allLogins.remove(login!!)
                 viewDialog.hideDialog()
                 val data = Intent()
@@ -300,6 +309,8 @@ class CreateLoginActivity : AppCompatActivity() {
 
             override fun onLoginDeleteError(errorCode: Int, errorMsg: String) {
                 viewDialog.hideDialog()
+                AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_DELETE_ERROR)
+
                 val data = Intent()
                 setResult(LoginsRepository.deleteLoginError, data)
                 Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()

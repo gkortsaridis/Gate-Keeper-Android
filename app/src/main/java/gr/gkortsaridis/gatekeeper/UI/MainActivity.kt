@@ -6,17 +6,12 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.DataSource
@@ -28,6 +23,7 @@ import com.github.florent37.shapeofview.shapes.RoundRectView
 import com.google.android.material.navigation.NavigationView
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.UI.About.AboutFragment
 import gr.gkortsaridis.gatekeeper.UI.Account.MyAccountFragment
 import gr.gkortsaridis.gatekeeper.UI.Authentication.AuthenticationBaseActivity
@@ -245,45 +241,53 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 navTextPasswords.typeface = Typeface.DEFAULT_BOLD
                 navContainerPasswords.setBackgroundColor(resources.getColor(R.color.colorPrimary))
                 //loginsFragment.animateFabIn()
+                AnalyticsRepository.trackEvent(AnalyticsRepository.LOGINS_LIST)
             }
             "Cards" -> {
                 fragmentToReplace = CardsFragment()
                 supportActionBar?.title = "Digital Wallet"
                 navTextCards.typeface = Typeface.DEFAULT_BOLD
                 navContainerCards.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+                AnalyticsRepository.trackEvent(AnalyticsRepository.CARDS_LIST)
             }
             "Notes" -> {
                 fragmentToReplace = NotesFragment()
                 supportActionBar?.title = "Secure Notes"
                 navTextNotes.typeface = Typeface.DEFAULT_BOLD
                 navContainerNotes.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+                AnalyticsRepository.trackEvent(AnalyticsRepository.NOTES_LIST)
             }
             "Account" -> {
                 fragmentToReplace = MyAccountFragment()
                 supportActionBar?.title = "My Account"
                 navTextAccount.typeface = Typeface.DEFAULT_BOLD
                 navContainerAccount.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+                AnalyticsRepository.trackEvent(AnalyticsRepository.ACCOUNT_PAGE)
             }
             "PasswordGenerator" -> {
                 fragmentToReplace = PasswordGeneratorFragment()
                 supportActionBar?.title = "Password Generator"
                 navTextPassGen.typeface = Typeface.DEFAULT_BOLD
                 navContainerPassGen.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+                AnalyticsRepository.trackEvent(AnalyticsRepository.PASSWORD_GENERATOR)
             }
             "Settings" -> {
                 fragmentToReplace = SettingsFragment()
                 supportActionBar?.title = "Settings"
                 navButtonSettings.setBackgroundColor(resources.getColor(R.color.colorPrimary))
                 navButtonSettings.setImageResource(R.drawable.settings_white)
+                AnalyticsRepository.trackEvent(AnalyticsRepository.SETTINGS_PAGE)
             }
             "About" -> {
                 fragmentToReplace = AboutFragment()
                 supportActionBar?.title = "About GateKeeper"
                 navButtonAbout.setBackgroundColor(resources.getColor(R.color.colorPrimary))
                 navButtonAbout.setImageResource(R.drawable.copyright_white)
+                AnalyticsRepository.trackEvent(AnalyticsRepository.ABOUT_PAGE)
             }
             "Logout" -> {
                 fragmentToReplace = null
+                AnalyticsRepository.trackEvent(AnalyticsRepository.LOGOUT)
             }
 
         }
@@ -293,6 +297,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else { logout() }
 
         drawer.closeDrawer(GravityCompat.START)
+    }
+
+    override fun onDestroy() {
+        AnalyticsRepository.flushEvents()
+        super.onDestroy()
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean { return true }
