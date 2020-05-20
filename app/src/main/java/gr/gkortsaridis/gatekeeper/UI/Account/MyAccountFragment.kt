@@ -23,6 +23,7 @@ import com.google.android.gms.ads.AdRequest
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
@@ -68,10 +69,12 @@ class MyAccountFragment : Fragment() {
     }
 
     private fun goToHistory() {
+        AnalyticsRepository.trackEvent(AnalyticsRepository.HISTORY_PAGE)
         startActivity(Intent(activity, AccountHistoryActivity::class.java))
     }
 
     private fun goToBilling() {
+        AnalyticsRepository.trackEvent(AnalyticsRepository.BILLING_PAGE)
         Toast.makeText(context, "Everything is free for now :)", Toast.LENGTH_SHORT).show()
         //context?.startActivity(Intent(activity, AccountStatusActivity::class.java))
     }
@@ -90,6 +93,7 @@ class MyAccountFragment : Fragment() {
                             GateKeeperApplication.extraData?.userEmail ?: "",
                             it.data.extraDataEncryptedData,
                             it.data.extraDataIv)
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.ACCOUNT_NAME_CHANGE)
                         Toast.makeText(activity, "Data successfully updated", Toast.LENGTH_SHORT).show()
                     }
                     else { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }
@@ -114,6 +118,7 @@ class MyAccountFragment : Fragment() {
                             it.data.extraDataIv)
 
                         displayUserImg()
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.ACCOUNT_ICON_CHANGE)
                         Toast.makeText(activity, "Img successfully updated", Toast.LENGTH_SHORT).show()
                     }
                     else { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }

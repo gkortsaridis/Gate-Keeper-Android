@@ -8,12 +8,10 @@ object AnalyticsRepository {
 
     //Auth Analytics
     const val SIGN_UP = "SIGN UP"
-    const val SIGN_IN = "SIGN IN"
+    const val SIGN_IN_PASS = "SIGN IN PASSWORD"
+    const val SIGN_IN_BIO = "SIGN IN BIO"
+    const val SIGN_IN_PIN = "SIGN IN PIN"
     const val SIGN_IN_ERROR = "SIGN IN ERROR"
-    const val SIGN_IN_TYPE = "SIGN IN TYPE"
-    const val SIGN_IN_PASS = "PASSWORD"
-    const val SIGN_IN_BIO = "BIO"
-    const val SIGN_IN_PIN = "PIN"
 
     //Content Analytics
     const val LOGINS_LIST = "LOGINS LIST"
@@ -25,6 +23,8 @@ object AnalyticsRepository {
     const val ACCOUNT_PAGE = "ACCOUNT PAGE"
     const val PASSWORD_GENERATOR = "PASSWORD GENERATOR"
     const val SETTINGS_PAGE = "SETTINGS PAGE"
+    const val HISTORY_PAGE = "HISTORY PAGE"
+    const val BILLING_PAGE = "BILLING PAGE"
     const val ABOUT_PAGE = "ABOUT PAGE"
     const val LOGOUT = "LOGOUT"
 
@@ -48,6 +48,12 @@ object AnalyticsRepository {
     const val NOTE_DELETE = "NOTE DELETE"
     const val NOTE_DELETE_ERROR = "NOTE_DELETE_ERROR"
 
+    //Actions Analytics
+    const val LOGIN_PASS_COPY = "LOGIN PASSWORD COPY"
+    const val LOGIN_USER_COPY = "LOGIN USERNAME COPY"
+    const val ACCOUNT_NAME_CHANGE = "ACCOUNT FULL NAME CHANGE"
+    const val ACCOUNT_ICON_CHANGE = "ACCOUNT ICON CHANGE"
+
     private const val MIXPANEL_TOKEN = "d16de22f59b56298aeac95a6c4458fae"
     private val mixpanel = MixpanelAPI.getInstance(GateKeeperApplication.instance.applicationContext, MIXPANEL_TOKEN)
 
@@ -59,6 +65,19 @@ object AnalyticsRepository {
         mixpanel.identify(userId);
         mixpanel.people.identify(userId);
     }
+
+    fun setUserEmail(userEmail: String) {
+        val people: MixpanelAPI.People = mixpanel.people
+        people["\$email"] = userEmail
+        flushEvents()
+    }
+
+    fun setUserName(name: String) {
+        val people: MixpanelAPI.People = mixpanel.people
+        people["\$last_name"] = name
+        flushEvents()
+    }
+
 
     fun flushEvents() {
         mixpanel.flush()
