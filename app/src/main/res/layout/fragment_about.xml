@@ -102,6 +102,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/gate_keeper_version"
+            android:id="@+id/gatekeeper_version"
             android:layout_marginLeft="16dp"/>
 
 

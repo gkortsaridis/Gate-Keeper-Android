@@ -64,7 +64,7 @@ object GateKeeperAPI {
      * If there is need to trust all certificates, call getUnsafeOkHttpClient()
      * instead of OkHttpClient.Builder()
      */
-    private val jet2Client = OkHttpClient.Builder()
+    private val gateKeeperClient = OkHttpClient.Builder()
         .addInterceptor(FlipperOkhttpInterceptor(GateKeeperApplication.networkFlipperPlugin))
         .connectTimeout(NETWORK_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .readTimeout(NETWORK_TIMEOUT_SECONDS, TimeUnit.SECONDS)
@@ -93,7 +93,7 @@ object GateKeeperAPI {
     }
 
     private val retrofit = Retrofit.Builder()
-        .client(jet2Client)
+        .client(gateKeeperClient)
         .baseUrl(BASE_SERVER_URL)
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
