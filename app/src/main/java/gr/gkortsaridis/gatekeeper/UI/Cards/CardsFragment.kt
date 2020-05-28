@@ -1,79 +1,108 @@
 package gr.gkortsaridis.gatekeeper.UI.Cards
 
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.azoft.carousellayoutmanager.CarouselLayoutManager
+import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
+import com.azoft.carousellayoutmanager.CenterScrollListener
+import com.google.android.gms.ads.AdRequest
+import gr.gkortsaridis.gatekeeper.Database.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
+import gr.gkortsaridis.gatekeeper.Interfaces.MyDialogFragmentListeners
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.CreditCardsRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.Timeline
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import io.noties.tumbleweed.android.types.Translation
+import io.noties.tumbleweed.equations.Cubic
+import kotlinx.android.synthetic.main.fragment_cards.*
+import kotlinx.android.synthetic.main.fragment_cards.adview
+import kotlinx.android.synthetic.main.fragment_cards.no_items_view
+import kotlinx.android.synthetic.main.fragment_cards.vault_name
+import kotlinx.android.synthetic.main.fragment_cards.vault_view
 
-class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClickListener {
+class CardsFragment : Fragment(), CreditCardClickListener {
 
-    private lateinit var cardsRecyclerView: RecyclerView
-    private lateinit var addCreditCard: FloatingActionButton
-    private lateinit var cardsAdapter: CreditCardsRecyclerViewAdapter
-    private lateinit var vaultView: LinearLayout
-    private lateinit var vaultName: TextView
-    private lateinit var addCardButton: Button
-    private lateinit var noCardsMessage: LinearLayout
-
+    private var allCards: ArrayList<CreditCard> = ArrayList()
+    private var filtered: ArrayList<CreditCard> = ArrayList()
+    private var cardsAdapter : CreditCardsRecyclerViewAdapter? = null
     private lateinit var currentVault: Vault
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_cards, container, false)
-        cardsRecyclerView = view.findViewById(R.id.cards_recycler_view)
-        addCreditCard = view.findViewById(R.id.add_credit_card)
-        vaultView = view.findViewById(R.id.vault_view)
-        vaultName = view.findViewById(R.id.vault_name)
-        addCardButton = view.findViewById(R.id.add_card_btn)
-        noCardsMessage = view.findViewById(R.id.no_items_view)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_cards, container, false)
+    }
 
-        cardsAdapter = CreditCardsRecyclerViewAdapter(activity, GateKeeperApplication.cards, this)
-        cardsRecyclerView.adapter = cardsAdapter
-        cardsRecyclerView.layoutManager = GridLayoutManager(activity,1)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        addCardButton.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
-        addCreditCard.setOnClickListener { startActivity(Intent(activity, CreateCreditCardActivity::class.java)) }
-        vaultView.setOnClickListener { changeVault() }
+        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
+        viewModel.appCards.observe(activity!!, Observer {
+            this.allCards = ArrayList(it)
+            updateCards()
+            updateUI()
+        })
 
-        return view
+        val adRequest = AdRequest.Builder().build()
+        adview.loadAd(adRequest)
+
+        cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, CreditCardRepository.allCards, this)
+        cards_recycler_view.adapter = cardsAdapter
+        cards_recycler_view.addOnScrollListener(CenterScrollListener())
+
+        val layoutManager = CarouselLayoutManager(CarouselLayoutManager.VERTICAL)
+        layoutManager.setPostLayoutListener(CarouselZoomPostLayoutListener())
+        cards_recycler_view.layoutManager = layoutManager
+        cards_recycler_view.setHasFixedSize(true)
+
+        add_card_btn.setOnClickListener { createCard() }
+        add_credit_card.setOnClickListener { createCard() }
+        vault_view.setOnClickListener { changeVault() }
+        animateFabIn()
+    }
+
+    private fun createCard() {
+        startActivity(Intent(activity, CardEditActivity::class.java))
     }
 
     private fun updateUI() {
-        currentVault = VaultRepository.getLastActiveVault()
-        val filtered = CreditCardRepository.filterCardsByVault(currentVault)
-        vaultName.text = currentVault.name
-        cardsAdapter.updateCards(filtered)
+        val vault = VaultRepository.getLastActiveVault()
+        vault_name.text = vault.name
+        vault_view.setBackgroundColor(resources.getColor(vault.getVaultColorResource()))
+        vault_name.setTextColor(resources.getColor(vault.getVaultColorAccent()))
+        vault_icon.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
 
-        noCardsMessage.visibility = if (filtered.size > 0) View.GONE else View.VISIBLE
-        addCreditCard.visibility = if (filtered.size > 0) View.VISIBLE else View.GONE
+        if (cardsAdapter == null) {
+            cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, filtered, this)
+        }
+        if (cards_recycler_view?.isComputingLayout == false) {
+            cardsAdapter?.updateCards(filtered)
+            cards_recycler_view.scrollToPosition(0)
+        }
+
+        no_items_view.visibility = if (filtered.isNotEmpty()) View.GONE else View.VISIBLE
+        add_credit_card.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
-    override fun onCreditCardClicked(card: CreditCard) {
-        val intent = Intent(activity, CreateCreditCardActivity::class.java)
+    override fun onCreditCardClicked(card: CreditCard) { }
+
+    override fun onCreditCardEditButtonClicked(card: CreditCard, position: Int) {
+        val intent = Intent(activity, CardEditActivity::class.java)
         intent.putExtra("card_id", card.id)
         startActivity(intent)
     }
@@ -87,7 +116,22 @@ class CardsFragment(private var activity: Activity) : Fragment(), CreditCardClic
 
     override fun onResume() {
         super.onResume()
+        updateCards()
         updateUI()
+    }
+
+    private fun updateCards() {
+        currentVault = VaultRepository.getLastActiveVault()
+        filtered = CreditCardRepository.filterCardsByVault(allCards, currentVault)
+        filtered.sortBy { it.modifiedDate }
+        filtered.reverse()
+    }
+
+    private fun animateFabIn() {
+        Timeline.createParallel()
+            .push(Tween.to(add_credit_card, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(add_credit_card, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .start(ViewTweenManager.get(add_credit_card))
     }
 
 }

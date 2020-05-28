@@ -1,23 +1,22 @@
 package gr.gkortsaridis.gatekeeper.Entities
 
 import android.text.format.DateUtils
-import com.google.firebase.Timestamp
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.*
 
-data class Device(val OS : String,
-                  val version : String,
-                  val versionNum: Int,
-                  val UID : String,
-                  val vendor: String,
-                  var nickname: String,
-                  var locale: String,
-                  val firstAdded: Timestamp,
-                  var lastEntry: Timestamp,
-                  val isTablet: Boolean){
+data class Device(val OS : String = "",
+                  val version : String = "",
+                  val versionNum: Int = -1,
+                  val UID : String = "",
+                  val vendor: String = "",
+                  var nickname: String = "",
+                  var locale: String = "",
+                  val isTablet: Boolean = false,
+                  var id: String? = null){
 
     fun formattedDate(): String {
-        val lastEntryDate = lastEntry.toDate()
+        val lastEntryDate = Date() //lastEntry.toDate()
         val sdf: DateFormat?
         val dateStr: String
         when {

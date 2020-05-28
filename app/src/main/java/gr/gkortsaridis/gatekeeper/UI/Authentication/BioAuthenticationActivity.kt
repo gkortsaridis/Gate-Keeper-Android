@@ -7,11 +7,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.Entities.UserCredentials
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import org.json.JSONObject
 
 class BioAuthenticationActivity : AppCompatActivity() {
 
@@ -50,18 +51,17 @@ class BioAuthenticationActivity : AppCompatActivity() {
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    AuthRepository.signIn(activity, credentials.email, credentials.password, false, object: SignInListener{
-                        override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
-                            if (success) {
-                                AuthRepository.setApplicationUser(user.authResult!!.user!!)
-                                AuthRepository.proceedLoggedIn(activity)
-                            }else {
-                                Toast.makeText(activity, user.exception.toString(), Toast.LENGTH_SHORT).show()
-                            }
-
+                    AuthRepository.signIn(activity, credentials.email, credentials.password, object: SignInListener{
+                        override fun onSignInComplete(userId: String) {
+                            AuthRepository.setApplicationUser(userId)
+                            AuthRepository.proceedLoggedIn(activity)
+                            AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_BIO)
                         }
 
-                        override fun onRegistrationNeeded(email: String) { }
+                        override fun onSignInError(errorCode: Int, errorMsg: String) {
+                            Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
+                            AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_ERROR)
+                        }
                     })
                 }
 
@@ -81,7 +81,7 @@ class BioAuthenticationActivity : AppCompatActivity() {
     }
 
     private fun goToPassword() {
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, SignInActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION
         startActivity(intent)
         overridePendingTransition(0, 0)

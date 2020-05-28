@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="10dp"
+        android:layout_centerInParent="true"
+        android:elevation="10dp"
+        android:id="@+id/card_back"
+        android:layout_margin="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="16dp"
+                android:layout_height="match_parent"
+                android:id="@+id/card_vault_color_back"
+                android:background="@color/vault_yellow_1"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:id="@+id/card_container_back"
+                android:background="@android:color/white"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingRight="8dp">
+
+                    <LinearLayout
+                        android:layout_width="105dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/flip_card_back_btn"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="8dp"
+                        android:padding="10dp">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/flip_horizontal"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/flip_card"
+                            android:textColor="@color/mate_black" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CARD HOLDER"
+                        android:textColor="@color/subtext"
+                        android:layout_marginTop="32dp"
+                        android:layout_marginLeft="16dp"
+                        android:textSize="17sp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="CARDHOLDER NAME"
+                        android:textSize="20sp"
+                        android:layout_marginLeft="16dp"
+                        android:textColor="@color/mate_black"
+                        android:layout_marginRight="16dp"
+                        android:textStyle="bold"
+                        android:id="@+id/cardholder_name" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
+                    android:layout_margin="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CVV"
+                        android:textSize="17sp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/subtext"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="222"
+                        android:id="@+id/card_cvv"
+                        android:textSize="17sp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/mate_black"
+                        android:layout_marginLeft="8dp"/>
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:id="@+id/edit_card"
+                        android:clickable="true"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="4dp"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/create"
+                            android:backgroundTintMode="src_atop"
+                            android:backgroundTint="@color/colorPrimaryDark"
+                            android:layout_gravity="center_vertical" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="EDIT"
+                            android:textSize="17sp"
+                            android:layout_gravity="center_vertical"
+                            android:textColor="@color/mate_black"
+                            android:layout_marginLeft="8dp"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

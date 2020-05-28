@@ -11,22 +11,75 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.fabric'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file("gate_keeper_keystore.keystore")
+            storePassword 'gate_keeper'
+            keyAlias 'gate_keeper'
+            keyPassword 'gate_keeper'
+        }
+    }
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "gr.gkortsaridis.gatekeeper"
         minSdkVersion 24
         multiDexEnabled true
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 17
+        versionName "0.17"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
+            resValue 'string', 'banner_ad_unit_id', '"ca-app-pub-4492385836648698/2722588186"'
+            resValue("bool", "FIREBASE_CRASH_ENABLED", "true")
         }
+        debug {
+            resValue 'string', 'banner_ad_unit_id', '"ca-app-pub-3940256099942544/6300978111"'
+            resValue("bool", "FIREBASE_CRASH_ENABLED", "false")
+        }
+    }
+
+    flavorDimensions "server"
+    productFlavors {
+        local {
+            dimension "server"
+            buildConfigField "String", "BASE_SERVER_URL", "\"http://192.168.1.116:8080/\""
+            resValue "string", "app_name", "Gate Keeper - Local"
+            /*manifestPlaceholders = [
+                    appIcon  : "@mipmap/ic_launcher_test_i",
+                    roundIcon: "@mipmap/ic_launcher_test_i_round",
+            ]*/
+        }
+        devAchilles {
+            dimension "server"
+            buildConfigField "String", "BASE_SERVER_URL", '"http://gate-keeper.herokuapp.com/"'
+            resValue "string", "app_name", "Gate Keeper - Achilles"
+        }
+        betaHades {
+            dimension "server"
+            buildConfigField "String", "BASE_SERVER_URL", '"http://45.63.100.236:8080/haides/"'
+            resValue "string", "app_name", "Gate Keeper - Hades"
+        }
+        production {
+            dimension "server"
+            buildConfigField "String", "BASE_SERVER_URL", '"http://45.63.100.236"'
+            resValue "string", "app_name", "Gate Keeper"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 }
 
@@ -34,23 +87,26 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.palette:palette:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.biometric:biometric:1.0.1'
+    implementation 'com.google.android.gms:play-services-ads:19.1.0'
+
+    //Billing
+    implementation 'com.android.billingclient:billing:2.2.0'
+    implementation 'com.android.billingclient:billing-ktx:2.2.0'
 
     //Firebase
-    implementation 'com.google.firebase:firebase-analytics:17.2.1'
-    implementation 'com.google.firebase:firebase-auth:19.2.0'
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.google.firebase:firebase-firestore:21.3.1'
-    implementation 'com.google.firebase:firebase-perf:19.0.4'
+    implementation 'com.google.firebase:firebase-analytics:17.4.1'
+    implementation 'com.google.firebase:firebase-perf:19.0.7'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
     implementation 'com.firebaseui:firebase-ui-storage:4.3.2'
 
     //Lottie Animations
@@ -68,6 +124,76 @@ dependencies {
 
     //PIN Auth
     implementation 'com.andrognito.pinlockview:pinlockview:2.1.0'
+
+    //Custom Shapes
+    implementation 'com.github.florent37:shapeofview:1.4.7'
+
+    //Month-Year picker
+    implementation 'com.whiteelephant:monthandyearpicker:1.3.0'
+
+    //Vega Layout Manager
+    implementation 'com.stone.vega.library:VegaLayoutManager:1.0.6'
+
+    //Stack Layout Manager
+    implementation 'com.littlemango:stacklayoutmanager:1.0.5'
+
+    //Card Flip
+    implementation 'com.wajahatkarim3.EasyFlipView:EasyFlipView:2.1.2'
+
+    //Keyboard listener
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
+
+    //Tumbleweed animations
+    implementation 'io.noties:tumbleweed:2.1.0'
+    implementation 'io.noties:tumbleweed-android:2.1.0'
+    implementation 'io.noties:tumbleweed-android-kt:2.1.0'
+
+    //Image Picker
+    implementation 'com.github.dhaval2404:imagepicker:1.6'
+    implementation 'com.github.florent37:inline-activity-result-kotlin:1.0.1'
+
+    //RecyclerView Carousel
+    implementation 'com.azoft.carousellayoutmanager:carousel:1.2.4'
+
+    //FB Flipper Debug
+    releaseImplementation 'com.github.theGlenn:flipper-android-no-op:0.3.0'
+    debugImplementation 'com.facebook.flipper:flipper:0.31.2'
+    debugImplementation 'com.facebook.soloader:soloader:0.8.2'
+    debugImplementation 'com.facebook.flipper:flipper-network-plugin:0.31.2'
+
+    //Retrofit, RXJava, RXKotlin
+    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.0.1'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.12'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
+
+    //Expandable View
+    implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
+
+    //Custom EditText
+    implementation 'com.github.maxpilotto:action-edit-text:2.2.0'
+
+    //Paris Styling
+    implementation 'com.airbnb.android:paris:1.4.0'
+
+    //Room
+    implementation "androidx.room:room-runtime:2.2.5"
+    kapt "androidx.room:room-compiler:2.2.5"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation "net.zetetic:android-database-sqlcipher:4.3.0"
+    implementation "androidx.sqlite:sqlite:2.1.0"
+
+    //RevenueCat in-app purchases
+    implementation 'com.revenuecat.purchases:purchases:3.1.0'
+
+    //Mixpanel analytics
+    implementation 'com.mixpanel.android:mixpanel-android:5.8.3'
+
+    //Bugsnag Crashlytics
+    implementation "com.bugsnag:bugsnag-android:5.0.0"
 }
 
 apply plugin: 'com.google.gms.google-services'

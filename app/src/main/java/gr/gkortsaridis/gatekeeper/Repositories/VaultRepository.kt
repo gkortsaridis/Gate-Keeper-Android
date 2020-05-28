@@ -1,77 +1,89 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
+import android.annotation.SuppressLint
+import gr.gkortsaridis.gatekeeper.Database.GatekeeperDatabase
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultEditListener
-import gr.gkortsaridis.gatekeeper.Interfaces.VaultRetrieveListener
 import gr.gkortsaridis.gatekeeper.Interfaces.VaultSetupListener
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
+@SuppressLint("CheckResult")
 object VaultRepository {
 
-    fun setupVaultsForNewUser(user: FirebaseUser, listener: VaultSetupListener) {
-        retrieveVaultsByAccountID(user.uid, object: VaultRetrieveListener {
-            override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
-                if (vaults.size > 0) {
-                    listener.onVaultSetupComplete()
-                }else{
-                    createVault("Personal", object : VaultCreateListener {
-                        override fun onVaultCreated() { listener.onVaultSetupComplete() }
-                        override fun onVaultCreateError() { listener.onVaultSetupError() }
-                    })
-                }
-            }
+    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+    val allVaultsObj =  Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White)
 
-            override fun onVaultsRetrieveError(e: Exception) {
-                createVault("Personal", object : VaultCreateListener {
-                    override fun onVaultCreated() { listener.onVaultSetupComplete() }
-                    override fun onVaultCreateError() { listener.onVaultSetupError() }
-                })
-            }
-        })
+    var allVaults: ArrayList<Vault>
+        get() {
+            return ArrayList(db.dao().allVaultsSync)
+            //return GateKeeperApplication.vaults ?: ArrayList()
+        }
+        set(vaults) {
+            db.dao().truncateVaults()
+            for (vault in vaults) { db.dao().insertVault(vault) }
+            //GateKeeperApplication.vaults = vaults
+        }
+
+    fun addLocalVault(vault: Vault) {
+        db.dao().insertVault(vault)
     }
 
-    fun createVault(vaultName: String, listener: VaultCreateListener) {
-        val db = FirebaseFirestore.getInstance()
-
-        val vault = Vault("", AuthRepository.getUserID(), vaultName)
-
-        db.collection("vaults")
-            .add(hashMapOf( "account_id" to AuthRepository.getUserID(), "vault" to SecurityRepository.encryptObjectWithUserCredentials(vault) ))
-            .addOnCompleteListener {
-                if (it.isSuccessful) { listener.onVaultCreated() }
-                else { listener.onVaultCreateError() }
-            }
+    fun removeLocalVault(vault: Vault) {
+        db.dao().deleteVault(vault)
     }
 
-    fun retrieveVaultsByAccountID(accountID: String, retrieveListener: VaultRetrieveListener) {
+    fun updateLocalVault(vault: Vault) {
+        db.dao().updateVault(vault)
+    }
 
-        val db = FirebaseFirestore.getInstance()
-        db.collection("vaults")
-            .whereEqualTo("account_id",accountID)
-            .get().addOnSuccessListener { result ->
-                val vaultsResult = ArrayList<Vault>()
-                for (document in result) {
-                    val encryptedVault = (document["vault"] ?: "") as String
-                    val decryptedVault = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedVault, Vault::class.java) as Vault?
-                    if (decryptedVault != null) {
-                        decryptedVault.id = document.id
-                        vaultsResult.add(decryptedVault)
+    fun setupVaultsForNewUser(userId: String, listener: VaultSetupListener) {
+        val personalVault = Vault(id = "", name = "Personal", account_id = AuthRepository.getUserID(), color = VaultColor.Blue)
+        GateKeeperAPI.api.createVault(SecurityRepository.createEncryptedDataRequestBody(personalVault))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(Schedulers.newThread())
+            .subscribe (
+                {
+                    if (it.errorCode == -1) { listener.onVaultSetupComplete() }
+                    else { listener.onVaultSetupError(it.errorCode, it.errorMsg) }
+                },
+                { listener.onVaultSetupError(it.hashCode(), it.localizedMessage ?: "") }
+            )
+    }
+
+    fun createVault(vault: Vault, listener: VaultCreateListener) {
+
+        GateKeeperAPI.api.createVault(SecurityRepository.createEncryptedDataRequestBody(vault))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    if (it.errorCode == -1) {
+                        val encryptedData = it.data
+                        val vault = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(encryptedData, Vault::class.java) as Vault?
+                        if (vault != null) {
+                            vault.id = it.data.id.toString()
+                            listener.onVaultCreated(vault)
+                        } else {
+                            listener.onVaultCreateError(-1, "Decryption Error")
+                        }
                     }
-                }
-
-                retrieveListener.onVaultsRetrieveSuccess(vaultsResult)
-            }
-            .addOnFailureListener { exception -> retrieveListener.onVaultsRetrieveError(exception) }
-
+                    else {
+                        listener.onVaultCreateError(it.errorCode, it.errorMsg)
+                    }
+                },
+                { listener.onVaultCreateError(it.hashCode(), it.localizedMessage ?: "") }
+            )
     }
 
     fun getVaultByID(id: String): Vault? {
-        if (id == "-1") { return Vault("-1", AuthRepository.getUserID(), "All Vaults") }
+        if (id == "-1") { return Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White) }
 
-        for (vault in GateKeeperApplication.vaults) {
+        for (vault in allVaults) {
             if (vault.id == id) {
                 return vault
             }
@@ -84,13 +96,13 @@ object VaultRepository {
 
     fun getLastActiveRealVault() : Vault {
         val lastActive = getLastActiveVault()
-        return if (lastActive.id == "-1") { GateKeeperApplication.vaults[0] }
+        return if (lastActive.id == "-1") { allVaults[0] }
         else lastActive
     }
 
     fun getLastActiveVault(): Vault {
         val lastActiveVaultId = DataRepository.lastActiveVaultId ?: ""
-        var vaultToReturn = GateKeeperApplication.vaults[0]
+        var vaultToReturn = allVaults[0]
         if (lastActiveVaultId != "") {
             val savedVault = getVaultByID(lastActiveVaultId)
             if (savedVault != null) { vaultToReturn = savedVault}
@@ -99,47 +111,79 @@ object VaultRepository {
         return vaultToReturn
     }
 
-    fun renameVault(newName: String, vault: Vault, listener: VaultEditListener) {
+    fun keepActiveVaultOrChangeToAllVaults(vaultId: String) {
+        if (getLastActiveVault().id != vaultId) {
+            setActiveVault(allVaultsObj)
+        }
+     }
+
+    fun editVault(newName: String, color: VaultColor, vault: Vault, listener: VaultEditListener) {
 
         vault.name = newName
+        vault.color = color
 
-        val vaulthash = hashMapOf(
-            "name" to SecurityRepository.encryptObjectWithUserCredentials(vault.name),
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("vaults")
-            .document(vault.id)
-            .set(vaulthash)
-            .addOnCompleteListener {
-                listener.onVaultRenamed()
-            }
-
+        GateKeeperAPI.api.updateVault(SecurityRepository.createEncryptedDataRequestBody(vault, vault.id))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    if (it.errorCode == -1) {
+                        val encryptedData = it.data
+                        val vault = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(encryptedData, Vault::class.java) as Vault?
+                        if (vault != null) {
+                            listener.onVaultEdited(vault)
+                        } else {
+                            listener.onVaultEditError(-1, "Decryption Error")
+                        }
+                    }
+                    else {
+                        listener.onVaultEditError(it.errorCode, it.errorMsg)
+                    }
+                },
+                {
+                    listener.onVaultEditError(it.hashCode(), it.localizedMessage ?: "")
+                }
+            )
     }
 
     fun deleteVault(vault: Vault, listener: VaultEditListener) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("vaults")
-            .document(vault.id)
-            .delete()
-            .addOnCompleteListener {
-                retrieveVaultsByAccountID(vault.account_id, object: VaultRetrieveListener{
-                    override fun onVaultsRetrieveSuccess(vaults: ArrayList<Vault>) {
-                        GateKeeperApplication.vaults = vaults
+
+        //Delete the vault
+        GateKeeperAPI.api.deleteVault(vaultId = vault.id, body = SecurityRepository.createUsernameHashRequestBody())
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    if (it.errorCode == -1 && vault.id.toLong() == it.deletedItemID) {
+
+                        //Delete all vault's logins
+                        val vaultLogins = LoginsRepository.filterLoginsByVault(LoginsRepository.allLogins, vault)
+                        for (login in vaultLogins) {
+                            LoginsRepository.deleteLogin(login, null)
+                        }
+
+                        //Delete all vault's cards
+                        val vaultCards = CreditCardRepository.filterCardsByVault(CreditCardRepository.allCards, vault)
+                        for (card in vaultCards) {
+                            CreditCardRepository.deleteCreditCard(card, null)
+                        }
+
+                        //Delete all vault's notes
+                        val vaultNotes = NotesRepository.filterNotesByVault(NotesRepository.allNotes, vault)
+                        for (note in vaultNotes) {
+                            NotesRepository.deleteNote(note, null)
+                        }
+
                         listener.onVaultDeleted()
                     }
+                    else { listener.onVaultDeleteError(it.errorCode, it.errorMsg) }
+                },
+                { listener.onVaultDeleteError(it.hashCode(), it.localizedMessage ?: "") }
+            )
+    }
 
-                    override fun onVaultsRetrieveError(e: Exception) {
-                        listener.onVaultDeleted()
-                    }
-                })
-            }
-
-        val vaultLogins = LoginsRepository.filterLoginsByVault(GateKeeperApplication.logins, vault)
-        for (login in vaultLogins) {
-            LoginsRepository.deleteLogin(login, null)
-        }
+    fun shouldCreateVaults(): Boolean {
+        return true
     }
 
 }

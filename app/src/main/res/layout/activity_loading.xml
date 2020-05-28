@@ -8,18 +8,23 @@
     tools:context=".UI.Authentication.LoadingActivity"
     android:background="@android:color/white">
 
-    <RelativeLayout
+    <com.github.florent37.shapeofview.shapes.ArcView
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@color/colorPrimaryDark">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="30sp"
-            android:layout_centerInParent="true"
-            android:textColor="@android:color/white"/>
-    </RelativeLayout>
+        android:layout_height="wrap_content"
+        app:shape_arc_position="bottom"
+        app:shape_arc_height="40dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@color/colorPrimaryDark">
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@mipmap/ic_launcher"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+
+    </com.github.florent37.shapeofview.shapes.ArcView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/welcome_message"
-            android:text="Welcome back\nGeorge!"
+            android:text="Welcome back"
             android:gravity="center_horizontal"
             android:layout_gravity="center_horizontal"
             android:textColor="@color/mate_black"
@@ -52,103 +57,6 @@
             android:layout_gravity="center_horizontal"
             android:textColor="@color/mate_black"
             android:textSize="20sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:weightSum="4">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:src="@drawable/vault"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Vaults"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="8dp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:src="@drawable/padlock"
-                android:layout_marginLeft="-4dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Logins"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="8dp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:src="@drawable/credit_cards"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cards"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="8dp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:src="@drawable/note"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Notes"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="8dp"/>
-
-        </LinearLayout>
-
-
-
-
 
     </LinearLayout>
 

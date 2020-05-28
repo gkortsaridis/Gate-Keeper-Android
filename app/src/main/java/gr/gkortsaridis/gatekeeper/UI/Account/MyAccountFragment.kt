@@ -6,125 +6,139 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.gms.ads.AdRequest
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
+import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
 import gr.gkortsaridis.gatekeeper.Utils.GlideApp
 import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.Timeline
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import io.noties.tumbleweed.android.types.Translation
+import io.noties.tumbleweed.equations.Cubic
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_my_account.*
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
+class MyAccountFragment : Fragment() {
 
-class MyAccountFragment(private val activity: Activity) : Fragment() {
-
-    private val user = GateKeeperApplication.user
-    private lateinit var sendConfirmation : TextView
-    private lateinit var emailConfirmed : LinearLayout
-    private lateinit var profileImage : ImageView
-
-    private val PICK_PHOTO_FOR_AVATAR = 1
-    private val viewDialog = ViewDialog(activity)
+    private lateinit var viewDialog: ViewDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_my_account, container, false)
-
-        emailConfirmed = view.findViewById(R.id.verified_email_link)
-        sendConfirmation = view.findViewById(R.id.verify_email_here)
-        profileImage = view.findViewById(R.id.profileImage)
-
-        sendConfirmation.setOnClickListener { sendEmailConfirmation() }
-        profileImage.setOnClickListener { pickImage() }
-        emailConfirmed.visibility = if (user?.isEmailVerified!!) View.GONE else View.VISIBLE
-        displayUserImg()
-        return view
+        return inflater.inflate(R.layout.fragment_my_account, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewDialog = ViewDialog(activity!!)
 
-        full_name_et.setText(user?.displayName ?: "")
-        email_et.setText(user?.email ?: "")
-        verified_email_link.visibility = if (user?.isEmailVerified == true) { View.GONE } else { View.VISIBLE }
-        user_uid.text = "Your personal ID is: ${user?.uid}"
+        full_name_et.setText(GateKeeperApplication.extraData?.userFullName ?: "")
+        email_et.setText(GateKeeperApplication.extraData?.userEmail)
+        user_uid.text = "Your personal ID is: ${GateKeeperApplication.user_id ?: ""}"
+        update_account_btn.setOnClickListener { updateProfileName(name = full_name_et.text.toString()) }
 
-        update_account_btn.setOnClickListener { updateProfile(name = full_name_et.text.toString()) }
+        update_profile_image.setOnClickListener { pickImage() }
+        account_billing_container.setOnClickListener { goToBilling() }
+        account_history_container.setOnClickListener { goToHistory() }
+
+        val adRequest = AdRequest.Builder().build()
+        adview.loadAd(adRequest)
+
+        displayUserImg()
+        animateContainersIn()
     }
 
-    private fun sendEmailConfirmation(){
-        user?.sendEmailVerification()
-        Toast.makeText(activity, "Verification email sent", Toast.LENGTH_SHORT).show()
+    private fun goToHistory() {
+        AnalyticsRepository.trackEvent(AnalyticsRepository.HISTORY_PAGE)
+        startActivity(Intent(activity, AccountHistoryActivity::class.java))
     }
 
-    private fun updateProfile(name: String?) {
+    private fun goToBilling() {
+        AnalyticsRepository.trackEvent(AnalyticsRepository.BILLING_PAGE)
+        Toast.makeText(context, "Everything is free for now :)", Toast.LENGTH_SHORT).show()
+        //context?.startActivity(Intent(activity, AccountStatusActivity::class.java))
+    }
+
+    private fun updateProfileName(name: String?) {
         viewDialog.showDialog()
 
-        //Display Name & Photo URL
-        val profileUpdates = UserProfileChangeRequest.Builder()
-        if (name != null) { profileUpdates.setDisplayName(full_name_et.text.toString()) }
-        val profile = profileUpdates.build()
+        val disposable = GateKeeperAPI.api.updateExtraData(SecurityRepository.createExtraDataUpdateRequestBody(fullName = name))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    viewDialog.hideDialog()
+                    if (it.errorCode == -1) {
+                        GateKeeperApplication.extraData =  SecurityRepository.getUserExtraData(
+                            GateKeeperApplication.extraData?.userEmail ?: "",
+                            it.data.extraDataEncryptedData,
+                            it.data.extraDataIv)
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.ACCOUNT_NAME_CHANGE)
+                        Toast.makeText(activity, "Data successfully updated", Toast.LENGTH_SHORT).show()
+                    }
+                    else { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }
+                },
+                { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }
+            )
+    }
 
-        user?.updateProfile(profile)?.addOnCompleteListener {
-            viewDialog.hideDialog()
-            Toast.makeText(activity, "Profile Update Completed successfully", Toast.LENGTH_SHORT).show()
-        }
+    private fun updateProfileImg(img: String) {
+        viewDialog.showDialog()
+
+        val disposable = GateKeeperAPI.api.updateExtraData(SecurityRepository.createExtraDataUpdateRequestBody(imgUrl = img))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    viewDialog.hideDialog()
+                    if (it.errorCode == -1) {
+                        GateKeeperApplication.extraData =  SecurityRepository.getUserExtraData(
+                            GateKeeperApplication.extraData?.userEmail ?: "",
+                            it.data.extraDataEncryptedData,
+                            it.data.extraDataIv)
+
+                        displayUserImg()
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.ACCOUNT_ICON_CHANGE)
+                        Toast.makeText(activity, "Img successfully updated", Toast.LENGTH_SHORT).show()
+                    }
+                    else { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }
+                },
+                { Toast.makeText(activity, "Could not update your data", Toast.LENGTH_SHORT).show() }
+            )
     }
 
     private fun pickImage() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "image/*"
-        startActivityForResult(intent, PICK_PHOTO_FOR_AVATAR)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == PICK_PHOTO_FOR_AVATAR && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                //Retrieve selected Image
-                val inputStream = data.data?.let { activity.contentResolver.openInputStream(it) }
-                val imgData = inputStream?.let { createByteArrayToUpload(it) }
-                if (imgData != null) {
-                    getUserImageReference().putBytes(imgData).addOnCompleteListener {
-                        run {
-                            if (it.isSuccessful) {
-                                displayUserImg()
-                            } else {
-                                Toast.makeText(activity, "ERROR", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
+        ImagePicker.with(this)
+            .compress(1024)
+            .maxResultSize(1080, 1080)
+            .start { resultCode, data ->
+                if (resultCode == Activity.RESULT_OK) {
+                    val fileUri = data?.data
+                    val inputStream = fileUri?.let { activity!!.contentResolver.openInputStream(it) }
+                    val imgData = inputStream?.let { createByteArrayToUpload(it) }
+                    if (imgData != null) { updateProfileImg( Base64.encodeToString(imgData, Base64.DEFAULT) ) }
                 }
             }
-        }
-
-    }
-
-    private fun getUserImageReference(): StorageReference {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val imagesRef = storageRef.child("userImages")
-        return imagesRef.child(AuthRepository.getUserID()+".jpg")
     }
 
     private fun createByteArrayToUpload(inputStream: InputStream): ByteArray {
@@ -135,25 +149,63 @@ class MyAccountFragment(private val activity: Activity) : Fragment() {
     }
 
     private fun displayUserImg() {
+        image_loading.visibility = View.VISIBLE
         GlideApp
-            .with(activity)
-            .load(getUserImageReference())
+            .with(activity!!)
+            .load(GateKeeperApplication.extraData?.getUserImgBmp())
             .placeholder(R.drawable.camera)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
             .listener(object: RequestListener<Drawable>{
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    profileImage.setPadding(50.dp,50.dp,50.dp,50.dp)
-                    profileImage.setImageResource(R.drawable.camera)
+                    activity?.runOnUiThread {
+                        image_loading.visibility = View.GONE
+                        profile_image.setPadding(150.dp,150.dp,150.dp,150.dp)
+                        update_profile_image.text = "Set profile image"
+                    }
                     return false
                 }
 
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    profileImage.setPadding(0,0,0,0)
+                    activity?.runOnUiThread {
+                        image_loading.visibility = View.GONE
+                        profile_image.setPadding(0,0,0,0)
+                        profile_image.setImageDrawable(resource)
+                        update_profile_image.text = "Set profile image"
+                    }
                     return false
                 }
-            })
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(true)
-            .into(profileImage)
+            }).submit()
+
+
+    }
+
+    private fun animateContainersIn() {
+        Timeline.createParallel()
+            .push(
+                Timeline.createParallel()
+                    .push(Tween.to(account_image_container, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(account_image_container, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .push(
+                Timeline.createParallel()
+                    .pushPause(0.3f)
+                    .push(Tween.to(account_info_container, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(account_info_container, Translation.XY).target(370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .push(
+                Timeline.createParallel()
+                    .pushPause(0.5f)
+                    .push(Tween.to(status_container, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(status_container, Translation.XY).target(-370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .push(
+                Timeline.createParallel()
+                    .pushPause(0.7f)
+                    .push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
+                    .push(Tween.to(adview_container, Translation.XY).target(370.dp.toFloat(), 0f).ease(Cubic.INOUT).duration(1.0f))
+            )
+            .start(ViewTweenManager.get(account_image_container))
 
     }
 }

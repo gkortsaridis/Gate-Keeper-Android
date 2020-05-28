@@ -2,102 +2,38 @@ package gr.gkortsaridis.gatekeeper.Repositories
 
 import android.content.Context
 import android.os.Build
+import android.provider.Settings.Secure
 import android.telephony.TelephonyManager
 import android.util.Log
-import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.gson.Gson
 import gr.gkortsaridis.gatekeeper.Entities.Device
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
-import gr.gkortsaridis.gatekeeper.Interfaces.DeviceModifyListener
-import gr.gkortsaridis.gatekeeper.Interfaces.DevicesRetrieveListener
 import gr.gkortsaridis.gatekeeper.R
-import java.util.*
-import kotlin.collections.ArrayList
+import java.sql.Timestamp
 
 
 object DeviceRepository {
 
     private const val TAG = "_DEVICE_REPOSITORY_"
 
-    fun retrieveDevicesByAccountID(accountID: String, retrieveListener: DevicesRetrieveListener) {
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("devices")
-            .whereEqualTo("account_id",accountID)
-            .get().addOnSuccessListener { result ->
-                val devicesResult = ArrayList<Device>()
-
-                for (document in result) {
-                    val encryptedDevice = (document["device"] ?: "")as String
-                    val decryptedDevice = SecurityRepository.decryptStringToObjectWithUserCredentials(encryptedDevice, Device::class.java) as Device?
-                    if (decryptedDevice != null){
-                        devicesResult.add(decryptedDevice)
-                    }
-                }
-
-                retrieveListener.onDevicesRetrieved(devicesResult)
-            }
-            .addOnFailureListener { exception -> retrieveListener.onDeviceRetrieveError(exception) }
+    fun getDeviceById(id: String): Device? {
+        return GateKeeperApplication.devices?.find { it.id == id }
     }
 
-    fun logCurrentLogin(context: Context) {
-        val encryptedDevice = SecurityRepository.encryptObjectWithUserCredentials(getCurrentDevice(context))
-
-        val currentDevice = getCurrentDevice(context)
-        currentDevice.lastEntry = Timestamp.now()
-        currentDevice.locale = getDetectedCountry(context, "??")
-
-        val devicehash = hashMapOf(
-            "device" to encryptedDevice,
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("devices")
-            .document(currentDevice.UID)
-            .set(devicehash)
-            .addOnCompleteListener { Log.i(TAG, "Login was logged") }
+    fun getLastUsedDatetime(device: Device): Timestamp? {
+        val og = GateKeeperApplication.userLog
+        val userLog = GateKeeperApplication.userLog.filter { it.deviceId == device.id?.toLong() }
+        return if (userLog.isNotEmpty()) userLog[userLog.size-1].timestamp else null
     }
 
-    fun renameDevice(device: Device, newName: String, listener: DeviceModifyListener) {
+    fun getCurrentDevice(context: Context): Device {
 
-        device.nickname = newName
+        val fields = Build.VERSION_CODES::class.java.fields
+        var codeName = "UNKNOWN"
+        fields.filter { it.getInt(Build.VERSION_CODES::class) == Build.VERSION.SDK_INT }.forEach { codeName = it.name }
 
-        val devicehash = hashMapOf(
-            "device" to SecurityRepository.encryptObjectWithUserCredentials(device),
-            "account_id" to AuthRepository.getUserID()
-        )
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("devices")
-            .document(device.UID)
-            .set(devicehash)
-            .addOnCompleteListener {
-                listener.onDeviceRenamed()
-                Log.i(TAG, "Device was renamed")
-            }
-
-    }
-
-    fun deleteDevice(device: Device, listener: DeviceModifyListener) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("devices")
-            .document(device.UID)
-            .delete()
-            .addOnCompleteListener {
-                listener.onDeviceDeleted()
-            }
-
-        listener.onDeviceDeleted()
-    }
-
-    private fun getCurrentDevice(context: Context): Device {
-
-        val UID = FirebaseInstanceId.getInstance().id
+        val UID = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
         val OS = "Android"
-        val version = Build.VERSION.CODENAME
+        val version = codeName
         val versionNum = Build.VERSION.SDK_INT
         val vendor = Build.MANUFACTURER + " " +Build.MODEL
         val nickname = ""
@@ -106,7 +42,7 @@ object DeviceRepository {
         val devices = GateKeeperApplication.devices
         for (device in devices ?: ArrayList()) { if (device.UID == UID) { return device } }
 
-        return Device(OS= OS, version = version, versionNum = versionNum, UID = UID, vendor = vendor, nickname = nickname, locale = locale, firstAdded = Timestamp.now(), lastEntry = Timestamp.now(), isTablet = context.resources.getBoolean(
+        return Device(OS= OS, version = version, versionNum = versionNum, UID = UID, vendor = vendor, nickname = nickname, locale = locale, isTablet = context.resources.getBoolean(
             R.bool.isTablet))
     }
 

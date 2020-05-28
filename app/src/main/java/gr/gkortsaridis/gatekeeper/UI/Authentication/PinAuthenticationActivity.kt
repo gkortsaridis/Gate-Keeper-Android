@@ -3,7 +3,6 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -11,11 +10,12 @@ import android.widget.Toast
 import com.andrognito.pinlockview.IndicatorDots
 import com.andrognito.pinlockview.PinLockListener
 import com.andrognito.pinlockview.PinLockView
-import gr.gkortsaridis.gatekeeper.Entities.FirebaseSignInResult
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
+import org.json.JSONObject
 
 class PinAuthenticationActivity : AppCompatActivity() {
 
@@ -47,7 +47,7 @@ class PinAuthenticationActivity : AppCompatActivity() {
         }
 
         goToPassword.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, SignInActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
@@ -61,17 +61,23 @@ class PinAuthenticationActivity : AppCompatActivity() {
                     //Not in setup mode. Sign In
 
                     if (pin == DataRepository.pinLock) {
-                        AuthRepository.signIn(activity, savedCredentials!!.email, savedCredentials!!.password, true, object: SignInListener{
-                            override fun onSignInComplete(success: Boolean, user: FirebaseSignInResult) {
-                                if (success) {
-                                    AuthRepository.setApplicationUser(user.authResult!!.user!!)
+                        AuthRepository.signIn(
+                            activity,
+                            savedCredentials!!.email,
+                            savedCredentials.password,
+                            object: SignInListener{
+                                override fun onSignInComplete(userId: String) {
+                                    AuthRepository.setApplicationUser(userId)
                                     AuthRepository.proceedLoggedIn(activity)
-                                }else {
-                                    Toast.makeText(activity, user.exception.toString(), Toast.LENGTH_SHORT).show()
+                                    AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_PIN)
+
                                 }
-                            }
-                            override fun onRegistrationNeeded(email: String) {  }
-                        })
+
+                                override fun onSignInError(errorCode: Int, errorMsg: String) {
+                                    Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
+                                    AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_ERROR)
+                                }
+                            })
                     } else {
                         Toast.makeText(activity, "Wrong PIN entered", Toast.LENGTH_SHORT).show()
                         lockView.resetPinLockView()
@@ -85,8 +91,9 @@ class PinAuthenticationActivity : AppCompatActivity() {
                         lockView.resetPinLockView()
                     } else {
                       if (tempPin == pin!!) {
-                          DataRepository.pinLock = pin
                           Toast.makeText(activity, "Your PIN is successfully setup", Toast.LENGTH_SHORT).show()
+                          DataRepository.pinLock = pin
+                          DataRepository.preferredAuthType = AuthRepository.PIN_SIGN_IN
                           finish()
                       }
                     }

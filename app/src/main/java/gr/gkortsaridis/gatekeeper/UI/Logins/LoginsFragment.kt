@@ -1,7 +1,6 @@
 package gr.gkortsaridis.gatekeeper.UI.Logins
 
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -10,26 +9,28 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.autofill.AutofillManager
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.gms.ads.AdRequest
+import com.stone.vega.library.VegaLayoutManager
+import gr.gkortsaridis.gatekeeper.Database.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.LOGIN_SORT_TYPE_NAME
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.deleteLoginSuccess
@@ -37,62 +38,119 @@ import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import gr.gkortsaridis.gatekeeper.Utils.dp
+import io.noties.tumbleweed.Timeline
+import io.noties.tumbleweed.Tween
+import io.noties.tumbleweed.android.ViewTweenManager
+import io.noties.tumbleweed.android.types.Alpha
+import io.noties.tumbleweed.android.types.Translation
+import io.noties.tumbleweed.equations.Cubic
+import kotlinx.android.synthetic.main.fragment_logins.*
 
 
-class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectListener {
+class LoginsFragment() : Fragment(), LoginSelectListener {
 
     private val TAG = "_LOGINS_FRAGMENT_"
-
-    private lateinit var loginsRV: RecyclerView
-    private lateinit var fab: FloatingActionButton
-    private lateinit var vaultName: TextView
-    private lateinit var vaultView: LinearLayout
-    private lateinit var addLoginButton: Button
-    private lateinit var noLoginsMessage: LinearLayout
     private var autofillManager: AutofillManager? = null
+    private var loginsAdapter: LoginsRecyclerViewAdapter? = null
+
+    private var activeLogins: ArrayList<Login> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_logins, container, false)
+        return inflater.inflate(R.layout.fragment_logins, container, false)
+    }
 
-        loginsRV = view.findViewById(R.id.logins_recycler_view) as RecyclerView
-        loginsRV.layoutManager = LinearLayoutManager(activity)
-        noLoginsMessage = view.findViewById(R.id.no_items_view)
-        addLoginButton = view.findViewById(R.id.add_login_btn)
-        fab = view.findViewById(R.id.fab)
-        vaultView = view.findViewById(R.id.vault_view)
-        vaultName = view.findViewById(R.id.vault_name)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        addLoginButton.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
+        val adRequest = AdRequest.Builder().build()
+        adview.loadAd(adRequest)
+
+        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
+        viewModel.appLogins.observe(activity!!, Observer {
+            this.activeLogins = ArrayList(it)
+            updateUI(this.activeLogins)
+        })
+
+        logins_recycler_view.layoutManager = VegaLayoutManager()
+
+        add_login_btn.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
-        vaultView.setOnClickListener{
+        vault_view.setOnClickListener{
             val intent = Intent(activity, SelectVaultActivity::class.java)
             intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
             intent.putExtra("vault_id",VaultRepository.getLastActiveVault().id)
             startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
         }
 
-        return view
+        val sortTypes = arrayOf("Name", "Modified date")
+        sort_logins.setOnClickListener {
+            val builder = AlertDialog.Builder(activity)
+            builder.setTitle("Sort by")
+            builder.setSingleChoiceItems(sortTypes, DataRepository.loginSortType) { dialog, which ->
+                DataRepository.loginSortType = which
+                updateUI(this.activeLogins)
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+        }
+
+        loginsAdapter =
+            LoginsRecyclerViewAdapter(
+                activity!!.baseContext,
+                arrayListOf(), //empty for now
+                activity!!.packageManager,
+                this
+            )
+        logins_recycler_view.adapter = loginsAdapter
+
+        animateItemsIn()
+
+        adview_container.visibility = View.GONE
     }
 
     override fun onResume() {
         super.onResume()
-        updateUI()
+        updateUI(this.activeLogins)
     }
 
-    private fun updateUI() {
-        val logins = LoginsRepository.filterLoginsByCurrentVault(GateKeeperApplication.logins)
-        loginsRV.adapter =
-            LoginsRecyclerViewAdapter(
-                activity.baseContext,
-                logins,
-                activity.packageManager,
-                this
-            )
+    private fun updateUI(allLogins: ArrayList<Login>) {
+        val logins = LoginsRepository.filterLoginsByCurrentVault(allLogins)
+        val sortType = DataRepository.loginSortType
+        if (sortType == LOGIN_SORT_TYPE_NAME) {
+            logins.sortBy { it.name.toLowerCase() }
+            logins_sort_type?.text = "Sort by name"
+        }
+        else {
+            logins.sortBy { it.date_modified }
+            logins.reverse()
+            logins_sort_type?.text = "Sort by modified date"
+        }
 
-        vaultName.text = VaultRepository.getLastActiveVault().name
-        noLoginsMessage.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
-        fab.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
+        if (loginsAdapter == null) {
+            loginsAdapter =
+                LoginsRecyclerViewAdapter(
+                    activity!!.baseContext,
+                    logins,
+                    activity!!.packageManager,
+                    this
+                )
+        }
+
+        loginsAdapter?.updateLogins(logins)
+
+        login_cnt?.text = logins.size.toString()
+
+        val vault = VaultRepository.getLastActiveVault()
+        vault_name?.text = vault.name
+        vault_view?.setBackgroundColor(resources.getColor(vault.getVaultColorResource()))
+        vault_name?.setTextColor(resources.getColor(vault.getVaultColorAccent()))
+        vault_icon?.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
+
+        no_items_view?.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
+        fab?.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
+        logins_counter_container?.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
     }
 
     private fun checkForAutofill() {
@@ -120,10 +178,10 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (requestCode == createLoginRequestCode && resultCode == createLoginSuccess) {
-            updateUI()
+            updateUI(this.activeLogins)
             Toast.makeText(context, "Login successfully created", Toast.LENGTH_SHORT).show()
         } else if (resultCode == deleteLoginSuccess) {
-            updateUI()
+            updateUI(this.activeLogins)
             Toast.makeText(context, "Login successfully deleted", Toast.LENGTH_SHORT).show()
         }
 
@@ -143,7 +201,6 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
     }
 
     private fun openLogin(login: Login) {
-        Log.i("Clicked", login.name)
         val intent = Intent(activity, CreateLoginActivity::class.java)
         intent.putExtra("login_id",login.id)
         startActivity(intent)
@@ -156,7 +213,16 @@ class LoginsFragment(private var activity: Activity) : Fragment(), LoginSelectLi
         ) as ClipboardManager
         val clip = ClipData.newPlainText("label",login.password)
         clipboard.setPrimaryClip(clip)
-
+        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_PASS_COPY)
         Toast.makeText(context, login.name+" password copied", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun animateItemsIn() {
+        Timeline.createParallel()
+            .push(Tween.to(fab, Alpha.VIEW, 1.0f).target(1.0f))
+            .push(Tween.to(fab, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            //.push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
+            //.push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
+            .start(ViewTweenManager.get(fab))
     }
 }

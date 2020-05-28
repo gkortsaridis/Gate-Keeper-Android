@@ -1,84 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_grey"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <View
+    <com.github.florent37.shapeofview.shapes.CutCornerView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/colorPrimaryDark"/>
+        android:layout_height="30dp"
+        android:elevation="4dp"
+        android:id="@+id/top_container"
+        app:shape_cutCorner_bottomRightSize="10dp"
+        app:shape_cutCorner_bottomLeftSize="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="59.5dp"
+            android:background="@color/colorPrimaryDark">
+
+        </RelativeLayout>
+
+    </com.github.florent37.shapeofview.shapes.CutCornerView>
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:shape_roundRect_topRightRadius="28dp"
+        app:shape_roundRect_topLeftRadius="28dp"
+        app:shape_roundRect_bottomRightRadius="28dp"
+        app:shape_roundRect_bottomLeftRadius="28dp"
+        android:elevation="5dp"
+        android:id="@+id/vault_container"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/vault_view"
+            android:background="@color/vault_red_1"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:paddingTop="8dp"
+            android:paddingLeft="32dp"
+            android:paddingBottom="8dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_height="30dp"
+                android:id="@+id/vault_icon"
+                android:tintMode="src_atop"
+                android:src="@drawable/vault_white"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Personal"
+                android:id="@+id/vault_name"
+                android:textSize="19sp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:maxLines="1"/>
+        </LinearLayout>
+
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/plus"
+        android:alpha="0.0"
+        android:id="@+id/fab"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="-56dp"
+        tools:alpha="1"
+        tools:layout_marginBottom="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/vault_container"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="16dp"
+        android:id="@+id/logins_counter_container">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="108"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/login_cnt"
+            android:textStyle="bold"
+            android:textColor="#232326"
+            android:textSize="15sp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="items"
+            android:layout_gravity="center_vertical"
+            android:textColor="#585858"
+            android:textSize="15sp"
+            android:layout_marginLeft="8dp"/>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/logins_sort_type"
+            android:text="Sort by name"
+            android:layout_gravity="center_vertical"
+            android:textColor="#585858"
+            android:textSize="15sp"
+            android:layout_marginRight="8dp"/>
+
+        <ImageButton
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:id="@+id/sort_logins"
+            android:background="@drawable/down_arrow_bold"/>
+    </LinearLayout>
+
+    <!--
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:id="@+id/search_container"
+        app:shape_roundRect_topRightRadius="5dp"
+        app:shape_roundRect_bottomRightRadius="5dp"
+        app:shape_roundRect_bottomLeftRadius="5dp"
+        app:shape_roundRect_topLeftRadius="5dp"
+        android:elevation="5dp"
+        android:layout_below="@+id/logins_counter_container">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+            <SearchView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:queryHint="Search for passwords"
+                android:id="@+id/search_view"/>
+        </RelativeLayout>
+    </com.github.florent37.shapeofview.shapes.RoundRectView> -->
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/logins_recycler_view"
-        android:layout_marginTop="60dp"
-        android:background="@android:color/transparent"/>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:cardElevation="5dp"
-        app:cardCornerRadius="3dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:id="@+id/vault_view"
-            android:foreground="?attr/selectableItemBackground"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:background="@color/colorPrimary">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Vault"
-                    android:textColor="@android:color/white"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_height="50dp"
-                android:layout_width="match_parent">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/vault"
-                    android:alpha="0.3"
-                    android:scaleType="centerInside"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Personal"
-                    android:id="@+id/vault_name"
-                    android:textColor="@color/mate_black"
-                    android:layout_centerInParent="true"/>
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-
-    </androidx.cardview.widget.CardView>
+        android:layout_below="@+id/logins_counter_container"
+        tools:listitem="@layout/recycler_view_item_login_right"/>
 
     <LinearLayout
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        tools:visibility="gone"
         android:id="@+id/no_items_view"
         android:layout_centerInParent="true">
         <ImageView
@@ -115,14 +208,23 @@
             android:layout_marginTop="8dp"/>
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:id="@+id/adview_container"
+        android:visibility="gone"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/plus"
-        android:id="@+id/fab"
-        android:layout_margin="16dp"/>
+        app:shape_roundRect_topLeftRadius="10dp"
+        app:shape_roundRect_topRightRadius="10dp">
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id"/>
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
+
 
 </RelativeLayout>
-

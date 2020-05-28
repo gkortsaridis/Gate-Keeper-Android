@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true">
+
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:elevation="4dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="32dp"
+        app:shape_roundRect_bottomLeftRadius="10dp"
+        app:shape_roundRect_topLeftRadius="10dp"
+        app:shape_roundRect_bottomRightRadius="10dp"
+        app:shape_roundRect_topRightRadius="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/login_background"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:id="@+id/img_container"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="16dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/login_img_container_2"
+                        android:background="@color/vault_red_1"/>
+
+                    <!--<com.github.florent37.shapeofview.shapes.DiagonalView
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        app:shape_diagonal_position="right"
+                        app:shape_diagonal_angle="30">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/vault_color_red"
+                            android:rotation="180"
+                            android:id="@+id/login_img_container"/>
+                    </com.github.florent37.shapeofview.shapes.DiagonalView> -->
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:id="@+id/login_image"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="24dp"
+                    android:padding="4dp"
+                    android:src="@drawable/question_mark"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toRightOf="@+id/img_container"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="12dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="52dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/login_name"
+                    android:textColor="@color/mate_black"
+                    android:singleLine="true"
+                    android:text="Name"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/login_username"
+                    android:text="Username"
+                    android:singleLine="true"
+                    android:textColor="#5C5C5C"
+                    android:textSize="17sp"
+                    android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+            <ImageButton
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:id="@+id/login_action"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/copy"/>
+
+        </RelativeLayout>
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+</RelativeLayout>
+
+

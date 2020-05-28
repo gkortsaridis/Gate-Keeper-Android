@@ -4,8 +4,28 @@
     <color name="colorPrimaryDark">#0039cb</color>
     <color name="colorAccent">#768fff</color>
 
+    <color name="light_grey">#F5F5F5</color>
     <color name="busy_grey">#E5E5E5</color>
+    <color name="underline_grey">#7C7C7C</color>
     <color name="mate_black">#212121</color>
+    <color name="subtext">#BDBDBD</color>
+    <color name="edittext_black">#313131</color>
     <color name="tone_black">#323232</color>
     <color name="error_red">#f44336</color>
+    <color name="editable_card">#ffcdd2</color>
+    <color name="done_green">#7cb342</color>
+
+    <color name="vault_red_1">#e53935</color>
+    <color name="vault_red_2">#ef5350</color>
+    <color name="vault_green_1">#4caf50</color>
+    <color name="vault_green_2">#81c784</color>
+    <color name="vault_blue_1">#1e88e5</color>
+    <color name="vault_blue_2">#42a5f5</color>
+    <color name="vault_yellow_1">#fdd835</color>
+    <color name="vault_yellow_2">#ffee58</color>
+    <color name="vault_white_1">#eeeeee</color>
+    <color name="vault_white_2">#ffffff</color>
+    <color name="vault_coral">#47A8BD</color>
+    <color name="cancel_grey">#757575</color>
+
 </resources>

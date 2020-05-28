@@ -1,58 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:id="@+id/note_background"
+    android:layout_height="match_parent"
+    android:background="@color/light_grey"
+    tools:context=".UI.Notes.NoteActivity">
 
-    <RelativeLayout
+    <com.github.florent37.shapeofview.shapes.CutCornerView
         android:layout_width="match_parent"
-        android:id="@+id/note_background"
-        android:layout_height="match_parent"
-        tools:context=".UI.Notes.NoteActivity">
+        android:layout_height="60dp"
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/top_container"
+        app:shape_cutCorner_bottomRightSize="10dp"
+        app:shape_cutCorner_bottomLeftSize="10dp">
 
-        <androidx.appcompat.widget.Toolbar
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/toolbar"/>
+            android:layout_height="59.5dp"
+            android:background="@color/colorPrimaryDark">
+        </RelativeLayout>
+
+    </com.github.florent37.shapeofview.shapes.CutCornerView>
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:shape_roundRect_topRightRadius="28dp"
+        app:shape_roundRect_topLeftRadius="28dp"
+        app:shape_roundRect_bottomRightRadius="28dp"
+        app:shape_roundRect_bottomLeftRadius="28dp"
+        android:elevation="5dp"
+        android:id="@+id/vault_container"
+        android:layout_marginTop="82dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/vault_view"
+            android:background="@color/vault_red_1"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:paddingTop="8dp"
+            android:paddingLeft="32dp"
+            android:paddingBottom="8dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_height="30dp"
+                android:id="@+id/vault_icon"
+                android:src="@drawable/vault_white"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Personal"
+                android:id="@+id/vault_name"
+                android:textSize="19sp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:maxLines="1"/>
+        </LinearLayout>
+
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbar"
+        android:elevation="0dp"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:background="@color/colorPrimaryDark">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="70dp"
             android:layout_marginRight="70dp"
             android:layout_marginTop="16dp"
             tools:text="Note Title"
             android:hint="Title"
             android:inputType="text"
-            android:id="@+id/note_title"
+            android:id="@+id/note_title_et"
             android:background="@null"
             android:cursorVisible="true"
-            android:textColor="@color/mate_black"
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/greyish"
             android:textStyle="bold"/>
 
-        <ScrollView
-            android:layout_below="@+id/toolbar"
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_below="@+id/vault_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="8dp"
+        android:layout_marginBottom="106dp">
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="106dp">
-            <EditText
+            android:id="@+id/note_body_et"
+            android:padding="16dp"
+            android:hint="Body"
+            android:text="This is the body"
+            android:background="@android:color/transparent"
+            android:cursorVisible="true"/>
+    </ScrollView>
+
+    <com.github.florent37.shapeofview.shapes.ArcView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:shape_arc_position="top"
+        app:shape_arc_height="20dp"
+        android:elevation="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="5dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/note_body"
-                android:padding="16dp"
-                android:hint="Body"
-                android:text="This is the body"
-                android:background="@null"
-                android:cursorVisible="true"/>
-        </ScrollView>
+                android:id="@+id/bottom_view"
+                android:background="@color/colorPrimaryDark"
+                android:orientation="horizontal">
 
-    </RelativeLayout>
+                <ImageButton
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/delete_grey"
+                    android:layout_gravity="bottom"
+                    android:id="@+id/delete_note_btn"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginLeft="40dp"
+                    android:backgroundTintMode="src_atop"
+                    android:backgroundTint="@color/white"/>
 
-    <!-- Adding bottom sheet after main content -->
-    <include layout="@layout/note_bottom_sheet" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Edited at: XXXX"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="8dp"
+                    android:id="@+id/date_modified_tv"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:layout_weight="1"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                <ImageButton
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/tick"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginRight="40dp"
+                    android:backgroundTintMode="src_atop"
+                    android:id="@+id/update_note_btn"
+                    android:backgroundTint="@color/white"/>
+
+            </LinearLayout>
+
+        </com.github.florent37.shapeofview.shapes.ArcView>
+
+</RelativeLayout>
+
 
 

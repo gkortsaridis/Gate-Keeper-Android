@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_grey"
+    android:id="@+id/background"
+    tools:context=".UI.Cards.CardEditActivity"
+    android:orientation="vertical">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:id="@+id/toolbar">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit Card"
+                android:id="@+id/activity_title"
+                android:layout_gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:textSize="19sp"/>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:id="@+id/delete_card_btn"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/bin"/>
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/top_view">
+        <com.github.florent37.shapeofview.shapes.CutCornerView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:elevation="4dp"
+            app:shape_cutCorner_bottomRightSize="10dp"
+            app:shape_cutCorner_bottomLeftSize="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="59.5dp"
+                android:background="@color/colorPrimaryDark">
+            </RelativeLayout>
+
+        </com.github.florent37.shapeofview.shapes.CutCornerView>
+        <com.github.florent37.shapeofview.shapes.RoundRectView
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:shape_roundRect_topRightRadius="28dp"
+            app:shape_roundRect_topLeftRadius="28dp"
+            app:shape_roundRect_bottomRightRadius="28dp"
+            app:shape_roundRect_bottomLeftRadius="28dp"
+            android:elevation="5dp"
+            android:id="@+id/vault_container"
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="6dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/vault_view"
+                android:background="@color/vault_red_1"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:paddingTop="8dp"
+                android:paddingLeft="32dp"
+                android:paddingBottom="8dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="30dp"
+                    android:id="@+id/vault_icon"
+                    android:tintMode="src_atop"
+                    android:src="@drawable/vault_white"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Personal"
+                    android:id="@+id/vault_name"
+                    android:textSize="19sp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@android:color/white"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:maxLines="1"/>
+            </LinearLayout>
+
+        </com.github.florent37.shapeofview.shapes.RoundRectView>
+    </RelativeLayout>
+
+
+    <com.github.florent37.shapeofview.shapes.ArcView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:elevation="4dp"
+        app:shape_arc_position="top"
+        app:shape_arc_height="20dp"
+        android:id="@+id/save_arc"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/save_update_button"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:background="@color/colorPrimaryDark">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:textSize="18sp"
+                android:layout_centerInParent="true"
+                android:textColor="@android:color/white"/>
+
+        </RelativeLayout>
+    </com.github.florent37.shapeofview.shapes.ArcView>
+
+    <ScrollView
+        android:layout_below="@+id/top_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="4dp"
+                android:layout_marginRight="-3dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="32dp"
+                app:shape_roundRect_bottomLeftRadius="40dp"
+                app:shape_roundRect_topLeftRadius="40dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:clipChildren="true">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="16dp"
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="Card Name"
+                            android:hint="Card Name"
+                            android:textSize="21sp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:inputType="text"
+                            android:id="@+id/card_name_et"
+                            android:background="@null"
+                            android:cursorVisible="true"
+                            android:textStyle="bold"/>
+
+                        <com.maxpilotto.actionedittext.ActionEditText
+                            android:id="@+id/cardholder_name_et"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:aed_label="Cardholder Name"
+                            app:aed_hint="Type the cardholder's name..."
+                            android:layout_marginTop="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="16dp"/>
+
+                        <com.maxpilotto.actionedittext.ActionEditText
+                            android:id="@+id/card_number_et"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:aed_label="Card Number"
+                            app:aed_inputType="NUMERIC_VISIBLE"
+                            app:aed_maxLength="16"
+                            app:aed_hint="Type the card number..."
+                            android:layout_marginTop="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="16dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="16dp"
+                            android:id="@+id/expiration_date_container"
+                            android:layout_marginBottom="16dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Expiration Date"
+                                android:layout_marginLeft="8dp"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="12sp"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginTop="8dp">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    tools:text="01/21"
+                                    android:layout_gravity="bottom"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/mate_black"
+                                    android:id="@+id/expiration_date_tv"/>
+
+                                <View
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="2dp"
+                                    android:layout_weight="1"/>
+
+                                <ImageButton
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:background="@drawable/copy"
+                                    android:backgroundTintMode="src_atop"
+                                    android:layout_marginRight="8dp"
+                                    android:id="@+id/copy_expiry_date"
+                                    android:backgroundTint="@color/colorPrimary"/>
+                            </LinearLayout>
+
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/greyish"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+
+
+                        <com.maxpilotto.actionedittext.ActionEditText
+                            android:id="@+id/cvv_et"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:aed_label="CVV"
+                            app:aed_inputType="NUMERIC_VISIBLE"
+                            app:aed_maxLength="4"
+                            app:aed_hint="Type the card CVV..."
+                            android:layout_marginTop="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="16dp"/>
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="80dp"/>
+
+        </LinearLayout>
+
+
+
+    </ScrollView>
+
+</RelativeLayout>

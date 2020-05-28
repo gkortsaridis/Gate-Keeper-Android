@@ -11,8 +11,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.NoteColor
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import java.text.SimpleDateFormat
 
@@ -46,6 +48,7 @@ class NotesRecyclerViewAdapter(
         private var noteModified: TextView? = null
         private var view: LinearLayout? = null
         private var pinnedNote: ImageView? = null
+        private var noteVaultColor: View? = null
 
         init {
             noteTitle = v.findViewById(R.id.note_title)
@@ -53,17 +56,21 @@ class NotesRecyclerViewAdapter(
             noteModified = v.findViewById(R.id.note_modified)
             view = v.findViewById(R.id.note_container)
             pinnedNote = v.findViewById(R.id.note_pinned)
+            noteVaultColor = v.findViewById(R.id.note_vault_color)
         }
 
         fun bindView(note: Note, context: Context, listener: NoteClickListener) {
             noteTitle?.text = note.title
             noteTitle?.setTextColor(context.resources.getColor(R.color.mate_black))
             noteBody?.text = note.body
-            val modifiedDate = note.modifiedDate.toDate()
+            val modifiedDate = note.modifiedDate
             val formatter = SimpleDateFormat(GateKeeperConstants.simpleDateFormat)
             val formattedDate = formatter.format(modifiedDate)
             noteModified?.text = formattedDate
-            view?.setBackgroundColor(Color.parseColor(note.color?.value  ?: NoteColor.White.value))
+
+            val vault = VaultRepository.getVaultByID(note.vaultId)
+            noteVaultColor?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+
             view?.setOnClickListener { listener.onNoteClicked(note) }
             pinnedNote?.visibility = if (note.isPinned) View.VISIBLE else View.GONE
         }

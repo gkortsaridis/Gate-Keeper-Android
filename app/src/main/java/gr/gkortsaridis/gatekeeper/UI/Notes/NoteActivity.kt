@@ -2,18 +2,15 @@ package gr.gkortsaridis.gatekeeper.UI.Notes
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.firebase.Timestamp
+import androidx.core.widget.addTextChangedListener
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.NoteColor
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -23,41 +20,25 @@ import gr.gkortsaridis.gatekeeper.Interfaces.NoteCreateListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteDeleteListener
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteUpdateListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
+import gr.gkortsaridis.gatekeeper.Utils.showKeyboard
+import kotlinx.android.synthetic.main.activity_note.*
+import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
 
 class NoteActivity : AppCompatActivity() {
 
-    private lateinit var toolbar: Toolbar
-    private lateinit var noteTitle: EditText
-    private lateinit var noteBody : EditText
-    private lateinit var noteModified: TextView
-    private lateinit var noteExtraBtn: ImageButton
-    private lateinit var bottomSheetLayout: LinearLayout
-    private lateinit var bottomSheetContainer: RelativeLayout
-    private lateinit var noteBackground: RelativeLayout
-    private lateinit var deleteNote: LinearLayout
-    private lateinit var circleBlue: Button
-    private lateinit var circleCream: Button
-    private lateinit var circleGreen: Button
-    private lateinit var circleOrange: Button
-    private lateinit var circlePink: Button
-    private lateinit var circleRed: Button
-    private lateinit var circleWhite: Button
-    private lateinit var circleYellow: Button
 
     private lateinit var noteColor: NoteColor
     private lateinit var note : Note
-    private lateinit var sheetBehavior : BottomSheetBehavior<LinearLayout>
     private var noteMenu : Int? = null
     private var isPinned : Boolean = false
-    private lateinit var vaultView: LinearLayout
-    private lateinit var vaultName: TextView
 
     private lateinit var vaultToAdd: Vault
 
@@ -65,47 +46,31 @@ class NoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
 
-        toolbar = findViewById(R.id.toolbar)
-        deleteNote = findViewById(R.id.delete_note)
-        noteTitle = findViewById(R.id.note_title)
-        noteExtraBtn = findViewById(R.id.note_extra)
-        bottomSheetLayout = findViewById(R.id.bottom_sheet)
-        noteBackground = findViewById(R.id.note_background)
-        bottomSheetContainer = findViewById(R.id.bottom_container)
-        circleBlue = findViewById(R.id.circle_blue)
-        circleCream = findViewById(R.id.circle_cream)
-        circleGreen = findViewById(R.id.circle_green)
-        circleOrange = findViewById(R.id.circle_orange)
-        circlePink = findViewById(R.id.circle_pink)
-        circleRed = findViewById(R.id.circle_red)
-        circleWhite = findViewById(R.id.circle_white)
-        circleYellow = findViewById(R.id.circle_yellow)
-        noteBody = findViewById(R.id.note_body)
-        noteModified = findViewById(R.id.note_modified)
-        vaultView = findViewById(R.id.vault_view)
-        vaultName = findViewById(R.id.vault_name)
+        AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_INFO)
 
         val noteId = intent.getStringExtra("note_id")!!
         if (noteId != "-1") {
-            deleteNote.visibility = View.VISIBLE
+            delete_note_btn.visibility = View.VISIBLE
             note = NotesRepository.getNoteById(noteId)!!
             vaultToAdd = VaultRepository.getVaultByID(note.vaultId)!!
             this.isPinned = note.isPinned
             noteMenu = if (note.isPinned) R.menu.note_actionbar_menu_star_on else R.menu.note_actionbar_menu_star_off
         }else {
-            deleteNote.visibility = View.GONE
+            delete_note_btn.visibility = View.INVISIBLE
             vaultToAdd = VaultRepository.getLastActiveRealVault()
             note = Note(
                 title= "",
                 body = "",
-                modifiedDate = Timestamp.now(),
-                createDate = Timestamp.now(),
-                id= "",
+                modifiedDate = Timestamp(System.currentTimeMillis()),
+                createDate = Timestamp(System.currentTimeMillis()),
+                id= "-1",
                 accountId = AuthRepository.getUserID(),
                 isPinned = false,
                 vaultId = vaultToAdd.id,
                 color = NoteColor.White)
             noteMenu = R.menu.note_actionbar_menu_star_off
+            note_body_et.requestFocus()
+            note_body_et.showKeyboard()
         }
 
         noteColor = note.color ?: NoteColor.White
@@ -114,32 +79,35 @@ class NoteActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
 
-        noteTitle.setText(note.title)
-        deleteNote.setOnClickListener { deleteNote() }
-        sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
-        noteExtraBtn.setOnClickListener { sheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
-
-        circleBlue.setOnClickListener { changeColor(NoteColor.Blue) }
-        circleCream.setOnClickListener { changeColor(NoteColor.Cream) }
-        circleGreen.setOnClickListener { changeColor(NoteColor.Green) }
-        circleOrange.setOnClickListener { changeColor(NoteColor.Orange) }
-        circlePink.setOnClickListener { changeColor(NoteColor.Pink) }
-        circleRed.setOnClickListener { changeColor(NoteColor.Red) }
-        circleWhite.setOnClickListener { changeColor(NoteColor.White) }
-        circleYellow.setOnClickListener { changeColor(NoteColor.Yellow) }
-        vaultView.setOnClickListener { changeVault() }
+        note_title_et.setText(note.title)
+        delete_note_btn.setOnClickListener { deleteNote() }
+        vault_view.setOnClickListener { changeVault() }
 
         val formatter = SimpleDateFormat(GateKeeperConstants.dateOnlyFormat)
-        val formattedDate = formatter.format(note.modifiedDate.toDate())
-        noteModified.text = "Edited at $formattedDate"
-        noteBody.setText(note.body)
+        val formattedDate = formatter.format(note.modifiedDate)
+        date_modified_tv.text = "Edited at $formattedDate"
+        note_body_et.setText(note.body)
 
-        changeColor(noteColor)
+        update_note_btn.setOnClickListener {
+            updateNoteAndFinish()
+        }
+
+        note_title_et.addTextChangedListener { toggleSaveButton() }
+        note_body_et.addTextChangedListener{ toggleSaveButton() }
+
         updateUI()
+        toggleSaveButton()
+    }
+
+    private fun toggleSaveButton() {
+        update_note_btn.visibility = if (isNoteNotEmpty()) View.VISIBLE else View.INVISIBLE
     }
 
     private fun updateUI() {
-        vaultName.text = vaultToAdd.name
+        vault_name.text = vaultToAdd.name
+        vault_view.setBackgroundColor(resources.getColor(vaultToAdd.getVaultColorResource()))
+        vault_name.setTextColor(resources.getColor(vaultToAdd.getVaultColorAccent()))
+        vault_icon.setColorFilter(resources.getColor(vaultToAdd.getVaultColorAccent()))
     }
 
     private fun changeVault() {
@@ -149,12 +117,6 @@ class NoteActivity : AppCompatActivity() {
         startActivityForResult(intent, GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE)
     }
 
-    private fun changeColor(color: NoteColor) {
-        noteColor = color
-        noteBackground.setBackgroundColor(Color.parseColor(color.value))
-        bottomSheetLayout.setBackgroundColor(Color.parseColor(color.value))
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(noteMenu!!, menu)
         return super.onCreateOptionsMenu(menu)
@@ -162,7 +124,7 @@ class NoteActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            android.R.id.home -> { updateNoteAndFinish() }
+            android.R.id.home -> { finish() }
             R.id.action_star_off -> {
                 this.isPinned = true
                 noteMenu = R.menu.note_actionbar_menu_star_on
@@ -178,49 +140,67 @@ class NoteActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onBackPressed() {
-        updateNoteAndFinish()
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (ev?.action === MotionEvent.ACTION_DOWN) {
-            if (sheetBehavior.state === BottomSheetBehavior.STATE_EXPANDED) {
-                val outRect = Rect()
-                bottomSheetLayout.getGlobalVisibleRect(outRect)
-
-                if (!outRect.contains(ev?.rawX.toInt(), ev.rawY.toInt())){
-                    sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                }
-            }
-        }
-
-        return super.dispatchTouchEvent(ev)
-    }
-
     private fun deleteNote() {
-        val viewDialog = ViewDialog(this)
-        viewDialog.showDialog()
 
-        NotesRepository.deleteNote(note, object: NoteDeleteListener{
-            override fun onNoteDeleted() {
-                GateKeeperApplication.notes.remove(note)
-                viewDialog.hideDialog()
-                finishWithResult()
-            }
-        })
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Delete Note")
+        builder.setMessage("Are you sure you want to delete this Note item?")
+        builder.setPositiveButton("DELETE"){dialog, _ ->
+            dialog.cancel()
+
+            val viewDialog = ViewDialog(this)
+            viewDialog.showDialog()
+
+            NotesRepository.deleteNote(note, object: NoteDeleteListener{
+                override fun onNoteDeleted() {
+                    NotesRepository.removeLocalNote(note)
+                    //GateKeeperApplication.notes.remove(note)
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_DELETE)
+
+                    viewDialog.hideDialog()
+                    finishWithResult()
+                }
+
+                override fun onNoteDeleteError(errorCode: Int, errorMsg: String) {
+                    NotesRepository.removeLocalNote(note)
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_DELETE_ERROR)
+                    //GateKeeperApplication.notes.remove(note)
+                    viewDialog.hideDialog()
+                }
+            })
+
+        }
+        builder.setNegativeButton("CANCEL"){dialog, _ -> dialog.cancel() }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+
+        val positiveButton: Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        positiveButton.setTextColor(resources.getColor(R.color.error_red))
     }
 
     private fun updateNoteAndFinish() {
         val viewDialog = ViewDialog(this)
-        VaultRepository.setActiveVault(vaultToAdd)
-        if (note.id != "") {
+
+        if (VaultRepository.getLastActiveVault().id != vaultToAdd.id) {
+            VaultRepository.setActiveVault(VaultRepository.allVaultsObj)
+        }
+        if (note.id != "-1") {
             if (isNoteChanged()) {
                 bringNoteObjUpToDate()
 
                 viewDialog.showDialog()
                 NotesRepository.updateNote(note, object : NoteUpdateListener{
                     override fun onNoteUpdated(note: Note) {
-                        GateKeeperApplication.notes.replaceAll { if (it.id == note.id) note else it }
+                        NotesRepository.updateLocalNote(note)
+                        //GateKeeperApplication.notes.replaceAll { if (it.id == note.id) note else it }
+                        viewDialog.hideDialog()
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_UPDATE)
+
+                        finishWithResult()
+                    }
+
+                    override fun onNoteUpdateError(errorCode: Int, errorMsg: String) {
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_UPDATE_ERROR)
                         viewDialog.hideDialog()
                         finishWithResult()
                     }
@@ -230,37 +210,52 @@ class NoteActivity : AppCompatActivity() {
             }
 
         }else {
-            if (noteTitle.text.toString().trim() != "" || noteBody.text.toString().trim() != "") {
-                note.createDate = Timestamp.now()
+            if (note_title_et.text.toString().trim() != "" || note_body_et.text.toString().trim() != "") {
+                note.createDate = null
                 bringNoteObjUpToDate()
 
                 viewDialog.showDialog()
                 NotesRepository.createNote(note, object : NoteCreateListener{
                     override fun onNoteCreated(note: Note) {
-                        GateKeeperApplication.notes.add(note)
+                        NotesRepository.addLocalNote(note)
+                        //GateKeeperApplication.notes.add(note)
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_CREATE)
+                        viewDialog.hideDialog()
+                        finishWithResult()
+                    }
+
+                    override fun onNoteCreateError(errorCode: Int, errorMsg: String) {
+                        NotesRepository.addLocalNote(note)
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.NOTE_CREATE_ERROR)
+                        //GateKeeperApplication.notes.add(note)
                         viewDialog.hideDialog()
                         finishWithResult()
                     }
                 })
             } else {
-              finishWithResult()
+                Toast.makeText(this, "Cannot save empty note", Toast.LENGTH_SHORT).show()
+                finishWithResult()
             }
         }
 
     }
 
+    private fun isNoteNotEmpty(): Boolean {
+        return note_title_et.text.toString().isNotEmpty() || note_body_et.text.toString().isNotEmpty()
+    }
+
     private fun isNoteChanged(): Boolean {
-        return (note.title != noteTitle.text.toString()
-                || note.body != noteBody.text.toString()
+        return (note.title != note_title_et.text.toString()
+                || note.body != note_body_et.text.toString()
                 || note.color != noteColor
                 || this.isPinned != note.isPinned
                 || this.vaultToAdd.id != note.vaultId)
     }
 
     private fun bringNoteObjUpToDate() {
-        note.title = noteTitle.text.toString()
-        note.body = noteBody.text.toString()
-        note.modifiedDate = Timestamp.now()
+        note.title = note_title_et.text.toString()
+        note.body = note_body_et.text.toString()
+        note.modifiedDate = null
         note.color = noteColor
         note.isPinned = this.isPinned
         note.vaultId = vaultToAdd.id
@@ -278,6 +273,10 @@ class NoteActivity : AppCompatActivity() {
     }
 
     private fun finishWithResult() {
+        if (note.id != VaultRepository.getLastActiveVault().id) {
+            VaultRepository.setActiveVault(VaultRepository.allVaultsObj)
+        }
+
         val intent = Intent()
         setResult(1, intent)
         finish()

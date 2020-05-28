@@ -5,7 +5,7 @@ import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 
 object DataRepository {
 
-    private const val PREFS_FILENAME = "gatekeeper.prefs"
+    const val PREFS_FILENAME = "gatekeeper.prefs"
     private const val CREDENTIALS_EMAIL = "user_credentials_email"
     private const val CREDENTIALS_PASSWORD = "user_credentials_password"
     private const val SAVED_LOGINS = "saved_logins"
@@ -15,6 +15,7 @@ object DataRepository {
     private const val AUTH_TYPE = "authentication_type"
     private const val PIN_LOCK = "pin_lock"
     private const val LOGIN_CLICK_ACTION = "login_click_action"
+    private const val LOGIN_SORT_TYPE = "login_sort_type"
 
     private val prefs: SharedPreferences = GateKeeperApplication.instance.getSharedPreferences(PREFS_FILENAME, 0)
 
@@ -51,6 +52,10 @@ object DataRepository {
         set(value) = prefs.edit().putString(PIN_LOCK, value).apply()
 
     var loginClickAction : Int
-        get() = prefs.getInt(LOGIN_CLICK_ACTION, LoginsRepository.LOGIN_CLICK_ACTION_COPY)
+        get() = prefs.getInt(LOGIN_CLICK_ACTION, LoginsRepository.LOGIN_CLICK_ACTION_OPEN)
         set(value) = prefs.edit().putInt(LOGIN_CLICK_ACTION, value).apply()
+
+    var loginSortType : Int
+        get() = prefs.getInt(LOGIN_SORT_TYPE, LoginsRepository.LOGIN_SORT_TYPE_NAME)
+        set(value) = prefs.edit().putInt(LOGIN_SORT_TYPE, value).apply()
 }

@@ -1,23 +1,27 @@
 package gr.gkortsaridis.gatekeeper.Repositories
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import android.util.Log
 import com.google.gson.Gson
-import gr.gkortsaridis.gatekeeper.Entities.*
+import com.revenuecat.purchases.Purchases
+import com.revenuecat.purchases.identifyWith
+import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
+import gr.gkortsaridis.gatekeeper.Entities.UserCredentials
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
-import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.Authentication.LoadingActivity
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
+import gr.gkortsaridis.gatekeeper.Utils.pbkdf2_lib
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
+@SuppressLint("CheckResult")
 object AuthRepository {
 
     const val SIGN_IN_NOT_SET = 0
@@ -27,68 +31,105 @@ object AuthRepository {
 
     private val TAG = "_Auth_Repository_"
 
-    val auth = FirebaseAuth.getInstance()
-    val RC_SIGN_IN : Int = 1
-
-    fun signIn(activity:Activity, email: String, password: String, check: Boolean, listener: SignInListener) {
+    fun signIn(activity: Activity, email: String, password: String, listener: SignInListener) {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener {
-                viewDialog.hideDialog()
 
-                if (it.isSuccessful) {
-                    val bundle = Bundle()
-                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
-                    FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
-                    listener.onSignInComplete(true, FirebaseSignInResult(it.result,null))
-                }else {
-                    listener.onSignInComplete(false, FirebaseSignInResult(null,it.exception))
+        val hash = pbkdf2_lib.createHash(password, email)
+        val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
+        val encDevice = SecurityRepository.encryptObjToEncDataWithUserCredentials(device)
+        val body = ReqBodyUsernameHash(
+            username = email,
+            hash = hash,
+            deviceEncryptedData = encDevice?.encryptedData ?: "",
+            deviceIv = encDevice?.iv ?: "",
+            deviceUid = device.UID)
+
+        GateKeeperAPI.api.signIn(body)
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    viewDialog.hideDialog()
+
+                    if (it.errorCode == -1) {
+                        GateKeeperApplication.extraData = SecurityRepository.getUserExtraData(
+                            email = body.username,
+                            data = it.data.extraDataEncryptedData,
+                            iv = it.data.extraDataIv)
+                        AnalyticsRepository.setUserEmail(email)
+                        if (GateKeeperApplication.extraData?.userFullName?.isNotBlank() == true) {
+                            AnalyticsRepository.setUserName(GateKeeperApplication.extraData?.userFullName ?: "")
+                        }
+                        listener.onSignInComplete(it.data.userId)
+                    } else {
+                        listener.onSignInError(it.errorCode, it.errorMsg)
+                    }
+                },
+                {
+                    viewDialog.hideDialog()
+                    listener.onSignInError(it.hashCode(), it.localizedMessage ?: "")
                 }
-            }
-    }
-
-    fun googleSignIn(activity: Activity) {
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(activity.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        val googleSignInClient = GoogleSignIn.getClient(activity, gso)
-
-        val signInIntent = googleSignInClient.signInIntent
-        activity.startActivityForResult(signInIntent, RC_SIGN_IN)
+            )
     }
 
     fun signUp(activity: Activity, email: String, password: String, listener: SignUpListener) {
         val viewDialog = ViewDialog(activity)
         viewDialog.showDialog()
-        auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener { result: AuthResult ->
-            viewDialog.hideDialog()
-            val bundle = Bundle()
-            bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
-            FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
-            saveCredentials(email, password)
-            listener.onSignUpComplete(true, FirebaseSignInResult(result, null))
-            result.user?.sendEmailVerification()
-        }.addOnFailureListener {e: java.lang.Exception ->
-            viewDialog.hideDialog()
-            listener.onSignUpComplete(false, FirebaseSignInResult(null, e))
-        }
+
+        val hash = pbkdf2_lib.createHash(password = password, username = email)
+        val device = DeviceRepository.getCurrentDevice(GateKeeperApplication.instance)
+        val body = ReqBodyUsernameHash(
+            username = email,
+            hash = hash,
+            deviceEncryptedData = "",
+            deviceIv = "",
+            deviceUid = device.UID)
+        GateKeeperAPI.api.signUp(body)
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe (
+                {
+                    viewDialog.hideDialog()
+                    if (it.errorCode == -1) {
+                        GateKeeperApplication.extraData = SecurityRepository.getUserExtraData(
+                            email = body.username,
+                            data = it.data.extraDataEncryptedData,
+                            iv = it.data.extraDataIv)
+                        AnalyticsRepository.setUserEmail(email)
+                        listener.onSignUpComplete(it.data.userId)
+                    } else {
+                        listener.onSignUpError(it.errorCode, it.errorMsg)
+                    }
+                },
+                {
+                    viewDialog.hideDialog()
+                    listener.onSignUpError(it.hashCode(), it.localizedMessage ?: "")
+                }
+            )
     }
 
-    fun setApplicationUser(user: FirebaseUser) {
-        GateKeeperApplication.user = user
-        DataRepository.savedUser = user.uid
+    fun setApplicationUser(userId: String) {
+        GateKeeperApplication.user_id = userId
+        DataRepository.savedUser = userId
+
+        //Analytics User identity
+        AnalyticsRepository.identifyUser(userId)
+
+        //RevenueCat User identity
+        Purchases.sharedInstance.identifyWith(userId) { purchaserInfo ->
+            // purchaserInfo updated for my_app_user_id
+            GateKeeperApplication.purchaserInfo = purchaserInfo
+            Log.i("REVENUE CAT PURCHASER INFO", purchaserInfo.toString())
+        }
     }
 
     fun proceedLoggedIn(activity: Activity) {
         activity.startActivity(Intent(activity, LoadingActivity::class.java))
     }
 
-    fun clearCredentials() {
-        DataRepository.userEmail = null
-        DataRepository.userPassword = null
+    fun isPlusUser(): Boolean {
+        return GateKeeperApplication.purchaserInfo?.entitlements?.get("Plus")?.isActive == true
     }
 
     fun saveCredentials(email: String, password: String): Boolean {
@@ -129,14 +170,7 @@ object AuthRepository {
     }
 
     fun getUserID (): String {
-        var userId = ""
-
-        if (GateKeeperApplication.user != null) { userId = GateKeeperApplication.user!!.uid }
-        else if (GateKeeperApplication.user_id != null && GateKeeperApplication.user_id != "") {
-            userId = GateKeeperApplication.user_id!!
-        }
-
-        return userId
+        return GateKeeperApplication.user_id ?: ""
     }
 
     fun getPreferredAuthType(): Int{

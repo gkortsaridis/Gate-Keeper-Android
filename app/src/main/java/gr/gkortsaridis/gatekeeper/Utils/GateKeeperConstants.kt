@@ -11,4 +11,8 @@ object GateKeeperConstants {
     const val CHANGE_VAULT_REQUEST_CODE = 14
     const val CHANGE_APP_REQUEST_CODE = 13
     const val CHANGE_ACTIVE_VAULT_REQUEST_CODE = 15
+
+    const val CARD_STATE_DONE = 1
+    const val CARD_STATE_EDITED = 2
+
 }

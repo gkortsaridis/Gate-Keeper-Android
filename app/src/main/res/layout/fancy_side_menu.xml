@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.github.florent37.shapeofview.shapes.DiagonalView
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:elevation="4dp"
+                    app:shape_diagonal_angle="6"
+                    app:shape_diagonal_position="bottom">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorPrimaryDark"/>
+
+                </com.github.florent37.shapeofview.shapes.DiagonalView>
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/crowns"
+                android:id="@+id/plus_crown"/>
+            <com.github.florent37.shapeofview.shapes.CircleView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:elevation="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/profile_image"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_launcher_round"/>
+            </com.github.florent37.shapeofview.shapes.CircleView>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="George Kortsaridis"
+            android:id="@+id/nav_name"
+            android:textColor="@color/mate_black"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/you_are_secured"
+            android:id="@+id/your_are_secured_tv"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:textSize="17sp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/skew_top"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="32dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:orientation="vertical"
+            android:background="@color/colorPrimaryDark">
+
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/passwords_rectview"
+                app:shape_roundRect_bottomLeftRadius="25dp"
+                app:shape_roundRect_bottomRightRadius="25dp"
+                app:shape_roundRect_topLeftRadius="25dp"
+                app:shape_roundRect_topRightRadius="25dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:background="@color/colorPrimary"
+                    android:id="@+id/nav_container_passwords"
+                    android:layout_height="50dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/nav_text_passwords"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:text="Passwords"/>
+                </RelativeLayout>
+
+
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/cards_rectview"
+                app:shape_roundRect_bottomLeftRadius="25dp"
+                app:shape_roundRect_bottomRightRadius="25dp"
+                app:shape_roundRect_topLeftRadius="25dp"
+                app:shape_roundRect_topRightRadius="25dp">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:clickable="true"
+                    android:id="@+id/nav_container_cards"
+                    android:background="@color/colorPrimary"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:layout_height="50dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/nav_text_cards"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:text="Digital Wallet"/>
+                </RelativeLayout>
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/notes_rectview"
+                app:shape_roundRect_bottomLeftRadius="25dp"
+                app:shape_roundRect_bottomRightRadius="25dp"
+                app:shape_roundRect_topLeftRadius="25dp"
+                app:shape_roundRect_topRightRadius="25dp">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:background="@color/colorPrimary"
+                    android:id="@+id/nav_container_notes"
+                    android:layout_height="50dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/nav_text_notes"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:text="Secure Notes"/>
+                </RelativeLayout>
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/account_rectview"
+                app:shape_roundRect_bottomLeftRadius="25dp"
+                app:shape_roundRect_bottomRightRadius="25dp"
+                app:shape_roundRect_topLeftRadius="25dp"
+                app:shape_roundRect_topRightRadius="25dp">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:background="@color/colorPrimary"
+                    android:id="@+id/nav_container_account"
+                    android:layout_height="50dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/nav_text_account"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:text="My Account"/>
+                </RelativeLayout>
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/pass_gen_rectview"
+                app:shape_roundRect_bottomLeftRadius="25dp"
+                app:shape_roundRect_bottomRightRadius="25dp"
+                app:shape_roundRect_topLeftRadius="25dp"
+                app:shape_roundRect_topRightRadius="25dp">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:background="@color/colorPrimary"
+                    android:id="@+id/nav_container_pass_gen"
+                    android:layout_height="50dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/nav_text_pass_gen"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:text="Password Generator"/>
+                </RelativeLayout>
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/skew_bottom"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="32dp"/>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <com.github.florent37.shapeofview.shapes.CircleView
+                android:layout_width="80dp"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:src="@drawable/settings"
+                    android:padding="10dp"
+                    android:id="@+id/nav_button_settings"
+                    android:layout_gravity="center_vertical"/>
+            </com.github.florent37.shapeofview.shapes.CircleView>
+
+
+            <com.github.florent37.shapeofview.shapes.CircleView
+                android:layout_width="80dp"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:padding="10dp"
+                    android:id="@+id/nav_button_about"
+                    android:src="@drawable/copyright"
+                    android:layout_gravity="center_vertical"/>
+            </com.github.florent37.shapeofview.shapes.CircleView>
+
+            <com.github.florent37.shapeofview.shapes.CircleView
+                android:layout_width="80dp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:background="@color/colorPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="10dp"
+                    android:id="@+id/nav_button_logout"
+                    android:src="@drawable/logout"
+                    android:layout_gravity="center_vertical"/>
+            </com.github.florent37.shapeofview.shapes.CircleView>
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
+

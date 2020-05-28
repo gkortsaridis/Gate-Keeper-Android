@@ -1,12 +1,13 @@
 package gr.gkortsaridis.gatekeeper.Entities
 
-enum class CardType {
-    Mastercard,
-    Visa,
-    Amex,
-    DiscoverCard,
-    DinersClub,
-    Unknown
+enum class CardType(val value: String) {
+    Mastercard("MASTERCARD"),
+    Visa("VISA"),
+    Amex("AMEX"),
+    DiscoverCard("DISCOVER"),
+    DinersClub("DINERS"),
+    JCB("JCB"),
+    Unknown("")
 }
 
 enum class Bank {
@@ -24,7 +25,19 @@ enum class NoteColor(val value: String) {
     Pink("#F0A1A6"),
     Red("#F65A34"),
     Yellow("#FEF735"),
-    White("#fafafa")
+    White("#ffffff")
+}
+
+enum class VaultColor(val value: String) {
+    Blue("#A7D9D6"),
+    Cream("#FDE79D"),
+    Green("#82CC74"),
+    Orange("#F66522"),
+    Pink("#F0A1A6"),
+    Red("#F65A34"),
+    Yellow("#FEF735"),
+    White("#ffffff"),
+    Coral("#47A8BD")
 }
 
 enum class LoginUrlType(val value: String) {

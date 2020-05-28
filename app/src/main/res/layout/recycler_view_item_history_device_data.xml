@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:elevation="5dp"
+        app:shape_roundRect_topLeftRadius="5dp"
+        app:shape_roundRect_topRightRadius="5dp"
+        app:shape_roundRect_bottomLeftRadius="5dp"
+        app:shape_roundRect_bottomRightRadius="5dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This is a nickname"
+                android:id="@+id/device_nickname"
+                android:textSize="19sp"
+                android:textColor="@color/mate_black"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This is the full vendor name"
+                android:id="@+id/device_vendor"
+                android:textSize="16sp"
+                android:textColor="@color/mate_black"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Android 10.1"
+                android:textSize="15sp"
+                android:id="@+id/device_os_info"
+                android:textColor="@color/greyish"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="16dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Last used: 16 April 2020, 8:45AM"
+                    android:textSize="15sp"
+                    android:textColor="@color/greyish"
+                    android:id="@+id/device_last_used" />
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"/>
+                <ImageButton
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/down_arrow_bold"
+                    android:id="@+id/expand_device_info"/>
+            </LinearLayout>
+
+
+
+
+            <net.cachapa.expandablelayout.ExpandableLayout
+                android:id="@+id/device_info_expand"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:el_duration="1000"
+                app:el_expanded="false"
+                app:el_parallax="0.5">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp">
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/device_new_name"
+                            android:hint="Set a device nickname"/>
+                        <ImageButton
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:id="@+id/rename_request"
+                            android:background="@drawable/edit_black"
+                            android:layout_gravity="center_vertical"/>
+                    </LinearLayout>
+
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delete"
+                        android:layout_gravity="end"
+                        android:id="@+id/delete_request"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/error_red"/>
+
+                </LinearLayout>
+
+            </net.cachapa.expandablelayout.ExpandableLayout>
+        </LinearLayout>
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+</LinearLayout>
