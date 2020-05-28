@@ -12,7 +12,6 @@ import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import kotlinx.android.synthetic.main.activity_sign_in.*
-import org.json.JSONObject
 
 
 class SignInActivity : AppCompatActivity(), SignInListener {
@@ -57,10 +56,7 @@ class SignInActivity : AppCompatActivity(), SignInListener {
 
     override fun onSignInComplete(userId: String) {
         val biometricManager = BiometricManager.from(this)
-
-        val props = JSONObject()
-        props.put(AnalyticsRepository.SIGN_IN_TYPE, AnalyticsRepository.SIGN_IN_PASS)
-        AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN, props)
+        AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_PASS)
 
         if (AuthRepository.getPreferredAuthType() == AuthRepository.SIGN_IN_NOT_SET
             && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {

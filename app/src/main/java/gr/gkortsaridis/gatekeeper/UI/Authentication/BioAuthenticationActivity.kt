@@ -55,9 +55,7 @@ class BioAuthenticationActivity : AppCompatActivity() {
                         override fun onSignInComplete(userId: String) {
                             AuthRepository.setApplicationUser(userId)
                             AuthRepository.proceedLoggedIn(activity)
-                            val props = JSONObject()
-                            props.put(AnalyticsRepository.SIGN_IN_TYPE, AnalyticsRepository.SIGN_IN_BIO)
-                            AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN, props)
+                            AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_BIO)
                         }
 
                         override fun onSignInError(errorCode: Int, errorMsg: String) {

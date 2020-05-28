@@ -128,6 +128,7 @@ class CreateLoginActivity : AppCompatActivity() {
                     icon = R.drawable.copy
                     onClick = {
                         copy(passwordET.text!!, "Password")
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_PASS_COPY)
                     }
                 })
             }
@@ -141,6 +142,7 @@ class CreateLoginActivity : AppCompatActivity() {
                     icon = R.drawable.copy
                     onClick = {
                         copy(usernameET.text!!, "Username")
+                        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_USER_COPY)
                     }
                 })
 

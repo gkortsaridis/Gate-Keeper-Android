@@ -3,14 +3,14 @@ package gr.gkortsaridis.gatekeeper.Repositories
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.identifyWith
-import gr.gkortsaridis.gatekeeper.Entities.*
+import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyUsernameHash
+import gr.gkortsaridis.gatekeeper.Entities.UserCredentials
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.Interfaces.SignUpListener
@@ -57,9 +57,10 @@ object AuthRepository {
                             email = body.username,
                             data = it.data.extraDataEncryptedData,
                             iv = it.data.extraDataIv)
-                        val bundle = Bundle()
-                        bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
-                        FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+                        AnalyticsRepository.setUserEmail(email)
+                        if (GateKeeperApplication.extraData?.userFullName?.isNotBlank() == true) {
+                            AnalyticsRepository.setUserName(GateKeeperApplication.extraData?.userFullName ?: "")
+                        }
                         listener.onSignInComplete(it.data.userId)
                     } else {
                         listener.onSignInError(it.errorCode, it.errorMsg)
@@ -95,9 +96,7 @@ object AuthRepository {
                             email = body.username,
                             data = it.data.extraDataEncryptedData,
                             iv = it.data.extraDataIv)
-                        val bundle = Bundle()
-                        bundle.putString(FirebaseAnalytics.Param.METHOD, "Email/Password")
-                        FirebaseAnalytics.getInstance(activity).logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
+                        AnalyticsRepository.setUserEmail(email)
                         listener.onSignUpComplete(it.data.userId)
                     } else {
                         listener.onSignUpError(it.errorCode, it.errorMsg)

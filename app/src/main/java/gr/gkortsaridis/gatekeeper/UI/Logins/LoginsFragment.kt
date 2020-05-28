@@ -27,6 +27,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.LOGIN_SORT_TYPE_NAME
@@ -212,7 +213,7 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         ) as ClipboardManager
         val clip = ClipData.newPlainText("label",login.password)
         clipboard.setPrimaryClip(clip)
-
+        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_PASS_COPY)
         Toast.makeText(context, login.name+" password copied", Toast.LENGTH_SHORT).show()
     }
 
