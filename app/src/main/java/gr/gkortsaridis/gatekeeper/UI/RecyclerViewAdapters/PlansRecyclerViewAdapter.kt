@@ -67,30 +67,31 @@ class PlansRecyclerViewAdapter(
         }
 
         fun bindSku(context: Context, packageItem: Package, listener: InAppPurchasesListener?){
+            packageItem.product.price
             when {
-                /*sku.price == "Free" -> {
+                packageItem.product.price == "Free" -> {
                     planName?.text = "GateKeeper\nBasic"
-                    title?.text = sku.title
-                    price?.text = sku.price
+                    title?.text = packageItem.product.title
+                    price?.text = packageItem.product.price
                     currency?.text = ""
                     description?.text = context.getString(R.string.free_plan_description)
                     perMonth?.visibility = View.GONE
                 }
-                sku.sku == "gate_keeper_plus_yearly" -> {
+                packageItem.product.sku == "gate_keeper_plus_yearly" -> {
                     planName?.text = "GateKeeper\nPlus+"
-                    val priceNumber = sku.price.substring(1)
-                    val priceCurrency = sku.price[0].toString()
+                    val priceNumber = packageItem.product.price.substring(1)
+                    val priceCurrency = packageItem.product.price[0].toString()
                     val priceRounded = ((priceNumber.toFloat() / 12) * 100.0).roundToInt() / 100.0
-                    price?.text = priceRounded.toString()
+                    price?.text = priceRounded.toString().replace(".0","")
                     currency?.text = priceCurrency
-                    description?.text = "Charged "+priceNumber+" yearly"+context.getString(R.string.yearly_plan_description)
+                    description?.text = "Charged "+packageItem.product.price+" yearly"+context.getString(R.string.yearly_plan_description)
                     title?.text = "Yearly Subscription"
 
                 }
-                sku.sku == "gatekeeper_plus_monthly" -> {
+                packageItem.product.sku == "gatekeeper_plus_monthly" -> {
                     planName?.text = "GateKeeper\nPlus+"
-                    val priceNumber = sku.price.substring(1)
-                    val priceCurrency = sku.price[0].toString()
+                    val priceNumber = packageItem.product.price.substring(1)
+                    val priceCurrency = packageItem.product.price[0].toString()
                     price?.text = priceNumber
                     currency?.text = priceCurrency
                     description?.text = context.getString(R.string.monthly_plan_description)
@@ -98,13 +99,13 @@ class PlansRecyclerViewAdapter(
                 }
                 else -> {
                     //Just in case :)
-                    val priceNumber = sku.price.substring(1)
-                    val priceCurrency = sku.price[0].toString()
+                    val priceNumber = packageItem.product.price.substring(1)
+                    val priceCurrency = packageItem.product.price[0].toString()
                     price?.text = priceNumber
                     currency?.text = priceCurrency
-                    description?.text = sku.description
-                    title?.text = sku.title
-                }*/
+                    description?.text = packageItem.product.description
+                    title?.text = packageItem.product.title
+                }
             }
 
             buyNow?.setOnClickListener { listener?.onSubscriptionBuyTouched(packageItem) }
