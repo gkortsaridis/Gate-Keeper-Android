@@ -29,7 +29,7 @@ object pbkdf2_lib {
     ): ByteArray {
         val spec = PBEKeySpec(password, salt, iterations, bytes * 8)
         val skf = SecretKeyFactory.getInstance(PBKDF2_ALGORITHM)
-        return skf.generateSecret(spec).getEncoded()
+        return skf.generateSecret(spec).encoded
     }
 
     fun toHex(array: ByteArray): String {

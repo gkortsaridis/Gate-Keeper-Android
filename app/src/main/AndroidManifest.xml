@@ -75,6 +75,10 @@
             <meta-data
                 android:name="android.autofill"
                 android:resource="@xml/gatekeeper_credentials_filler" />
+
+            <meta-data
+                android:name="firebase_crashlytics_collection_enabled"
+                android:value="false" />
         </service>
     </application>
 
