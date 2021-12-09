@@ -36,8 +36,14 @@ object LoginsRepository {
     val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
 
     var allLogins: ArrayList<Login>
-        get() { return ArrayList(db.dao().allLoginsSync) }
-        set(logins) { db.dao().truncateLogins(); for (login in logins) { db.dao().insertLogin(login) } }
+        get() {
+            return GateKeeperApplication.logins ?: ArrayList()
+            //return ArrayList(db.dao().allLoginsSync)
+        }
+        set(logins) {
+            GateKeeperApplication.logins = logins
+            //db.dao().truncateLogins(); for (login in logins) { db.dao().insertLogin(login) }
+        }
 
     fun addLocalLogin(login: Login) { db.dao().insertLogin(login) }
 

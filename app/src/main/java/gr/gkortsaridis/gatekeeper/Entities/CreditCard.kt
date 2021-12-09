@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.Entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.type.DateTime
 import java.io.Serializable
 import java.sql.Timestamp
 
@@ -17,6 +18,6 @@ data class CreditCard(
     var cardholderName: String,
     var vaultId: String,
     var accountId: String,
-    var modifiedDate: Timestamp? = null,
-    var createdDate: Timestamp? = null
+    var modifiedDate: Long? = null,
+    var createdDate: Long? = null
 ): Serializable

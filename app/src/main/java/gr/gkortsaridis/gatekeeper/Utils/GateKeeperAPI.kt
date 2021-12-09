@@ -104,10 +104,10 @@ object GateKeeperAPI {
     interface GateKeeperInterface {
 
         //AUTHENTICATION
-        @POST("auth/signIn")
+        @POST("auth/signin")
         fun signIn(@Body body: ReqBodyUsernameHash?): Observable<RespAuthentication>
 
-        @POST("auth/signUp")
+        @POST("auth/signup")
         fun signUp(@Body body: ReqBodyUsernameHash): Observable<RespAuthentication>
 
         @PUT("auth/extraData")

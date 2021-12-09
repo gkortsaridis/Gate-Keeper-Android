@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.Entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.type.DateTime
 import gr.gkortsaridis.gatekeeper.R
 import java.sql.Timestamp
 
@@ -12,8 +13,8 @@ data class Vault(
     var account_id : String,
     var name : String,
     var color: VaultColor?,
-    var dateCreated: Timestamp? = null,
-    var dateModified: Timestamp? = null
+    var dateCreated: Long? = null,
+    var dateModified: Long? = null
 ) {
 
     fun getVaultColorResource(): Int {

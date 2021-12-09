@@ -403,10 +403,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.onConfigurationChanged(newConfig)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item)) {
             return true
-        } else if (item?.itemId == R.id.app_bar_search) {
+        } else if (item.itemId == R.id.app_bar_search) {
             startActivityForResult(Intent(this, SearchActivity::class.java), 10)
         }
         return super.onOptionsItemSelected(item)

@@ -20,25 +20,29 @@ object VaultRepository {
 
     var allVaults: ArrayList<Vault>
         get() {
-            return ArrayList(db.dao().allVaultsSync)
-            //return GateKeeperApplication.vaults ?: ArrayList()
+            //return ArrayList(db.dao().allVaultsSync)
+            return GateKeeperApplication.vaults ?: ArrayList()
         }
         set(vaults) {
-            db.dao().truncateVaults()
-            for (vault in vaults) { db.dao().insertVault(vault) }
-            //GateKeeperApplication.vaults = vaults
+            //db.dao().truncateVaults()
+            //for (vault in vaults) { db.dao().insertVault(vault) }
+            GateKeeperApplication.vaults = vaults
         }
 
     fun addLocalVault(vault: Vault) {
-        db.dao().insertVault(vault)
+        GateKeeperApplication.vaults.add(vault)
+        //db.dao().insertVault(vault)
     }
 
     fun removeLocalVault(vault: Vault) {
-        db.dao().deleteVault(vault)
+        GateKeeperApplication.vaults.removeIf { it.id == vault.id }
+        //db.dao().deleteVault(vault)
     }
 
     fun updateLocalVault(vault: Vault) {
-        db.dao().updateVault(vault)
+        GateKeeperApplication.vaults.removeIf { it.id == vault.id }
+        GateKeeperApplication.vaults.add(vault)
+    //db.dao().updateVault(vault)
     }
 
     fun setupVaultsForNewUser(userId: String, listener: VaultSetupListener) {

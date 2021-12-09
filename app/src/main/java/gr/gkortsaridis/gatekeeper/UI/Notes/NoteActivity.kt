@@ -61,8 +61,8 @@ class NoteActivity : AppCompatActivity() {
             note = Note(
                 title= "",
                 body = "",
-                modifiedDate = Timestamp(System.currentTimeMillis()),
-                createDate = Timestamp(System.currentTimeMillis()),
+                modifiedDate = System.currentTimeMillis(),//Timestamp(System.currentTimeMillis()),
+                createDate = System.currentTimeMillis(),//Timestamp(System.currentTimeMillis()),
                 id= "-1",
                 accountId = AuthRepository.getUserID(),
                 isPinned = false,

@@ -15,9 +15,7 @@ import com.google.android.gms.ads.MobileAds
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.revenuecat.purchases.PurchaserInfo
 import com.revenuecat.purchases.Purchases
-import gr.gkortsaridis.gatekeeper.Entities.Device
-import gr.gkortsaridis.gatekeeper.Entities.UserExtraData
-import gr.gkortsaridis.gatekeeper.Entities.UserLog
+import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 
 
@@ -27,7 +25,7 @@ class GateKeeperApplication : Application() {
         super.onCreate()
         instance = this
         user_id = DataRepository.savedUser
-        MobileAds.initialize(this, admobAppID)
+        //MobileAds.initialize(this, admobAppID)
 
         Bugsnag.start(this)
         networkFlipperPlugin = NetworkFlipperPlugin()
@@ -56,6 +54,12 @@ class GateKeeperApplication : Application() {
         lateinit var instance: GateKeeperApplication private set
         var user_id: String? = null
         val admobAppID = "ca-app-pub-4492385836648698~3680446633"
+
+
+        var vaults: ArrayList<Vault> = arrayListOf()
+        var logins: ArrayList<Login> = arrayListOf()
+        var cards: ArrayList<CreditCard> = arrayListOf()
+        var notes: ArrayList<Note> = arrayListOf()
 
         var extraData: UserExtraData? = null
         var devices: ArrayList<Device>? = null

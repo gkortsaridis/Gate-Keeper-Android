@@ -66,8 +66,8 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
         val adRequest = AdRequest.Builder().build()
         adview.loadAd(adRequest)
 
-        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
-        viewModel.appLogins.observe(activity!!, Observer {
+        val viewModel: MainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        viewModel.appLogins.observe(requireActivity(), Observer {
             this.activeLogins = ArrayList(it)
             updateUI(this.activeLogins)
         })
