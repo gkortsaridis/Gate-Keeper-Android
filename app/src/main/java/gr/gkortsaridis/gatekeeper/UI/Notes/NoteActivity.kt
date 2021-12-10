@@ -117,7 +117,7 @@ class NoteActivity : AppCompatActivity() {
         startActivityForResult(intent, GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(noteMenu!!, menu)
         return super.onCreateOptionsMenu(menu)
     }

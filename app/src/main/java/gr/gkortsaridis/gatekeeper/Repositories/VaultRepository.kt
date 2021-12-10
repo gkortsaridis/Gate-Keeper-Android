@@ -159,7 +159,8 @@ object VaultRepository {
             .subscribe (
                 {
                     if (it.errorCode == -1 && vault.id.toLong() == it.deletedItemID) {
-
+                        //TODO: MOVE TO BACKEND -> DELETE VAULT'S DATA ON DELETE
+                        /*
                         //Delete all vault's logins
                         val vaultLogins = LoginsRepository.filterLoginsByVault(LoginsRepository.allLogins, vault)
                         for (login in vaultLogins) {
@@ -176,7 +177,7 @@ object VaultRepository {
                         val vaultNotes = NotesRepository.filterNotesByVault(NotesRepository.allNotes, vault)
                         for (note in vaultNotes) {
                             NotesRepository.deleteNote(note, null)
-                        }
+                        }*/
 
                         listener.onVaultDeleted()
                     }

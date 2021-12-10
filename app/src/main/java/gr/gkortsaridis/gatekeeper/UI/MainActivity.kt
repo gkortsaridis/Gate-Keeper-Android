@@ -217,7 +217,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         plus_crown.visibility = if(AuthRepository.isPlusUser()) View.VISIBLE else View.GONE
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.search_menu, menu)
         return true
     }

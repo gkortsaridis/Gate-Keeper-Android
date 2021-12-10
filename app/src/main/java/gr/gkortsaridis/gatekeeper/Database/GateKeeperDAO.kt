@@ -10,6 +10,7 @@ import gr.gkortsaridis.gatekeeper.Entities.Vault
 @Dao
 interface GateKeeperDAO {
 
+    /*
     //Get data on the main thread
     @get:Query("SELECT * FROM logins")
     val allLoginsSync: List<Login>
@@ -21,7 +22,7 @@ interface GateKeeperDAO {
     val allCardsSync: List<CreditCard>
 
     @get:Query("SELECT * FROM notes")
-    val allNotesSync: List<Note>
+    val allNotesSync: List<Note>*/
 
     //Use LiveData to get stuff from DB
     @get:Query("SELECT * FROM logins")
