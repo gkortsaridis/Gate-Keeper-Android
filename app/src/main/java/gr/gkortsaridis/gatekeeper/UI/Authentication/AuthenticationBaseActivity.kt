@@ -3,23 +3,28 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.biometric.BiometricManager
+import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
+import gr.gkortsaridis.gatekeeper.ViewModels.SignInViewModel
 
+@AndroidEntryPoint
 class AuthenticationBaseActivity : AppCompatActivity() {
+
+    private val viewModel: SignInViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication_base)
 
-        val preferredAuthType = AuthRepository.getPreferredAuthType()
+        val preferredAuthType = viewModel.getPreferredAuthType()
         val canAuthenticateWithBio = BiometricManager.from(this).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
 
-        val intent = if (preferredAuthType == AuthRepository.BIO_SIN_IN && canAuthenticateWithBio) {
+        val intent = if (preferredAuthType == viewModel.BIO_SIN_IN && canAuthenticateWithBio) {
             Intent(this, BioAuthenticationActivity::class.java)
-        } else if (preferredAuthType == AuthRepository.PIN_SIGN_IN && !DataRepository.pinLock.isNullOrEmpty()) {
+        } else if (preferredAuthType == viewModel.PIN_SIGN_IN && !DataRepository.pinLock.isNullOrEmpty()) {
             Intent(this, PinAuthenticationActivity::class.java)
         } else {
             Intent(this, SignInActivity::class.java)

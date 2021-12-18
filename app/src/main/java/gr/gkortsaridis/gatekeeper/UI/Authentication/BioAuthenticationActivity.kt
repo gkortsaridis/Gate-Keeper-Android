@@ -2,35 +2,114 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.Entities.UserCredentials
-import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
-import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
-import org.json.JSONObject
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
+import gr.gkortsaridis.gatekeeper.Utils.Status
+import gr.gkortsaridis.gatekeeper.ViewModels.SignInViewModel
 
+@AndroidEntryPoint
 class BioAuthenticationActivity : AppCompatActivity() {
-
-    private val activity = this
-    private lateinit var startBio : ImageButton
+    private val viewModel: SignInViewModel by viewModels()
+    private val viewDialog = ViewDialog(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_bio_authentication)
+        setContent { SignInPage() }
 
-        startBio = findViewById(R.id.start_bio)
-        startBio.setOnClickListener { startBioAuth() }
+        viewModel.signInData.observe(this, {
+            when(it.status) {
+                Status.LOADING -> {
+                    viewDialog.showDialog()
+                }
+                Status.ERROR -> {
+                    viewDialog.hideDialog()
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_ERROR)
+                }
+                Status.SUCCESS -> {
+                    viewDialog.hideDialog()
+                    val userId = it.data!!.userId
+                    viewModel.setApplicationUser(userId)
+                    viewModel.proceedLoggedIn(this)
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_BIO)
+                }
+            }
+        })
 
         startBioAuth()
     }
 
+    @Preview
+    @Composable
+    fun SignInPage() {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .background(GateKeeperTheme.colorPrimaryDark),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.size(150.dp))
+
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "Localized description",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(100.dp, 100.dp)
+            )
+
+
+            Image(
+                painter = painterResource(id = R.drawable.access),
+                contentDescription = "Localized description",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(150.dp, 150.dp)
+                    .clickable { startBioAuth() }
+            )
+
+            Spacer(modifier = Modifier.weight(1.0f))
+
+            Text(
+                color = GateKeeperTheme.white,
+                text = "Click the fingerprint icon to try again",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+
+            Spacer(modifier = Modifier.size(16.dp))
+
+        }
+
+    }
+
     private fun startBioAuth() {
-        val loadedCredentials = AuthRepository.loadCredentials()
+        val loadedCredentials = viewModel.loadCredentials()
         if (loadedCredentials != null) {
             showBioAuth(loadedCredentials)
         } else {
@@ -51,18 +130,9 @@ class BioAuthenticationActivity : AppCompatActivity() {
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    AuthRepository.signIn(activity, credentials.email, credentials.password, object: SignInListener{
-                        override fun onSignInComplete(userId: String) {
-                            AuthRepository.setApplicationUser(userId)
-                            AuthRepository.proceedLoggedIn(activity)
-                            AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_BIO)
-                        }
-
-                        override fun onSignInError(errorCode: Int, errorMsg: String) {
-                            Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
-                            AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_ERROR)
-                        }
-                    })
+                    viewModel.email = credentials.email
+                    viewModel.password = credentials.password
+                    viewModel.signIn()
                 }
 
                 override fun onAuthenticationFailed() {

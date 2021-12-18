@@ -3,6 +3,8 @@ package gr.gkortsaridis.gatekeeper.Utils
 import androidx.compose.ui.graphics.Color
 
 object GateKeeperTheme {
+    val white = Color(0xffffffff)
+
     val colorPrimary = Color(0xff2962ff)
     val colorPrimaryDark = Color(0xff0039cb)
     val colorAccent = Color(0xff768fff)
