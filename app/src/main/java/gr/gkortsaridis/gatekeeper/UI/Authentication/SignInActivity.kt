@@ -10,34 +10,31 @@ import androidx.biometric.BiometricManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.GateKeeperTextField
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.InputType
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 import gr.gkortsaridis.gatekeeper.ViewModels.SignInViewModel
-import kotlinx.android.synthetic.main.activity_sign_in.*
-
 
 class SignInActivity : ComponentActivity(), SignInListener {
 
@@ -51,16 +48,14 @@ class SignInActivity : ComponentActivity(), SignInListener {
 
     private lateinit var signInViewModel: SignInViewModel
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContent {
-            SignInPage()
-        }
+        signInViewModel = ViewModelProvider(this).get(SignInViewModel::class.java)
+        setContent { SignInPage() }
 
         /*setContentView(R.layout.activity_sign_in)
 
-        signInViewModel = ViewModelProvider(this).get(SignInViewModel::class.java)
 
         signIn = findViewById(R.id.sign_in)
         signUpLink = findViewById(R.id.sign_up_link)
@@ -88,20 +83,15 @@ class SignInActivity : ComponentActivity(), SignInListener {
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
-                .background(Color(0xFFFFFACD))
         ) {
             topPart()
-            inputCard()
+            bottomPart()
         }
 
     }
 
     @Composable
-    fun inputCard() {
-        val usernameState = remember { mutableStateOf(TextFieldValue()) }
-        val passwordState = remember { mutableStateOf(TextFieldValue()) }
-
-
+    fun bottomPart() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -110,47 +100,92 @@ class SignInActivity : ComponentActivity(), SignInListener {
                 .background(Color.Transparent),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Card(
-                modifier = Modifier
+            inputCard()
+        }
+    }
 
-                    .width(300.dp)
-                    .background(Color.Red),
-                elevation = 5.dp
+    @Composable
+    fun inputCard() {
+        val checkedState = remember { mutableStateOf(signInViewModel.rememberPassword) }
+
+        Card(
+            modifier = Modifier
+                .width(300.dp)
+                .background(Color.Transparent),
+            elevation = 5.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             ) {
-                Column(
+                Text(
+                    text = "Sign In",
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(top = 16.dp, bottom = 32.dp)
+                        .align(alignment = Alignment.CenterHorizontally),
+                    color = GateKeeperTheme.colorPrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+
+                GateKeeperTextField(
+                    placeholder = "Username",
+                    inputType = InputType.EMAIL,
+                    onTextChange = { signInViewModel.emailStr = it }
+                )
+                Divider(thickness = 16.dp, color = Color.Transparent)
+                GateKeeperTextField(
+                    placeholder = "Password",
+                    inputType = InputType.PASSWORD,
+                    onTextChange = { signInViewModel.passwordStr = it }
+                )
+
+                Row(
+                    modifier = Modifier.padding(top = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Hello")
-                    TextField(
-                        value = usernameState.value,
-                        label = { Text("Email") },
-                        onValueChange = { usernameState.value = it },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                        modifier = Modifier.background(Color.Transparent),
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.Red
-                        ),
-                        leadingIcon = { Icon(painterResource(id = R.drawable.access), contentDescription = "", modifier = Modifier.size(20.dp)) }
+                    Checkbox(
+                        checked = checkedState.value,
+                        onCheckedChange = {
+                            signInViewModel.rememberPassword = it
+                            checkedState.value = it
+                        },
+                        colors = CheckboxDefaults.colors(GateKeeperTheme.colorAccent)
                     )
-                    TextField(
-                        value = passwordState.value,
-                        onValueChange = { passwordState.value = it },
-                        label = { Text("Password") },
-                        visualTransformation = PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.Transparent
-                        )
+                    Text(
+                        text = stringResource(id = R.string.save_username),
+                        modifier = Modifier.padding(start = 4.dp)
                     )
                 }
 
-            }
-        }
+                Button(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth()
+                    ,
+                    onClick = {
+                        Toast.makeText(GateKeeperApplication.instance.applicationContext, signInViewModel.emailStr+" "+signInViewModel.passwordStr, Toast.LENGTH_SHORT).show()
+                    }) {
+                    Text("SIGN IN")
+                }
 
+
+                Row(modifier = Modifier.padding(top = 24.dp)) {
+                    Text("New User? ")
+                    Text(
+                        text = "Sign Up",
+                        color = GateKeeperTheme.colorAccent,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+
+            }
+
+        }
     }
+
 
     @Composable
     fun topPart() {
@@ -158,21 +193,19 @@ class SignInActivity : ComponentActivity(), SignInListener {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(250.dp)
-                .background(Color.Blue),
+                .background(GateKeeperTheme.colorPrimaryDark),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = R.drawable.padlock),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Localized description",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(70.dp, 70.dp)
-                    .background(Color.Red)
             )
         }
     }
-
 
 
     private fun signUp() {
