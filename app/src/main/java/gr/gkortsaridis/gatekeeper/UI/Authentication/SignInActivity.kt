@@ -2,14 +2,19 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.biometric.BiometricManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -20,13 +25,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
-import gr.gkortsaridis.gatekeeper.Interfaces.SignInListener
+import dagger.hilt.android.AndroidEntryPoint
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
@@ -34,46 +39,58 @@ import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.GateKeeperTextField
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.InputType
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
+import gr.gkortsaridis.gatekeeper.Utils.Status
 import gr.gkortsaridis.gatekeeper.ViewModels.SignInViewModel
 
-class SignInActivity : ComponentActivity(), SignInListener {
-
-    private val TAG = "_Login_Activity_"
-
-    private lateinit var signIn: Button
-    private lateinit var signUpLink: TextView
-    private lateinit var email: EditText
-    private lateinit var password: EditText
-    private lateinit var saveCredentials: CheckBox
-
-    private lateinit var signInViewModel: SignInViewModel
-
+@AndroidEntryPoint
+class SignInActivity : ComponentActivity() {
+    private val viewModel: SignInViewModel by viewModels()
+    private val viewDialog = ViewDialog(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        signInViewModel = ViewModelProvider(this).get(SignInViewModel::class.java)
-        setContent { SignInPage() }
-
-        /*setContentView(R.layout.activity_sign_in)
-
-
-        signIn = findViewById(R.id.sign_in)
-        signUpLink = findViewById(R.id.sign_up_link)
-        email = findViewById(R.id.emailET)
-        password = findViewById(R.id.passwordET)
-        saveCredentials = findViewById(R.id.save_credentials)
-
-        signIn.setOnClickListener { signIn(emailET.text.toString(), password.text.toString(), false) }
-        signUpLink.setOnClickListener { signUp() }
 
         val loadedCredentials = AuthRepository.loadCredentials()
-        if (loadedCredentials != null) {
-            saveCredentials.isChecked = true
-            email.setText(loadedCredentials.email)
-            //password.setText(loadedCredentials.password)
-        }else{
-            saveCredentials.isChecked = false
-        }*/
+        viewModel.rememberEmail = loadedCredentials != null
+        if (loadedCredentials != null) { viewModel.password = loadedCredentials.email }
+
+        setContent { SignInPage() }
+
+        viewModel.signInData.observe(this, {
+            when(it.status) {
+                Status.LOADING ->  { viewDialog.showDialog() }
+                Status.ERROR -> {
+                    viewDialog.hideDialog()
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_ERROR)
+                }
+                Status.SUCCESS -> {
+                    viewDialog.hideDialog()
+
+                    val userId = it.data!!.userId
+                    val biometricManager = BiometricManager.from(this)
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_PASS)
+
+                    if (AuthRepository.getPreferredAuthType() == AuthRepository.SIGN_IN_NOT_SET
+                        && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
+                        AlertDialog.Builder(this)
+                            .setTitle("Biometric Sign In")
+                            .setMessage("Would you like to use our biometric authentication feature?\nYour credentials are going to be safely stored on the device.")
+                            .setPositiveButton("Yes") { _, _ ->
+                                DataRepository.preferredAuthType = AuthRepository.BIO_SIN_IN
+                                proceedLogin(user = userId)
+                            }
+                            .setNegativeButton("No") { _, _ ->
+                                DataRepository.preferredAuthType = AuthRepository.PASSWORD_SIGN_IN
+                                proceedLogin(user = userId)
+                            }
+                            .show()
+                    } else {
+                        proceedLogin(user = userId)
+                    }
+                }
+            }
+        })
     }
 
     @Preview
@@ -106,7 +123,7 @@ class SignInActivity : ComponentActivity(), SignInListener {
 
     @Composable
     fun inputCard() {
-        val checkedState = remember { mutableStateOf(signInViewModel.rememberPassword) }
+        val checkedState = remember { mutableStateOf(viewModel.rememberEmail) }
 
         Card(
             modifier = Modifier
@@ -132,13 +149,13 @@ class SignInActivity : ComponentActivity(), SignInListener {
                 GateKeeperTextField(
                     placeholder = "Username",
                     inputType = InputType.EMAIL,
-                    onTextChange = { signInViewModel.emailStr = it }
+                    onTextChange = { viewModel.email = it }
                 )
                 Divider(thickness = 16.dp, color = Color.Transparent)
                 GateKeeperTextField(
                     placeholder = "Password",
                     inputType = InputType.PASSWORD,
-                    onTextChange = { signInViewModel.passwordStr = it }
+                    onTextChange = { viewModel.password = it }
                 )
 
                 Row(
@@ -148,7 +165,7 @@ class SignInActivity : ComponentActivity(), SignInListener {
                     Checkbox(
                         checked = checkedState.value,
                         onCheckedChange = {
-                            signInViewModel.rememberPassword = it
+                            viewModel.rememberEmail = it
                             checkedState.value = it
                         },
                         colors = CheckboxDefaults.colors(GateKeeperTheme.colorAccent)
@@ -164,8 +181,7 @@ class SignInActivity : ComponentActivity(), SignInListener {
                         .padding(top = 16.dp)
                         .fillMaxWidth()
                     ,
-                    onClick = {
-                        Toast.makeText(GateKeeperApplication.instance.applicationContext, signInViewModel.emailStr+" "+signInViewModel.passwordStr, Toast.LENGTH_SHORT).show()
+                    onClick = { viewModel.signIn()
                     }) {
                     Text("SIGN IN")
                 }
@@ -176,7 +192,10 @@ class SignInActivity : ComponentActivity(), SignInListener {
                     Text(
                         text = "Sign Up",
                         color = GateKeeperTheme.colorAccent,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable {
+                            signUp()
+                        }
                     )
                 }
 
@@ -212,43 +231,9 @@ class SignInActivity : ComponentActivity(), SignInListener {
         startActivity(Intent(this, SignUpActivity::class.java))
     }
 
-    private fun signIn(email: String, password: String, check: Boolean) {
-        AuthRepository.signIn(this, email, password, this)
-    }
-
-    override fun onSignInComplete(userId: String) {
-        val biometricManager = BiometricManager.from(this)
-        AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_PASS)
-
-        if (AuthRepository.getPreferredAuthType() == AuthRepository.SIGN_IN_NOT_SET
-            && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
-            AlertDialog.Builder(this)
-                .setTitle("Biometric Sign In")
-                .setMessage("Would you like to use our biometric authentication feature?\nYour credentials are going to be safely stored on the device.")
-                .setPositiveButton("Yes") { _, _ ->
-                    DataRepository.preferredAuthType = AuthRepository.BIO_SIN_IN
-                    saveCredentials.isChecked = true
-                    proceedLogin(user = userId)
-                }
-                .setNegativeButton("No") { _, _ ->
-                    DataRepository.preferredAuthType = AuthRepository.PASSWORD_SIGN_IN
-                    proceedLogin(user = userId)
-                }
-                .show()
-        } else {
-            proceedLogin(user = userId)
-        }
-    }
-
-    override fun onSignInError(errorCode: Int, errorMsg: String) {
-        Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show()
-        AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_ERROR)
-
-    }
-
     private fun proceedLogin(user: String) {
         //Save credentials locally for decryption
-        AuthRepository.saveCredentials(email = email.text.toString(), password = password.text.toString())
+        AuthRepository.saveCredentials(email = viewModel.email, password = viewModel.password)
 
         AuthRepository.setApplicationUser(user)
         AuthRepository.proceedLoggedIn(this)

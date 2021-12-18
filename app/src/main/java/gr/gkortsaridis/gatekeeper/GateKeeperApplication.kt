@@ -11,14 +11,14 @@ import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.soloader.SoLoader
-import com.google.android.gms.ads.MobileAds
-import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.revenuecat.purchases.PurchaserInfo
 import com.revenuecat.purchases.Purchases
+import dagger.hilt.android.HiltAndroidApp
 import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 
 
+@HiltAndroidApp
 class GateKeeperApplication : Application() {
 
     override fun onCreate() {

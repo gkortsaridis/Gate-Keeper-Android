@@ -4,6 +4,10 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityRetainedComponent
 import gr.gkortsaridis.gatekeeper.BuildConfig.BASE_SERVER_URL
 import gr.gkortsaridis.gatekeeper.Entities.Network.*
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
@@ -20,6 +24,8 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
+@Module
+@InstallIn(ActivityRetainedComponent::class)
 object GateKeeperAPI {
 
     private const val TAG = "GateKeeperAPI"
@@ -99,6 +105,12 @@ object GateKeeperAPI {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
+
+    //To be used by injected Repositories
+    @Provides
+    fun provideApi(): GateKeeperInterface = retrofit.create(GateKeeperInterface::class.java)
+
+    //To be removed once all API calls are properly converted to ViewModel
     val api = retrofit.create(GateKeeperInterface::class.java)
 
     interface GateKeeperInterface {
