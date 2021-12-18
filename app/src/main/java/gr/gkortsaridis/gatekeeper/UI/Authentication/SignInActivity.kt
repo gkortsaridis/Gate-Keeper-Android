@@ -2,8 +2,6 @@ package gr.gkortsaridis.gatekeeper.UI.Authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,7 +12,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,7 +30,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
-import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.GateKeeperTextField
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.InputType
@@ -50,7 +45,7 @@ class SignInActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val loadedCredentials = AuthRepository.loadCredentials()
+        val loadedCredentials = viewModel.loadCredentials()
         viewModel.rememberEmail = loadedCredentials != null
         if (loadedCredentials != null) { viewModel.password = loadedCredentials.email }
 
@@ -71,17 +66,17 @@ class SignInActivity : ComponentActivity() {
                     val biometricManager = BiometricManager.from(this)
                     AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_PASS)
 
-                    if (AuthRepository.getPreferredAuthType() == AuthRepository.SIGN_IN_NOT_SET
+                    if (viewModel.getPreferredAuthType() == viewModel.SIGN_IN_NOT_SET
                         && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
                         AlertDialog.Builder(this)
                             .setTitle("Biometric Sign In")
                             .setMessage("Would you like to use our biometric authentication feature?\nYour credentials are going to be safely stored on the device.")
                             .setPositiveButton("Yes") { _, _ ->
-                                DataRepository.preferredAuthType = AuthRepository.BIO_SIN_IN
+                                DataRepository.preferredAuthType = viewModel.BIO_SIN_IN
                                 proceedLogin(user = userId)
                             }
                             .setNegativeButton("No") { _, _ ->
-                                DataRepository.preferredAuthType = AuthRepository.PASSWORD_SIGN_IN
+                                DataRepository.preferredAuthType = viewModel.PASSWORD_SIGN_IN
                                 proceedLogin(user = userId)
                             }
                             .show()
@@ -233,9 +228,8 @@ class SignInActivity : ComponentActivity() {
 
     private fun proceedLogin(user: String) {
         //Save credentials locally for decryption
-        AuthRepository.saveCredentials(email = viewModel.email, password = viewModel.password)
-
-        AuthRepository.setApplicationUser(user)
-        AuthRepository.proceedLoggedIn(this)
+        viewModel.saveCredentials(email = viewModel.email, password = viewModel.password)
+        viewModel.setApplicationUser(user)
+        viewModel.proceedLoggedIn(this)
     }
 }
