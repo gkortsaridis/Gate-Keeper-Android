@@ -4,6 +4,8 @@ import androidx.compose.ui.graphics.Color
 
 object GateKeeperTheme {
     val white = Color(0xffffffff)
+    val boldText = Color(0xff232326)
+    val greyText = Color(0xff585858)
 
     val colorPrimary = Color(0xff2962ff)
     val colorPrimaryDark = Color(0xff0039cb)

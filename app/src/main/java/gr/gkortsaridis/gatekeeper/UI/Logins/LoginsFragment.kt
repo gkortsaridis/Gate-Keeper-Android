@@ -14,6 +14,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.autofill.AutofillManager
 import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.GenericShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -38,7 +59,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
-import gr.gkortsaridis.gatekeeper.Utils.dp
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 import io.noties.tumbleweed.Timeline
 import io.noties.tumbleweed.Tween
 import io.noties.tumbleweed.android.ViewTweenManager
@@ -46,9 +67,10 @@ import io.noties.tumbleweed.android.types.Alpha
 import io.noties.tumbleweed.android.types.Translation
 import io.noties.tumbleweed.equations.Cubic
 import kotlinx.android.synthetic.main.fragment_logins.*
+import androidx.compose.foundation.lazy.items
 
 
-class LoginsFragment() : Fragment(), LoginSelectListener {
+class LoginsFragment() : Fragment() {
 
     private val TAG = "_LOGINS_FRAGMENT_"
     private var autofillManager: AutofillManager? = null
@@ -57,9 +79,178 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
     private var activeLogins: ArrayList<Login> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_logins, container, false)
+        return ComposeView(requireContext()).apply {
+            setContent { loginsPage() }
+        }
+        //return inflater.inflate(R.layout.fragment_logins, container, false)
     }
 
+    @Preview
+    @Composable
+    fun loginsPage() {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .background(GateKeeperTheme.light_grey)
+        ) {
+            vaultSelector()
+            itemsCount()
+            itemsList()
+        }
+
+    }
+
+    @Composable
+    fun vaultSelector(){
+
+        val bottomCornerCutShape = GenericShape { size, _ ->
+            moveTo(0f,0f)
+            lineTo(size.width, 0f)
+            lineTo(size.width, size.height - 10.dp.value)
+            lineTo(size.width - 10.dp.value, size.height)
+            lineTo(10.dp.value, size.height)
+            lineTo(0f, size.height - 10.dp.value)
+        }
+
+
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Card(
+                modifier = Modifier
+                    .height(30.dp)
+                    .fillMaxWidth(),
+                shape = bottomCornerCutShape,
+                backgroundColor = GateKeeperTheme.colorPrimaryDark,
+                elevation = 4.dp
+            ) {}
+
+            Card(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 2.dp)
+                    .height(56.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(26.dp),
+                backgroundColor = GateKeeperTheme.vault_red_1,
+                elevation = 5.dp,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 32.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.vault),
+                        contentDescription = "Localized description",
+                        colorFilter = ColorFilter.tint(GateKeeperTheme.white),
+                        modifier = Modifier
+                            .size(30.dp, 30.dp)
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = "Vault Name",
+                        color = GateKeeperTheme.white,
+                        fontSize = 19.sp
+                    )
+                }
+            }
+
+
+        }
+    }
+
+    @Composable
+    fun itemsCount(){
+        Row(
+            modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "108",
+                fontWeight = FontWeight.Bold,
+                color = GateKeeperTheme.boldText,
+                fontSize = 15.sp
+            )
+
+            Text(
+                text = "items",
+                color = GateKeeperTheme.greyText,
+                fontSize = 15.sp,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+
+            Text(
+                text = "Sort by name",
+                color = GateKeeperTheme.greyText,
+                fontSize = 15.sp,
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.down_arrow_bold),
+                contentDescription = "Localized description",
+                modifier = Modifier
+                    .size(24.dp, 24.dp)
+            )
+
+        }
+    }
+
+    @Composable
+    fun itemsList(){
+
+        val login1 = Login(account_id = "1", name = "My login", username = "gkortsaridis@gmail.com", password = "pass", url = "www.google.com", notes = "Some Notes", date_created=123L, date_modified=234L, vault_id="123")
+        val logins = listOf(login1, login1, login1)
+
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 8.dp)
+        ) {
+            items(logins) { login -> loginItem(login = login)}
+        }
+    }
+
+    @Composable
+    fun loginItem(login: Login) {
+        Card(
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .fillMaxWidth()
+                .height(80.dp),
+            elevation = 4.dp,
+            shape = RoundedCornerShape(10.dp),
+            backgroundColor = GateKeeperTheme.white,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(16.dp)
+                        .background(GateKeeperTheme.vault_red_1),
+                )
+
+                Image(
+                    painter = painterResource(id = R.drawable.question_mark),
+                    contentDescription = "Localized description",
+                    modifier = Modifier
+                        .size(40.dp, 40.dp)
+                        .padding(4.dp)
+                )
+
+            }
+        }
+    }
+
+
+
+    /*
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -225,4 +416,5 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
             //.push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
             .start(ViewTweenManager.get(fab))
     }
+     */
 }
