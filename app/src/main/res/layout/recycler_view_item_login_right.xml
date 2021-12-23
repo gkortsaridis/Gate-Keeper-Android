@@ -105,13 +105,13 @@
             </LinearLayout>
 
             <ImageButton
+                android:id="@+id/login_action"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:id="@+id/login_action"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
-                android:background="@drawable/copy"/>
+                android:background="@drawable/copy" />
 
         </RelativeLayout>
     </com.github.florent37.shapeofview.shapes.RoundRectView>

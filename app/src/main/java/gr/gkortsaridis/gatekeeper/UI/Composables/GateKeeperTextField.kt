@@ -40,7 +40,7 @@ object GateKeeperTextField {
         TextField(
             modifier = Modifier.fillMaxWidth().composed { modifier ?: Modifier },
             value = textState,
-            placeholder = { Text(text = placeholder) },
+            label = { Text(text = placeholder) },
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
                 //cursorColor = Color.Black,

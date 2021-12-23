@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.gms.ads.AdRequest
-import gr.gkortsaridis.gatekeeper.Database.MainViewModel
+import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
@@ -44,10 +44,10 @@ class NotesFragment : Fragment(), NoteClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
-        viewModel.appNotes.observe(activity!!, Observer {
+        /*viewModel.appNotes.observe(activity!!, Observer {
             this.allNotes = ArrayList(it)
             updateUI()
-        })
+        })*/
 
         currentVault = VaultRepository.getLastActiveVault()
         val adRequest = AdRequest.Builder().build()

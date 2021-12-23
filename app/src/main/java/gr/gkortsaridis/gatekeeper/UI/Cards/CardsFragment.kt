@@ -13,11 +13,10 @@ import com.azoft.carousellayoutmanager.CarouselLayoutManager
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
 import com.azoft.carousellayoutmanager.CenterScrollListener
 import com.google.android.gms.ads.AdRequest
-import gr.gkortsaridis.gatekeeper.Database.MainViewModel
+import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
-import gr.gkortsaridis.gatekeeper.Interfaces.MyDialogFragmentListeners
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.CreditCardRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
@@ -52,11 +51,11 @@ class CardsFragment : Fragment(), CreditCardClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
-        viewModel.appCards.observe(activity!!, Observer {
+        /*viewModel.appCards.observe(activity!!, Observer {
             this.allCards = ArrayList(it)
             updateCards()
             updateUI()
-        })
+        })*/
 
         val adRequest = AdRequest.Builder().build()
         adview.loadAd(adRequest)

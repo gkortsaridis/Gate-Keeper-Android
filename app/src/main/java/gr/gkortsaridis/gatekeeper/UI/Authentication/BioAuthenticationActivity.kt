@@ -53,8 +53,8 @@ class BioAuthenticationActivity : AppCompatActivity() {
                 Status.SUCCESS -> {
                     viewDialog.hideDialog()
                     val userId = it.data!!.userId
-                    viewModel.setApplicationUser(userId)
-                    viewModel.proceedLoggedIn(this)
+                    SignInViewModel.setApplicationUser(userId)
+                    SignInViewModel.proceedLoggedIn(this)
                     AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_BIO)
                 }
             }
@@ -109,7 +109,7 @@ class BioAuthenticationActivity : AppCompatActivity() {
     }
 
     private fun startBioAuth() {
-        val loadedCredentials = viewModel.loadCredentials()
+        val loadedCredentials = SignInViewModel.loadCredentials()
         if (loadedCredentials != null) {
             showBioAuth(loadedCredentials)
         } else {

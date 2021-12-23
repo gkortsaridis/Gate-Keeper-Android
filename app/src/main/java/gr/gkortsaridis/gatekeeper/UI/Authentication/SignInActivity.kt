@@ -45,7 +45,7 @@ class SignInActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val loadedCredentials = viewModel.loadCredentials()
+        val loadedCredentials = SignInViewModel.loadCredentials()
         viewModel.rememberEmail = loadedCredentials != null
         if (loadedCredentials != null) { viewModel.password = loadedCredentials.email }
 
@@ -66,17 +66,17 @@ class SignInActivity : ComponentActivity() {
                     val biometricManager = BiometricManager.from(this)
                     AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_PASS)
 
-                    if (viewModel.getPreferredAuthType() == viewModel.SIGN_IN_NOT_SET
+                    if (SignInViewModel.getPreferredAuthType() == SignInViewModel.SIGN_IN_NOT_SET
                         && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
                         AlertDialog.Builder(this)
                             .setTitle("Biometric Sign In")
                             .setMessage("Would you like to use our biometric authentication feature?\nYour credentials are going to be safely stored on the device.")
                             .setPositiveButton("Yes") { _, _ ->
-                                DataRepository.preferredAuthType = viewModel.BIO_SIN_IN
+                                DataRepository.preferredAuthType = SignInViewModel.BIO_SIN_IN
                                 proceedLogin(user = userId)
                             }
                             .setNegativeButton("No") { _, _ ->
-                                DataRepository.preferredAuthType = viewModel.PASSWORD_SIGN_IN
+                                DataRepository.preferredAuthType = SignInViewModel.PASSWORD_SIGN_IN
                                 proceedLogin(user = userId)
                             }
                             .show()
@@ -228,8 +228,8 @@ class SignInActivity : ComponentActivity() {
 
     private fun proceedLogin(user: String) {
         //Save credentials locally for decryption
-        viewModel.saveCredentials(email = viewModel.email, password = viewModel.password)
-        viewModel.setApplicationUser(user)
-        viewModel.proceedLoggedIn(this)
+        SignInViewModel.saveCredentials(email = viewModel.email, password = viewModel.password)
+        SignInViewModel.setApplicationUser(user)
+        SignInViewModel.proceedLoggedIn(this)
     }
 }

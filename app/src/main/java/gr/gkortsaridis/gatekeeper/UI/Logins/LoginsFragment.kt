@@ -1,24 +1,15 @@
 package gr.gkortsaridis.gatekeeper.UI.Logins
 
 
-import android.app.AlertDialog
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.autofill.AutofillManager
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -27,45 +18,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
 import com.stone.vega.library.VegaLayoutManager
-import gr.gkortsaridis.gatekeeper.Database.MainViewModel
+import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.Login
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
-import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.LOGIN_SORT_TYPE_NAME
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.deleteLoginSuccess
-import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
-import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
-import io.noties.tumbleweed.Timeline
-import io.noties.tumbleweed.Tween
-import io.noties.tumbleweed.android.ViewTweenManager
-import io.noties.tumbleweed.android.types.Alpha
-import io.noties.tumbleweed.android.types.Translation
-import io.noties.tumbleweed.equations.Cubic
 import kotlinx.android.synthetic.main.fragment_logins.*
 import androidx.compose.foundation.lazy.items
 
@@ -244,13 +212,40 @@ class LoginsFragment() : Fragment() {
                         .padding(4.dp)
                 )
 
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .weight(1f)
+                ) {
+
+                    Text(
+                        text = "Item name",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+
+
+                    Text(
+                        text = "Item username",
+                        fontSize = 18.sp
+                    )
+
+                }
+
+                Image(
+                    painter = painterResource(id = R.drawable.copy),
+                    contentDescription = "Localized description",
+                    modifier = Modifier
+                        .padding(start=8.dp, end=16.dp)
+                        .size(24.dp, 24.dp)
+                )
+
             }
         }
     }
 
 
 
-    /*
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -258,14 +253,14 @@ class LoginsFragment() : Fragment() {
         adview.loadAd(adRequest)
 
         val viewModel: MainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
-        viewModel.appLogins.observe(requireActivity(), Observer {
+        /*viewModel.appLogins.observe(requireActivity(), Observer {
             this.activeLogins = ArrayList(it)
-            updateUI(this.activeLogins)
-        })
+            //updateUI(this.activeLogins)
+        })*/
 
         logins_recycler_view.layoutManager = VegaLayoutManager()
 
-        add_login_btn.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
+        /*add_login_btn.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
         vault_view.setOnClickListener{
             val intent = Intent(activity, SelectVaultActivity::class.java)
@@ -298,14 +293,10 @@ class LoginsFragment() : Fragment() {
 
         animateItemsIn()
 
-        adview_container.visibility = View.GONE
+        adview_container.visibility = View.GONE*/
     }
 
-    override fun onResume() {
-        super.onResume()
-        updateUI(this.activeLogins)
-    }
-
+    /*
     private fun updateUI(allLogins: ArrayList<Login>) {
         val logins = LoginsRepository.filterLoginsByCurrentVault(allLogins)
         val sortType = DataRepository.loginSortType

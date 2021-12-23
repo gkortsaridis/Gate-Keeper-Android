@@ -19,12 +19,12 @@ class AuthenticationBaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication_base)
 
-        val preferredAuthType = viewModel.getPreferredAuthType()
+        val preferredAuthType = SignInViewModel.getPreferredAuthType()
         val canAuthenticateWithBio = BiometricManager.from(this).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
 
-        val intent = if (preferredAuthType == viewModel.BIO_SIN_IN && canAuthenticateWithBio) {
+        val intent = if (preferredAuthType == SignInViewModel.BIO_SIN_IN && canAuthenticateWithBio) {
             Intent(this, BioAuthenticationActivity::class.java)
-        } else if (preferredAuthType == viewModel.PIN_SIGN_IN && !DataRepository.pinLock.isNullOrEmpty()) {
+        } else if (preferredAuthType == SignInViewModel.PIN_SIGN_IN && !DataRepository.pinLock.isNullOrEmpty()) {
             Intent(this, PinAuthenticationActivity::class.java)
         } else {
             Intent(this, SignInActivity::class.java)

@@ -1,7 +1,6 @@
 package gr.gkortsaridis.gatekeeper.UI.Search
 
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -9,8 +8,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import gr.gkortsaridis.gatekeeper.Database.MainViewModel
+import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Interfaces.SearchResultClickListener
 import gr.gkortsaridis.gatekeeper.R
@@ -41,10 +39,10 @@ class SearchActivity : AppCompatActivity(), SearchResultClickListener {
         search_results_rv.adapter = adapter
 
         val viewModel: MainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.appLogins.observe(this, Observer { this.allLogins = ArrayList(it) })
-        viewModel.appCards.observe(this, Observer { this.allCards = ArrayList(it) })
-        viewModel.appNotes.observe(this, Observer { this.allNotes = ArrayList(it) })
-        viewModel.appVaults.observe(this, Observer { this.allVaults = ArrayList(it) })
+        //viewModel.appLogins.observe(this, Observer { this.allLogins = ArrayList(it) })
+        //viewModel.appCards.observe(this, Observer { this.allCards = ArrayList(it) })
+        //viewModel.appNotes.observe(this, Observer { this.allNotes = ArrayList(it) })
+        //viewModel.appVaults.observe(this, Observer { this.allVaults = ArrayList(it) })
 
 
         search_et.addTextChangedListener { updateUI(it.toString()) }
