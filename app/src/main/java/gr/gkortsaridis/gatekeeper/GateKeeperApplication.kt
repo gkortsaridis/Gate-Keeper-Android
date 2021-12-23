@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper
 
 import android.app.Application
+import androidx.lifecycle.MutableLiveData
 import com.bugsnag.android.Bugsnag
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
@@ -55,6 +56,11 @@ class GateKeeperApplication : Application() {
         var user_id: String? = null
         val admobAppID = "ca-app-pub-4492385836648698~3680446633"
 
+        val allVaults = MutableLiveData<ArrayList<Vault>>()
+        val allLogins = MutableLiveData<ArrayList<Login>>()
+        val allCards  = MutableLiveData<ArrayList<CreditCard>>()
+        val allNotes  = MutableLiveData<ArrayList<Note>>()
+        val allDevices = MutableLiveData<ArrayList<Device>>()
 
         var vaults: ArrayList<Vault> = arrayListOf()
         var logins: ArrayList<Login> = arrayListOf()

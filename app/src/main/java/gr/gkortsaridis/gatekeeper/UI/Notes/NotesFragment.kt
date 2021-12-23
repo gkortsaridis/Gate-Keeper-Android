@@ -86,9 +86,9 @@ class NotesFragment : Fragment(), NoteClickListener {
         notesAdapter?.setNotes(notes)
 
         vault_name?.text = currentVault.name
-        vault_view?.setBackgroundColor(resources.getColor(currentVault.getVaultColorResource()))
-        vault_name?.setTextColor(resources.getColor(currentVault.getVaultColorAccent()))
-        vault_icon?.setColorFilter(resources.getColor(currentVault.getVaultColorAccent()))
+        //vault_view?.setBackgroundColor(resources.getColor(currentVault.getVaultColorResource()))
+        //vault_name?.setTextColor(resources.getColor(currentVault.getVaultColorAccent()))
+        //vault_icon?.setColorFilter(resources.getColor(currentVault.getVaultColorAccent()))
 
         no_items_view?.visibility = if (notes.size > 0) View.GONE else View.VISIBLE
         add_note?.visibility = if (notes.size > 0) View.VISIBLE else View.GONE

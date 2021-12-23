@@ -243,9 +243,9 @@ class CardEditActivity : AppCompatActivity() {
         delete_card_btn.visibility = if (card.id != "-1") View.VISIBLE else View.GONE
 
         vault_name.text = vaultToAdd?.name
-        vault_view.setBackgroundColor(resources.getColor(vaultToAdd?.getVaultColorResource() ?: R.color.colorPrimaryDark))
-        vault_name.setTextColor(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
-        vault_icon.setColorFilter(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
+        vault_view.setBackgroundColor(vaultToAdd?.getVaultColorResource()?.value!!.toInt())
+        vault_name.setTextColor(vaultToAdd?.getVaultColorAccent()?.value!!.toInt())
+        vault_icon.setColorFilter(vaultToAdd?.getVaultColorAccent()?.value!!.toInt())
     }
 
     private fun copy(txt: String, what: String) {

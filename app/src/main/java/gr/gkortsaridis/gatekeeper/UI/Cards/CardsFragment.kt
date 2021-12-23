@@ -82,9 +82,9 @@ class CardsFragment : Fragment(), CreditCardClickListener {
     private fun updateUI() {
         val vault = VaultRepository.getLastActiveVault()
         vault_name.text = vault.name
-        vault_view.setBackgroundColor(resources.getColor(vault.getVaultColorResource()))
-        vault_name.setTextColor(resources.getColor(vault.getVaultColorAccent()))
-        vault_icon.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
+        //vault_view.setBackgroundColor(resources.getColor(vault.getVaultColorResource()))
+        //vault_name.setTextColor(resources.getColor(vault.getVaultColorAccent()))
+        //vault_icon.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
 
         if (cardsAdapter == null) {
             cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, filtered, this)

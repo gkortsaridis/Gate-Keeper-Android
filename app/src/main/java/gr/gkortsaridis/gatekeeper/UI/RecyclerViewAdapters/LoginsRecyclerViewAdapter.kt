@@ -88,7 +88,7 @@ class LoginsRecyclerViewAdapter(
             this.loginUsername?.text = login.username
 
             val vault = VaultRepository.getVaultByID(login.vault_id)
-            loginImgContainer2?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+            //loginImgContainer2?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
             //loginImgContainer?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
 
             var color = "ffffff"

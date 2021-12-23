@@ -13,5 +13,16 @@ object GateKeeperShapes {
         }
     }
 
+    fun getBottomCornerCutShape(cornerDiagonalDp: Int): GenericShape {
+        return GenericShape { size, _ ->
+            moveTo(0f,0f)
+            lineTo(size.width, 0f)
+            lineTo(size.width, size.height - cornerDiagonalDp.dp.value)
+            lineTo(size.width - cornerDiagonalDp.dp.value, size.height)
+            lineTo(cornerDiagonalDp.dp.value, size.height)
+            lineTo(0f, size.height - cornerDiagonalDp.dp.value)
+        }
+
+    }
 
 }

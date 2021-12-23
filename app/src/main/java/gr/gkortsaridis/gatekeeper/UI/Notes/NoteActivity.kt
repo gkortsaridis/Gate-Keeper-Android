@@ -105,9 +105,9 @@ class NoteActivity : AppCompatActivity() {
 
     private fun updateUI() {
         vault_name.text = vaultToAdd.name
-        vault_view.setBackgroundColor(resources.getColor(vaultToAdd.getVaultColorResource()))
-        vault_name.setTextColor(resources.getColor(vaultToAdd.getVaultColorAccent()))
-        vault_icon.setColorFilter(resources.getColor(vaultToAdd.getVaultColorAccent()))
+        //vault_view.setBackgroundColor(resources.getColor(vaultToAdd.getVaultColorResource()))
+        //vault_name.setTextColor(resources.getColor(vaultToAdd.getVaultColorAccent()))
+        //vault_icon.setColorFilter(resources.getColor(vaultToAdd.getVaultColorAccent()))
     }
 
     private fun changeVault() {

@@ -208,9 +208,9 @@ class CreateLoginActivity : AppCompatActivity() {
         delete_login_btn.visibility = if (login.id != "-1") View.VISIBLE else View.GONE
 
         vault_name.text = vaultToAdd?.name
-        vault_view.setBackgroundColor(resources.getColor(vaultToAdd?.getVaultColorResource() ?: R.color.colorPrimaryDark))
-        vault_name.setTextColor(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
-        vault_icon.setColorFilter(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
+        //vault_view.setBackgroundColor(resources.getColor(vaultToAdd?.getVaultColorResource() ?: R.color.colorPrimaryDark))
+        //vault_name.setTextColor(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
+        //vault_icon.setColorFilter(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
     }
 
     private fun updateLogin() {

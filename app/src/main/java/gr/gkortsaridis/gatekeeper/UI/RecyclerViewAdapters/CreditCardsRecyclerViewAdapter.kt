@@ -140,8 +140,8 @@ class CreditCardsRecyclerViewAdapter(
             }
 
             val vault = VaultRepository.getVaultByID(card.vaultId)
-            cardVaultColor?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
-            cardVaultColorBack?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+            //cardVaultColor?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+            //cardVaultColorBack?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
 
             flipCard?.setOnClickListener { flipView?.flipTheView() }
             flipBackCard?.setOnClickListener { flipView?.flipTheView() }
