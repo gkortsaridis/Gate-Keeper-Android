@@ -47,6 +47,7 @@ class SignInActivity : ComponentActivity() {
 
         val loadedCredentials = SignInViewModel.loadCredentials()
         viewModel.rememberEmail = loadedCredentials != null
+        viewModel.email = loadedCredentials?.email ?: ""
         if (loadedCredentials != null) { viewModel.password = loadedCredentials.email }
 
         setContent { SignInPage() }
@@ -144,6 +145,7 @@ class SignInActivity : ComponentActivity() {
                 GateKeeperTextField(
                     placeholder = "Username",
                     inputType = InputType.EMAIL,
+                    value = viewModel.email,
                     onTextChange = { viewModel.email = it }
                 )
                 Divider(thickness = 16.dp, color = Color.Transparent)

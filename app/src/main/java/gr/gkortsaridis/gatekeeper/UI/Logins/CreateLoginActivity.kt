@@ -11,15 +11,34 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
 import com.maxpilotto.actionedittext.ActionEditText
 import com.maxpilotto.actionedittext.actions.Icon
 import com.maxpilotto.actionedittext.actions.Toggle
+import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.Database.AppExecutors
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -32,18 +51,26 @@ import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperVaultSelector.vaultSelector
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_APP_REQUEST_CODE
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperDevelopMockData
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperShapes
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
+import gr.gkortsaridis.gatekeeper.ViewModels.LoginDetailsViewModel
+import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import io.noties.tumbleweed.Tween
 import io.noties.tumbleweed.android.ViewTweenManager
 import io.noties.tumbleweed.android.types.Alpha
 import kotlinx.android.synthetic.main.activity_create_login.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 
-
+@AndroidEntryPoint
 class CreateLoginActivity : AppCompatActivity() {
+
+    private val viewModel: LoginDetailsViewModel by viewModels()
 
     private val TAG = "_Create_Login_Activity_"
 
@@ -54,7 +81,15 @@ class CreateLoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_login)
+        val loginId = intent.getStringExtra("login_id")
+        val currentVault = viewModel.getLastActiveVault()
+
+        setContent { LoginDetailsPage(
+            currentVault = currentVault,
+            loginAction = 1
+        ) }
+
+        /*setContentView(R.layout.activity_create_login)
 
         AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_INFO)
 
@@ -80,7 +115,6 @@ class CreateLoginActivity : AppCompatActivity() {
 
         this.activity = this
 
-        val loginId = intent.getStringExtra("login_id")
         if (loginId == null) {
             activity_title.text = "Create new Password"
             vaultToAdd = VaultRepository.getLastActiveRealVault()
@@ -97,9 +131,9 @@ class CreateLoginActivity : AppCompatActivity() {
             )
 
         } else {
-            login = LoginsRepository.getLoginById(loginId)!!
+            login = viewModel.getLoginById(loginId)!!
             activity_title.text = "Edit Password"
-            vaultToAdd = VaultRepository.getVaultByID(login!!.vault_id)!!
+            vaultToAdd = VaultRepository.getVaultByID(login.vault_id)!!
             save_update_button.setOnClickListener { updateLogin() }
         }
 
@@ -171,9 +205,100 @@ class CreateLoginActivity : AppCompatActivity() {
 
 
         toggleSaveButton()
-        updateUI()
+        updateUI()*/
     }
 
+
+    @Composable
+    @Preview
+    fun LoginDetailsPage(
+        currentVault: Vault = GateKeeperDevelopMockData.mockVault,
+        loginAction: Int = -1
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .background(GateKeeperTheme.light_grey)
+        ) {
+            toolbar(loginAction = loginAction)
+            vaultSelector(currentVault = currentVault)
+
+            inputCard()
+            Spacer(modifier = Modifier.weight(1f))
+
+            bottomButton()
+        }
+
+    }
+
+    @Composable
+    fun toolbar(
+        loginAction: Int
+    ) {
+        Card(
+            modifier = Modifier
+                .height(48.dp)
+                .fillMaxWidth(),
+            backgroundColor = GateKeeperTheme.colorPrimaryDark,
+            shape = RoundedCornerShape(0.dp),
+            elevation = 4.dp
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if(loginAction == -1) "Create Login" else "Edit Login",
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 16.dp),
+                    color = GateKeeperTheme.white,
+                    fontSize = 19.sp
+                )
+
+
+                Image(
+                    painter = painterResource(id = R.drawable.delete_grey),
+                    contentDescription = "Localized description",
+                    colorFilter = ColorFilter.tint(GateKeeperTheme.white),
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .size(24.dp, 24.dp)
+                        .clickable { },
+                )
+            }
+
+        }
+    }
+
+    @Composable
+    fun inputCard() {
+        Card(
+            shape = GateKeeperShapes.getLoginCardShape(250),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 32.dp, start = 16.dp),
+            backgroundColor = GateKeeperTheme.colorAccent
+        ) {
+            Spacer(modifier = Modifier.height(450.dp))
+        }
+
+    }
+
+    @Composable
+    fun bottomButton() {
+        Card(
+            shape = GateKeeperShapes.getArcButtonShape(diagonalDp = 200),
+            modifier = Modifier
+                .fillMaxWidth(),
+            backgroundColor = GateKeeperTheme.colorAccent
+        ) {
+            Spacer(modifier = Modifier.height(80.dp))
+        }
+    }
+
+    /*
     private fun dataNotEmpty(): Boolean {
         return (nameET.text.isNotBlank() || usernameET.text?.isNotBlank() == true || passwordET.text?.isNotBlank() == true || urlET.text?.isNotBlank() == true || notesET.text?.isNotBlank() == true)
     }
@@ -357,4 +482,5 @@ class CreateLoginActivity : AppCompatActivity() {
         val relativeLayout = linearLayout[1] as RelativeLayout
         return relativeLayout[0] as AppCompatEditText
     }
+     */
 }

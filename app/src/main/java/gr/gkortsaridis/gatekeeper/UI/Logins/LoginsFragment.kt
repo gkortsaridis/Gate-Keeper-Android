@@ -17,13 +17,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +36,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.gms.ads.AdRequest
+import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.R
@@ -46,19 +51,14 @@ import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import kotlinx.android.synthetic.main.fragment_logins.*
 
-
+@AndroidEntryPoint
 class LoginsFragment : Fragment() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        //val login1 = Login(account_id = "1", name = "My login", username = "gkortsaridis@gmail.com", password = "pass", url = "www.google.com", notes = "Some Notes", date_created=123L, date_modified=234L, vault_id="123")
-        //val logins = listOf(login1, login1, login1)
-
-
-        val currentVault = VaultRepository.getLastActiveVault()
-        val allLogins = viewModel.allLogins.value ?: arrayListOf()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val currentVault = viewModel.getLastActiveVault()
+        val allLogins = viewModel.allLogins
         val currentVaultLogins = MainViewModel.filterLoginsByVault(logins = allLogins, vault = currentVault)
         val sortType = DataRepository.loginSortType
         if (sortType == LOGIN_SORT_TYPE_NAME) {
@@ -80,12 +80,8 @@ class LoginsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adRequest = AdRequest.Builder().build()
-        adview.loadAd(adRequest)
-
-        viewModel.allLogins.observe(requireActivity(), Observer {
-            //updateUI(this.activeLogins)
-        })
+        //val adRequest = AdRequest.Builder().build()
+        //adview.loadAd(adRequest)
 
         /*add_login_btn.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
         fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
@@ -137,8 +133,81 @@ class LoginsFragment : Fragment() {
                 .background(GateKeeperTheme.light_grey)
         ) {
             vaultSelector(currentVault = currentVault)
-            itemsCount(sortType = sortType, logins = logins)
-            itemsList(logins = logins)
+            if(logins.isNotEmpty()) {
+                itemsCount(sortType = sortType, logins = logins)
+                Box(modifier = Modifier.fillMaxSize()){
+                    itemsList(logins = logins)
+                    FloatingActionButton(
+                        onClick = {
+                            startActivity(Intent(requireActivity(), CreateLoginActivity::class.java))
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(24.dp)
+                            .size(56.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.plus),
+                            contentDescription = "",
+                            modifier = Modifier.padding(all=12.dp)
+                        )
+                    }
+                }
+
+            } else {
+                noLogins()
+            }
+        }
+
+    }
+
+    @Composable
+    fun noLogins() {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(200.dp)
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.padlock_grey),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(40.dp, 40.dp)
+                        .padding(4.dp)
+                )
+                Text(
+                    text = stringResource(id = R.string.no_logins_title),
+                    modifier = Modifier.padding(top=8.dp),
+                    fontWeight = FontWeight.Bold,
+                    color = GateKeeperTheme.tone_black
+                )
+                Text(
+                    text = stringResource(id = R.string.no_logins_message),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top=8.dp),
+                    color = GateKeeperTheme.tone_black
+                )
+            }
+
+            FloatingActionButton(
+                onClick = {
+                          startActivity(Intent(requireActivity(), CreateLoginActivity::class.java))
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(24.dp)
+                    .size(56.dp),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.plus),
+                    contentDescription = "",
+                    modifier = Modifier.padding(all=12.dp)
+                )
+            }
         }
 
     }
@@ -186,7 +255,7 @@ class LoginsFragment : Fragment() {
     fun itemsList(logins: ArrayList<Login>){
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 8.dp)
+            contentPadding = PaddingValues(start = 32.dp, end= 32.dp, top = 8.dp, bottom = 60.dp)
         ) {
             items(logins) { login -> loginItem(login = login)}
         }
@@ -246,7 +315,7 @@ class LoginsFragment : Fragment() {
                     painter = painterResource(id = R.drawable.copy),
                     contentDescription = "Localized description",
                     modifier = Modifier
-                        .padding(start=8.dp, end=16.dp)
+                        .padding(start = 8.dp, end = 16.dp)
                         .size(24.dp, 24.dp)
                         .clickable { onLoginActionClicked(login) },
                 )

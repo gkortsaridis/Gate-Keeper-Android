@@ -22,7 +22,7 @@ import java.sql.Timestamp
 @SuppressLint("CheckResult")
 object CreditCardRepository {
 
-    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+    //val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
 
     var allCards: ArrayList<CreditCard>
         get() {
@@ -34,11 +34,17 @@ object CreditCardRepository {
             //db.dao().truncateCards(); for (card in cards) { db.dao().insertCard(card) }
         }
 
-    fun addLocalCard(card: CreditCard) { db.dao().insertCard(card) }
+    fun addLocalCard(card: CreditCard) {
+    //    db.dao().insertCard(card)
+    }
 
-    fun removeLocalCard(card: CreditCard) { db.dao().deleteCard(card) }
+    fun removeLocalCard(card: CreditCard) {
+//        db.dao().deleteCard(card)
+    }
 
-    fun updateLocalCard(card: CreditCard) { db.dao().updateCard(card) }
+    fun updateLocalCard(card: CreditCard) {
+        //db.dao().updateCard(card)
+    }
 
     fun filterCardsByVault(cards: List<CreditCard>, vault: Vault) : ArrayList<CreditCard> {
         val vaultIds = arrayListOf<String>()

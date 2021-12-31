@@ -33,7 +33,7 @@ object LoginsRepository {
     val deleteLoginSuccess = 4
     val deleteLoginError = 5
 
-    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+    //val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
 
     var allLogins: ArrayList<Login>
         get() {
@@ -45,11 +45,17 @@ object LoginsRepository {
             //db.dao().truncateLogins(); for (login in logins) { db.dao().insertLogin(login) }
         }
 
-    fun addLocalLogin(login: Login) { db.dao().insertLogin(login) }
+    fun addLocalLogin(login: Login) {
+        //db.dao().insertLogin(login)
+    }
 
-    fun removeLocalLogin(login: Login) { db.dao().deleteLogin(login) }
+    fun removeLocalLogin(login: Login) {
+     ///   db.dao().deleteLogin(login)
+    }
 
-    fun updateLocalLogin(login: Login) { db.dao().updateLogin(login) }
+    fun updateLocalLogin(login: Login) {
+    //    db.dao().updateLogin(login)
+    }
 
     fun encryptAndStoreLogin(activity: Activity, login: Login, listener: LoginCreateListener) {
         val viewDialog = ViewDialog(activity)
@@ -121,7 +127,10 @@ object LoginsRepository {
         return filterLoginsByVault(logins, VaultRepository.getLastActiveVault())
     }
 
-    fun getLoginById(loginId: String): Login? { return db.dao().loadLoginById(loginId) }
+    fun getLoginById(loginId: String): Login? {
+    //    return db.dao().loadLoginById(loginId)
+        return null
+    }
 
     fun getApplicationInfoByPackageName(packageName: String?, packageManager: PackageManager): ResolveInfo? {
         val mainIntent = Intent(Intent.ACTION_MAIN, null)

@@ -8,23 +8,24 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import dagger.hilt.android.AndroidEntryPoint
-import gr.gkortsaridis.gatekeeper.Entities.*
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.Repositories.*
+import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
 import gr.gkortsaridis.gatekeeper.UI.MainActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperShapes
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
@@ -86,6 +87,7 @@ class LoadingActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
+                .background(color = GateKeeperTheme.white),
         ) {
 
             Card(
@@ -128,7 +130,8 @@ class LoadingActivity : AppCompatActivity() {
                         .fillMaxWidth()
                         .height(300.dp)
                 ) {
-
+                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.encrypt))
+                    LottieAnimation(composition)
                 }
 
                 Text(

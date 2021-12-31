@@ -15,13 +15,13 @@ import io.reactivex.schedulers.Schedulers
 @SuppressLint("CheckResult")
 object VaultRepository {
 
-    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+    //val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
     val allVaultsObj =  Vault("-1", AuthRepository.getUserID(), "All Vaults", VaultColor.White)
 
     var allVaults: ArrayList<Vault>
         get() {
             //return ArrayList(db.dao().allVaultsSync)
-            return GateKeeperApplication.vaults ?: ArrayList()
+            return GateKeeperApplication.allVaults.value ?: ArrayList()
         }
         set(vaults) {
             //db.dao().truncateVaults()

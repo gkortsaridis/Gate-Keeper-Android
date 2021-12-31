@@ -42,59 +42,112 @@ class LoadingViewModel @Inject constructor(
                         val notes = ArrayList<Note>()
                         val devices = ArrayList<Device>()
 
+                        val dbItems = ArrayList<EncryptedDBItem>()
+
                         for (vault in vaultsEncrypted) {
-                            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(vault, Vault::class.java) as Vault?
+                            val dbItem = EncryptedDBItem(
+                                id=vault.id,
+                                type=0,
+                                encryptedData = vault.encryptedData,
+                                iv = vault.iv,
+                                dateCreated = vault.dateCreated,
+                                dateModified = vault.dateModified
+                            )
+                            dbItems.add(dbItem)
+                            /*val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(vault, Vault::class.java) as Vault?
                             if (decrypted != null) {
                                 decrypted.id = vault.id.toString()
                                 decrypted.dateCreated = vault.dateCreated
                                 decrypted.dateModified = vault.dateModified
                                 vaults.add(decrypted)
-                            }
+                            }*/
                         }
 
                         for (login in loginsEncrypted) {
-                            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(login, Login::class.java) as Login?
+                            val dbItem = EncryptedDBItem(
+                                id=login.id,
+                                type=1,
+                                encryptedData = login.encryptedData,
+                                iv = login.iv,
+                                dateCreated = login.dateCreated,
+                                dateModified = login.dateModified
+                            )
+                            dbItems.add(dbItem)
+
+                            /*val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(login, Login::class.java) as Login?
                             if (decrypted != null) {
                                 decrypted.id = login.id.toString()
                                 decrypted.date_created = login.dateCreated
                                 decrypted.date_modified = login.dateModified
                                 logins.add(decrypted)
-                            }
+                            }*/
                         }
 
                         for (card in cardsEncrypted) {
-                            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(card, CreditCard::class.java) as CreditCard?
+                            val dbItem = EncryptedDBItem(
+                                id=card.id,
+                                type=2,
+                                encryptedData = card.encryptedData,
+                                iv = card.iv,
+                                dateCreated = card.dateCreated,
+                                dateModified = card.dateModified
+                            )
+                            dbItems.add(dbItem)
+
+                            /*val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(card, CreditCard::class.java) as CreditCard?
                             if (decrypted != null) {
                                 decrypted.id = card.id.toString()
                                 decrypted.modifiedDate = card.dateModified
                                 decrypted.createdDate = card.dateCreated
                                 cards.add(decrypted)
-                            }
+                            }*/
                         }
 
                         for (note in notesEncrypted) {
-                            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(note, Note::class.java) as Note?
+                            val dbItem = EncryptedDBItem(
+                                id=note.id,
+                                type=3,
+                                encryptedData = note.encryptedData,
+                                iv = note.iv,
+                                dateCreated = note.dateCreated,
+                                dateModified = note.dateModified
+                            )
+                            dbItems.add(dbItem)
+
+                            /*val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(note, Note::class.java) as Note?
                             if (decrypted != null) {
                                 decrypted.id = note.id.toString()
                                 decrypted.createDate = note.dateCreated
                                 decrypted.modifiedDate = note.dateModified
                                 notes.add(decrypted)
-                            }
+                            }*/
                         }
 
                         for (device in devicesEncrypted) {
-                            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(device, Device::class.java) as Device?
+                            val dbItem = EncryptedDBItem(
+                                id=device.id,
+                                type=4,
+                                encryptedData = device.encryptedData,
+                                iv = device.iv,
+                                dateCreated = device.dateCreated,
+                                dateModified = device.dateModified
+                            )
+                            dbItems.add(dbItem)
+
+                            /*val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(device, Device::class.java) as Device?
                             if (decrypted != null) {
                                 decrypted.id = device.id.toString()
                                 devices.add(decrypted)
-                            }
+                            }*/
                         }
 
-                        userDataRepository.updateLogins(logins = logins)
+                        /*userDataRepository.updateLogins(logins = logins)
                         userDataRepository.updateVaults(vaults = vaults)
                         userDataRepository.updateCards(cards = cards)
                         userDataRepository.updateNotes(notes = notes)
-                        userDataRepository.updateDevices(devices = devices)
+                        userDataRepository.updateDevices(devices = devices)*/
+
+                        userDataRepository.setUserData(dbItems = dbItems)
 
                         allData.postValue(Resource.success(data = it.data))
                     } else {
