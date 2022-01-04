@@ -1,53 +1,207 @@
 package gr.gkortsaridis.gatekeeper.UI.Account
 
 
-import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Card
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
-import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.android.gms.ads.AdRequest
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
-import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperAPI
-import gr.gkortsaridis.gatekeeper.Utils.GlideApp
-import gr.gkortsaridis.gatekeeper.Utils.dp
-import io.noties.tumbleweed.Timeline
-import io.noties.tumbleweed.Tween
-import io.noties.tumbleweed.android.ViewTweenManager
-import io.noties.tumbleweed.android.types.Alpha
-import io.noties.tumbleweed.android.types.Translation
-import io.noties.tumbleweed.equations.Cubic
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_my_account.*
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.GateKeeperTextField
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperShapes
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 
 class MyAccountFragment : Fragment() {
 
     private lateinit var viewDialog: ViewDialog
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_my_account, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return ComposeView(requireContext()).apply {
+            setContent { accountPage() }
+        }
     }
 
+    @Preview
+    @Composable
+    fun accountPage() {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .background(GateKeeperTheme.light_grey)
+        ) {
+            userImgCard(modifier = Modifier.align(Alignment.End))
+            userDetailsCard()
+            userExtraInfoCard(modifier = Modifier.align(Alignment.End))
+        }
+    }
+
+    @Composable
+    fun userImgCard(
+        modifier: Modifier = Modifier
+    ) {
+        Column(
+            modifier = Modifier.padding(vertical = 32.dp).composed { modifier },
+            horizontalAlignment = Alignment.End
+        ) {
+            Card(
+                modifier = Modifier.size(width = 370.dp, height = 300.dp),
+                elevation = 4.dp,
+                backgroundColor = GateKeeperTheme.busy_grey,
+                shape = GateKeeperShapes.getLeftRadiusCard(200)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.camera),
+                    contentDescription = "Add Profile Image",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(120.dp)
+                )
+            }
+
+            Text(
+                text = "UPDATE PROFILE IMAGE",
+                modifier = Modifier.padding(all=16.dp),
+                color = GateKeeperTheme.colorPrimaryDark
+            )
+
+        }
+    }
+
+    @Composable
+    fun userDetailsCard() {
+        Column(
+            modifier = Modifier.padding(vertical = 32.dp),
+        ) {
+            Card(
+                modifier = Modifier.width(width = 370.dp),
+                elevation = 4.dp,
+                backgroundColor = GateKeeperTheme.white,
+                shape = GateKeeperShapes.getRightRadiusCard(200)
+            ) {
+                Column() {
+                    GateKeeperTextField(
+                        placeholder="Full Name",
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 24.dp, bottom = 8.dp)
+                    )
+
+                    GateKeeperTextField(
+                        placeholder="Email",
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 24.dp, bottom = 32.dp)
+                    )
+
+                }
+             }
+
+            Text(
+                text = "UPDATE ACCOUNT DETAILS",
+                modifier = Modifier.padding(all=16.dp),
+                color = GateKeeperTheme.colorPrimaryDark
+            )
+
+        }
+    }
+
+    @Composable
+    fun userExtraInfoCard(
+        modifier: Modifier = Modifier
+    ) {
+
+        Column(
+            modifier = Modifier
+                .padding(vertical = 32.dp)
+                .composed { modifier },
+        ) {
+            Card(
+                modifier = Modifier.size(width = 370.dp, height = 1000.dp),
+                elevation = 4.dp,
+                backgroundColor = GateKeeperTheme.white,
+                shape = GateKeeperShapes.getLeftRadiusCard(150)
+            ) {
+                Row(
+                    modifier = Modifier.weight(2F)
+                ) {
+                    userExtraInfoButton(
+                        modifier = Modifier.weight(1F),
+                        img = R.drawable.account_grey,
+                        text = "Account History",
+                        onClick = { goToHistory() }
+                    )
+                    userExtraInfoButton(
+                        modifier = Modifier.weight(1F),
+                        img = R.drawable.cash,
+                        text = "Billing Status",
+                        onClick = { goToBilling() }
+                    )
+                }
+            }
+
+        }
+
+    }
+
+    @Composable
+    fun userExtraInfoButton(
+        modifier: Modifier = Modifier,
+        img: Int,
+        text: String,
+        onClick: () -> Unit = {},
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .clickable { onClick }
+                .composed { modifier },
+            contentAlignment = Alignment.Center,
+
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    modifier = Modifier.size(width = 30.dp, height = 30.dp),
+                    painter = painterResource(id = img),
+                    contentDescription = text
+                )
+                Text(
+                    text = text,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
+        }
+    }
+
+    private fun goToHistory() {
+        AnalyticsRepository.trackEvent(AnalyticsRepository.HISTORY_PAGE)
+        startActivity(Intent(requireActivity(), AccountHistoryActivity::class.java))
+    }
+
+    private fun goToBilling() {
+        AnalyticsRepository.trackEvent(AnalyticsRepository.BILLING_PAGE)
+        Toast.makeText(context, "Everything is free for now :)", Toast.LENGTH_SHORT).show()
+        //context?.startActivity(Intent(activity, AccountStatusActivity::class.java))
+    }
+
+    /*
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewDialog = ViewDialog(activity!!)
@@ -67,17 +221,10 @@ class MyAccountFragment : Fragment() {
         displayUserImg()
         animateContainersIn()
     }
+    */
 
-    private fun goToHistory() {
-        AnalyticsRepository.trackEvent(AnalyticsRepository.HISTORY_PAGE)
-        startActivity(Intent(activity, AccountHistoryActivity::class.java))
-    }
+    /*
 
-    private fun goToBilling() {
-        AnalyticsRepository.trackEvent(AnalyticsRepository.BILLING_PAGE)
-        Toast.makeText(context, "Everything is free for now :)", Toast.LENGTH_SHORT).show()
-        //context?.startActivity(Intent(activity, AccountStatusActivity::class.java))
-    }
 
     private fun updateProfileName(name: String?) {
         viewDialog.showDialog()
@@ -177,7 +324,6 @@ class MyAccountFragment : Fragment() {
                 }
             }).submit()
 
-
     }
 
     private fun animateContainersIn() {
@@ -208,4 +354,6 @@ class MyAccountFragment : Fragment() {
             .start(ViewTweenManager.get(account_image_container))
 
     }
+     */
+
 }

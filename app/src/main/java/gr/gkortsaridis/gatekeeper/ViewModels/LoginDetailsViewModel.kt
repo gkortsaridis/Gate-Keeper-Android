@@ -13,6 +13,6 @@ class LoginDetailsViewModel @Inject constructor(
 ): ViewModel() {
 
     fun getLastActiveVault() = userDataRepository.getLastActiveVault()
-    fun getLoginById(id: String) = userDataRepository.getLoginById(id)
+    fun getLoginById(id: String?) = userDataRepository.getLoginById(id)
 
 }

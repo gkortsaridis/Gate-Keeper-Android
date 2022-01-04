@@ -86,7 +86,9 @@ class UserDataRepository @Inject constructor(
         }
     }
 
-    fun getLoginById(id: String): Login? {
+    fun getLoginById(id: String?): Login? {
+        if(id == null) { return null }
+
         val encLogin = getLocalLoginById(id)
         if(encLogin != null) {
             val modifiedLogin = EncryptedData(

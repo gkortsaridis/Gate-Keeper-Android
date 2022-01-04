@@ -141,22 +141,23 @@
     </com.github.florent37.shapeofview.shapes.ArcView>
 
     <ScrollView
-        android:layout_below="@+id/top_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top_view">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <com.github.florent37.shapeofview.shapes.RoundRectView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:elevation="4dp"
-                android:layout_marginRight="-3dp"
-                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
+                android:layout_marginRight="-3dp"
+                android:layout_marginBottom="16dp"
+                android:elevation="4dp"
                 app:shape_roundRect_bottomLeftRadius="40dp"
                 app:shape_roundRect_topLeftRadius="40dp">
 
@@ -347,10 +348,9 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="80dp"/>
+                android:layout_height="80dp" />
 
         </LinearLayout>
-
 
 
     </ScrollView>

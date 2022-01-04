@@ -28,7 +28,7 @@ object GateKeeperTextField {
 
     @Composable
     fun GateKeeperTextField(
-            modifier: Modifier? = null,
+            modifier: Modifier = Modifier,
             placeholder: String,
             inputType: InputType = InputType.TEXT,
             onTextChange: (String) -> Unit = {},
@@ -38,7 +38,7 @@ object GateKeeperTextField {
         var passwordVisibility by remember { mutableStateOf(false) }
 
         TextField(
-            modifier = Modifier.fillMaxWidth().composed { modifier ?: Modifier },
+            modifier = Modifier.fillMaxWidth().composed { modifier },
             value = textState,
             label = { Text(text = placeholder) },
             colors = TextFieldDefaults.textFieldColors(

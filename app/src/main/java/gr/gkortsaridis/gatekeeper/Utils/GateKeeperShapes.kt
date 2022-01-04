@@ -27,7 +27,7 @@ object GateKeeperShapes {
         }
     }
 
-    fun getLoginCardShape(cornerDiagonalDp: Int): GenericShape {
+    fun getLeftRadiusCard(cornerDiagonalDp: Int): GenericShape {
         return GenericShape { size, _ ->
             arcTo(
                 rect = Rect(
@@ -56,6 +56,38 @@ object GateKeeperShapes {
             )
 
             lineTo(0f,0f)
+        }
+    }
+
+    fun getRightRadiusCard(cornerDiagonalDp: Int): GenericShape {
+        return GenericShape { size, _ ->
+            moveTo(0F,0F)
+
+            lineTo(size.width - cornerDiagonalDp.toFloat(), 0F)
+
+            arcTo(
+                rect = Rect(
+                    Offset(size.width - cornerDiagonalDp, 0f),
+                    Size(cornerDiagonalDp.toFloat(), cornerDiagonalDp.toFloat())
+                ),
+                startAngleDegrees = 270f,
+                sweepAngleDegrees = 90f,
+                forceMoveTo = false
+            )
+
+            lineTo(size.width, size.height - cornerDiagonalDp)
+
+            arcTo(
+                rect = Rect(
+                    Offset(size.width - cornerDiagonalDp, size.height - cornerDiagonalDp),
+                    Size(cornerDiagonalDp.toFloat(), cornerDiagonalDp.toFloat())
+                ),
+                startAngleDegrees = 0f,
+                sweepAngleDegrees = 90f,
+                forceMoveTo = false
+            )
+
+            lineTo(0f,size.height)
         }
     }
 

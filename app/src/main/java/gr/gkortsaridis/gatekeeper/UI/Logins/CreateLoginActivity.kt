@@ -1,21 +1,12 @@
 package gr.gkortsaridis.gatekeeper.UI.Logins
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Intent
-import android.content.pm.ResolveInfo
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatEditText
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,41 +22,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import androidx.core.view.get
-import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.viewModels
-import com.maxpilotto.actionedittext.ActionEditText
-import com.maxpilotto.actionedittext.actions.Icon
-import com.maxpilotto.actionedittext.actions.Toggle
 import dagger.hilt.android.AndroidEntryPoint
-import gr.gkortsaridis.gatekeeper.Database.AppExecutors
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
-import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginCreateListener
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginDeleteListener
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginUpdateListener
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
-import gr.gkortsaridis.gatekeeper.Repositories.AuthRepository
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
-import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.GateKeeperTextField
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperVaultSelector.vaultSelector
-import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_APP_REQUEST_CODE
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperDevelopMockData
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperShapes
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 import gr.gkortsaridis.gatekeeper.ViewModels.LoginDetailsViewModel
-import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
-import io.noties.tumbleweed.Tween
-import io.noties.tumbleweed.android.ViewTweenManager
-import io.noties.tumbleweed.android.types.Alpha
-import kotlinx.android.synthetic.main.activity_create_login.*
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 
 @AndroidEntryPoint
 class CreateLoginActivity : AppCompatActivity() {
@@ -82,11 +48,12 @@ class CreateLoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val loginId = intent.getStringExtra("login_id")
+        val login = viewModel.getLoginById(loginId)
         val currentVault = viewModel.getLastActiveVault()
 
         setContent { LoginDetailsPage(
             currentVault = currentVault,
-            loginAction = 1
+            login = login
         ) }
 
         /*setContentView(R.layout.activity_create_login)
@@ -213,7 +180,7 @@ class CreateLoginActivity : AppCompatActivity() {
     @Preview
     fun LoginDetailsPage(
         currentVault: Vault = GateKeeperDevelopMockData.mockVault,
-        loginAction: Int = -1
+        login: Login? = null
     ) {
         Column(
             modifier = Modifier
@@ -221,10 +188,10 @@ class CreateLoginActivity : AppCompatActivity() {
                 .fillMaxWidth()
                 .background(GateKeeperTheme.light_grey)
         ) {
-            toolbar(loginAction = loginAction)
+            toolbar(login = login)
             vaultSelector(currentVault = currentVault)
 
-            inputCard()
+            inputCard(login = login)
             Spacer(modifier = Modifier.weight(1f))
 
             bottomButton()
@@ -234,7 +201,7 @@ class CreateLoginActivity : AppCompatActivity() {
 
     @Composable
     fun toolbar(
-        loginAction: Int
+        login: Login?
     ) {
         Card(
             modifier = Modifier
@@ -249,7 +216,7 @@ class CreateLoginActivity : AppCompatActivity() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if(loginAction == -1) "Create Login" else "Edit Login",
+                    text = if(login == null) "Create Login" else "Edit Login",
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 16.dp),
@@ -257,31 +224,68 @@ class CreateLoginActivity : AppCompatActivity() {
                     fontSize = 19.sp
                 )
 
+                if(login != null) {
+                    Image(
+                        painter = painterResource(id = R.drawable.delete_grey),
+                        contentDescription = "Delete Login",
+                        colorFilter = ColorFilter.tint(GateKeeperTheme.white),
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .size(24.dp, 24.dp)
+                            .clickable { showDeleteLoginDialog() },
+                    )
+                }
 
-                Image(
-                    painter = painterResource(id = R.drawable.delete_grey),
-                    contentDescription = "Localized description",
-                    colorFilter = ColorFilter.tint(GateKeeperTheme.white),
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .size(24.dp, 24.dp)
-                        .clickable { },
-                )
             }
 
         }
     }
 
     @Composable
-    fun inputCard() {
+    fun inputCard(
+        login: Login?
+    ) {
         Card(
-            shape = GateKeeperShapes.getLoginCardShape(250),
+            shape = GateKeeperShapes.getLeftRadiusCard(250),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 32.dp, start = 16.dp),
-            backgroundColor = GateKeeperTheme.colorAccent
+            backgroundColor = GateKeeperTheme.white,
+            elevation = 4.dp
         ) {
-            Spacer(modifier = Modifier.height(450.dp))
+            Column{
+
+                GateKeeperTextField(
+                    modifier = Modifier.padding(start = 32.dp, end=16.dp, top=32.dp, bottom = 8.dp),
+                    placeholder="Name",
+                    value = login?.name ?: ""
+                )
+
+                GateKeeperTextField(
+                    modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 8.dp),
+                    placeholder="Username",
+                    value = login?.username ?: ""
+                )
+
+                GateKeeperTextField(
+                    modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 8.dp),
+                    placeholder="Password",
+                    value = login?.password ?: ""
+                )
+
+                GateKeeperTextField(
+                    modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 8.dp),
+                    placeholder="URL",
+                    value = login?.url ?: ""
+                )
+
+                GateKeeperTextField(
+                    modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 32.dp),
+                    placeholder="Notes",
+                    value = login?.notes ?: ""
+                )
+                //TODO: Notes need to be multiline input
+            }
         }
 
     }
@@ -297,6 +301,22 @@ class CreateLoginActivity : AppCompatActivity() {
             Spacer(modifier = Modifier.height(80.dp))
         }
     }
+
+    private fun showDeleteLoginDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Delete Password")
+        builder.setMessage("Are you sure you want to delete this Password item?")
+        builder.setPositiveButton("DELETE"){dialog, _ ->
+            dialog.cancel()
+        }
+        builder.setNegativeButton("CANCEL"){dialog, _ -> dialog.cancel() }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+
+        val positiveButton: Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        positiveButton.setTextColor(resources.getColor(R.color.error_red))
+    }
+
 
     /*
     private fun dataNotEmpty(): Boolean {
