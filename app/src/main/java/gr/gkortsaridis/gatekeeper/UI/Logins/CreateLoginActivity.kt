@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.UI.Logins
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -14,7 +15,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -37,13 +38,6 @@ import gr.gkortsaridis.gatekeeper.ViewModels.LoginDetailsViewModel
 class CreateLoginActivity : AppCompatActivity() {
 
     private val viewModel: LoginDetailsViewModel by viewModels()
-
-    private val TAG = "_Create_Login_Activity_"
-
-    private var vaultToAdd: Vault? = null
-    private lateinit var login: Login
-
-    private lateinit var activity: Activity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -182,26 +176,47 @@ class CreateLoginActivity : AppCompatActivity() {
         currentVault: Vault = GateKeeperDevelopMockData.mockVault,
         login: Login? = null
     ) {
+        var loginToShow = login ?: Login(
+            account_id = currentVault.account_id,
+            name = "",
+            username = "",
+            password = "",
+            url = "",
+            notes = "",
+            vault_id = currentVault.id
+        )
+
+        var dataNotEmpty by remember { mutableStateOf(dataNotEmpty(loginToShow)) }
+
         Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
                 .background(GateKeeperTheme.light_grey)
         ) {
-            toolbar(login = login)
+            toolbar(login = loginToShow)
             vaultSelector(currentVault = currentVault)
 
-            inputCard(login = login)
+            inputCard(
+                login = loginToShow,
+                onLoginChane = {
+                    loginToShow = it
+                    dataNotEmpty = dataNotEmpty(it)
+                }
+            )
             Spacer(modifier = Modifier.weight(1f))
 
-            bottomButton()
+            bottomButton(
+                dataNotEmpty = dataNotEmpty,
+                onSavePressed = { handleSaveButton(loginToShow) }
+            )
         }
 
     }
 
     @Composable
     fun toolbar(
-        login: Login?
+        login: Login
     ) {
         Card(
             modifier = Modifier
@@ -232,7 +247,7 @@ class CreateLoginActivity : AppCompatActivity() {
                         modifier = Modifier
                             .padding(end = 16.dp)
                             .size(24.dp, 24.dp)
-                            .clickable { showDeleteLoginDialog() },
+                            .clickable { handleDeleteButton() },
                     )
                 }
 
@@ -243,7 +258,8 @@ class CreateLoginActivity : AppCompatActivity() {
 
     @Composable
     fun inputCard(
-        login: Login?
+        login: Login,
+        onLoginChane: (Login) -> Unit = {}
     ) {
         Card(
             shape = GateKeeperShapes.getLeftRadiusCard(250),
@@ -258,51 +274,72 @@ class CreateLoginActivity : AppCompatActivity() {
                 GateKeeperTextField(
                     modifier = Modifier.padding(start = 32.dp, end=16.dp, top=32.dp, bottom = 8.dp),
                     placeholder="Name",
-                    value = login?.name ?: ""
+                    value = login.name,
+                    onTextChange = { login.name = it; onLoginChane(login) }
                 )
 
                 GateKeeperTextField(
                     modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 8.dp),
                     placeholder="Username",
-                    value = login?.username ?: ""
+                    value = login.username,
+                    onTextChange = {login.username = it; onLoginChane(login) }
                 )
 
                 GateKeeperTextField(
                     modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 8.dp),
                     placeholder="Password",
-                    value = login?.password ?: ""
+                    value = login.password,
+                    onTextChange = {login.password = it; onLoginChane(login) }
                 )
 
                 GateKeeperTextField(
                     modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 8.dp),
                     placeholder="URL",
-                    value = login?.url ?: ""
+                    value = login.url,
+                    onTextChange = {login.url = it; onLoginChane(login) }
                 )
 
+                //TODO: Notes need to be multiline input
                 GateKeeperTextField(
                     modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 32.dp),
                     placeholder="Notes",
-                    value = login?.notes ?: ""
+                    value = login.notes ?: "",
+                    onTextChange = {login.notes = it; onLoginChane(login) }
                 )
-                //TODO: Notes need to be multiline input
             }
         }
 
     }
 
     @Composable
-    fun bottomButton() {
+    fun bottomButton(
+        dataNotEmpty: Boolean,
+        onSavePressed: () -> Unit = {}
+    ) {
         Card(
             shape = GateKeeperShapes.getArcButtonShape(diagonalDp = 200),
             modifier = Modifier
-                .fillMaxWidth(),
-            backgroundColor = GateKeeperTheme.colorAccent
+                .fillMaxWidth()
+                .height(80.dp)
+                .clickable { onSavePressed() },
+            backgroundColor = if(dataNotEmpty) GateKeeperTheme.colorAccent else GateKeeperTheme.busy_grey,
+            elevation = 10.dp
         ) {
-            Spacer(modifier = Modifier.height(80.dp))
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Text(
+                    text = "Save",
+                    color = GateKeeperTheme.white,
+                    fontSize = 20.sp
+                )
+            }
         }
     }
 
-    private fun showDeleteLoginDialog() {
+    private fun handleDeleteButton() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Delete Password")
         builder.setMessage("Are you sure you want to delete this Password item?")
@@ -317,21 +354,18 @@ class CreateLoginActivity : AppCompatActivity() {
         positiveButton.setTextColor(resources.getColor(R.color.error_red))
     }
 
+    private fun handleSaveButton(login: Login) {
+        Log.i("SAVING", "Name: "+login.name)
+        Log.i("SAVING", "Username: "+login.username)
+        Log.i("SAVING", "Password: "+login.password)
+        Log.i("SAVING", "URL: "+login.url)
+        Log.i("SAVING", "Notes: "+login.notes)
+    }
 
+    private fun dataNotEmpty(login: Login): Boolean {
+        return (login.name.isNotBlank() || login.username.isNotBlank() || login.password.isNotBlank() || login.url.isNotBlank() || (login.notes ?: "").isNotBlank())
+    }
     /*
-    private fun dataNotEmpty(): Boolean {
-        return (nameET.text.isNotBlank() || usernameET.text?.isNotBlank() == true || passwordET.text?.isNotBlank() == true || urlET.text?.isNotBlank() == true || notesET.text?.isNotBlank() == true)
-    }
-
-    private fun toggleSaveButton() {
-        save_update_button.setBackgroundColor(
-            if (dataNotEmpty()) {
-                resources.getColor(R.color.colorPrimaryDark)
-            } else {
-                resources.getColor(R.color.greyish)
-            }
-        )
-    }
 
     private fun copy(txt: String, what: String) {
         val clipboard = ContextCompat.getSystemService(
@@ -342,20 +376,6 @@ class CreateLoginActivity : AppCompatActivity() {
         clipboard.setPrimaryClip(clip)
 
         Toast.makeText(this, "$what copied", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun updateUI() {
-        nameET.setText(login.name)
-        usernameET.apply { text = login.username }
-        passwordET.apply { text = login.password }
-        urlET.apply { text = login.url }
-        notesET.apply { text = login.notes }
-        delete_login_btn.visibility = if (login.id != "-1") View.VISIBLE else View.GONE
-
-        vault_name.text = vaultToAdd?.name
-        //vault_view.setBackgroundColor(resources.getColor(vaultToAdd?.getVaultColorResource() ?: R.color.colorPrimaryDark))
-        //vault_name.setTextColor(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
-        //vault_icon.setColorFilter(resources.getColor(vaultToAdd?.getVaultColorAccent() ?: R.color.colorPrimaryDark))
     }
 
     private fun updateLogin() {

@@ -4,6 +4,8 @@ package gr.gkortsaridis.gatekeeper.UI.Logins
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,13 +34,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.gms.ads.AdRequest
 import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
@@ -46,8 +54,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.LOGIN_SORT_TYPE_NAME
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperVaultSelector.vaultSelector
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperDevelopMockData
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
+import gr.gkortsaridis.gatekeeper.Utils.*
 import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import kotlinx.android.synthetic.main.fragment_logins.*
 
@@ -59,6 +66,7 @@ class LoginsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val currentVault = viewModel.getLastActiveVault()
         val allLogins = viewModel.allLogins
+        val loginAction = DataRepository.loginClickAction
         val currentVaultLogins = MainViewModel.filterLoginsByVault(logins = allLogins, vault = currentVault)
         val sortType = DataRepository.loginSortType
         if (sortType == LOGIN_SORT_TYPE_NAME) {
@@ -72,7 +80,8 @@ class LoginsFragment : Fragment() {
             setContent { loginsPage(
                 currentVault = currentVault,
                 logins = currentVaultLogins,
-                sortType = sortType
+                sortType = sortType,
+                loginAction = loginAction
             ) }
         }
     }
@@ -124,7 +133,8 @@ class LoginsFragment : Fragment() {
     fun loginsPage(
         currentVault: Vault = GateKeeperDevelopMockData.mockVault,
         logins: ArrayList<Login> = GateKeeperDevelopMockData.mockLogins,
-        sortType: Int = LOGIN_SORT_TYPE_NAME
+        sortType: Int = LOGIN_SORT_TYPE_NAME,
+        loginAction: Int = LoginsRepository.LOGIN_CLICK_ACTION_OPEN
     ) {
         Column(
             modifier = Modifier
@@ -136,7 +146,7 @@ class LoginsFragment : Fragment() {
             if(logins.isNotEmpty()) {
                 itemsCount(sortType = sortType, logins = logins)
                 Box(modifier = Modifier.fillMaxSize()){
-                    itemsList(logins = logins)
+                    itemsList(logins = logins, loginAction = loginAction)
                     FloatingActionButton(
                         onClick = {
                             startActivity(Intent(requireActivity(), CreateLoginActivity::class.java))
@@ -252,17 +262,60 @@ class LoginsFragment : Fragment() {
     }
 
     @Composable
-    fun itemsList(logins: ArrayList<Login>){
+    fun itemsList(
+        logins: ArrayList<Login>,
+        loginAction: Int
+    ){
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(start = 32.dp, end= 32.dp, top = 8.dp, bottom = 60.dp)
         ) {
-            items(logins) { login -> loginItem(login = login)}
+            items(logins) { login -> loginItem(login = login, loginAction = loginAction)}
         }
     }
 
     @Composable
-    fun loginItem(login: Login) {
+    fun loginItem(
+        login: Login,
+        loginAction: Int
+    ) {
+
+        val vault = viewModel.getVaultById(login.vault_id)
+        var color = "ffffff"
+        when (vault?.color) {
+            VaultColor.Red -> { color = "e53935" }
+            VaultColor.Green -> { color = "4caf50" }
+            VaultColor.Blue -> { color = "1e88e5" }
+            VaultColor.Yellow -> { color = "fdd835" }
+            VaultColor.White -> { color = "ffffff" }
+        }
+
+        val app = MainViewModel.getApplicationInfoByPackageName(login.url, requireActivity().packageManager)
+        val appIcon = app?.loadIcon(requireActivity().packageManager)
+
+        /*
+        if (appIcon != null) {
+            this.loginInitial?.visibility = View.GONE
+            this.loginImage?.visibility = View.VISIBLE
+            this.loginImage?.setImageDrawable(appIcon)
+        } else {
+            this.loginImage?.visibility = View.VISIBLE
+            GlideApp.with(context)
+                .load(FavIconDownloader.buildUrl(login.url, color))
+                .placeholder(R.drawable.padlock)
+                .listener(object: RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        val bitmap = resource?.toBitmap(8.dp, 8.dp)!!
+                        return false
+                    }
+                })
+                .into(loginImage!!)
+        }*/
+
         Card(
             modifier = Modifier
                 .padding(vertical = 8.dp)
@@ -311,14 +364,27 @@ class LoginsFragment : Fragment() {
 
                 }
 
-                Image(
-                    painter = painterResource(id = R.drawable.copy),
-                    contentDescription = "Localized description",
-                    modifier = Modifier
-                        .padding(start = 8.dp, end = 16.dp)
-                        .size(24.dp, 24.dp)
-                        .clickable { onLoginActionClicked(login) },
-                )
+                if (loginAction == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) {
+                    Image(
+                        painter = painterResource(id = R.drawable.copy),
+                        contentDescription = "Copy Password",
+                        modifier = Modifier
+                            .padding(start = 8.dp, end = 16.dp)
+                            .size(24.dp, 24.dp)
+                            .clickable { onLoginActionClicked(login) },
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.writing),
+                        contentDescription = "Edit Login",
+                        modifier = Modifier
+                            .padding(start = 8.dp, end = 16.dp)
+                            .size(24.dp, 24.dp)
+                            .clickable { onLoginActionClicked(login) },
+                    )
+                }
+
+
 
             }
         }
@@ -344,7 +410,7 @@ class LoginsFragment : Fragment() {
 
     private fun copyLoginPassword(login: Login) {
         val clipboard = getSystemService(
-            context!!,
+            requireContext(),
             ClipboardManager::class.java
         ) as ClipboardManager
         val clip = ClipData.newPlainText("label",login.password)

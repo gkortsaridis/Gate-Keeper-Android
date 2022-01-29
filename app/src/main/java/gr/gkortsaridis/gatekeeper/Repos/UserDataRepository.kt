@@ -98,7 +98,7 @@ class UserDataRepository @Inject constructor(
                 dateCreated = encLogin.dateCreated,
                 dateModified = encLogin.dateModified
             )
-            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedLogin, Vault::class.java) as Login?
+            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedLogin, Login::class.java) as Login?
             if (decrypted != null) {
                 decrypted.id = encLogin.id
                 decrypted.date_created = encLogin.dateCreated

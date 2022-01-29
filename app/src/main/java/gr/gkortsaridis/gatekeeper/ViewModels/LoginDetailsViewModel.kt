@@ -12,6 +12,11 @@ class LoginDetailsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository
 ): ViewModel() {
 
+    var loginName = ""
+    var loginUsername = ""
+    var loginPassword = ""
+    var loginNotes = ""
+
     fun getLastActiveVault() = userDataRepository.getLastActiveVault()
     fun getLoginById(id: String?) = userDataRepository.getLoginById(id)
 

@@ -1,5 +1,8 @@
 package gr.gkortsaridis.gatekeeper.ViewModels
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
@@ -24,10 +27,22 @@ class MainViewModel @Inject constructor(
         fun filterLoginsByCurrentVault(logins: ArrayList<Login>): ArrayList<Login> {
             return filterLoginsByVault(logins, VaultRepository.getLastActiveVault())
         }
+
+        fun getApplicationInfoByPackageName(packageName: String?, packageManager: PackageManager): ResolveInfo? {
+            val mainIntent = Intent(Intent.ACTION_MAIN, null)
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+            val pkgAppsList: List<ResolveInfo> = packageManager.queryIntentActivities(mainIntent, 0)
+            for (app in pkgAppsList) {
+                if (app.activityInfo.packageName == packageName) {
+                    return app
+                }
+            }
+            return null
+        }
     }
 
     fun getLastActiveVault() = userDataRepository.getLastActiveVault()
-
+    fun getVaultById(id: String) = userDataRepository.getVaultById(id)
 
     val allVaults = userDataRepository.getAllVaults()
     val allLogins = userDataRepository.getAllLogins()
@@ -35,6 +50,7 @@ class MainViewModel @Inject constructor(
     val allCards  = userDataRepository.getLocalCards()
     val allNotes  = userDataRepository.getLocalNotes()
     val allDevices = userDataRepository.getLocalDevices()
+
 
 
 
