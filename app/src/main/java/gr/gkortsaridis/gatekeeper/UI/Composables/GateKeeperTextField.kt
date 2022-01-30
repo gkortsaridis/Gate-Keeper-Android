@@ -10,7 +10,9 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -23,7 +25,8 @@ object GateKeeperTextField {
         EMAIL(1),
         PASSWORD(2),
         NUMBER(3),
-        PHONE(4)
+        PHONE(4),
+        MULTILINE(5)
     }
 
     @Composable
@@ -36,47 +39,53 @@ object GateKeeperTextField {
         ) {
         var textState by remember { mutableStateOf(value) }
         var passwordVisibility by remember { mutableStateOf(false) }
+        var isFocused by remember { mutableStateOf(false) }
 
         TextField(
-            modifier = Modifier.fillMaxWidth().composed { modifier },
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged {
+                    isFocused = it.isFocused
+                }
+                .composed { modifier },
             value = textState,
             label = { Text(text = placeholder) },
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
-                //cursorColor = Color.Black,
-                //disabledLabelColor = lightBlue,
                 focusedIndicatorColor = GateKeeperTheme.colorAccent,
-                //unfocusedIndicatorColor = Color.Transparent
             ),
             onValueChange = { textState = it; onTextChange(it) },
-            //shape = RoundedCornerShape(8.dp),
-            singleLine = true,
+            singleLine = inputType != InputType.MULTILINE,
+            maxLines = if(inputType == InputType.MULTILINE) 3 else 1,
             visualTransformation = if (inputType == InputType.PASSWORD && !passwordVisibility) PasswordVisualTransformation()  else VisualTransformation.None,
             keyboardOptions = KeyboardOptions(
-                keyboardType =when(inputType) {
+                keyboardType = when(inputType) {
                     InputType.PASSWORD -> KeyboardType.Password
                     InputType.EMAIL -> KeyboardType.Email
                     InputType.NUMBER -> KeyboardType.Number
                     InputType.PHONE -> KeyboardType.Phone
                     else -> KeyboardType.Text
-                }),
+                },
+            ),
             trailingIcon = {
-                if(inputType == InputType.PASSWORD) {
-                    val image = if (passwordVisibility)
-                        Icons.Filled.Visibility
-                    else Icons.Filled.VisibilityOff
+                if(isFocused) {
+                    if(inputType == InputType.PASSWORD) {
+                        val image = if (passwordVisibility)
+                            Icons.Filled.Visibility
+                        else Icons.Filled.VisibilityOff
 
-                    IconButton(onClick = {
-                        passwordVisibility = !passwordVisibility
-                    }) {
-                        Icon(imageVector  = image, "")
-                    }
-                }else if (textState.isNotEmpty()) {
-                    IconButton(onClick = { textState = "" }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Close,
-                            contentDescription = null
-                        )
+                        IconButton(onClick = {
+                            passwordVisibility = !passwordVisibility
+                        }) {
+                            Icon(imageVector  = image, "")
+                        }
+                    }else if (textState.isNotEmpty()) {
+                        IconButton(onClick = { textState = ""; onTextChange("") }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Close,
+                                contentDescription = null
+                            )
+                        }
                     }
                 }
             }

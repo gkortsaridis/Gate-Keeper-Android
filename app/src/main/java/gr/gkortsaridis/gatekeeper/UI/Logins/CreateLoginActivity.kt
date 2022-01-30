@@ -36,6 +36,7 @@ import gr.gkortsaridis.gatekeeper.Utils.GateKeeperShapes
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 import gr.gkortsaridis.gatekeeper.Utils.Status
 import gr.gkortsaridis.gatekeeper.ViewModels.LoginDetailsViewModel
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.InputType
 
 @AndroidEntryPoint
 class CreateLoginActivity : AppCompatActivity() {
@@ -313,6 +314,7 @@ class CreateLoginActivity : AppCompatActivity() {
                     modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 8.dp),
                     placeholder="Password",
                     value = login.password,
+                    inputType = InputType.PASSWORD,
                     onTextChange = {login.password = it; onLoginChane(login) }
                 )
 
@@ -328,6 +330,7 @@ class CreateLoginActivity : AppCompatActivity() {
                     modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 32.dp),
                     placeholder="Notes",
                     value = login.notes ?: "",
+                    inputType = InputType.MULTILINE,
                     onTextChange = {login.notes = it; onLoginChane(login) }
                 )
             }
