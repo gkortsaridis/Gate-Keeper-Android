@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.azoft.carousellayoutmanager.CarouselLayoutManager
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
 import com.azoft.carousellayoutmanager.CenterScrollListener
 import com.google.android.gms.ads.AdRequest
+import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Vault
@@ -36,12 +38,11 @@ import kotlinx.android.synthetic.main.fragment_cards.no_items_view
 import kotlinx.android.synthetic.main.fragment_cards.vault_name
 import kotlinx.android.synthetic.main.fragment_cards.vault_view
 
+@AndroidEntryPoint
 class CardsFragment : Fragment(), CreditCardClickListener {
 
-    private var allCards: ArrayList<CreditCard> = ArrayList()
-    private var filtered: ArrayList<CreditCard> = ArrayList()
+    private val viewModel: MainViewModel by viewModels()
     private var cardsAdapter : CreditCardsRecyclerViewAdapter? = null
-    private lateinit var currentVault: Vault
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_cards, container, false)
@@ -50,17 +51,9 @@ class CardsFragment : Fragment(), CreditCardClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
-        /*viewModel.appCards.observe(activity!!, Observer {
-            this.allCards = ArrayList(it)
-            updateCards()
-            updateUI()
-        })*/
+        val allCardsLive = viewModel.getAllCardsLive(this)
 
-        val adRequest = AdRequest.Builder().build()
-        adview.loadAd(adRequest)
-
-        cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, CreditCardRepository.allCards, this)
+        cardsAdapter = CreditCardsRecyclerViewAdapter(requireActivity(), allCardsLive.value ?: ArrayList(), this)
         cards_recycler_view.adapter = cardsAdapter
         cards_recycler_view.addOnScrollListener(CenterScrollListener())
 
@@ -80,22 +73,23 @@ class CardsFragment : Fragment(), CreditCardClickListener {
     }
 
     private fun updateUI() {
-        val vault = VaultRepository.getLastActiveVault()
+        val vault = viewModel.getLastActiveVault()
         vault_name.text = vault.name
         //vault_view.setBackgroundColor(resources.getColor(vault.getVaultColorResource()))
         //vault_name.setTextColor(resources.getColor(vault.getVaultColorAccent()))
         //vault_icon.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
 
+        /*
         if (cardsAdapter == null) {
             cardsAdapter = CreditCardsRecyclerViewAdapter(activity!!, filtered, this)
         }
         if (cards_recycler_view?.isComputingLayout == false) {
             cardsAdapter?.updateCards(filtered)
             cards_recycler_view.scrollToPosition(0)
-        }
+        }*/
 
-        no_items_view.visibility = if (filtered.isNotEmpty()) View.GONE else View.VISIBLE
-        add_credit_card.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
+        no_items_view.visibility =  View.VISIBLE
+        add_credit_card.visibility = View.GONE
     }
 
     override fun onCreditCardClicked(card: CreditCard) { }
@@ -109,7 +103,7 @@ class CardsFragment : Fragment(), CreditCardClickListener {
     private fun changeVault() {
         val intent = Intent(activity, SelectVaultActivity::class.java)
         intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
-        intent.putExtra("vault_id",currentVault.id)
+       // intent.putExtra("vault_id",currentVault.id)
         startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
     }
 
@@ -120,10 +114,7 @@ class CardsFragment : Fragment(), CreditCardClickListener {
     }
 
     private fun updateCards() {
-        currentVault = VaultRepository.getLastActiveVault()
-        filtered = CreditCardRepository.filterCardsByVault(allCards, currentVault)
-        filtered.sortBy { it.modifiedDate }
-        filtered.reverse()
+
     }
 
     private fun animateFabIn() {

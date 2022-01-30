@@ -4,9 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import gr.gkortsaridis.gatekeeper.Database.GateKeeperDAO
 import gr.gkortsaridis.gatekeeper.Entities.*
-import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
-import gr.gkortsaridis.gatekeeper.Entities.Network.RespAllData
-import gr.gkortsaridis.gatekeeper.Entities.Network.RespEncryptedData
+import gr.gkortsaridis.gatekeeper.Entities.Network.*
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
@@ -19,17 +17,13 @@ class UserDataRepository @Inject constructor(
     private val api: GateKeeperAPI.GateKeeperInterface,
     private val dao: GateKeeperDAO) {
 
-    //DAO TASKS
-    fun insertSingleDataObject(dbItem: EncryptedDBItem) {
-        dao.insertSingleDataObject(dbItem = dbItem)
-    }
-
-    //Low Level - Encrypted Data
+    //~~~~~~~~ DAO TASKS ~~~~~~~~
     fun getLocalVaults(): List<EncryptedDBItem> { return dao.allVaults }
     fun getLocalLogins(): List<EncryptedDBItem> { return dao.allLogins }
 
     fun getLocalLoginsLive(): LiveData<List<EncryptedDBItem>> { return dao.allLoginsLive }
     fun getLocalVaultsLive(): LiveData<List<EncryptedDBItem>> { return dao.allVaultsLive }
+    fun getLocalCardsLive(): LiveData<List<EncryptedDBItem>> { return dao.allCardsLive }
 
     fun getLocalVaultById(id: String): EncryptedDBItem? { return dao.loadVaultById(id) }
     fun getLocalLoginById(id: String): EncryptedDBItem? { return dao.loadLoginById(id) }
@@ -39,7 +33,19 @@ class UserDataRepository @Inject constructor(
         dao.insertUserData(dbItems = dbItems)
     }
 
-    // API CALLS
+    fun insertSingleDataObject(dbItem: EncryptedDBItem) {
+        dao.insertSingleDataObject(dbItem = dbItem)
+    }
+
+    fun updateSingleDataObject(dbItem: EncryptedDBItem) {
+        dao.updateSingleDataObject(dbItem = dbItem)
+    }
+
+    fun deleteSingleLoginObject(id: String) {
+        dao.deleteLoginById(id = id)
+    }
+
+    //~~~~~~~~ API CALLS ~~~~~~~~
     fun getAllData(userId: String): Observable<RespAllData> {
         return api.getAllData(userId = userId)
     }
@@ -50,6 +56,10 @@ class UserDataRepository @Inject constructor(
 
     fun updateLogin(body: ReqBodyEncryptedData): Observable<RespEncryptedData> {
         return api.updateLogin(body = body)
+    }
+
+    fun deleteLogin(loginId: String,body: ReqBodyUsernameHash): Observable<RespDeletetItem> {
+        return api.deleteLogin(loginId = loginId, body= body)
     }
 
 }

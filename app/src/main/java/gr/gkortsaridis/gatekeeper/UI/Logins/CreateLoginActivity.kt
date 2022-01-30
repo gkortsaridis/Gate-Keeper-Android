@@ -1,8 +1,7 @@
 package gr.gkortsaridis.gatekeeper.UI.Logins
 
-import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -29,14 +28,15 @@ import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.GateKeeperTextField
-import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperVaultSelector.vaultSelector
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperDevelopMockData
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperShapes
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
-import gr.gkortsaridis.gatekeeper.Utils.Status
-import gr.gkortsaridis.gatekeeper.ViewModels.LoginDetailsViewModel
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.InputType
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperVaultSelector.vaultSelector
+import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
+import gr.gkortsaridis.gatekeeper.Utils.*
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE
+import gr.gkortsaridis.gatekeeper.ViewModels.LoginDetailsViewModel
 
 @AndroidEntryPoint
 class CreateLoginActivity : AppCompatActivity() {
@@ -49,6 +49,8 @@ class CreateLoginActivity : AppCompatActivity() {
         val loginId = intent.getStringExtra("login_id")
         val login = viewModel.getLoginById(loginId)
         val currentVault = viewModel.getLastActiveVault()
+
+        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_INFO)
 
         setContent { LoginDetailsPage(
             currentVault = currentVault,
@@ -74,54 +76,49 @@ class CreateLoginActivity : AppCompatActivity() {
             }
         }
 
-
-        /*setContentView(R.layout.activity_create_login)
-
-        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_INFO)
-
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-
-        delete_login_btn.setOnClickListener { showDeleteLoginDialog() }
-
-        vault_view.setOnClickListener {
-            login.name = nameET.text.toString()
-            login.password = passwordET.text.toString()
-            login.username = usernameET.text.toString()
-            login.url = urlET.text.toString()
-            login.notes = notesET.text.toString()
-
-            val intent = Intent(this, SelectVaultActivity::class.java)
-            intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_VAULT)
-            intent.putExtra("vault_id",vaultToAdd?.id)
-            startActivityForResult(intent, CHANGE_VAULT_REQUEST_CODE)
+        viewModel.updateLoginData.observe(this) {
+            when (it.status) {
+                Status.LOADING -> { viewDialog.showDialog() }
+                Status.ERROR -> {
+                    viewDialog.hideDialog()
+                    Toast.makeText(this, it.message ?: "", Toast.LENGTH_SHORT).show()
+                }
+                Status.SUCCESS -> {
+                    viewDialog.hideDialog()
+                    if(it.data != null) {
+                        viewModel.updateLocalLogin(it.data)
+                        finish()
+                    } else {
+                        Toast.makeText(this, "We encountered an error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
 
-        this.activity = this
+        viewModel.deleteLoginData.observe(this) {
+            when (it.status) {
+                Status.LOADING -> { viewDialog.showDialog() }
+                Status.ERROR -> {
+                    viewDialog.hideDialog()
+                    Toast.makeText(this, it.message ?: "", Toast.LENGTH_SHORT).show()
+                }
+                Status.SUCCESS -> {
+                    viewDialog.hideDialog()
+                    AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_DELETE)
 
-        if (loginId == null) {
-            activity_title.text = "Create new Password"
-            vaultToAdd = VaultRepository.getLastActiveRealVault()
-            save_update_button.setOnClickListener { createLogin() }
-            login = Login(account_id = AuthRepository.getUserID(),
-                vault_id = vaultToAdd!!.id,
-                name = "",
-                password = "",
-                username = "",
-                url = "",
-                notes = "",
-                date_created = null,
-                date_modified = null
-            )
+                    if(it.data != null) {
+                        viewModel.deleteLocalLogin(it.data.toString())
 
-        } else {
-            login = viewModel.getLoginById(loginId)!!
-            activity_title.text = "Edit Password"
-            vaultToAdd = VaultRepository.getVaultByID(login.vault_id)!!
-            save_update_button.setOnClickListener { updateLogin() }
+                        val data = Intent()
+                        setResult(LoginsRepository.deleteLoginSuccess, data)
+                        finish()
+                    } else {
+                        Toast.makeText(this, "We encountered an error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
+        /*
 
         KeyboardVisibilityEvent.setEventListener(activity) { isOpen ->
             Tween
@@ -132,45 +129,6 @@ class CreateLoginActivity : AppCompatActivity() {
             save_update_button.visibility = if (isOpen) View.GONE else View.VISIBLE
         }
 
-        passwordET.apply{    // Kotlin
-            action(Toggle(context).apply {
-                checkedRes = R.drawable.eye
-                uncheckedRes = R.drawable.eye_off
-                checked = (login.id != "-1")
-                setPassword(checked)
-
-                onToggle = { checked ->
-                    setPassword(checked)
-                }
-            })
-            if (login.id != "-1") {
-                action(Icon(context).apply {
-                    icon = R.drawable.copy
-                    onClick = {
-                        copy(passwordET.text!!, "Password")
-                        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_PASS_COPY)
-                    }
-                })
-            }
-
-            showActions()   // This displays all the actions that are added
-        }
-
-        if (login.id != "-1") {
-            usernameET.apply{    // Kotlin
-                action(Icon(context).apply {
-                    icon = R.drawable.copy
-                    onClick = {
-                        copy(usernameET.text!!, "Username")
-                        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_USER_COPY)
-                    }
-                })
-
-                showActions()   // This displays all the actions that are added
-            }
-
-        }
-
         urlET.apply{    // Kotlin
             action(Icon(context).apply {
                 icon = R.drawable.order
@@ -178,20 +136,8 @@ class CreateLoginActivity : AppCompatActivity() {
                     startActivityForResult(Intent(context, ApplicationSelector::class.java), CHANGE_APP_REQUEST_CODE)
                 }
             })
-
-            showActions()   // This displays all the actions that are added
         }
-
-
-        nameET.addTextChangedListener { toggleSaveButton() }
-        getEditTextFromView(usernameET).addTextChangedListener { toggleSaveButton() }
-        getEditTextFromView(passwordET).addTextChangedListener { toggleSaveButton() }
-        getEditTextFromView(urlET).addTextChangedListener { toggleSaveButton() }
-        getEditTextFromView(notesET).addTextChangedListener { toggleSaveButton() }
-
-
-        toggleSaveButton()
-        updateUI()*/
+*/
     }
 
 
@@ -220,7 +166,10 @@ class CreateLoginActivity : AppCompatActivity() {
                 .background(GateKeeperTheme.light_grey)
         ) {
             toolbar(login = loginToShow)
-            vaultSelector(currentVault = currentVault)
+            vaultSelector(
+                currentVault = currentVault,
+                onVaultClick = { onVaultClick(currentVault) }
+            )
 
             inputCard(
                 login = loginToShow,
@@ -272,7 +221,7 @@ class CreateLoginActivity : AppCompatActivity() {
                         modifier = Modifier
                             .padding(end = 16.dp)
                             .size(24.dp, 24.dp)
-                            .clickable { handleDeleteButton() },
+                            .clickable { handleDeleteButton(login) },
                     )
                 }
 
@@ -346,7 +295,7 @@ class CreateLoginActivity : AppCompatActivity() {
             shape = GateKeeperShapes.getArcButtonShape(diagonalDp = 200),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
+                .height(60.dp)
                 .clickable { onSavePressed() },
             backgroundColor = if(dataNotEmpty) GateKeeperTheme.colorAccent else GateKeeperTheme.busy_grey,
             elevation = 10.dp
@@ -365,11 +314,12 @@ class CreateLoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleDeleteButton() {
+    private fun handleDeleteButton(login: Login) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Delete Password")
         builder.setMessage("Are you sure you want to delete this Password item?")
         builder.setPositiveButton("DELETE"){dialog, _ ->
+            viewModel.deleteLogin(login)
             dialog.cancel()
         }
         builder.setNegativeButton("CANCEL"){dialog, _ -> dialog.cancel() }
@@ -381,20 +331,21 @@ class CreateLoginActivity : AppCompatActivity() {
     }
 
     private fun handleSaveButton(login: Login) {
-        Log.i("SAVING", "Name: "+login.name)
-        Log.i("SAVING", "Username: "+login.username)
-        Log.i("SAVING", "Password: "+login.password)
-        Log.i("SAVING", "URL: "+login.url)
-        Log.i("SAVING", "Notes: "+login.notes)
-
         if(login.id == "-1") { viewModel.createLogin(login) }
-        else {}
-
+        else { viewModel.updateLogin(login) }
     }
 
     private fun dataNotEmpty(login: Login): Boolean {
         return (login.name.isNotBlank() || login.username.isNotBlank() || login.password.isNotBlank() || login.url.isNotBlank() || (login.notes ?: "").isNotBlank())
     }
+
+    private fun onVaultClick(currentVault: Vault) {
+        val intent = Intent(this, SelectVaultActivity::class.java)
+        intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_VAULT)
+        intent.putExtra("vault_id",currentVault.id)
+        startActivityForResult(intent, CHANGE_VAULT_REQUEST_CODE)
+    }
+
     /*
 
     private fun copy(txt: String, what: String) {
@@ -406,130 +357,6 @@ class CreateLoginActivity : AppCompatActivity() {
         clipboard.setPrimaryClip(clip)
 
         Toast.makeText(this, "$what copied", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun updateLogin() {
-        if (dataNotEmpty()) {
-            login.username = usernameET.text.toString()
-            login.name = nameET.text.toString()
-            login.password = passwordET.text.toString()
-            login.notes = notesET.text.toString()
-            login.url = urlET.text.toString()
-            login.vault_id = vaultToAdd!!.id
-            login.date_modified = null
-
-            val viewDialog = ViewDialog(activity)
-            viewDialog.showDialog()
-
-            LoginsRepository.encryptAndUpdateLogin(this, login, object : LoginUpdateListener{
-                override fun onLoginUpdated(login: Login) {
-                    AppExecutors.instance.diskIO.execute {
-                        LoginsRepository.updateLocalLogin(login)
-                        viewDialog.hideDialog()
-                        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_UPDATE)
-                        val data = Intent()
-                        setResult(LoginsRepository.createLoginSuccess, data)
-                        finish()
-                    }
-                }
-
-                override fun onLoginUpdateError(errorCode: Int, errorMsg: String) {
-                    viewDialog.hideDialog()
-                    val data = Intent()
-                    setResult(LoginsRepository.createLoginError, data)
-                    AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_UPDATE_ERROR)
-                    finish()
-                }
-            })
-        } else {
-            Toast.makeText(this, "Cannot save empty password item. If you do not want this item anymore, please delete it", Toast.LENGTH_SHORT).show()
-        }
-
-    }
-
-    private fun createLogin() {
-        if (dataNotEmpty()) {
-            val viewDialog = ViewDialog(activity)
-            viewDialog.showDialog()
-
-            val loginObj = Login(account_id = AuthRepository.getUserID(),
-                vault_id = vaultToAdd!!.id,
-                name = nameET.text.toString(),
-                password = passwordET.text.toString(),
-                username = usernameET.text.toString(),
-                url = urlET.text.toString(),
-                notes = notesET.text.toString(),
-                date_created = null,
-                date_modified = null
-            )
-
-            LoginsRepository.encryptAndStoreLogin(this, loginObj, object : LoginCreateListener{
-                override fun onLoginCreated(login: Login) {
-                    viewDialog.hideDialog()
-                    LoginsRepository.addLocalLogin(login)
-                    //LoginsRepository.allLogins.add(login)
-                    AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_CREATE)
-                    val data = Intent()
-                    setResult(LoginsRepository.createLoginSuccess, data)
-                    finish()
-                }
-
-                override fun onLoginCreateError(errorCode: Int, errorMsg: String) {
-                    viewDialog.hideDialog()
-                    AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_CREATE_ERROR)
-                    Toast.makeText(baseContext, errorMsg, Toast.LENGTH_SHORT).show()
-                    val data = Intent()
-                    setResult(LoginsRepository.createLoginError, data)
-                    finish()
-                }
-            })
-        } else {
-            Toast.makeText(this, "Cannot save empty password item", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun deleteLogin() {
-        val viewDialog = ViewDialog(activity)
-        viewDialog.showDialog()
-
-        LoginsRepository.deleteLogin(login!!, object: LoginDeleteListener {
-            override fun onLoginDeleted() {
-                LoginsRepository.removeLocalLogin(login)
-                AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_DELETE)
-
-                //LoginsRepository.allLogins.remove(login!!)
-                viewDialog.hideDialog()
-                val data = Intent()
-                setResult(LoginsRepository.deleteLoginSuccess, data)
-                finish()
-            }
-
-            override fun onLoginDeleteError(errorCode: Int, errorMsg: String) {
-                viewDialog.hideDialog()
-                AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_DELETE_ERROR)
-
-                val data = Intent()
-                setResult(LoginsRepository.deleteLoginError, data)
-                Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show()
-                finish()
-            }
-        })
-    }
-
-    private fun showDeleteLoginDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Delete Password")
-        builder.setMessage("Are you sure you want to delete this Password item?")
-        builder.setPositiveButton("DELETE"){dialog, _ ->
-            dialog.cancel()
-            deleteLogin()
-        }
-        builder.setNegativeButton("CANCEL"){dialog, _ -> dialog.cancel() }
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-
-        val positiveButton: Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        positiveButton.setTextColor(resources.getColor(R.color.error_red))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -544,13 +371,6 @@ class CreateLoginActivity : AppCompatActivity() {
             updateUI()
         }
 
-    }
-
-    private fun getEditTextFromView(view: ActionEditText): AppCompatEditText {
-        //Get the EditText View from the custom View
-        val linearLayout = view[0] as LinearLayout
-        val relativeLayout = linearLayout[1] as RelativeLayout
-        return relativeLayout[0] as AppCompatEditText
     }
      */
 }

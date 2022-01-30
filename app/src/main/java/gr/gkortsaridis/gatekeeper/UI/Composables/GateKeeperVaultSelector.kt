@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper.UI.Composables
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -20,7 +21,10 @@ import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 object GateKeeperVaultSelector {
 
     @Composable
-    fun vaultSelector(currentVault: Vault){
+    fun vaultSelector(
+        currentVault: Vault,
+        onVaultClick: () -> Unit = {},
+    ){
 
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -39,7 +43,8 @@ object GateKeeperVaultSelector {
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 2.dp)
                     .height(56.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clickable { onVaultClick() },
                 shape = RoundedCornerShape(26.dp),
                 backgroundColor = currentVault.getVaultColorResource(),
                 elevation = 5.dp,

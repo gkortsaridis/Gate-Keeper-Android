@@ -5,12 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import gr.gkortsaridis.gatekeeper.Entities.EncryptedDBItem
-import gr.gkortsaridis.gatekeeper.Entities.EncryptedData
-import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Network.RespEncryptedData
-import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Repos.UserDataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
@@ -135,6 +132,36 @@ open class BaseViewModel  @Inject constructor(
         }
 
         return decryptedLogins
+    }
+
+    fun getAllCardsLive(observer: LifecycleOwner): LiveData<ArrayList<CreditCard>> {
+        val encryptedCards = userDataRepository.getLocalCardsLive()
+
+        val decryptedCards = MutableLiveData<ArrayList<CreditCard>>()
+        decryptedCards.value = ArrayList()
+
+        encryptedCards.observe(observer) {
+            val cards = ArrayList<CreditCard>()
+            it.forEach { item ->
+                val modifiedVault = EncryptedData(
+                    id=item.id,
+                    encryptedData = item.encryptedData,
+                    iv=item.iv,
+                    dateCreated = item.dateCreated,
+                    dateModified = item.dateModified
+                )
+                val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedVault, CreditCard::class.java) as CreditCard?
+                if (decrypted != null) {
+                    decrypted.id = item.id
+                    decrypted.createdDate = item.dateCreated
+                    decrypted.modifiedDate = item.dateModified
+                    cards.add(decrypted)
+                }
+            }
+            decryptedCards.value = cards
+        }
+
+        return decryptedCards
     }
 
     fun getLoginById(id: String?): Login? {
