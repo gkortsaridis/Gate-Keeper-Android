@@ -82,49 +82,6 @@ class LoginsFragment : Fragment() {
         }
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        //val adRequest = AdRequest.Builder().build()
-        //adview.loadAd(adRequest)
-
-        /*add_login_btn.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
-        fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
-        vault_view.setOnClickListener{
-            val intent = Intent(activity, SelectVaultActivity::class.java)
-            intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
-            intent.putExtra("vault_id",VaultRepository.getLastActiveVault().id)
-            startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
-        }
-
-        val sortTypes = arrayOf("Name", "Modified date")
-        sort_logins.setOnClickListener {
-            val builder = AlertDialog.Builder(activity)
-            builder.setTitle("Sort by")
-            builder.setSingleChoiceItems(sortTypes, DataRepository.loginSortType) { dialog, which ->
-                DataRepository.loginSortType = which
-                updateUI(this.activeLogins)
-                dialog.dismiss()
-            }
-            val dialog = builder.create()
-            dialog.show()
-        }
-
-        loginsAdapter =
-            LoginsRecyclerViewAdapter(
-                activity!!.baseContext,
-                arrayListOf(), //empty for now
-                activity!!.packageManager,
-                this
-            )
-        logins_recycler_view.adapter = loginsAdapter
-
-        animateItemsIn()
-
-        adview_container.visibility = View.GONE*/
-    }
-
     @Preview
     @Composable
     fun loginsPage(
@@ -428,12 +385,6 @@ class LoginsFragment : Fragment() {
     }
 
     /*
-    private fun updateUI(allLogins: ArrayList<Login>) {
-        no_items_view?.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
-        fab?.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
-        logins_counter_container?.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
-    }
-
     private fun checkForAutofill() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             autofillManager = context?.getSystemService(AutofillManager::class.java)
@@ -454,19 +405,6 @@ class LoginsFragment : Fragment() {
             }
 
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-        if (requestCode == createLoginRequestCode && resultCode == createLoginSuccess) {
-            updateUI(this.activeLogins)
-            Toast.makeText(context, "Login successfully created", Toast.LENGTH_SHORT).show()
-        } else if (resultCode == deleteLoginSuccess) {
-            updateUI(this.activeLogins)
-            Toast.makeText(context, "Login successfully deleted", Toast.LENGTH_SHORT).show()
-        }
-
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun animateItemsIn() {
