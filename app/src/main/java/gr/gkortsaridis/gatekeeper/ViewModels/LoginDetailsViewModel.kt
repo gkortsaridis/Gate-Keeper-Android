@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import gr.gkortsaridis.gatekeeper.Entities.EncryptedDBItem
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Repos.UserDataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
@@ -16,22 +17,32 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginDetailsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository
-): ViewModel() {
-
-    fun getLastActiveVault() = userDataRepository.getLastActiveVault()
-    fun getLoginById(id: String?) = userDataRepository.getLoginById(id)
-    fun insertLocalLogin(login: Login) = userDataRepository.insertLocalLogin(login)
+): BaseViewModel(userDataRepository = userDataRepository) {
 
     // ~~~~~~~~~~~~ API CALLS  ~~~~~~~~~~~~
     private val compositeDisposable = CompositeDisposable()
     val createLoginData = MutableLiveData<Resource<Login>>()
 
+    fun insertLocalLogin(login: Login){
+        val encryptedLogin = SecurityRepository.encryptObjToEncDataWithUserCredentials(login)
+        if(encryptedLogin != null) {
+            val userData = EncryptedDBItem(
+                id = login.id,
+                type = 1,
+                encryptedData = encryptedLogin.encryptedData,
+                iv = encryptedLogin.iv,
+                dateCreated = login.date_created,
+                dateModified = login.date_modified
+            )
+            userDataRepository.insertSingleDataObject(userData)
+        }
+    }
 
     fun createLogin(login: Login): LiveData<Resource<Login>> {
         createLoginData.postValue(Resource.loading(data = null))
         val body = SecurityRepository.createEncryptedDataRequestBody(login)
         if(body != null) {
-            compositeDisposable.add(userDataRepository.createLogin(body = body!!)
+            compositeDisposable.add(userDataRepository.createLogin(body = body)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(Schedulers.newThread())
                 .subscribe (

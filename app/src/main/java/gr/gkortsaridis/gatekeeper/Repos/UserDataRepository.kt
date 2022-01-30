@@ -88,55 +88,10 @@ class UserDataRepository @Inject constructor(
         }
     }
 
-    fun getLoginById(id: String?): Login? {
-        if(id == null) { return null }
 
-        val encLogin = getLocalLoginById(id)
-        if(encLogin != null) {
-            val modifiedLogin = EncryptedData(
-                id=encLogin.id,
-                encryptedData = encLogin.encryptedData,
-                iv=encLogin.iv,
-                dateCreated = encLogin.dateCreated,
-                dateModified = encLogin.dateModified
-            )
-            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedLogin, Login::class.java) as Login?
-            if (decrypted != null) {
-                decrypted.id = encLogin.id
-                decrypted.date_created = encLogin.dateCreated
-                decrypted.date_modified = encLogin.dateModified
-            }
-
-            return decrypted
-        } else {
-            return null
-        }
-    }
-
-    fun getLastActiveVault(): Vault {
-        val lastActiveVaultId = DataRepository.lastActiveVaultId ?: ""
-        var vaultToReturn = getAllVaults()[0]
-        //if (lastActiveVaultId != "") {
-        //    val savedVault = VaultRepository.getVaultByID(lastActiveVaultId)
-        //    if (savedVault != null) { vaultToReturn = savedVault}
-        //}
-
-        return vaultToReturn
-    }
-
-    fun insertLocalLogin(login: Login){
-        val encryptedLogin = SecurityRepository.encryptObjToEncDataWithUserCredentials(login)
-        if(encryptedLogin != null) {
-            val userData = EncryptedDBItem(
-                id = login.id,
-                type = 1,
-                encryptedData = encryptedLogin.encryptedData,
-                iv = encryptedLogin.iv,
-                dateCreated = login.date_created,
-                dateModified = login.date_modified
-            )
-            dao.insertSingleDataObject(userData)
-        }
+    //DAO TASKS
+    fun insertSingleDataObject(dbItem: EncryptedDBItem) {
+        dao.insertSingleDataObject(dbItem = dbItem)
     }
 
     //Low Level - Encrypted Data
@@ -144,9 +99,10 @@ class UserDataRepository @Inject constructor(
     private fun getLocalLogins(): List<EncryptedDBItem> { return dao.allLogins }
 
     fun getLocalLoginsLive(): LiveData<List<EncryptedDBItem>> { return dao.allLoginsLive }
+    fun getLocalVaultsLive(): LiveData<List<EncryptedDBItem>> { return dao.allVaultsLive }
 
-    private fun getLocalVaultById(id: String): EncryptedDBItem? { return dao.loadVaultById(id) }
-    private fun getLocalLoginById(id: String): EncryptedDBItem? { return dao.loadLoginById(id) }
+    fun getLocalVaultById(id: String): EncryptedDBItem? { return dao.loadVaultById(id) }
+    fun getLocalLoginById(id: String): EncryptedDBItem? { return dao.loadLoginById(id) }
 
     fun getLocalCards():  MutableLiveData<ArrayList<CreditCard>> { return GateKeeperApplication.allCards }
     fun getLocalNotes(): MutableLiveData<ArrayList<Note>> { return GateKeeperApplication.allNotes }

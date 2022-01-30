@@ -68,7 +68,6 @@ class LoginsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val currentVault = viewModel.getLastActiveVault()
-        val allLogins = viewModel.allLogins
         val allLoginsLive = viewModel.getAllLoginsLive(this)
         val loginAction = DataRepository.loginClickAction
         val sortType = DataRepository.loginSortType
