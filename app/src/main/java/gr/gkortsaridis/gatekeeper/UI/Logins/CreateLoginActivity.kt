@@ -325,7 +325,6 @@ class CreateLoginActivity : AppCompatActivity() {
                     onTextChange = {login.url = it; onLoginChane(login) }
                 )
 
-                //TODO: Notes need to be multiline input
                 GateKeeperTextField(
                     modifier = Modifier.padding(start = 32.dp, end=16.dp, top=8.dp, bottom = 32.dp),
                     placeholder="Notes",
@@ -389,6 +388,7 @@ class CreateLoginActivity : AppCompatActivity() {
         Log.i("SAVING", "Notes: "+login.notes)
 
         if(login.id == "-1") { viewModel.createLogin(login) }
+        else {}
 
     }
 

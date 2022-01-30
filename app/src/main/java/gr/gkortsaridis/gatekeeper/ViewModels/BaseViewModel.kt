@@ -24,7 +24,7 @@ open class BaseViewModel  @Inject constructor(
     //BASIC RETRIEVE/FIND TASKS
     fun getLastActiveVault(): Vault {
         val lastActiveVaultId = DataRepository.lastActiveVaultId ?: ""
-        var vaultToReturn = userDataRepository.getAllVaults()[0]
+        var vaultToReturn = getAllVaults()[0]
         if (lastActiveVaultId != "") {
             val savedVault = getVaultById(lastActiveVaultId)
             if (savedVault != null) { vaultToReturn = savedVault }
@@ -32,14 +32,50 @@ open class BaseViewModel  @Inject constructor(
         return vaultToReturn
     }
 
-    fun getVaultById(id: String) = userDataRepository.getVaultById(id)
+    fun getAllVaults(): ArrayList<Vault> {
+        val vaults = ArrayList<Vault>()
+        val encryptedVaults = userDataRepository.getLocalVaults()
+        encryptedVaults.forEach { vault ->
+            val modifiedVault = EncryptedData(
+                id=vault.id,
+                encryptedData = vault.encryptedData,
+                iv=vault.iv,
+                dateCreated = vault.dateCreated,
+                dateModified = vault.dateModified
+            )
+            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedVault, Vault::class.java) as Vault?
+            if (decrypted != null) {
+                decrypted.id = vault.id
+                decrypted.dateCreated = vault.dateCreated
+                decrypted.dateModified = vault.dateModified
+                vaults.add(decrypted)
+            }
+        }
 
-    val allVaults = userDataRepository.getAllVaults()
-    val allLogins = userDataRepository.getAllLogins()
+        return vaults
+    }
+    fun getAllLogins(): ArrayList<Login> {
+        val logins = ArrayList<Login>()
+        val encryptedLogins = userDataRepository.getLocalLogins()
+        encryptedLogins.forEach { item ->
+            val modifiedItem = EncryptedData(
+                id=item.id,
+                encryptedData = item.encryptedData,
+                iv=item.iv,
+                dateCreated = item.dateCreated,
+                dateModified = item.dateModified
+            )
+            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedItem, Login::class.java) as Login?
+            if (decrypted != null) {
+                decrypted.id = item.id
+                decrypted.date_created = item.dateCreated
+                decrypted.date_modified = item.dateModified
+                logins.add(decrypted)
+            }
+        }
 
-    val allCards  = userDataRepository.getLocalCards()
-    val allNotes  = userDataRepository.getLocalNotes()
-    val allDevices = userDataRepository.getLocalDevices()
+        return logins
+    }
 
     fun getAllVaultsLive(observer: LifecycleOwner): LiveData<ArrayList<Vault>> {
         val encryptedVaults = userDataRepository.getLocalVaultsLive()
@@ -118,6 +154,31 @@ open class BaseViewModel  @Inject constructor(
                 decrypted.id = encLogin.id
                 decrypted.date_created = encLogin.dateCreated
                 decrypted.date_modified = encLogin.dateModified
+            }
+
+            return decrypted
+        } else {
+            return null
+        }
+    }
+
+    fun getVaultById(id: String?): Vault? {
+        if(id == null) { return null }
+
+        val encVault = userDataRepository.getLocalVaultById(id)
+        if(encVault != null) {
+            val modifiedVault = EncryptedData(
+                id=encVault.id,
+                encryptedData = encVault.encryptedData,
+                iv=encVault.iv,
+                dateCreated = encVault.dateCreated,
+                dateModified = encVault.dateModified
+            )
+            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedVault, Vault::class.java) as Vault?
+            if (decrypted != null) {
+                decrypted.id = encVault.id
+                decrypted.dateCreated = encVault.dateCreated
+                decrypted.dateModified = encVault.dateModified
             }
 
             return decrypted

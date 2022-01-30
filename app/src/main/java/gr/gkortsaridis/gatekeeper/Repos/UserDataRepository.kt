@@ -19,94 +19,20 @@ class UserDataRepository @Inject constructor(
     private val api: GateKeeperAPI.GateKeeperInterface,
     private val dao: GateKeeperDAO) {
 
-    //High Level - Decrypted Data
-    fun getAllVaults(): ArrayList<Vault> {
-        val vaults = ArrayList<Vault>()
-        val encryptedVaults = getLocalVaults()
-        encryptedVaults.forEach { vault ->
-            val modifiedVault = EncryptedData(
-                id=vault.id,
-                encryptedData = vault.encryptedData,
-                iv=vault.iv,
-                dateCreated = vault.dateCreated,
-                dateModified = vault.dateModified
-            )
-            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedVault, Vault::class.java) as Vault?
-            if (decrypted != null) {
-                decrypted.id = vault.id
-                decrypted.dateCreated = vault.dateCreated
-                decrypted.dateModified = vault.dateModified
-                vaults.add(decrypted)
-            }
-        }
-
-        return vaults
-    }
-    fun getAllLogins(): ArrayList<Login> {
-        val logins = ArrayList<Login>()
-        val encryptedLogins = getLocalLogins()
-        encryptedLogins.forEach { item ->
-            val modifiedItem = EncryptedData(
-                id=item.id,
-                encryptedData = item.encryptedData,
-                iv=item.iv,
-                dateCreated = item.dateCreated,
-                dateModified = item.dateModified
-            )
-            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedItem, Login::class.java) as Login?
-            if (decrypted != null) {
-                decrypted.id = item.id
-                decrypted.date_created = item.dateCreated
-                decrypted.date_modified = item.dateModified
-                logins.add(decrypted)
-            }
-        }
-
-        return logins
-    }
-
-    fun getVaultById(id: String): Vault? {
-        val encVault = getLocalVaultById(id)
-        if(encVault != null) {
-            val modifiedVault = EncryptedData(
-                id=encVault.id,
-                encryptedData = encVault.encryptedData,
-                iv=encVault.iv,
-                dateCreated = encVault.dateCreated,
-                dateModified = encVault.dateModified
-            )
-            val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedVault, Vault::class.java) as Vault?
-            if (decrypted != null) {
-                decrypted.id = encVault.id
-                decrypted.dateCreated = encVault.dateCreated
-                decrypted.dateModified = encVault.dateModified
-            }
-
-            return decrypted
-        } else {
-            return null
-        }
-    }
-
-
     //DAO TASKS
     fun insertSingleDataObject(dbItem: EncryptedDBItem) {
         dao.insertSingleDataObject(dbItem = dbItem)
     }
 
     //Low Level - Encrypted Data
-    private fun getLocalVaults(): List<EncryptedDBItem> { return dao.allVaults }
-    private fun getLocalLogins(): List<EncryptedDBItem> { return dao.allLogins }
+    fun getLocalVaults(): List<EncryptedDBItem> { return dao.allVaults }
+    fun getLocalLogins(): List<EncryptedDBItem> { return dao.allLogins }
 
     fun getLocalLoginsLive(): LiveData<List<EncryptedDBItem>> { return dao.allLoginsLive }
     fun getLocalVaultsLive(): LiveData<List<EncryptedDBItem>> { return dao.allVaultsLive }
 
     fun getLocalVaultById(id: String): EncryptedDBItem? { return dao.loadVaultById(id) }
     fun getLocalLoginById(id: String): EncryptedDBItem? { return dao.loadLoginById(id) }
-
-    fun getLocalCards():  MutableLiveData<ArrayList<CreditCard>> { return GateKeeperApplication.allCards }
-    fun getLocalNotes(): MutableLiveData<ArrayList<Note>> { return GateKeeperApplication.allNotes }
-    fun getLocalDevices(): MutableLiveData<ArrayList<Device>> { return GateKeeperApplication.allDevices }
 
     fun setUserData(dbItems: ArrayList<EncryptedDBItem>) {
         dao.deleteAllData()
@@ -120,6 +46,10 @@ class UserDataRepository @Inject constructor(
 
     fun createLogin(body: ReqBodyEncryptedData): Observable<RespEncryptedData> {
         return api.createLogin(body= body)
+    }
+
+    fun updateLogin(body: ReqBodyEncryptedData): Observable<RespEncryptedData> {
+        return api.updateLogin(body = body)
     }
 
 }

@@ -22,6 +22,7 @@ class LoginDetailsViewModel @Inject constructor(
     // ~~~~~~~~~~~~ API CALLS  ~~~~~~~~~~~~
     private val compositeDisposable = CompositeDisposable()
     val createLoginData = MutableLiveData<Resource<Login>>()
+    val updateLoginData = MutableLiveData<Resource<Login>>()
 
     fun insertLocalLogin(login: Login){
         val encryptedLogin = SecurityRepository.encryptObjToEncDataWithUserCredentials(login)
@@ -70,6 +71,10 @@ class LoginDetailsViewModel @Inject constructor(
 
 
         return createLoginData
+    }
+
+    fun updateLogin(login: Login): LiveData<Resource<Login>> {
+        return updateLoginData
     }
 
 }
