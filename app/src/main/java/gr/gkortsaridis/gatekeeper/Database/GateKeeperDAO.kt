@@ -1,8 +1,10 @@
 package gr.gkortsaridis.gatekeeper.Database
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
-import gr.gkortsaridis.gatekeeper.Entities.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import gr.gkortsaridis.gatekeeper.Entities.EncryptedDBItem
 
 @Dao
 interface GateKeeperDAO {
@@ -13,6 +15,9 @@ interface GateKeeperDAO {
 
     @get:Query("SELECT * FROM data WHERE type = 1")
     val allLogins: List<EncryptedDBItem>
+
+    @get:Query("SELECT * FROM data WHERE type = 1")
+    val allLoginsLive: LiveData<List<EncryptedDBItem>>
 
     @get:Query("SELECT * FROM data WHERE type = 2")
     val allCards: List<EncryptedDBItem>
@@ -45,6 +50,9 @@ interface GateKeeperDAO {
     //Inserts
     @Insert
     fun insertUserData(dbItems: ArrayList<EncryptedDBItem>)
+
+    @Insert
+    fun insertSingleDataObject(dbItem: EncryptedDBItem)
 
     //Deletes
     @Query("DELETE FROM data")

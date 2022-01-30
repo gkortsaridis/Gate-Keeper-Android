@@ -23,6 +23,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -37,6 +38,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -57,6 +59,7 @@ import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperVaultSelector.vaultSe
 import gr.gkortsaridis.gatekeeper.Utils.*
 import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import kotlinx.android.synthetic.main.fragment_logins.*
+import kotlin.math.log
 
 @AndroidEntryPoint
 class LoginsFragment : Fragment() {
@@ -66,25 +69,20 @@ class LoginsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val currentVault = viewModel.getLastActiveVault()
         val allLogins = viewModel.allLogins
+        val allLoginsLive = viewModel.getAllLoginsLive(this)
         val loginAction = DataRepository.loginClickAction
-        val currentVaultLogins = MainViewModel.filterLoginsByVault(logins = allLogins, vault = currentVault)
         val sortType = DataRepository.loginSortType
-        if (sortType == LOGIN_SORT_TYPE_NAME) {
-            currentVaultLogins.sortBy { it.name.lowercase() }
-        } else {
-            allLogins.sortBy { it.date_modified }
-            allLogins.reverse()
-        }
 
         return ComposeView(requireContext()).apply {
             setContent { loginsPage(
                 currentVault = currentVault,
-                logins = currentVaultLogins,
+                logins = allLoginsLive,
                 sortType = sortType,
                 loginAction = loginAction
             ) }
         }
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -132,10 +130,21 @@ class LoginsFragment : Fragment() {
     @Composable
     fun loginsPage(
         currentVault: Vault = GateKeeperDevelopMockData.mockVault,
-        logins: ArrayList<Login> = GateKeeperDevelopMockData.mockLogins,
+        logins: LiveData<ArrayList<Login>> = GateKeeperDevelopMockData.mockLoginsLive,
         sortType: Int = LOGIN_SORT_TYPE_NAME,
         loginAction: Int = LoginsRepository.LOGIN_CLICK_ACTION_OPEN
     ) {
+        val loginsLive = logins.observeAsState()
+
+        val currentVaultLogins = MainViewModel.filterLoginsByVault(logins = loginsLive.value ?: ArrayList(), vault = currentVault)
+        if (sortType == LOGIN_SORT_TYPE_NAME) {
+            currentVaultLogins.sortBy { it.name.lowercase() }
+        } else {
+            currentVaultLogins.sortBy { it.date_modified }
+            currentVaultLogins.reverse()
+        }
+
+
         Column(
             modifier = Modifier
                 .fillMaxHeight()
@@ -143,10 +152,10 @@ class LoginsFragment : Fragment() {
                 .background(GateKeeperTheme.light_grey)
         ) {
             vaultSelector(currentVault = currentVault)
-            if(logins.isNotEmpty()) {
-                itemsCount(sortType = sortType, logins = logins)
+            if(currentVaultLogins.isNotEmpty()) {
+                itemsCount(sortType = sortType, logins = currentVaultLogins)
                 Box(modifier = Modifier.fillMaxSize()){
-                    itemsList(logins = logins, loginAction = loginAction)
+                    itemsList(logins = currentVaultLogins, loginAction = loginAction)
                     FloatingActionButton(
                         onClick = {
                             startActivity(Intent(requireActivity(), CreateLoginActivity::class.java))

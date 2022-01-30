@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import gr.gkortsaridis.gatekeeper.Database.GateKeeperDAO
 import gr.gkortsaridis.gatekeeper.Entities.*
+import gr.gkortsaridis.gatekeeper.Entities.Network.ReqBodyEncryptedData
 import gr.gkortsaridis.gatekeeper.Entities.Network.RespAllData
+import gr.gkortsaridis.gatekeeper.Entities.Network.RespEncryptedData
 import gr.gkortsaridis.gatekeeper.GateKeeperApplication
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.SecurityRepository
@@ -122,9 +124,27 @@ class UserDataRepository @Inject constructor(
         return vaultToReturn
     }
 
+    fun insertLocalLogin(login: Login){
+        val encryptedLogin = SecurityRepository.encryptObjToEncDataWithUserCredentials(login)
+        if(encryptedLogin != null) {
+            val userData = EncryptedDBItem(
+                id = login.id,
+                type = 1,
+                encryptedData = encryptedLogin.encryptedData,
+                iv = encryptedLogin.iv,
+                dateCreated = login.date_created,
+                dateModified = login.date_modified
+            )
+            dao.insertSingleDataObject(userData)
+        }
+    }
+
     //Low Level - Encrypted Data
     private fun getLocalVaults(): List<EncryptedDBItem> { return dao.allVaults }
     private fun getLocalLogins(): List<EncryptedDBItem> { return dao.allLogins }
+
+    fun getLocalLoginsLive(): LiveData<List<EncryptedDBItem>> { return dao.allLoginsLive }
+
     private fun getLocalVaultById(id: String): EncryptedDBItem? { return dao.loadVaultById(id) }
     private fun getLocalLoginById(id: String): EncryptedDBItem? { return dao.loadLoginById(id) }
 
@@ -142,5 +162,8 @@ class UserDataRepository @Inject constructor(
         return api.getAllData(userId = userId)
     }
 
+    fun createLogin(body: ReqBodyEncryptedData): Observable<RespEncryptedData> {
+        return api.createLogin(body= body)
+    }
 
 }

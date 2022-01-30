@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -26,18 +27,21 @@ import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.GateKeeperTextField
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperVaultSelector.vaultSelector
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperDevelopMockData
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperShapes
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
+import gr.gkortsaridis.gatekeeper.Utils.Status
 import gr.gkortsaridis.gatekeeper.ViewModels.LoginDetailsViewModel
 
 @AndroidEntryPoint
 class CreateLoginActivity : AppCompatActivity() {
 
     private val viewModel: LoginDetailsViewModel by viewModels()
+    private val viewDialog = ViewDialog(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +53,26 @@ class CreateLoginActivity : AppCompatActivity() {
             currentVault = currentVault,
             login = login
         ) }
+
+        viewModel.createLoginData.observe(this) {
+            when (it.status) {
+                Status.LOADING -> { viewDialog.showDialog() }
+                Status.ERROR -> {
+                    viewDialog.hideDialog()
+                    Toast.makeText(this, it.message ?: "", Toast.LENGTH_SHORT).show()
+                }
+                Status.SUCCESS -> {
+                    viewDialog.hideDialog()
+                    if(it.data != null) {
+                        viewModel.insertLocalLogin(it.data)
+                        finish()
+                    } else {
+                        Toast.makeText(this, "We encountered an error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
 
         /*setContentView(R.layout.activity_create_login)
 
@@ -360,6 +384,9 @@ class CreateLoginActivity : AppCompatActivity() {
         Log.i("SAVING", "Password: "+login.password)
         Log.i("SAVING", "URL: "+login.url)
         Log.i("SAVING", "Notes: "+login.notes)
+
+        if(login.id == "-1") { viewModel.createLogin(login) }
+
     }
 
     private fun dataNotEmpty(login: Login): Boolean {
