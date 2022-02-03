@@ -220,6 +220,9 @@ dependencies {
 
     //Bugsnag Crashlytics
     implementation "com.bugsnag:bugsnag-android:5.0.0"
+
+    implementation "com.google.accompanist:accompanist-pager:0.24.1-alpha"
+    implementation "com.google.accompanist:accompanist-pager-indicators:0.24.1-alpha"
 }
 
 apply plugin: 'com.google.gms.google-services'

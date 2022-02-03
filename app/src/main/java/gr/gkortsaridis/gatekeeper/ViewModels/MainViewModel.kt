@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Login
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Repos.UserDataRepository
@@ -20,8 +21,8 @@ class MainViewModel @Inject constructor(
             return ArrayList(logins.filter { it.vault_id == vault.id })
         }
 
-        fun filterLoginsByCurrentVault(logins: ArrayList<Login>): ArrayList<Login> {
-            return filterLoginsByVault(logins, VaultRepository.getLastActiveVault())
+        fun filterCardsByVault(cards: ArrayList<CreditCard>, vault: Vault): ArrayList<CreditCard> {
+            return ArrayList(cards.filter { it.vaultId == vault.id })
         }
 
         fun getApplicationInfoByPackageName(packageName: String?, packageManager: PackageManager): ResolveInfo? {
