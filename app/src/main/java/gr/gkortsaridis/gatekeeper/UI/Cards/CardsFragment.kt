@@ -8,12 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,22 +26,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import com.google.accompanist.pager.*
 import com.google.android.material.math.MathUtils.lerp
 import dagger.hilt.android.AndroidEntryPoint
-import gr.gkortsaridis.gatekeeper.Entities.CreditCard
-import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Interfaces.CreditCardClickListener
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
+import gr.gkortsaridis.gatekeeper.UI.Composables.CardFace
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperFlipCard
 import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperVaultSelector
 import gr.gkortsaridis.gatekeeper.UI.Logins.CreateLoginActivity
 import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.CreditCardsRecyclerViewAdapter
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperDevelopMockData
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperDevelopMockData.mockCards
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import kotlin.math.absoluteValue
@@ -78,69 +83,106 @@ class CardsFragment : Fragment(), CreditCardClickListener {
                 .background(GateKeeperTheme.light_grey)
         ) {
             GateKeeperVaultSelector.vaultSelector(currentVault = currentVault)
-            //if(currentVaultCards.isNotEmpty()) {
-                cardsContent()
-            //} else {
-            //    noCards()
-            //}
+            if(currentVaultCards.isNotEmpty() || true) {
+                itemsList(mockCards)
+            } else {
+                noCards()
+            }
         }
 
     }
 
-    @OptIn(ExperimentalPagerApi::class)
     @Composable
-    fun cardsContent() {
-        Column(Modifier.fillMaxSize()) {
-            val pagerState = rememberPagerState()
+    fun itemsList(
+        cards: ArrayList<CreditCard>,
+    ){
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(start = 32.dp, end= 32.dp, top = 8.dp, bottom = 60.dp)
+        ) {
+            items(cards) { card -> cardItem(card = card)}
+        }
+    }
 
-            // Display 10 items
-            HorizontalPager(
-                count = 10,
-                state = pagerState,
-                // Add 32.dp horizontal padding to 'center' the pages
-                contentPadding = PaddingValues(horizontal = 48.dp),
+    @OptIn(ExperimentalMaterialApi::class)
+    @Composable
+    fun cardItem(
+        card: CreditCard,
+    ) {
+        var cardFace by remember {
+            mutableStateOf(CardFace.Front)
+        }
+
+        GateKeeperFlipCard(
+            cardFace = cardFace,
+            front = { cardFront(
+                card = card,
+                onCardFlip = { cardFace = cardFace.next }
+            ) },
+            back = { cardBack(
+                card = card,
+                onCardFlip = { cardFace = cardFace.next }
+            ) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1.567f)
+                .padding(vertical = 8.dp)
+        )
+    }
+
+    @Composable
+    fun cardFront(
+        card: CreditCard,
+        onCardFlip: () -> Unit
+    ) {
+        val vault = viewModel.getVaultById(card.vaultId)
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-            ) { page ->
-                Card(
-                    modifier = Modifier
-                        .graphicsLayer {
-                            // Calculate the absolute offset for the current page from the
-                            // scroll position. We use the absolute value which allows us to mirror
-                            // any effects for both directions
-                            val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
-
-                            // We animate the scaleX + scaleY, between 85% and 100%
-                            lerp(
-                                0.85f,
-                                1f,
-                                1f - pageOffset.coerceIn(0f, 1f)
-                            ).also { scale ->
-                                scaleX = scale
-                                scaleY = scale
-                            }
-
-                            // We animate the alpha, between 50% and 100%
-                            alpha = lerp(
-                                0.8f,
-                                1f,
-                                1f - pageOffset.coerceIn(0f, 1f)
-                            )
-                        }
-                        .fillMaxWidth()
-                        .aspectRatio(1.586f)
-                ) {
-                    Text("Card ${page}")
-                }
-            }
-
-            HorizontalPagerIndicator(
-                pagerState = pagerState,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(16.dp),
+                    .fillMaxHeight()
+                    .width(16.dp)
+                    .background(vault?.color?.toColor() ?: GateKeeperTheme.white),
             )
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .background(color = GateKeeperTheme.error_red)
+                .clickable { onCardFlip() }
+            ) {
+
+            }
+        }
+
+
+    }
+
+    @Composable
+    fun cardBack(
+        card: CreditCard,
+        onCardFlip: () -> Unit
+    ) {
+        val vault = viewModel.getVaultById(card.vaultId)
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(16.dp)
+                    .background(vault?.color?.toColor() ?: GateKeeperTheme.white),
+            )
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .background(color = GateKeeperTheme.done_green)
+                .clickable { onCardFlip() }
+            ) {
+
+            }
         }
     }
 
