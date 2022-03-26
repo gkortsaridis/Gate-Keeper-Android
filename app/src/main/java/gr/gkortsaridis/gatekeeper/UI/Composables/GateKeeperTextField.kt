@@ -16,80 +16,76 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 
-object GateKeeperTextField {
+enum class InputType(val type: Int) {
+    TEXT(0),
+    EMAIL(1),
+    PASSWORD(2),
+    NUMBER(3),
+    PHONE(4),
+    MULTILINE(5)
+}
 
-    enum class InputType(val type: Int) {
-        TEXT(0),
-        EMAIL(1),
-        PASSWORD(2),
-        NUMBER(3),
-        PHONE(4),
-        MULTILINE(5)
-    }
+@Preview
+@Composable
+fun GateKeeperTextField(
+    modifier: Modifier = Modifier,
+    placeholder: String = "",
+    inputType: InputType = InputType.TEXT,
+    onTextChange: (String) -> Unit = {},
+    value: String = ""
+) {
+    var textState by remember { mutableStateOf(value) }
+    var passwordVisibility by remember { mutableStateOf(false) }
+    var isFocused by remember { mutableStateOf(false) }
 
-    @Composable
-    fun GateKeeperTextField(
-            modifier: Modifier = Modifier,
-            placeholder: String,
-            inputType: InputType = InputType.TEXT,
-            onTextChange: (String) -> Unit = {},
-            value: String = ""
-        ) {
-        var textState by remember { mutableStateOf(value) }
-        var passwordVisibility by remember { mutableStateOf(false) }
-        var isFocused by remember { mutableStateOf(false) }
-
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged {
-                    isFocused = it.isFocused
-                }
-                .composed { modifier },
-            value = textState,
-            label = { Text(text = placeholder) },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                focusedIndicatorColor = GateKeeperTheme.colorAccent,
-            ),
-            onValueChange = { textState = it; onTextChange(it) },
-            singleLine = inputType != InputType.MULTILINE,
-            maxLines = if(inputType == InputType.MULTILINE) 3 else 1,
-            visualTransformation = if (inputType == InputType.PASSWORD && !passwordVisibility) PasswordVisualTransformation()  else VisualTransformation.None,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = when(inputType) {
-                    InputType.PASSWORD -> KeyboardType.Password
-                    InputType.EMAIL -> KeyboardType.Email
-                    InputType.NUMBER -> KeyboardType.Number
-                    InputType.PHONE -> KeyboardType.Phone
-                    else -> KeyboardType.Text
-                },
-            ),
-            trailingIcon = {
-                if(isFocused) {
-                    if(inputType == InputType.PASSWORD) {
-                        val image = if (passwordVisibility)
-                            Icons.Filled.Visibility
-                        else Icons.Filled.VisibilityOff
-
-                        IconButton(onClick = {
-                            passwordVisibility = !passwordVisibility
-                        }) {
-                            Icon(imageVector  = image, "")
-                        }
-                    }else if (textState.isNotEmpty()) {
-                        IconButton(onClick = { textState = ""; onTextChange("") }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Close,
-                                contentDescription = null
-                            )
-                        }
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .onFocusChanged {
+                isFocused = it.isFocused
+            }
+            .composed { modifier },
+        value = textState,
+        label = { Text(text = placeholder) },
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = Color.Transparent,
+            focusedIndicatorColor = GateKeeperTheme.colorAccent,
+        ),
+        onValueChange = { textState = it; onTextChange(it) },
+        singleLine = inputType != InputType.MULTILINE,
+        maxLines = if(inputType == InputType.MULTILINE) 3 else 1,
+        visualTransformation = if (inputType == InputType.PASSWORD && !passwordVisibility) PasswordVisualTransformation()  else VisualTransformation.None,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = when(inputType) {
+                InputType.PASSWORD -> KeyboardType.Password
+                InputType.EMAIL -> KeyboardType.Email
+                InputType.NUMBER -> KeyboardType.Number
+                InputType.PHONE -> KeyboardType.Phone
+                else -> KeyboardType.Text },
+        ),
+        trailingIcon = {
+            if(isFocused) {
+                if(inputType == InputType.PASSWORD) {
+                    val image = if (passwordVisibility)
+                        Icons.Filled.Visibility
+                    else Icons.Filled.VisibilityOff
+                    IconButton(onClick = {
+                        passwordVisibility = !passwordVisibility
+                    }) {
+                        Icon(imageVector  = image, "")
+                    }
+                }else if (textState.isNotEmpty()) {
+                    IconButton(onClick = { textState = ""; onTextChange("") }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = null
+                        )
                     }
                 }
             }
-        )
-    }
-
+        }
+    )
 }

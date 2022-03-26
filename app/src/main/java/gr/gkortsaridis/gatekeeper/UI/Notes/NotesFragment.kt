@@ -9,8 +9,6 @@ import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -29,17 +27,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import dagger.hilt.android.AndroidEntryPoint
-import gr.gkortsaridis.gatekeeper.Entities.CreditCard
-import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperVaultSelector
+import gr.gkortsaridis.gatekeeper.UI.Composables.vaultSelector
 import gr.gkortsaridis.gatekeeper.UI.Logins.CreateLoginActivity
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperDevelopMockData
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
+import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import kotlinx.android.synthetic.main.fragment_notes.*
 
 @AndroidEntryPoint
@@ -74,7 +71,7 @@ class NotesFragment : Fragment() {
                 .fillMaxWidth()
                 .background(GateKeeperTheme.light_grey)
         ) {
-            GateKeeperVaultSelector.vaultSelector(currentVault = currentVault)
+            vaultSelector(currentVault = currentVault)
             if(currentVaultNotes.isNotEmpty() || true) {
                 itemsList(GateKeeperDevelopMockData.mockNotes)
             } else {

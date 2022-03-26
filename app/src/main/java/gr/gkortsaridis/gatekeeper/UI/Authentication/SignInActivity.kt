@@ -31,8 +31,8 @@ import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
-import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.GateKeeperTextField
-import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.InputType
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField
+import gr.gkortsaridis.gatekeeper.UI.Composables.InputType
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 import gr.gkortsaridis.gatekeeper.Utils.Status
 import gr.gkortsaridis.gatekeeper.ViewModels.SignInViewModel
@@ -52,9 +52,11 @@ class SignInActivity : ComponentActivity() {
 
         setContent { SignInPage() }
 
-        viewModel.signInData.observe(this, {
-            when(it.status) {
-                Status.LOADING ->  { viewDialog.showDialog() }
+        viewModel.signInData.observe(this) {
+            when (it.status) {
+                Status.LOADING -> {
+                    viewDialog.showDialog()
+                }
                 Status.ERROR -> {
                     viewDialog.hideDialog()
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
@@ -68,7 +70,8 @@ class SignInActivity : ComponentActivity() {
                     AnalyticsRepository.trackEvent(AnalyticsRepository.SIGN_IN_PASS)
 
                     if (SignInViewModel.getPreferredAuthType() == SignInViewModel.SIGN_IN_NOT_SET
-                        && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
+                        && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
+                    ) {
                         AlertDialog.Builder(this)
                             .setTitle("Biometric Sign In")
                             .setMessage("Would you like to use our biometric authentication feature?\nYour credentials are going to be safely stored on the device.")
@@ -86,7 +89,7 @@ class SignInActivity : ComponentActivity() {
                     }
                 }
             }
-        })
+        }
     }
 
     @Preview

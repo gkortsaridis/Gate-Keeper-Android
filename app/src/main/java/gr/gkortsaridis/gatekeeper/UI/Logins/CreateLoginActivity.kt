@@ -30,9 +30,9 @@ import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
-import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.GateKeeperTextField
-import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.InputType
-import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperVaultSelector.vaultSelector
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField
+import gr.gkortsaridis.gatekeeper.UI.Composables.InputType
+import gr.gkortsaridis.gatekeeper.UI.Composables.vaultSelector
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.*
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE

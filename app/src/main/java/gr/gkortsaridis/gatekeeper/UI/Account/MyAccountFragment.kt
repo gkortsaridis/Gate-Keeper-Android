@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment
 import gr.gkortsaridis.gatekeeper.Entities.ViewDialog
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
-import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField.GateKeeperTextField
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperTextField
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperShapes
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 

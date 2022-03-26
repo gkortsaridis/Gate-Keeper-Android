@@ -70,7 +70,7 @@ class CardsFragment : Fragment() {
                 .fillMaxWidth()
                 .background(GateKeeperTheme.light_grey)
         ) {
-            GateKeeperVaultSelector.vaultSelector(currentVault = currentVault)
+            vaultSelector(currentVault = currentVault)
             if(currentVaultCards.isNotEmpty() || true) {
                 itemsList(mockCards)
             } else {
