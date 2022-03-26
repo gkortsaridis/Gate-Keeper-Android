@@ -164,6 +164,36 @@ open class BaseViewModel  @Inject constructor(
         return decryptedCards
     }
 
+    fun getAllNotesLive(observer: LifecycleOwner): LiveData<ArrayList<Note>> {
+        val encryptedNotes = userDataRepository.getLocalNotesLive()
+
+        val decryptedNotes = MutableLiveData<ArrayList<Note>>()
+        decryptedNotes.value = ArrayList()
+
+        encryptedNotes.observe(observer) {
+            val notes = ArrayList<Note>()
+            it.forEach { item ->
+                val modifiedNote = EncryptedData(
+                    id=item.id,
+                    encryptedData = item.encryptedData,
+                    iv=item.iv,
+                    dateCreated = item.dateCreated,
+                    dateModified = item.dateModified
+                )
+                val decrypted = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(modifiedNote, Note::class.java) as Note?
+                if (decrypted != null) {
+                    decrypted.id = item.id
+                    decrypted.createDate = item.dateCreated
+                    decrypted.modifiedDate = item.dateModified
+                    notes.add(decrypted)
+                }
+            }
+            decryptedNotes.value = notes
+        }
+
+        return decryptedNotes
+    }
+
     fun getLoginById(id: String?): Login? {
         if(id == null) { return null }
 

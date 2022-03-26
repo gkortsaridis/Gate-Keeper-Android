@@ -6,6 +6,7 @@ import android.content.pm.ResolveInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import gr.gkortsaridis.gatekeeper.Entities.CreditCard
 import gr.gkortsaridis.gatekeeper.Entities.Login
+import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.Repos.UserDataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
@@ -23,6 +24,10 @@ class MainViewModel @Inject constructor(
 
         fun filterCardsByVault(cards: ArrayList<CreditCard>, vault: Vault): ArrayList<CreditCard> {
             return ArrayList(cards.filter { it.vaultId == vault.id })
+        }
+
+        fun filterNotesByVault(notes: ArrayList<Note>, vault: Vault): ArrayList<Note> {
+            return ArrayList(notes.filter { it.vaultId == vault.id })
         }
 
         fun getApplicationInfoByPackageName(packageName: String?, packageManager: PackageManager): ResolveInfo? {

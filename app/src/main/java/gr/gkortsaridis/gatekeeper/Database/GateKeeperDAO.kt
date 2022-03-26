@@ -36,6 +36,9 @@ interface GateKeeperDAO {
     @get:Query("SELECT * FROM data WHERE type = 2")
     val allCardsLive: LiveData<List<EncryptedDBItem>>
 
+    @get:Query("SELECT * FROM data WHERE type = 3")
+    val allNotesLive: LiveData<List<EncryptedDBItem>>
+
     //~~~~~~~~ QUERY DATA ~~~~~~~~
     @Query("SELECT * FROM data WHERE type = 0 AND id = :id")
     fun loadVaultById(id: String): EncryptedDBItem?

@@ -20,13 +20,17 @@ class UserDataRepository @Inject constructor(
     //~~~~~~~~ DAO TASKS ~~~~~~~~
     fun getLocalVaults(): List<EncryptedDBItem> { return dao.allVaults }
     fun getLocalLogins(): List<EncryptedDBItem> { return dao.allLogins }
+    fun getLocalCards(): List<EncryptedDBItem>  { return dao.allCards }
+    fun getLocalNotes(): List<EncryptedDBItem>  { return dao.allNotes }
 
     fun getLocalLoginsLive(): LiveData<List<EncryptedDBItem>> { return dao.allLoginsLive }
     fun getLocalVaultsLive(): LiveData<List<EncryptedDBItem>> { return dao.allVaultsLive }
     fun getLocalCardsLive(): LiveData<List<EncryptedDBItem>> { return dao.allCardsLive }
+    fun getLocalNotesLive(): LiveData<List<EncryptedDBItem>> { return dao.allNotesLive }
 
     fun getLocalVaultById(id: String): EncryptedDBItem? { return dao.loadVaultById(id) }
     fun getLocalLoginById(id: String): EncryptedDBItem? { return dao.loadLoginById(id) }
+    fun getLocalNoteById(id: String) : EncryptedDBItem? { return dao.loadNoteById(id)  }
 
     fun setUserData(dbItems: ArrayList<EncryptedDBItem>) {
         dao.deleteAllData()
