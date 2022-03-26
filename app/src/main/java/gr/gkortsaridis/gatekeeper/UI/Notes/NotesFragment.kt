@@ -41,7 +41,6 @@ import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperDevelopMockData
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
-import kotlinx.android.synthetic.main.fragment_notes.*
 
 @AndroidEntryPoint
 class NotesFragment : Fragment() {
@@ -75,8 +74,11 @@ class NotesFragment : Fragment() {
                 .fillMaxWidth()
                 .background(GateKeeperTheme.light_grey)
         ) {
-            vaultSelector(currentVault = currentVault)
-            if(currentVaultNotes.isNotEmpty() || true) {
+            vaultSelector(
+                currentVault = currentVault,
+                onVaultClick = { changeVault(currentVault) }
+            )
+            if(currentVaultNotes.isNotEmpty()) {
                 itemsList(GateKeeperDevelopMockData.mockNotes) //TODO: Use LIVE Notes when available
             } else {
                 noNotes()
@@ -100,8 +102,11 @@ class NotesFragment : Fragment() {
                 StaggeredVerticalGrid(
                     maxColumnWidth = screenWidth,
                 ) {
-                    orderedNotes.forEach {
-                        GateKeeperNote(note = it)
+                    orderedNotes.forEach { it ->
+                        GateKeeperNote(
+                            note = it,
+                            onNoteClick = { clicked ->  onNoteClicked(clicked) }
+                        )
                     }
                 }
             }
@@ -160,10 +165,10 @@ class NotesFragment : Fragment() {
     }
 
 
-    private fun changeVault() {
+    private fun changeVault(currentVault: Vault) {
         val intent = Intent(activity, SelectVaultActivity::class.java)
         intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
-        //intent.putExtra("vault_id",currentVault.id)
+        intent.putExtra("vault_id",currentVault.id)
         startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
     }
 
@@ -184,7 +189,7 @@ class NotesFragment : Fragment() {
         return pinnedSorted
     }
 
-    fun onNoteClicked(note: Note) {
+    private fun onNoteClicked(note: Note) {
         val intent = Intent(activity, NoteActivity::class.java)
         intent.putExtra("note_id", note.id)
         startActivityForResult(intent,0)

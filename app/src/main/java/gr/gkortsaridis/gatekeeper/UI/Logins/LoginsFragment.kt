@@ -46,6 +46,7 @@ import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.LOGIN_SORT_TYPE_NAME
 import gr.gkortsaridis.gatekeeper.UI.Composables.vaultSelector
+import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.*
 import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import kotlinx.android.synthetic.main.fragment_logins.*
@@ -96,7 +97,10 @@ class LoginsFragment : Fragment() {
                 .fillMaxWidth()
                 .background(GateKeeperTheme.light_grey)
         ) {
-            vaultSelector(currentVault = currentVault)
+            vaultSelector(
+                currentVault = currentVault,
+                onVaultClick = { changeVault(currentVault) }
+            )
             if(currentVaultLogins.isNotEmpty()) {
                 itemsCount(sortType = sortType, logins = currentVaultLogins)
                 Box(modifier = Modifier.fillMaxSize()){
@@ -373,6 +377,13 @@ class LoginsFragment : Fragment() {
         Toast.makeText(context, login.name+" password copied", Toast.LENGTH_SHORT).show()
     }
 
+    private fun changeVault(currentVault: Vault) {
+        val intent = Intent(activity, SelectVaultActivity::class.java)
+        intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
+        intent.putExtra("vault_id",currentVault.id)
+        startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
+    }
+
     /*
     private fun checkForAutofill() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -394,15 +405,6 @@ class LoginsFragment : Fragment() {
             }
 
         }
-    }
-
-    private fun animateItemsIn() {
-        Timeline.createParallel()
-            .push(Tween.to(fab, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(fab, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            //.push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
-            //.push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            .start(ViewTweenManager.get(fab))
     }
      */
 }

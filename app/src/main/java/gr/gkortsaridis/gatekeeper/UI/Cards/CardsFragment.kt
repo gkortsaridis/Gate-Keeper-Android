@@ -70,9 +70,12 @@ class CardsFragment : Fragment() {
                 .fillMaxWidth()
                 .background(GateKeeperTheme.light_grey)
         ) {
-            vaultSelector(currentVault = currentVault)
-            if(currentVaultCards.isNotEmpty() || true) {
-                itemsList(mockCards)
+            vaultSelector(
+                currentVault = currentVault,
+                onVaultClick = { changeVault(currentVault) }
+            )
+            if(currentVaultCards.isNotEmpty()) {
+                itemsList(mockCards) //TODO: Use LIVE Cards when available
             } else {
                 noCards()
             }
@@ -185,10 +188,10 @@ class CardsFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun changeVault() {
+    private fun changeVault(currentVault: Vault) {
         val intent = Intent(activity, SelectVaultActivity::class.java)
         intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
-       // intent.putExtra("vault_id",currentVault.id)
+        intent.putExtra("vault_id",currentVault.id)
         startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
     }
 }

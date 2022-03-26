@@ -19,7 +19,8 @@ import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
 @Preview
 @Composable
 fun GateKeeperNote(
-    note: Note = GateKeeperDevelopMockData.mockNote
+    note: Note = GateKeeperDevelopMockData.mockNote,
+    onNoteClick: (Note) -> Unit = {},
 ) {
     Card(
         modifier = Modifier
@@ -30,7 +31,7 @@ fun GateKeeperNote(
             .background(color = note.color?.toColor() ?: GateKeeperTheme.white)
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { }
+            .clickable { onNoteClick(note) }
         ) {
             Text(text = note.title)
             Text(text = note.body)
