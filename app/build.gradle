@@ -16,7 +16,6 @@ android {
         }
     }
     compileSdkVersion 31
-    buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "gr.gkortsaridis.gatekeeper"
         minSdkVersion 24
