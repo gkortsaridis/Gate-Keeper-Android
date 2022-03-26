@@ -43,6 +43,17 @@ enum class VaultColor(val value: String) {
     Coral("#47A8BD")
 }
 
+fun NoteColor.toColor(): Color {
+    return when (this) {
+        NoteColor.Red -> { GateKeeperTheme.vault_red_1 }
+        NoteColor.Green -> { GateKeeperTheme.vault_green_1 }
+        NoteColor.Blue -> { GateKeeperTheme.vault_blue_1 }
+        NoteColor.Yellow -> { GateKeeperTheme.vault_yellow_1 }
+        NoteColor.White -> { GateKeeperTheme.vault_white_1 }
+        else -> {GateKeeperTheme.white }
+    }
+}
+
 fun VaultColor.toColor(): Color {
     return when (this) {
         VaultColor.Red -> { GateKeeperTheme.vault_red_1 }

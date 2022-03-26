@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -17,6 +18,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +32,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.Vault
 import gr.gkortsaridis.gatekeeper.R
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperNote
+import gr.gkortsaridis.gatekeeper.UI.Composables.StaggeredVerticalGrid
 import gr.gkortsaridis.gatekeeper.UI.Composables.vaultSelector
 import gr.gkortsaridis.gatekeeper.UI.Logins.CreateLoginActivity
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
@@ -73,7 +77,7 @@ class NotesFragment : Fragment() {
         ) {
             vaultSelector(currentVault = currentVault)
             if(currentVaultNotes.isNotEmpty() || true) {
-                itemsList(GateKeeperDevelopMockData.mockNotes)
+                itemsList(GateKeeperDevelopMockData.mockNotes) //TODO: Use LIVE Notes when available
             } else {
                 noNotes()
             }
@@ -85,7 +89,23 @@ class NotesFragment : Fragment() {
     fun itemsList(
         notes: ArrayList<Note>,
     ){
+        val configuration = LocalConfiguration.current
+        val screenWidth = configuration.screenWidthDp.dp
 
+        val orderedNotes = getOrderedNotes(notes)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item {
+                StaggeredVerticalGrid(
+                    maxColumnWidth = screenWidth,
+                ) {
+                    orderedNotes.forEach {
+                        GateKeeperNote(note = it)
+                    }
+                }
+            }
+        }
     }
 
     @Composable
@@ -153,17 +173,15 @@ class NotesFragment : Fragment() {
         startActivityForResult(intent,0)
     }
 
-    private fun getOrderedNotes(vault: Vault): ArrayList<Note> {
-        /*val filtered = NotesRepository.filterNotesByVault(this.allNotes, vault)
-        val pinnedNotes = filtered.filter { it.isPinned }
-        val nonPinnedNotes = filtered.filter { !it.isPinned }
+    private fun getOrderedNotes(notes: ArrayList<Note>): ArrayList<Note> {
+        val pinnedNotes = notes.filter { it.isPinned }
+        val nonPinnedNotes = notes.filter { !it.isPinned }
 
         val pinnedSorted = ArrayList(pinnedNotes.sortedWith(compareBy { it.modifiedDate }).reversed())
         val nonPinnedSorted = ArrayList(nonPinnedNotes.sortedWith(compareBy { it.modifiedDate }).reversed())
         pinnedSorted.addAll(nonPinnedSorted)
 
-        return pinnedSorted*/
-        return arrayListOf()
+        return pinnedSorted
     }
 
     fun onNoteClicked(note: Note) {
