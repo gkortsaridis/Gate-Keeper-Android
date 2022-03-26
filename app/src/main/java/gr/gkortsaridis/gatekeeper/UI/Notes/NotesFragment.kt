@@ -125,20 +125,20 @@ class NotesFragment : Fragment() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.credit_cards_grey),
+                    painter = painterResource(id = R.drawable.note_grey),
                     contentDescription = "",
                     modifier = Modifier
                         .size(40.dp, 40.dp)
                         .padding(4.dp)
                 )
                 Text(
-                    text = stringResource(id = R.string.no_cards_title),
+                    text = stringResource(id = R.string.no_notes_title),
                     modifier = Modifier.padding(top=8.dp),
                     fontWeight = FontWeight.Bold,
                     color = GateKeeperTheme.tone_black
                 )
                 Text(
-                    text = stringResource(id = R.string.no_cards_message),
+                    text = stringResource(id = R.string.no_notes_message),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(top=8.dp),
                     color = GateKeeperTheme.tone_black
