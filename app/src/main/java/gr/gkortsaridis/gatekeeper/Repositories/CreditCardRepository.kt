@@ -22,17 +22,29 @@ import java.sql.Timestamp
 @SuppressLint("CheckResult")
 object CreditCardRepository {
 
-    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+    //val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
 
     var allCards: ArrayList<CreditCard>
-        get() { return ArrayList(db.dao().allCardsSync) }
-        set(cards) { db.dao().truncateCards(); for (card in cards) { db.dao().insertCard(card) } }
+        get() {
+            return GateKeeperApplication.cards
+            //return ArrayList(db.dao().allCardsSync)
+        }
+        set(cards) {
+            GateKeeperApplication.cards = cards
+            //db.dao().truncateCards(); for (card in cards) { db.dao().insertCard(card) }
+        }
 
-    fun addLocalCard(card: CreditCard) { db.dao().insertCard(card) }
+    fun addLocalCard(card: CreditCard) {
+    //    db.dao().insertCard(card)
+    }
 
-    fun removeLocalCard(card: CreditCard) { db.dao().deleteCard(card) }
+    fun removeLocalCard(card: CreditCard) {
+//        db.dao().deleteCard(card)
+    }
 
-    fun updateLocalCard(card: CreditCard) { db.dao().updateCard(card) }
+    fun updateLocalCard(card: CreditCard) {
+        //db.dao().updateCard(card)
+    }
 
     fun filterCardsByVault(cards: List<CreditCard>, vault: Vault) : ArrayList<CreditCard> {
         val vaultIds = arrayListOf<String>()
@@ -123,7 +135,7 @@ object CreditCardRepository {
                     if (decryptedCard != null) {
                         decryptedCard.id = it.data.id.toString()
                         if (it.errorCode == -1) {
-                            decryptedCard.modifiedDate = Timestamp(System.currentTimeMillis())
+                            decryptedCard.modifiedDate = System.currentTimeMillis()//Timestamp(System.currentTimeMillis())
                             listener.onCardUpdated(decryptedCard)
                         }
                         else { listener.onCardUpdateError(it.errorCode, it.errorMsg) }
@@ -149,8 +161,8 @@ object CreditCardRepository {
                     if (decryptedCard != null) {
                         decryptedCard.id = it.data.id.toString()
                         if (it.errorCode == -1) {
-                            decryptedCard.modifiedDate = Timestamp(System.currentTimeMillis())
-                            decryptedCard.createdDate = Timestamp(System.currentTimeMillis())
+                            decryptedCard.modifiedDate = System.currentTimeMillis()//Timestamp(System.currentTimeMillis())
+                            decryptedCard.createdDate = System.currentTimeMillis()//Timestamp(System.currentTimeMillis())
                             listener.onCreditCardCreated(decryptedCard)
                         }
                         else { listener.onCreditCardCreateError(it.errorCode, it.errorMsg) }

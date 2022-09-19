@@ -69,7 +69,7 @@ class NotesRecyclerViewAdapter(
             noteModified?.text = formattedDate
 
             val vault = VaultRepository.getVaultByID(note.vaultId)
-            noteVaultColor?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
+            //noteVaultColor?.setBackgroundResource(vault?.getVaultColorResource() ?: R.color.colorPrimaryDark)
 
             view?.setOnClickListener { listener.onNoteClicked(note) }
             pinnedNote?.visibility = if (note.isPinned) View.VISIBLE else View.GONE

@@ -1,6 +1,7 @@
 package gr.gkortsaridis.gatekeeper
 
 import android.app.Application
+import androidx.lifecycle.MutableLiveData
 import com.bugsnag.android.Bugsnag
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
@@ -11,23 +12,21 @@ import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.soloader.SoLoader
-import com.google.android.gms.ads.MobileAds
-import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.revenuecat.purchases.PurchaserInfo
 import com.revenuecat.purchases.Purchases
-import gr.gkortsaridis.gatekeeper.Entities.Device
-import gr.gkortsaridis.gatekeeper.Entities.UserExtraData
-import gr.gkortsaridis.gatekeeper.Entities.UserLog
+import dagger.hilt.android.HiltAndroidApp
+import gr.gkortsaridis.gatekeeper.Entities.*
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 
 
+@HiltAndroidApp
 class GateKeeperApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
         instance = this
         user_id = DataRepository.savedUser
-        MobileAds.initialize(this, admobAppID)
+        //MobileAds.initialize(this, admobAppID)
 
         Bugsnag.start(this)
         networkFlipperPlugin = NetworkFlipperPlugin()
@@ -56,6 +55,17 @@ class GateKeeperApplication : Application() {
         lateinit var instance: GateKeeperApplication private set
         var user_id: String? = null
         val admobAppID = "ca-app-pub-4492385836648698~3680446633"
+
+        val allVaults = MutableLiveData<ArrayList<Vault>>()
+        val allLogins = MutableLiveData<ArrayList<Login>>()
+        val allCards  = MutableLiveData<ArrayList<CreditCard>>()
+        val allNotes  = MutableLiveData<ArrayList<Note>>()
+        val allDevices = MutableLiveData<ArrayList<Device>>()
+
+        var vaults: ArrayList<Vault> = arrayListOf()
+        var logins: ArrayList<Login> = arrayListOf()
+        var cards: ArrayList<CreditCard> = arrayListOf()
+        var notes: ArrayList<Note> = arrayListOf()
 
         var extraData: UserExtraData? = null
         var devices: ArrayList<Device>? = null

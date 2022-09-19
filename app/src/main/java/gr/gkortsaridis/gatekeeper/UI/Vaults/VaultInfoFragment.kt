@@ -185,6 +185,13 @@ class VaultInfoFragment(private val vault: Vault, private val listener: VaultInf
                         listener.onVaultInfoFragmentDismissed()
                         dismiss()
                     }
+
+                    override fun onVaultDeleteError(errorCode: Int, errorMsg: String) {
+                        super.onVaultDeleteError(errorCode, errorMsg)
+                        dialog.hideDialog()
+                        listener.onVaultInfoFragmentDismissed()
+                        dismiss()
+                    }
                 })
             }
 

@@ -18,17 +18,29 @@ import io.reactivex.schedulers.Schedulers
 @SuppressLint("CheckResult")
 object NotesRepository {
 
-    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
+    //val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
 
     var allNotes: ArrayList<Note>
-        get() { return ArrayList(db.dao().allNotesSync) }
-        set(notes) { db.dao().truncateNotes(); for (note in notes) { db.dao().insertNote(note) } }
+        get() {
+            return GateKeeperApplication.notes
+        //return ArrayList(db.dao().allNotesSync)
+        }
+        set(notes) {
+            GateKeeperApplication.notes
+        //    db.dao().truncateNotes(); for (note in notes) { db.dao().insertNote(note) }
+        }
 
-    fun addLocalNote(note: Note) { db.dao().insertNote(note) }
+    fun addLocalNote(note: Note) {
+    //    db.dao().insertNote(note)
+    }
 
-    fun removeLocalNote(note: Note) { db.dao().deleteNote(note) }
+    fun removeLocalNote(note: Note) {
+    //    db.dao().deleteNote(note)
+    }
 
-    fun updateLocalNote(note: Note) { db.dao().updateNote(note) }
+    fun updateLocalNote(note: Note) {
+    //    db.dao().updateNote(note)
+    }
 
     fun filterNotesByVault(allNotes: ArrayList<Note>, vault: Vault): ArrayList<Note> {
         val notes = allNotes //GateKeeperApplication.notes

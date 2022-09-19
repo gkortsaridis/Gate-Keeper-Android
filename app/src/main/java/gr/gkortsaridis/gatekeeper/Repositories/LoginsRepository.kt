@@ -33,89 +33,10 @@ object LoginsRepository {
     val deleteLoginSuccess = 4
     val deleteLoginError = 5
 
-    val db = GatekeeperDatabase.getInstance(GateKeeperApplication.instance.applicationContext)
-
-    var allLogins: ArrayList<Login>
-        get() { return ArrayList(db.dao().allLoginsSync) }
-        set(logins) { db.dao().truncateLogins(); for (login in logins) { db.dao().insertLogin(login) } }
-
-    fun addLocalLogin(login: Login) { db.dao().insertLogin(login) }
-
-    fun removeLocalLogin(login: Login) { db.dao().deleteLogin(login) }
-
-    fun updateLocalLogin(login: Login) { db.dao().updateLogin(login) }
-
-    fun encryptAndStoreLogin(activity: Activity, login: Login, listener: LoginCreateListener) {
-        val viewDialog = ViewDialog(activity)
-        viewDialog.showDialog()
-
-        GateKeeperAPI.api.createLogin(SecurityRepository.createEncryptedDataRequestBody(login))
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(Schedulers.newThread())
-            .subscribe (
-                {
-                    viewDialog.hideDialog()
-                    val decryptedLogin = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Login::class.java) as Login?
-                    if (decryptedLogin != null) {
-                        decryptedLogin.id = it.data.id.toString()
-                        if (it.errorCode == -1) { listener.onLoginCreated(decryptedLogin) }
-                        else { listener.onLoginCreateError(it.errorCode, it.errorMsg) }   
-                    } else {
-                        listener.onLoginCreateError(-1, "Decryption error")
-                    }
-                },
-                {
-                    viewDialog.hideDialog()
-                    listener.onLoginCreateError(it.hashCode(), it.localizedMessage ?: "")
-                }
-            )
+    fun getLoginById(loginId: String): Login? {
+    //    return db.dao().loadLoginById(loginId)
+        return null
     }
-
-    fun encryptAndUpdateLogin(activity: Activity, login: Login, listener: LoginUpdateListener) {
-        val viewDialog = ViewDialog(activity)
-        viewDialog.showDialog()
-
-        GateKeeperAPI.api.updateLogin(SecurityRepository.createEncryptedDataRequestBody(login, login.id))
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(Schedulers.newThread())
-            .subscribe (
-                {
-                    viewDialog.hideDialog()
-                    val decryptedLogin = SecurityRepository.decryptEncryptedDataToObjectWithUserCredentials(it.data, Login::class.java) as Login?
-                    if (decryptedLogin != null) {
-                        decryptedLogin.id = it.data.id.toString()
-                        if (it.errorCode == -1) { listener.onLoginUpdated(decryptedLogin) }
-                        else { listener.onLoginUpdateError(it.errorCode, it.errorMsg) }   
-                    } else {
-                        listener.onLoginUpdateError(-1, "Decryption Error")
-                    }
-                },
-                {
-                    viewDialog.hideDialog()
-                    listener.onLoginUpdateError(it.hashCode(), it.localizedMessage ?: "")
-                }
-            )
-    }
-
-    fun filterLoginsByVault(logins: ArrayList<Login>, vault: Vault): ArrayList<Login> {
-        val vaultIds = arrayListOf<String>()
-        VaultRepository.allVaults.forEach { vaultIds.add(it.id) }
-        val parentedLogins = ArrayList(logins.filter { vaultIds.contains(it.vault_id) })
-
-        if (vault.id == "-1") { return parentedLogins }
-
-        val filtered = parentedLogins.filter {
-            it.vault_id == vault.id
-        }
-
-        return ArrayList(filtered)
-    }
-
-    fun filterLoginsByCurrentVault(logins: ArrayList<Login>): ArrayList<Login> {
-        return filterLoginsByVault(logins, VaultRepository.getLastActiveVault())
-    }
-
-    fun getLoginById(loginId: String): Login? { return db.dao().loadLoginById(loginId) }
 
     fun getApplicationInfoByPackageName(packageName: String?, packageManager: PackageManager): ResolveInfo? {
         val mainIntent = Intent(Intent.ACTION_MAIN, null)
@@ -147,21 +68,6 @@ object LoginsRepository {
         }
 
         return decryptedLogins
-    }
-
-    fun deleteLogin(login: Login, listener: LoginDeleteListener?) {
-        GateKeeperAPI.api.deleteLogin(loginId = login.id, body = SecurityRepository.createUsernameHashRequestBody())
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(Schedulers.newThread())
-            .subscribe (
-                {
-                    if (it.errorCode == -1 && login.id.toLong() == it.deletedItemID) { listener?.onLoginDeleted() }
-                    else { listener?.onLoginDeleteError(it.errorCode, it.errorMsg) }
-                },
-                {
-                    listener?.onLoginDeleteError(it.hashCode(), it.localizedMessage ?: "")
-                }
-            )
     }
 
 }

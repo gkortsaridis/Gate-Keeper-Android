@@ -18,12 +18,12 @@
         android:layout_marginTop="150dp"/>
 
     <ImageButton
+        android:id="@+id/start_bio"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:background="@drawable/access"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/logo"
-        android:id="@+id/start_bio"/>
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/access" />
 
     <TextView
         android:layout_width="wrap_content"

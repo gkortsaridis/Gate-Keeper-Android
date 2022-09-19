@@ -61,8 +61,8 @@ class NoteActivity : AppCompatActivity() {
             note = Note(
                 title= "",
                 body = "",
-                modifiedDate = Timestamp(System.currentTimeMillis()),
-                createDate = Timestamp(System.currentTimeMillis()),
+                modifiedDate = System.currentTimeMillis(),//Timestamp(System.currentTimeMillis()),
+                createDate = System.currentTimeMillis(),//Timestamp(System.currentTimeMillis()),
                 id= "-1",
                 accountId = AuthRepository.getUserID(),
                 isPinned = false,
@@ -105,9 +105,9 @@ class NoteActivity : AppCompatActivity() {
 
     private fun updateUI() {
         vault_name.text = vaultToAdd.name
-        vault_view.setBackgroundColor(resources.getColor(vaultToAdd.getVaultColorResource()))
-        vault_name.setTextColor(resources.getColor(vaultToAdd.getVaultColorAccent()))
-        vault_icon.setColorFilter(resources.getColor(vaultToAdd.getVaultColorAccent()))
+        //vault_view.setBackgroundColor(resources.getColor(vaultToAdd.getVaultColorResource()))
+        //vault_name.setTextColor(resources.getColor(vaultToAdd.getVaultColorAccent()))
+        //vault_icon.setColorFilter(resources.getColor(vaultToAdd.getVaultColorAccent()))
     }
 
     private fun changeVault() {
@@ -117,7 +117,7 @@ class NoteActivity : AppCompatActivity() {
         startActivityForResult(intent, GateKeeperConstants.CHANGE_VAULT_REQUEST_CODE)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(noteMenu!!, menu)
         return super.onCreateOptionsMenu(menu)
     }

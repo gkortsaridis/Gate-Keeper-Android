@@ -2,6 +2,7 @@ package gr.gkortsaridis.gatekeeper.Entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.type.DateTime
 import java.io.Serializable
 import java.sql.Timestamp
 
@@ -15,7 +16,7 @@ data class Login(
     var password: String,
     var url: String,
     var notes: String?,
-    var date_created: Timestamp? = null,
-    var date_modified: Timestamp? = null,
+    var date_created: Long? = null,
+    var date_modified: Long? = null,
     var vault_id: String
 ) : Serializable

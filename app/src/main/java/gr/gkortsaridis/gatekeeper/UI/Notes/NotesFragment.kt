@@ -6,66 +6,166 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.google.android.gms.ads.AdRequest
-import gr.gkortsaridis.gatekeeper.Database.MainViewModel
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.Entities.Note
 import gr.gkortsaridis.gatekeeper.Entities.Vault
-import gr.gkortsaridis.gatekeeper.Interfaces.NoteClickListener
 import gr.gkortsaridis.gatekeeper.R
-import gr.gkortsaridis.gatekeeper.Repositories.NotesRepository
-import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
-import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.NotesRecyclerViewAdapter
+import gr.gkortsaridis.gatekeeper.UI.Composables.GateKeeperNote
+import gr.gkortsaridis.gatekeeper.UI.Composables.StaggeredVerticalGrid
+import gr.gkortsaridis.gatekeeper.UI.Composables.vaultSelector
+import gr.gkortsaridis.gatekeeper.UI.Logins.CreateLoginActivity
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
 import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
-import gr.gkortsaridis.gatekeeper.Utils.dp
-import io.noties.tumbleweed.Timeline
-import io.noties.tumbleweed.Tween
-import io.noties.tumbleweed.android.ViewTweenManager
-import io.noties.tumbleweed.android.types.Alpha
-import io.noties.tumbleweed.android.types.Translation
-import io.noties.tumbleweed.equations.Cubic
-import kotlinx.android.synthetic.main.fragment_notes.*
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperDevelopMockData
+import gr.gkortsaridis.gatekeeper.Utils.GateKeeperTheme
+import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 
-class NotesFragment : Fragment(), NoteClickListener {
+@AndroidEntryPoint
+class NotesFragment : Fragment() {
 
-    private var currentVault: Vault = VaultRepository.getLastActiveRealVault()
-    private var notesAdapter: NotesRecyclerViewAdapter? = null
-    private var allNotes: ArrayList<Note> = ArrayList()
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_notes, container, false)
+        val currentVault = viewModel.getLastActiveVault()
+        val allNotesLive = viewModel.getAllNotesLive(this)
+
+        return ComposeView(requireContext()).apply {
+            setContent { notesPage(
+                currentVault = currentVault,
+                notes = allNotesLive,
+            ) }
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    @Preview
+    @Composable
+    fun notesPage(
+        currentVault: Vault = GateKeeperDevelopMockData.mockVault,
+        notes: LiveData<ArrayList<Note>> = GateKeeperDevelopMockData.mockNotesLive,
+    ) {
+        val notesLive = notes.observeAsState()
+        val currentVaultNotes = MainViewModel.filterNotesByVault(notes = notesLive.value ?: ArrayList(), vault = currentVault)
 
-        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
-        viewModel.appNotes.observe(activity!!, Observer {
-            this.allNotes = ArrayList(it)
-            updateUI()
-        })
-
-        currentVault = VaultRepository.getLastActiveVault()
-        val adRequest = AdRequest.Builder().build()
-        adview.loadAd(adRequest)
-
-        notes_recycler_view.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        notesAdapter = NotesRecyclerViewAdapter(activity!!, getOrderedNotes(currentVault), this)
-        notes_recycler_view.adapter = notesAdapter
-
-        add_note_btn.setOnClickListener { addNote() }
-        add_note.setOnClickListener { addNote() }
-        vault_view.setOnClickListener { changeVault() }
-
-        animateItemsIn()
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .background(GateKeeperTheme.light_grey)
+        ) {
+            vaultSelector(
+                currentVault = currentVault,
+                onVaultClick = { changeVault(currentVault) }
+            )
+            if(currentVaultNotes.isNotEmpty()) {
+                itemsList(GateKeeperDevelopMockData.mockNotes) //TODO: Use LIVE Notes when available
+            } else {
+                noNotes()
+            }
+        }
 
     }
 
-    private fun changeVault() {
+    @Composable
+    fun itemsList(
+        notes: ArrayList<Note>,
+    ){
+        val configuration = LocalConfiguration.current
+        val screenWidth = configuration.screenWidthDp.dp
+
+        val orderedNotes = getOrderedNotes(notes)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item {
+                StaggeredVerticalGrid(
+                    maxColumnWidth = screenWidth,
+                ) {
+                    orderedNotes.forEach { it ->
+                        GateKeeperNote(
+                            note = it,
+                            onNoteClick = { clicked ->  onNoteClicked(clicked) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun noNotes() {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(200.dp)
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.note_grey),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(40.dp, 40.dp)
+                        .padding(4.dp)
+                )
+                Text(
+                    text = stringResource(id = R.string.no_notes_title),
+                    modifier = Modifier.padding(top=8.dp),
+                    fontWeight = FontWeight.Bold,
+                    color = GateKeeperTheme.tone_black
+                )
+                Text(
+                    text = stringResource(id = R.string.no_notes_message),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top=8.dp),
+                    color = GateKeeperTheme.tone_black
+                )
+            }
+
+            FloatingActionButton(
+                onClick = {
+                    startActivity(Intent(requireActivity(), CreateLoginActivity::class.java))
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(24.dp)
+                    .size(56.dp),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.plus),
+                    contentDescription = "",
+                    modifier = Modifier.padding(all=12.dp)
+                )
+            }
+        }
+
+    }
+
+
+    private fun changeVault(currentVault: Vault) {
         val intent = Intent(activity, SelectVaultActivity::class.java)
         intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
         intent.putExtra("vault_id",currentVault.id)
@@ -78,26 +178,9 @@ class NotesFragment : Fragment(), NoteClickListener {
         startActivityForResult(intent,0)
     }
 
-    private fun updateUI() {
-        val notes = getOrderedNotes(currentVault)
-        if (notesAdapter == null) {
-            notesAdapter = NotesRecyclerViewAdapter(activity!!, notes, this)
-        }
-        notesAdapter?.setNotes(notes)
-
-        vault_name?.text = currentVault.name
-        vault_view?.setBackgroundColor(resources.getColor(currentVault.getVaultColorResource()))
-        vault_name?.setTextColor(resources.getColor(currentVault.getVaultColorAccent()))
-        vault_icon?.setColorFilter(resources.getColor(currentVault.getVaultColorAccent()))
-
-        no_items_view?.visibility = if (notes.size > 0) View.GONE else View.VISIBLE
-        add_note?.visibility = if (notes.size > 0) View.VISIBLE else View.GONE
-    }
-
-    private fun getOrderedNotes(vault: Vault): ArrayList<Note> {
-        val filtered = NotesRepository.filterNotesByVault(this.allNotes, vault)
-        val pinnedNotes = filtered.filter { it.isPinned }
-        val nonPinnedNotes = filtered.filter { !it.isPinned }
+    private fun getOrderedNotes(notes: ArrayList<Note>): ArrayList<Note> {
+        val pinnedNotes = notes.filter { it.isPinned }
+        val nonPinnedNotes = notes.filter { !it.isPinned }
 
         val pinnedSorted = ArrayList(pinnedNotes.sortedWith(compareBy { it.modifiedDate }).reversed())
         val nonPinnedSorted = ArrayList(nonPinnedNotes.sortedWith(compareBy { it.modifiedDate }).reversed())
@@ -106,30 +189,10 @@ class NotesFragment : Fragment(), NoteClickListener {
         return pinnedSorted
     }
 
-    override fun onNoteClicked(note: Note) {
+    private fun onNoteClicked(note: Note) {
         val intent = Intent(activity, NoteActivity::class.java)
         intent.putExtra("note_id", note.id)
         startActivityForResult(intent,0)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        updateUI()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        currentVault = VaultRepository.getLastActiveVault()
-        updateUI()
-    }
-
-    private fun animateItemsIn() {
-        Timeline.createParallel()
-            .push(Tween.to(add_note, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(add_note, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            //.push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
-            //.push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            .start(ViewTweenManager.get(add_note))
     }
 
 }

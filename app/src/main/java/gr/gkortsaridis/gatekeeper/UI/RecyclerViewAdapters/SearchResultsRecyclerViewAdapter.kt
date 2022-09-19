@@ -71,7 +71,7 @@ class SearchResultsRecyclerViewAdapter(
                     itemName?.text = buildString(login?.name, searchStr)
                     itemSubtitle?.visibility = View.VISIBLE
                     itemSubtitle?.text = buildString(login?.username, searchStr)
-                    itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
+                    //itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
                     clickContainer?.setOnClickListener { listener.onLoginClicked(login!!) }
                 }
                 SearchResultType.CARD -> {
@@ -82,7 +82,7 @@ class SearchResultsRecyclerViewAdapter(
                     itemName?.text = buildString(card?.cardName, searchStr)
                     itemSubtitle?.visibility = View.VISIBLE
                     itemSubtitle?.text = buildString(card?.number, searchStr)
-                    itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
+                    //itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
                     clickContainer?.setOnClickListener { listener.onCardClicked(card!!) }
 
                 }
@@ -94,7 +94,7 @@ class SearchResultsRecyclerViewAdapter(
                     itemName?.text = buildString(note?.title, searchStr)
                     itemSubtitle?.visibility = View.VISIBLE
                     itemSubtitle?.text = buildString(note?.body, searchStr)
-                    itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
+                    //itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
                     clickContainer?.setOnClickListener { listener.onNoteClicked(note!!) }
 
                 }
@@ -103,7 +103,7 @@ class SearchResultsRecyclerViewAdapter(
                     itemType?.setImageResource(R.drawable.vault)
                     itemName?.text = buildString(vault?.name, searchStr)
                     itemSubtitle?.visibility = View.GONE
-                    itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
+                    //itemVault?.setBackgroundResource( vault?.getVaultColorResource() ?: R.color.colorPrimaryDark )
                     clickContainer?.setOnClickListener { listener.onVaultClicked(vault!!) }
 
                 }

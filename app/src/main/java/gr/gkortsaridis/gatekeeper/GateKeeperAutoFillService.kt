@@ -103,13 +103,13 @@ class GateKeeperAutoFillServiceL: AutofillService() {
                 val idEntry = viewNode.idEntry ?: ""
 
                 if (hint.contains("email") || hint.contains("user")
-                    || text.contains("email") || text.contains("user")
+                    || text?.contains("email") == true || text?.contains("user") == true
                     || idEntry.contains("email") || idEntry.contains("user") ) {
 
                     if (viewNode.autofillId != null) usernameAutofillId = viewNode.autofillId!!
 
                 }else if (hint.contains("pass") || hint.contains("secret")
-                    || text.contains("pass") || text.contains("secret")
+                    || text?.contains("pass") == true || text?.contains("secret") == true
                     || idEntry.contains("pass") || idEntry.contains("secret")) {
                     if (viewNode.autofillId != null) passwordAutofillId = viewNode.autofillId!!
                 }

@@ -141,22 +141,23 @@
     </com.github.florent37.shapeofview.shapes.ArcView>
 
     <ScrollView
-        android:layout_below="@+id/top_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top_view">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <com.github.florent37.shapeofview.shapes.RoundRectView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:elevation="4dp"
-                android:layout_marginRight="-3dp"
-                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
+                android:layout_marginRight="-3dp"
+                android:layout_marginBottom="16dp"
+                android:elevation="4dp"
                 app:shape_roundRect_bottomLeftRadius="40dp"
                 app:shape_roundRect_topLeftRadius="40dp">
 
@@ -165,67 +166,68 @@
                     android:layout_height="match_parent"
                     android:background="@color/white"
                     android:clipChildren="true">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:padding="16dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
                         <EditText
+                            android:id="@+id/nameET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            tools:text="Note Title"
-                            android:hint="Title"
-                            android:textSize="21sp"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:layout_marginBottom="16dp"
-                            android:inputType="text"
-                            android:id="@+id/nameET"
                             android:background="@null"
                             android:cursorVisible="true"
-                            android:textStyle="bold"/>
+                            android:hint="Title"
+                            android:inputType="text"
+                            android:textSize="21sp"
+                            android:textStyle="bold"
+                            tools:text="Note Title" />
 
                         <com.maxpilotto.actionedittext.ActionEditText
                             android:id="@+id/usernameET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:aed_label="Username"
-                            app:aed_hint="Type your username..."
-                            android:layout_marginTop="8dp"
                             android:layout_marginLeft="8dp"
-                            android:layout_marginRight="16dp"/>
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="16dp"
+                            app:aed_hint="Type your username..."
+                            app:aed_label="Username" />
 
                         <com.maxpilotto.actionedittext.ActionEditText
                             android:id="@+id/passwordET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:aed_label="Password"
-                            app:aed_hint="Type your password..."
-                            android:layout_marginTop="8dp"
                             android:layout_marginLeft="8dp"
-                            android:layout_marginRight="16dp"/>
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="16dp"
+                            app:aed_hint="Type your password..."
+                            app:aed_label="Password" />
 
                         <com.maxpilotto.actionedittext.ActionEditText
                             android:id="@+id/urlET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:aed_label="URL"
-                            app:aed_hint="Type or select your url..."
-                            android:layout_marginTop="8dp"
                             android:layout_marginLeft="8dp"
-                            android:layout_marginRight="16dp"/>
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="16dp"
+                            app:aed_hint="Type or select your url..."
+                            app:aed_label="URL" />
 
                         <com.maxpilotto.actionedittext.ActionEditText
                             android:id="@+id/notesET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:aed_label="Notes"
-                            app:aed_hint="Type any notes connected to this password..."
-                            android:layout_marginTop="8dp"
                             android:layout_marginLeft="8dp"
-                            android:layout_marginRight="16dp"/>
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="16dp"
+                            app:aed_hint="Type any notes connected to this password..."
+                            app:aed_label="Notes" />
 
 
                         <!--<RelativeLayout
@@ -346,10 +348,9 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="80dp"/>
+                android:layout_height="80dp" />
 
         </LinearLayout>
-
 
 
     </ScrollView>

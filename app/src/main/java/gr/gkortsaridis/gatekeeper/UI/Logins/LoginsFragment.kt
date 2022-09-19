@@ -1,158 +1,390 @@
 package gr.gkortsaridis.gatekeeper.UI.Logins
 
 
-import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.autofill.AutofillManager
 import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.ads.AdRequest
-import com.stone.vega.library.VegaLayoutManager
-import gr.gkortsaridis.gatekeeper.Database.MainViewModel
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import dagger.hilt.android.AndroidEntryPoint
 import gr.gkortsaridis.gatekeeper.Entities.Login
-import gr.gkortsaridis.gatekeeper.GateKeeperApplication
-import gr.gkortsaridis.gatekeeper.Interfaces.LoginSelectListener
+import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.VaultColor
 import gr.gkortsaridis.gatekeeper.R
 import gr.gkortsaridis.gatekeeper.Repositories.AnalyticsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.DataRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository
 import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.LOGIN_SORT_TYPE_NAME
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginRequestCode
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.createLoginSuccess
-import gr.gkortsaridis.gatekeeper.Repositories.LoginsRepository.deleteLoginSuccess
-import gr.gkortsaridis.gatekeeper.Repositories.VaultRepository
-import gr.gkortsaridis.gatekeeper.UI.RecyclerViewAdapters.LoginsRecyclerViewAdapter
+import gr.gkortsaridis.gatekeeper.UI.Composables.vaultSelector
 import gr.gkortsaridis.gatekeeper.UI.Vaults.SelectVaultActivity
-import gr.gkortsaridis.gatekeeper.Utils.GateKeeperConstants
-import gr.gkortsaridis.gatekeeper.Utils.dp
-import io.noties.tumbleweed.Timeline
-import io.noties.tumbleweed.Tween
-import io.noties.tumbleweed.android.ViewTweenManager
-import io.noties.tumbleweed.android.types.Alpha
-import io.noties.tumbleweed.android.types.Translation
-import io.noties.tumbleweed.equations.Cubic
+import gr.gkortsaridis.gatekeeper.Utils.*
+import gr.gkortsaridis.gatekeeper.ViewModels.MainViewModel
 import kotlinx.android.synthetic.main.fragment_logins.*
 
+@AndroidEntryPoint
+class LoginsFragment : Fragment() {
 
-class LoginsFragment() : Fragment(), LoginSelectListener {
+    private val viewModel: MainViewModel by viewModels()
 
-    private val TAG = "_LOGINS_FRAGMENT_"
-    private var autofillManager: AutofillManager? = null
-    private var loginsAdapter: LoginsRecyclerViewAdapter? = null
-
-    private var activeLogins: ArrayList<Login> = ArrayList()
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_logins, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val adRequest = AdRequest.Builder().build()
-        adview.loadAd(adRequest)
-
-        val viewModel: MainViewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
-        viewModel.appLogins.observe(activity!!, Observer {
-            this.activeLogins = ArrayList(it)
-            updateUI(this.activeLogins)
-        })
-
-        logins_recycler_view.layoutManager = VegaLayoutManager()
-
-        add_login_btn.setOnClickListener { startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
-        fab.setOnClickListener{ startActivityForResult(Intent(activity, CreateLoginActivity::class.java), createLoginRequestCode) }
-        vault_view.setOnClickListener{
-            val intent = Intent(activity, SelectVaultActivity::class.java)
-            intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
-            intent.putExtra("vault_id",VaultRepository.getLastActiveVault().id)
-            startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
-        }
-
-        val sortTypes = arrayOf("Name", "Modified date")
-        sort_logins.setOnClickListener {
-            val builder = AlertDialog.Builder(activity)
-            builder.setTitle("Sort by")
-            builder.setSingleChoiceItems(sortTypes, DataRepository.loginSortType) { dialog, which ->
-                DataRepository.loginSortType = which
-                updateUI(this.activeLogins)
-                dialog.dismiss()
-            }
-            val dialog = builder.create()
-            dialog.show()
-        }
-
-        loginsAdapter =
-            LoginsRecyclerViewAdapter(
-                activity!!.baseContext,
-                arrayListOf(), //empty for now
-                activity!!.packageManager,
-                this
-            )
-        logins_recycler_view.adapter = loginsAdapter
-
-        animateItemsIn()
-
-        adview_container.visibility = View.GONE
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updateUI(this.activeLogins)
-    }
-
-    private fun updateUI(allLogins: ArrayList<Login>) {
-        val logins = LoginsRepository.filterLoginsByCurrentVault(allLogins)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val currentVault = viewModel.getLastActiveVault()
+        val allLoginsLive = viewModel.getAllLoginsLive(this)
+        val loginAction = DataRepository.loginClickAction
         val sortType = DataRepository.loginSortType
-        if (sortType == LOGIN_SORT_TYPE_NAME) {
-            logins.sortBy { it.name.toLowerCase() }
-            logins_sort_type?.text = "Sort by name"
+
+        return ComposeView(requireContext()).apply {
+            setContent { loginsPage(
+                currentVault = currentVault,
+                logins = allLoginsLive,
+                sortType = sortType,
+                loginAction = loginAction
+            ) }
         }
-        else {
-            logins.sortBy { it.date_modified }
-            logins.reverse()
-            logins_sort_type?.text = "Sort by modified date"
-        }
-
-        if (loginsAdapter == null) {
-            loginsAdapter =
-                LoginsRecyclerViewAdapter(
-                    activity!!.baseContext,
-                    logins,
-                    activity!!.packageManager,
-                    this
-                )
-        }
-
-        loginsAdapter?.updateLogins(logins)
-
-        login_cnt?.text = logins.size.toString()
-
-        val vault = VaultRepository.getLastActiveVault()
-        vault_name?.text = vault.name
-        vault_view?.setBackgroundColor(resources.getColor(vault.getVaultColorResource()))
-        vault_name?.setTextColor(resources.getColor(vault.getVaultColorAccent()))
-        vault_icon?.setColorFilter(resources.getColor(vault.getVaultColorAccent()))
-
-        no_items_view?.visibility = if (logins.size > 0) View.GONE else View.VISIBLE
-        fab?.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
-        logins_counter_container?.visibility = if (logins.size > 0) View.VISIBLE else View.GONE
     }
 
+    @Preview
+    @Composable
+    fun loginsPage(
+        currentVault: Vault = GateKeeperDevelopMockData.mockVault,
+        logins: LiveData<ArrayList<Login>> = GateKeeperDevelopMockData.mockLoginsLive,
+        sortType: Int = LOGIN_SORT_TYPE_NAME,
+        loginAction: Int = LoginsRepository.LOGIN_CLICK_ACTION_OPEN
+    ) {
+        val loginsLive = logins.observeAsState()
+
+        val currentVaultLogins = MainViewModel.filterLoginsByVault(logins = loginsLive.value ?: ArrayList(), vault = currentVault)
+        if (sortType == LOGIN_SORT_TYPE_NAME) {
+            currentVaultLogins.sortBy { it.name.lowercase() }
+        } else {
+            currentVaultLogins.sortBy { it.date_modified }
+            currentVaultLogins.reverse()
+        }
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .background(GateKeeperTheme.light_grey)
+        ) {
+            vaultSelector(
+                currentVault = currentVault,
+                onVaultClick = { changeVault(currentVault) }
+            )
+            if(currentVaultLogins.isNotEmpty()) {
+                itemsCount(sortType = sortType, logins = currentVaultLogins)
+                Box(modifier = Modifier.fillMaxSize()){
+                    itemsList(logins = currentVaultLogins, loginAction = loginAction)
+                    FloatingActionButton(
+                        onClick = {
+                            startActivity(Intent(requireActivity(), CreateLoginActivity::class.java))
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(24.dp)
+                            .size(56.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.plus),
+                            contentDescription = "",
+                            modifier = Modifier.padding(all=12.dp)
+                        )
+                    }
+                }
+
+            } else {
+                noLogins()
+            }
+        }
+
+    }
+
+    @Composable
+    fun noLogins() {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(200.dp)
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.padlock_grey),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(40.dp, 40.dp)
+                        .padding(4.dp)
+                )
+                Text(
+                    text = stringResource(id = R.string.no_logins_title),
+                    modifier = Modifier.padding(top=8.dp),
+                    fontWeight = FontWeight.Bold,
+                    color = GateKeeperTheme.tone_black
+                )
+                Text(
+                    text = stringResource(id = R.string.no_logins_message),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top=8.dp),
+                    color = GateKeeperTheme.tone_black
+                )
+            }
+
+            FloatingActionButton(
+                onClick = {
+                          startActivity(Intent(requireActivity(), CreateLoginActivity::class.java))
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(24.dp)
+                    .size(56.dp),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.plus),
+                    contentDescription = "",
+                    modifier = Modifier.padding(all=12.dp)
+                )
+            }
+        }
+
+    }
+
+    @Composable
+    fun itemsCount(logins: ArrayList<Login>, sortType: Int){
+        Row(
+            modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "${logins.size}",
+                fontWeight = FontWeight.Bold,
+                color = GateKeeperTheme.boldText,
+                fontSize = 15.sp
+            )
+
+            Text(
+                text = "items",
+                color = GateKeeperTheme.greyText,
+                fontSize = 15.sp,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+
+            Text(
+                text = if(sortType == LOGIN_SORT_TYPE_NAME) "Sort by name" else "Sort by modified date",
+                color = GateKeeperTheme.greyText,
+                fontSize = 15.sp,
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.down_arrow_bold),
+                contentDescription = "Localized description",
+                modifier = Modifier
+                    .size(24.dp, 24.dp)
+            )
+
+        }
+    }
+
+    @Composable
+    fun itemsList(
+        logins: ArrayList<Login>,
+        loginAction: Int
+    ){
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(start = 32.dp, end= 32.dp, top = 8.dp, bottom = 60.dp)
+        ) {
+            items(logins) { login -> loginItem(login = login, loginAction = loginAction)}
+        }
+    }
+
+    @Composable
+    fun loginItem(
+        login: Login,
+        loginAction: Int
+    ) {
+
+        val vault = viewModel.getVaultById(login.vault_id)
+        var color = "ffffff"
+        when (vault?.color) {
+            VaultColor.Red -> { color = "e53935" }
+            VaultColor.Green -> { color = "4caf50" }
+            VaultColor.Blue -> { color = "1e88e5" }
+            VaultColor.Yellow -> { color = "fdd835" }
+            VaultColor.White -> { color = "ffffff" }
+        }
+
+        val app = MainViewModel.getApplicationInfoByPackageName(login.url, requireActivity().packageManager)
+        val appIcon = app?.loadIcon(requireActivity().packageManager)
+
+        /*
+        if (appIcon != null) {
+            this.loginInitial?.visibility = View.GONE
+            this.loginImage?.visibility = View.VISIBLE
+            this.loginImage?.setImageDrawable(appIcon)
+        } else {
+            this.loginImage?.visibility = View.VISIBLE
+            GlideApp.with(context)
+                .load(FavIconDownloader.buildUrl(login.url, color))
+                .placeholder(R.drawable.padlock)
+                .listener(object: RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        val bitmap = resource?.toBitmap(8.dp, 8.dp)!!
+                        return false
+                    }
+                })
+                .into(loginImage!!)
+        }*/
+
+        Card(
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .fillMaxWidth()
+                .height(80.dp)
+                .clickable { onLoginClicked(login) },
+            elevation = 4.dp,
+            shape = RoundedCornerShape(10.dp),
+            backgroundColor = GateKeeperTheme.white
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(16.dp)
+                        .background(GateKeeperTheme.vault_red_1),
+                )
+
+                Image(
+                    painter = painterResource(id = R.drawable.question_mark),
+                    contentDescription = "Localized description",
+                    modifier = Modifier
+                        .size(40.dp, 40.dp)
+                        .padding(4.dp)
+                )
+
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .weight(1f)
+                ) {
+
+                    Text(
+                        text = login.name,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+
+
+                    Text(
+                        text = login.username,
+                        fontSize = 18.sp
+                    )
+
+                }
+
+                if (loginAction == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) {
+                    Image(
+                        painter = painterResource(id = R.drawable.copy),
+                        contentDescription = "Copy Password",
+                        modifier = Modifier
+                            .padding(start = 8.dp, end = 16.dp)
+                            .size(24.dp, 24.dp)
+                            .clickable { onLoginActionClicked(login) },
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.writing),
+                        contentDescription = "Edit Login",
+                        modifier = Modifier
+                            .padding(start = 8.dp, end = 16.dp)
+                            .size(24.dp, 24.dp)
+                            .clickable { onLoginActionClicked(login) },
+                    )
+                }
+
+
+
+            }
+        }
+    }
+
+    private fun onLoginClicked(login: Login) {
+        val action = DataRepository.loginClickAction
+        if (action == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) { openLogin(login) }
+        else { copyLoginPassword(login) }
+    }
+
+    private fun onLoginActionClicked(login: Login) {
+        val action = DataRepository.loginClickAction
+        if (action == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) { copyLoginPassword(login) }
+        else { openLogin(login) }
+    }
+
+    private fun openLogin(login: Login) {
+        val intent = Intent(activity, CreateLoginActivity::class.java)
+        intent.putExtra("login_id",login.id)
+        startActivity(intent)
+    }
+
+    private fun copyLoginPassword(login: Login) {
+        val clipboard = getSystemService(
+            requireContext(),
+            ClipboardManager::class.java
+        ) as ClipboardManager
+        val clip = ClipData.newPlainText("label",login.password)
+        clipboard.setPrimaryClip(clip)
+        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_PASS_COPY)
+        Toast.makeText(context, login.name+" password copied", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun changeVault(currentVault: Vault) {
+        val intent = Intent(activity, SelectVaultActivity::class.java)
+        intent.putExtra("action", GateKeeperConstants.ACTION_CHANGE_ACTIVE_VAULT)
+        intent.putExtra("vault_id",currentVault.id)
+        startActivityForResult(intent, GateKeeperConstants.CHANGE_ACTIVE_VAULT_REQUEST_CODE)
+    }
+
+    /*
     private fun checkForAutofill() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             autofillManager = context?.getSystemService(AutofillManager::class.java)
@@ -174,55 +406,5 @@ class LoginsFragment() : Fragment(), LoginSelectListener {
 
         }
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-        if (requestCode == createLoginRequestCode && resultCode == createLoginSuccess) {
-            updateUI(this.activeLogins)
-            Toast.makeText(context, "Login successfully created", Toast.LENGTH_SHORT).show()
-        } else if (resultCode == deleteLoginSuccess) {
-            updateUI(this.activeLogins)
-            Toast.makeText(context, "Login successfully deleted", Toast.LENGTH_SHORT).show()
-        }
-
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onLoginClicked(login: Login) {
-        val action = DataRepository.loginClickAction
-        if (action == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) { openLogin(login) }
-        else { copyLoginPassword(login) }
-    }
-
-    override fun onLoginActionClicked(login: Login) {
-        val action = DataRepository.loginClickAction
-        if (action == LoginsRepository.LOGIN_CLICK_ACTION_OPEN) { copyLoginPassword(login) }
-        else { openLogin(login) }
-    }
-
-    private fun openLogin(login: Login) {
-        val intent = Intent(activity, CreateLoginActivity::class.java)
-        intent.putExtra("login_id",login.id)
-        startActivity(intent)
-    }
-
-    private fun copyLoginPassword(login: Login) {
-        val clipboard = getSystemService(
-            context!!,
-            ClipboardManager::class.java
-        ) as ClipboardManager
-        val clip = ClipData.newPlainText("label",login.password)
-        clipboard.setPrimaryClip(clip)
-        AnalyticsRepository.trackEvent(AnalyticsRepository.LOGIN_PASS_COPY)
-        Toast.makeText(context, login.name+" password copied", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun animateItemsIn() {
-        Timeline.createParallel()
-            .push(Tween.to(fab, Alpha.VIEW, 1.0f).target(1.0f))
-            .push(Tween.to(fab, Translation.XY).target(0f,-72.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            //.push(Tween.to(adview_container, Alpha.VIEW, 1.0f).target(1.0f))
-            //.push(Tween.to(adview_container, Translation.XY).target(0f,-90.dp.toFloat()).ease(Cubic.INOUT).duration(1.0f))
-            .start(ViewTweenManager.get(fab))
-    }
+     */
 }

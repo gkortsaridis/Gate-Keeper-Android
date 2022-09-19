@@ -62,13 +62,13 @@
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/login_image"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:id="@+id/login_image"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="24dp"
                     android:padding="4dp"
-                    android:src="@drawable/question_mark"/>
+                    android:src="@drawable/question_mark" />
 
             </RelativeLayout>
 
@@ -105,13 +105,13 @@
             </LinearLayout>
 
             <ImageButton
+                android:id="@+id/login_action"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:id="@+id/login_action"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
-                android:background="@drawable/copy"/>
+                android:background="@drawable/copy" />
 
         </RelativeLayout>
     </com.github.florent37.shapeofview.shapes.RoundRectView>

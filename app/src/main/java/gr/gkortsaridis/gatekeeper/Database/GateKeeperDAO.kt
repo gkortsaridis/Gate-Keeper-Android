@@ -2,102 +2,76 @@ package gr.gkortsaridis.gatekeeper.Database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import gr.gkortsaridis.gatekeeper.Entities.CreditCard
-import gr.gkortsaridis.gatekeeper.Entities.Login
-import gr.gkortsaridis.gatekeeper.Entities.Note
-import gr.gkortsaridis.gatekeeper.Entities.Vault
+import gr.gkortsaridis.gatekeeper.Entities.EncryptedDBItem
 
 @Dao
 interface GateKeeperDAO {
 
-    //Get data on the main thread
-    @get:Query("SELECT * FROM logins")
-    val allLoginsSync: List<Login>
+    //~~~~~~~~ READ DATA ~~~~~~~~
+    @get:Query("SELECT * FROM data WHERE type = 0")
+    val allVaults: List<EncryptedDBItem>
 
-    @get:Query("SELECT * FROM vaults")
-    val allVaultsSync: List<Vault>
+    @get:Query("SELECT * FROM data")
+    val allData: List<EncryptedDBItem>
 
-    @get:Query("SELECT * FROM cards")
-    val allCardsSync: List<CreditCard>
+    @get:Query("SELECT * FROM data WHERE type = 1")
+    val allLogins: List<EncryptedDBItem>
 
-    @get:Query("SELECT * FROM notes")
-    val allNotesSync: List<Note>
+    @get:Query("SELECT * FROM data WHERE type = 2")
+    val allCards: List<EncryptedDBItem>
 
-    //Use LiveData to get stuff from DB
-    @get:Query("SELECT * FROM logins")
-    val allLogins: LiveData<List<Login>>
+    @get:Query("SELECT * FROM data WHERE type = 3")
+    val allNotes: List<EncryptedDBItem>
 
-    @get:Query("SELECT * FROM vaults")
-    val allVaults: LiveData<List<Vault>>
+    @get:Query("SELECT * FROM data WHERE type = 4")
+    val allDevices: List<EncryptedDBItem>
 
-    @get:Query("SELECT * FROM cards")
-    val allCards: LiveData<List<CreditCard>>
+    //~~~~~~~~ READ LIVE DATA ~~~~~~~~
+    @get:Query("SELECT * FROM data WHERE type = 0")
+    val allVaultsLive: LiveData<List<EncryptedDBItem>>
 
-    @get:Query("SELECT * FROM notes")
-    val allNotes: LiveData<List<Note>>
+    @get:Query("SELECT * FROM data WHERE type = 1")
+    val allLoginsLive: LiveData<List<EncryptedDBItem>>
 
-    //Inserts
+    @get:Query("SELECT * FROM data WHERE type = 2")
+    val allCardsLive: LiveData<List<EncryptedDBItem>>
+
+    @get:Query("SELECT * FROM data WHERE type = 3")
+    val allNotesLive: LiveData<List<EncryptedDBItem>>
+
+    //~~~~~~~~ QUERY DATA ~~~~~~~~
+    @Query("SELECT * FROM data WHERE type = 0 AND id = :id")
+    fun loadVaultById(id: String): EncryptedDBItem?
+
+    @Query("SELECT * FROM data WHERE type = 1 AND id = :id")
+    fun loadLoginById(id: String): EncryptedDBItem?
+
+    @Query("SELECT * FROM data WHERE type = 2 AND id = :id")
+    fun loadCardById(id: String): EncryptedDBItem?
+
+    @Query("SELECT * FROM data WHERE type = 3 AND id = :id")
+    fun loadNoteById(id: String): EncryptedDBItem?
+
+    @Query("SELECT * FROM data WHERE type = 4 AND id = :id")
+    fun loadDeviceById(id: String): EncryptedDBItem?
+
+
+    //~~~~~~~~ INSERT DATA ~~~~~~~~
     @Insert
-    fun insertLogin(login: Login)
+    fun insertUserData(dbItems: ArrayList<EncryptedDBItem>)
 
     @Insert
-    fun insertVault(vault: Vault)
+    fun insertSingleDataObject(dbItem: EncryptedDBItem)
 
-    @Insert
-    fun insertCard(card: CreditCard)
-
-    @Insert
-    fun insertNote(note: Note)
-
-    //Updates
+    //~~~~~~~~ UPDATE DATA ~~~~~~~~
     @Update
-    fun updateLogin(login: Login)
+    fun updateSingleDataObject(dbItem: EncryptedDBItem)
 
-    @Update
-    fun updateVault(vault: Vault)
+    //~~~~~~~~ DELETE DATA ~~~~~~~~
+    @Query("DELETE FROM data")
+    fun deleteAllData()
 
-    @Update
-    fun updateCard(card: CreditCard)
+    @Query("DELETE FROM data WHERE type = 1 AND id = :id")
+    fun deleteLoginById(id: String)
 
-    @Update
-    fun updateNote(note: Note)
-
-    //Deletes
-    @Delete
-    fun deleteLogin(login: Login)
-
-    @Delete
-    fun deleteVault(vault: Vault)
-
-    @Delete
-    fun deleteCard(card: CreditCard)
-
-    @Delete
-    fun deleteNote(note: Note)
-
-
-    //Queries
-    @Query("SELECT * FROM logins WHERE id = :id")
-    fun loadLoginById(id: String): Login?
-
-    @Query("SELECT * FROM vaults WHERE id = :id")
-    fun loadVaultById(id: String): Vault?
-
-    @Query("SELECT * FROM cards WHERE id = :id")
-    fun loadCardById(id: String): CreditCard?
-
-    @Query("SELECT * FROM notes WHERE id = :id")
-    fun loadNoteById(id: String): Note?
-
-    @Query("DELETE FROM logins")
-    fun truncateLogins()
-
-    @Query("DELETE FROM vaults")
-    fun truncateVaults()
-
-    @Query("DELETE FROM cards")
-    fun truncateCards()
-
-    @Query("DELETE FROM notes")
-    fun truncateNotes()
 }
